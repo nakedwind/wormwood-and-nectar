@@ -1,0 +1,36 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls \"/c/Users/IEPC020/.claude\" 2>/dev/null || echo \"no .claude dir\")",
+      "Bash(mkdir -p \"/c/Users/IEPC020/Documents/私人用/苦艾與甘露遊戲/.claude\")",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(npx --version)",
+      "Bash(where node *)",
+      "Bash(where npm *)",
+      "Bash(where python3 *)",
+      "Bash(where py *)",
+      "Read(//c/Windows/**)",
+      "PowerShell(Get-Command node, npm, py, python3 -ErrorAction SilentlyContinue)",
+      "Bash(Select-Object Name)",
+      "PowerShell(Get-ChildItem \"C:\\\\Users\\\\IEPC020\\\\Documents\\\\私人用\\\\苦艾與甘露遊戲\" | ForEach-Object { $_.Name })",
+      "Bash(dir \"C:\\\\Users\\\\IEPC020\\\\Documents\\\\私人用\\\\苦艾與甘露遊戲\\\\\" /b | findstr /i \".png .jpg .jpeg .webp .gif\")",
+      "PowerShell(\\(Get-Content \"C:\\\\Users\\\\IEPC020\\\\Documents\\\\私人用\\\\苦艾與甘露遊戲\\\\index.html\" | Measure-Object -Line\\).Lines)",
+      "Bash(python -m http.server 8765)",
+      "Bash(mkdir -p \"/mnt/c/Users/IEPC020/Documents/私人用/苦艾與甘露遊戲/.claude\")",
+      "PowerShell(Get-Command python3, py, node, npx 2>$null)",
+      "Bash(ls \"C:\\\\Users\\\\IEPC020\\\\Documents\\\\私人用\\\\苦艾與甘露遊戲\\\\\" | findstr lobby)",
+      "Bash(python3 -c ' *)",
+      "Bash(python -c ' *)",
+      "Bash(node -e ' *)",
+      "Bash(powershell -NoProfile -Command '[System.Reflection.Assembly]::LoadWithPartialName\\('\\\\''System.Drawing'\\\\''\\) | Out-Null; foreach \\($f in @\\('\\\\''character_eldrin.png'\\\\'','\\\\''character_avaren.png'\\\\'','\\\\''character_eldrin_blink.png'\\\\'','\\\\''character_avaren_blink.png'\\\\''\\)\\) { $p = \\(Get-Location\\).Path + '\\\\''\\\\'\\\\'' + $f; $img = [System.Drawing.Image]::FromFile\\($p\\); Write-Host \\($f + '\\\\'': '\\\\'' + $img.Width + '\\\\'' x '\\\\'' + $img.Height\\); $img.Dispose\\(\\) }')",
+      "Bash(powershell -NoProfile -Command ' *)",
+      "Bash(powershell -NoProfile -Command 'Select-String -Path '\\\\''index.html'\\\\'' -Pattern '\\\\''sleep|Sleep|隔天|G\\\\.day'\\\\'' | Select-Object -First 20 | ForEach-Object { Write-Host \\($_.LineNumber.ToString\\(\\) + '\\\\'': '\\\\'' + $_.Line.Trim\\(\\)\\) }')",
+      "Bash(powershell -NoProfile -Command 'Select-String -Path '\\\\''index.html'\\\\'' -Pattern '\\\\''sleepNow|doAction_Sleep|doSleep'\\\\'' | ForEach-Object { Write-Host \\($_.LineNumber.ToString\\(\\) + '\\\\'': '\\\\'' + $_.Line.Trim\\(\\)\\) }')",
+      "Bash(cp \"C:/Users/IEPC020/Documents/私人用/苦艾與甘露遊戲 - 0522/index.html\" \"C:/Users/IEPC020/Documents/私人用/苦艾與甘露遊戲/index.html\" && echo \"完成\")",
+      "Bash(python3 -c \"import sys,json; [print\\(json.loads\\(l\\).get\\('timestamp',''\\),json.loads\\(l\\).get\\('type',''\\)\\) for l in sys.stdin]\")",
+      "Bash(sort -t: -k2 -n)",
+      "Bash(grep -v \"^\\\\\"newString\\\\\":\\\\\"\\\\\"$\")",
+      "Bash(grep -o \"room: \\\\[\\\\\\\\\\\\\\\\n[^]]*\\\\]\" \"C:\\\\Users\\\\IEPC020\\\\.claude\\\\projects\\\\C--Users-IEPC020-Documents------------\\\\b61d0ee7-18ce-4aa1-98fe-74c55ba7e0ee.jsonl\")"
+    ]
+  }
+}
