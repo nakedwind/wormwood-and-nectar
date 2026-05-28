@@ -705,6 +705,18 @@ body {
   0%,100% { opacity: 0.2; transform: scale(0.95); }
   50%     { opacity: 0.75; transform: scale(1.08); }
 }
+#outside-farm-2.harvest-flash::after {
+  content: ""; position: absolute; inset: -4px;
+  background: rgba(255, 244, 168, 0.28);
+  box-shadow: 0 0 18px rgba(255, 232, 128, 0.7);
+  pointer-events: none;
+  animation: herbHarvestFlash 0.55s ease-out forwards;
+}
+@keyframes herbHarvestFlash {
+  0%   { opacity: 0; transform: scale(0.96); }
+  35%  { opacity: 1; transform: scale(1.02); }
+  100% { opacity: 0; transform: scale(1.05); }
+}
 #research-scene-wrap {
   display: none; position: absolute;
   left: 20px; top: 322px;
@@ -805,14 +817,16 @@ body {
 /* 現有物件編輯模式 */
 #outside-objects.soe-edit-mode > div,
 #lobby-objects.soe-edit-mode > div,
-#room-objects.soe-edit-mode > div {
+#room-objects.soe-edit-mode > div,
+#forest-objects.soe-edit-mode > div {
   pointer-events: auto !important;
   cursor: move;
   outline: 1px dashed rgba(100,200,255,0.5);
 }
 #outside-objects.soe-edit-mode > div:hover,
 #lobby-objects.soe-edit-mode > div:hover,
-#room-objects.soe-edit-mode > div:hover {
+#room-objects.soe-edit-mode > div:hover,
+#forest-objects.soe-edit-mode > div:hover {
   outline: 1px solid rgba(100,200,255,0.9);
 }
 .soe-exist-label {
@@ -946,41 +960,33 @@ body {
       <div id="chicken-sleep" style="display:none;position:absolute;left:454px;top:95px;width:34px;height:25px;z-index:12;pointer-events:none;"><img src="chicken_sleep.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
       <!-- ══ 戶外場景物件層 ══ -->
       <div id="outside-objects" style="display:none;">
-        <div id="outside-house"    style="position:absolute;left:195px;top:-25px;width:269px;height:268px;z-index:8;pointer-events:none;"><img src="bg_outside/bg_outside_house.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
-        <div id="outside-tree-1"   style="position:absolute;left:-2px;top:345px;width:73px;height:129px;z-index:14;pointer-events:none;"><img src="bg_outside/bg_outside_tree.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
-        <div id="outside-tree-2"   style="position:absolute;left:132px;top:346px;width:73px;height:129px;z-index:14;pointer-events:none;"><img src="bg_outside/bg_outside_tree.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
-        <div id="outside-tree-3"   style="position:absolute;left:-5px;top:-22px;width:96px;height:118px;z-index:8;pointer-events:none;"><img src="bg_outside/bg_outside_tree02.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
-        <div id="outside-tree-4"   style="position:absolute;left:-16px;top:24px;width:94px;height:120px;z-index:8;pointer-events:none;"><img src="bg_outside/bg_outside_tree02.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
-        <div id="outside-tree-6"   style="position:absolute;left:78px;top:-31px;width:99px;height:123px;z-index:8;pointer-events:none;"><img src="bg_outside/bg_outside_tree02.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
-        <div id="outside-tree-7"   style="position:absolute;left:579px;top:-4px;width:70px;height:109px;z-index:8;pointer-events:none;"><img src="bg_outside/bg_outside_tree.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
-        <div id="outside-tree-8"   style="position:absolute;left:494px;top:345px;width:73px;height:129px;z-index:14;pointer-events:none;"><img src="bg_outside/bg_outside_tree.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
-        <div id="outside-tree-9"   style="position:absolute;left:391px;top:-47px;width:56px;height:94px;z-index:10;pointer-events:none;"><img src="bg_outside/bg_outside_tree.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
-        <div id="outside-tree-10"  style="position:absolute;left:578px;top:311px;width:72px;height:122px;z-index:15;pointer-events:none;"><img src="bg_outside/bg_outside_tree.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
-        <div id="outside-tree-11"  style="position:absolute;left:78px;top:14px;width:99px;height:123px;z-index:8;pointer-events:none;"><img src="bg_outside/bg_outside_tree02.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+        <div id="outside-house" style="position:absolute;left:193px;top:-12px;width:269px;height:268px;z-index:8;pointer-events:none;"><img src="bg_outside/bg_outside_house.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+        <div id="outside-tree-1" style="position:absolute;left:-2px;top:345px;width:73px;height:129px;z-index:15;pointer-events:none;"><img src="bg_outside/bg_outside_tree.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+        <div id="outside-tree-2" style="position:absolute;left:132px;top:346px;width:73px;height:129px;z-index:15;pointer-events:none;"><img src="bg_outside/bg_outside_tree.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+        <div id="outside-tree-3" style="position:absolute;left:16px;top:-25px;width:96px;height:118px;z-index:8;pointer-events:none;"><img src="bg_outside/bg_outside_tree02.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+        <div id="outside-tree-4" style="position:absolute;left:-26px;top:20px;width:94px;height:120px;z-index:8;pointer-events:none;"><img src="bg_outside/bg_outside_tree02.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+        <div id="outside-tree-6" style="position:absolute;left:117px;top:-39px;width:99px;height:123px;z-index:8;pointer-events:none;"><img src="bg_outside/bg_outside_tree02.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+        <div id="outside-tree-7" style="position:absolute;left:574px;top:26px;width:70px;height:109px;z-index:8;pointer-events:none;"><img src="bg_outside/bg_outside_tree.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+        <div id="outside-tree-8" style="position:absolute;left:494px;top:345px;width:73px;height:129px;z-index:15;pointer-events:none;"><img src="bg_outside/bg_outside_tree.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+        <div id="outside-tree-9" style="position:absolute;left:381px;top:-46px;width:56px;height:94px;z-index:10;pointer-events:none;"><img src="bg_outside/bg_outside_tree.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+        <div id="outside-fence-1" style="position:absolute;left:368px;top:440px;width:68px;height:27px;z-index:15;pointer-events:none;"><img src="bg_outside/bg_outside_fence.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+        <div id="outside-fence-2" style="position:absolute;left:429px;top:440px;width:68px;height:27px;z-index:15;pointer-events:none;"><img src="bg_outside/bg_outside_fence.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+        <div id="outside-fence-3" style="position:absolute;left:568px;top:440px;width:68px;height:27px;z-index:15;pointer-events:none;"><img src="bg_outside/bg_outside_fence.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+        <div id="outside-fence-4" style="position:absolute;left:64px;top:439px;width:68px;height:27px;z-index:15;pointer-events:none;"><img src="bg_outside/bg_outside_fence.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+        <div id="outside-fence-5" style="position:absolute;left:206px;top:439px;width:68px;height:27px;z-index:15;pointer-events:none;"><img src="bg_outside/bg_outside_fence.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+        <div id="outside-farm-1" style="position:absolute;left:7px;top:204px;width:178px;height:135px;z-index:10;pointer-events:none;"><img src="bg_outside/bg_outside_farm02.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+        <div id="outside-farm-2" style="position:absolute;left:2px;top:206px;width:188px;height:132px;z-index:10;pointer-events:none;"><img id="outside-farm-img" src="bg_outside/bg_outside_farm01.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+        <div id="outside-grass-1" style="position:absolute;left:62px;top:130px;width:51px;height:42px;z-index:8;pointer-events:none;"><img src="bg_outside/bg_outside_grass02.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+        <div id="outside-grass-2" style="position:absolute;left:447px;top:187px;width:51px;height:42px;z-index:8;pointer-events:none;"><img src="bg_outside/bg_outside_grass02.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+        <div id="outside-grass-3" style="position:absolute;left:476px;top:207px;width:49px;height:41px;z-index:8;pointer-events:none;"><img src="bg_outside/bg_outside_grass01.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+        <div id="outside-grass-4" style="position:absolute;left:105px;top:142px;width:50px;height:42px;z-index:8;pointer-events:none;"><img src="bg_outside/bg_outside_grass03.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+        <div id="outside-grass-5" style="position:absolute;left:53px;top:158px;width:53px;height:42px;z-index:8;pointer-events:none;"><img src="bg_outside/bg_outside_grass04.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+        <div id="outside-grass-6" style="position:absolute;left:430px;top:220px;width:53px;height:42px;z-index:8;pointer-events:none;"><img src="bg_outside/bg_outside_grass04.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+        <div id="outside-grass-7" style="position:absolute;left:11px;top:156px;width:48px;height:38px;z-index:8;pointer-events:none;"><img src="bg_outside/bg_outside_grass05.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+        <div id="outside-grass-8" style="position:absolute;left:466px;top:236px;width:52px;height:43px;z-index:8;pointer-events:none;"><img src="bg_outside/bg_outside_grass06.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+        <div id="outside-tree-10" style="position:absolute;left:578px;top:311px;width:72px;height:122px;z-index:15;pointer-events:none;"><img src="bg_outside/bg_outside_tree.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+        <div id="outside-tree-11" style="position:absolute;left:78px;top:14px;width:99px;height:123px;z-index:8;pointer-events:none;"><img src="bg_outside/bg_outside_tree02.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
         <div id="outside-fishing-1" style="position:absolute;left:494px;top:60px;width:38px;height:51px;z-index:10;pointer-events:none;"><img id="outside-fishing-img" src="bg_outside/bg_outside_fishing02.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
-        <div id="outside-fence-1"  style="position:absolute;left:370px;top:441px;width:68px;height:27px;z-index:14;pointer-events:none;"><img src="bg_outside/bg_outside_fence.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
-        <div id="outside-fence-2"  style="position:absolute;left:430px;top:441px;width:68px;height:27px;z-index:14;pointer-events:none;"><img src="bg_outside/bg_outside_fence.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
-        <div id="outside-fence-3"  style="position:absolute;left:568px;top:443px;width:68px;height:27px;z-index:14;pointer-events:none;"><img src="bg_outside/bg_outside_fence.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
-        <div id="outside-fence-4"  style="position:absolute;left:64px;top:445px;width:68px;height:27px;z-index:14;pointer-events:none;"><img src="bg_outside/bg_outside_fence.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
-        <div id="outside-fence-5"  style="position:absolute;left:202px;top:442px;width:68px;height:27px;z-index:14;pointer-events:none;"><img src="bg_outside/bg_outside_fence.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
-        <div id="outside-farm-1"   style="position:absolute;left:7px;top:204px;width:178px;height:135px;z-index:10;pointer-events:none;"><img src="bg_outside/bg_outside_farm02.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
-        <div id="outside-farm-2"   style="position:absolute;left:2px;top:206px;width:188px;height:132px;z-index:10;pointer-events:none;"><img src="bg_outside/bg_outside_farm01.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
-        <div id="outside-barrel"   style="position:absolute;left:381px;top:164px;width:32px;height:42px;z-index:8;pointer-events:none;"><img src="bg_outside/bg_outside_barrel.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
-        <div id="outside-barrel-2" style="position:absolute;left:410px;top:184px;width:29px;height:36px;z-index:10;pointer-events:none;"><img src="bg_outside/bg_outside_barrel.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
-        <div id="outside-box-1"    style="position:absolute;left:202px;top:167px;width:34px;height:41px;z-index:8;pointer-events:none;"><img src="bg_outside/bg_outside_box.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
-        <div id="outside-box-2"    style="position:absolute;left:226px;top:180px;width:36px;height:38px;z-index:8;pointer-events:none;"><img src="bg_outside/bg_outside_box.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
-        <div id="outside-box-3"    style="position:absolute;left:215px;top:154px;width:33px;height:37px;z-index:8;pointer-events:none;"><img src="bg_outside/bg_outside_box.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
-        <div id="outside-grass-1"  style="position:absolute;left:103px;top:116px;width:51px;height:42px;z-index:8;pointer-events:none;"><img src="bg_outside/bg_outside_grass02.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
-        <div id="outside-grass-2"  style="position:absolute;left:449px;top:169px;width:51px;height:42px;z-index:8;pointer-events:none;"><img src="bg_outside/bg_outside_grass02.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
-        <div id="outside-grass-3"  style="position:absolute;left:475px;top:194px;width:49px;height:41px;z-index:8;pointer-events:none;"><img src="bg_outside/bg_outside_grass01.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
-        <div id="outside-grass-4"  style="position:absolute;left:89px;top:144px;width:50px;height:42px;z-index:8;pointer-events:none;"><img src="bg_outside/bg_outside_grass03.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
-        <div id="outside-grass-5"  style="position:absolute;left:47px;top:140px;width:53px;height:42px;z-index:8;pointer-events:none;"><img src="bg_outside/bg_outside_grass04.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
-        <div id="outside-grass-6"  style="position:absolute;left:437px;top:217px;width:53px;height:42px;z-index:8;pointer-events:none;"><img src="bg_outside/bg_outside_grass04.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
-        <div id="outside-grass-7"  style="position:absolute;left:11px;top:156px;width:48px;height:38px;z-index:8;pointer-events:none;"><img src="bg_outside/bg_outside_grass05.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
-        <div id="outside-grass-8"  style="position:absolute;left:472px;top:231px;width:52px;height:43px;z-index:8;pointer-events:none;"><img src="bg_outside/bg_outside_grass06.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
-        <div id="outside-flower-1" style="position:absolute;left:225px;top:280px;width:36px;height:22px;z-index:10;pointer-events:none;"><img src="bg_outside/bg_outside_flower_02.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
-        <div id="outside-flower-2" style="position:absolute;left:416px;top:402px;width:36px;height:23px;z-index:10;pointer-events:none;"><img src="bg_outside/bg_outside_flower.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
-        <div id="outside-flower-3" style="position:absolute;left:81px;top:403px;width:36px;height:23px;z-index:10;pointer-events:none;"><img src="bg_outside/bg_outside_flower.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
       </div>
       <!-- ══ 大廳場景物件層 ══ -->
       <div id="lobby-objects" style="display:none;">
@@ -997,7 +1003,24 @@ body {
         <div id="room-bed02"      style="position:absolute;left:378px;top:314px;width:159px;height:151px;z-index:10;pointer-events:none;"><img src="bg_room/bg_room_bed02.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
       </div>
       <!-- ══ 森林場景物件 ══ -->
-      <div id="forest-nest" style="display:none;position:absolute;left:450px;top:94px;width:45px;height:42px;z-index:11;pointer-events:none;"><img src="Nest.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+      <div id="forest-objects" style="display:none;">
+        <div id="forest-light-1" style="position:absolute;left:360px;top:175px;width:28px;height:53px;z-index:10;pointer-events:none;"><img src="bg_forest/bg_forest_light.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+        <div id="forest-fishing-1" style="position:absolute;left:261px;top:208px;width:38px;height:78px;z-index:10;pointer-events:none;"><img src="bg_forest/bg_forest_fishing01.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+        <div id="forest-grass-1" style="position:absolute;left:139px;top:26px;width:49px;height:41px;z-index:10;pointer-events:none;"><img src="bg_forest/bg_outside_grass01.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+        <div id="forest-grass-2" style="position:absolute;left:416px;top:107px;width:51px;height:42px;z-index:10;pointer-events:none;"><img src="bg_forest/bg_outside_grass02.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+        <div id="forest-grass-3" style="position:absolute;left:448px;top:129px;width:50px;height:42px;z-index:10;pointer-events:none;"><img src="bg_forest/bg_outside_grass03.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+        <div id="forest-grass-4" style="position:absolute;left:112px;top:51px;width:52px;height:43px;z-index:10;pointer-events:none;"><img src="bg_forest/bg_outside_grass06.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+        <div id="forest-grass-5" style="position:absolute;left:435px;top:142px;width:52px;height:43px;z-index:10;pointer-events:none;"><img src="bg_forest/bg_outside_grass06.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+        <div id="forest-grass-6" style="position:absolute;left:481px;top:150px;width:52px;height:43px;z-index:10;pointer-events:none;"><img src="bg_forest/bg_outside_grass06.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+        <div id="forest-tree-1" style="position:absolute;left:72px;top:70px;width:73px;height:129px;z-index:10;pointer-events:none;"><img src="bg_forest/bg_outside_tree.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+        <div id="forest-tree-2" style="position:absolute;left:-18px;top:35px;width:99px;height:123px;z-index:10;pointer-events:none;"><img src="bg_forest/bg_outside_tree02.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+        <div id="forest-tree-3" style="position:absolute;left:-9px;top:142px;width:73px;height:129px;z-index:10;pointer-events:none;"><img src="bg_forest/bg_outside_tree.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+        <div id="forest-tree-4" style="position:absolute;left:493px;top:-23px;width:71px;height:123px;z-index:10;pointer-events:none;"><img src="bg_forest/bg_outside_tree.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+        <div id="forest-tree-5" style="position:absolute;left:544px;top:167px;width:99px;height:123px;z-index:10;pointer-events:none;"><img src="bg_forest/bg_outside_tree02.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+        <div id="forest-tree-6" style="position:absolute;left:580px;top:208px;width:99px;height:123px;z-index:10;pointer-events:none;"><img src="bg_forest/bg_outside_tree02.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+        <div id="forest-nest" style="position:absolute;left:493px;top:125px;width:49px;height:36px;z-index:2;pointer-events:none;"><img src="bg_forest/bg_forest_Nest.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+        <div id="forest-prospect" style="position:absolute;left:-19px;top:305px;width:633px;height:179px;z-index:45;pointer-events:none;"><img src="bg_forest/bg_forest_prospect.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+      </div>
       <div id="nest-egg-1" style="display:none;position:absolute;left:462px;top:101px;width:14px;height:13px;z-index:12;pointer-events:none;"><img src="egg.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
       <div id="nest-egg-2" style="display:none;position:absolute;left:470px;top:101px;width:14px;height:13px;z-index:12;pointer-events:none;"><img src="egg.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
       <canvas id="debug-canvas" width="640" height="480" style="position:absolute;inset:0;pointer-events:none;z-index:50;"></canvas>
@@ -1367,6 +1390,21 @@ function setOutsideFishingVisual(state) {
   wrap.classList.toggle('fishing-ready', ready);
 }
 
+function setOutsideFarmVisual(ready, flash = false) {
+  const wrap = document.getElementById('outside-farm-2');
+  const img = document.getElementById('outside-farm-img');
+  if (!wrap || !img) return;
+  const folder = (typeof G !== 'undefined' && G && G.timePeriod === 'evening')
+    ? 'bg_outside_night/' : 'bg_outside/';
+  img.src = folder + (ready ? 'bg_outside_farm02.png' : 'bg_outside_farm01.png');
+  if (flash) {
+    wrap.classList.remove('harvest-flash');
+    void wrap.offsetWidth;
+    wrap.classList.add('harvest-flash');
+    setTimeout(() => wrap.classList.remove('harvest-flash'), 650);
+  }
+}
+
 function updateRoomDepth() {
   if (G.scene !== 'room') return;
   const charZ = 13;
@@ -1494,19 +1532,24 @@ const ZONES = {
       fn(){ doAction_Cook(); } },
   ],
   forest: [
-    { id:'to_outside',    x1:283, y1:8,   x2:357, y2:88,  sceneHint:'→ 返回戶外', isScene:true,
-      fn(){ changeScene('outside'); } },
+    { id:'to_outside',    x1:286, y1:8,   x2:359, y2:73,  sceneHint:'→ 返回戶外', isScene:true,
+      fn(){ changeScene('outside', {x:325, y:426}); } },
     { id:'forest_pond',   x1:247, y1:232, x2:345, y2:288, interactHint:'垂釣',
       fn(){ doAction_ForestFish(); } },
-    { id:'forest_flower1', x1:70,  y1:259, x2:140, y2:350, interactHint:'花叢', fn(){ doAction_GatherFlower(); } },
-    { id:'forest_flower2', x1:228, y1:179, x2:301, y2:241, interactHint:'花叢', fn(){ doAction_GatherFlower(); } },
-    { id:'forest_flower3', x1:525, y1:263, x2:609, y2:360, interactHint:'花叢', fn(){ doAction_GatherFlower(); } },
-    { id:'forest_flower4', x1:452, y1:413, x2:560, y2:476, interactHint:'花叢', fn(){ doAction_GatherFlower(); } },
-    { id:'forest_tree1',  x1:16,  y1:33,  x2:142, y2:186, interactHint:'木材', fn(){ doAction_GatherWood(); } },
-    { id:'forest_tree2',  x1:496, y1:1,   x2:632, y2:99,  interactHint:'木材', fn(){ doAction_GatherWood(); } },
-    { id:'forest_tree3',  x1:499, y1:124, x2:639, y2:239, interactHint:'木材', fn(){ doAction_GatherWood(); } },
-    { id:'forest_tree4',  x1:569, y1:393, x2:635, y2:459, interactHint:'木材', fn(){ doAction_GatherWood(); } },
-    { id:'forest_nest',   x1:420, y1:80,  x2:530, y2:200, interactHint:'鳥巢', fn(){ doAction_CollectEggs(); } },
+    { id:'forest_tree1',  x1:5,   y1:8,   x2:105, y2:119, interactHint:'木材', fn(){ doAction_GatherWood(); } },
+    { id:'forest_tree2',  x1:5,   y1:361, x2:69,  y2:477, interactHint:'木材', fn(){ doAction_GatherWood(); } },
+    { id:'forest_tree3',  x1:556, y1:195, x2:637, y2:318, interactHint:'木材', fn(){ doAction_GatherWood(); } },
+    { id:'forest_tree4',  x1:481, y1:5,   x2:634, y2:102, interactHint:'木材', fn(){ doAction_GatherWood(); } },
+    { id:'forest_bush1',  x1:113, y1:13,  x2:177, y2:89,  interactHint:'草叢', fn(){ doAction_GatherBush(); } },
+    { id:'forest_bush2',  x1:427, y1:117, x2:491, y2:181, interactHint:'草叢', fn(){ doAction_GatherBush(); } },
+    { id:'forest_flower3', x1:29,  y1:277, x2:102, y2:329, interactHint:'花叢', fn(){ doAction_GatherFlower(); } },
+    { id:'forest_flower4', x1:83,  y1:226, x2:155, y2:273, interactHint:'花叢', fn(){ doAction_GatherFlower(); } },
+    { id:'forest_flower5', x1:197, y1:193, x2:278, y2:234, interactHint:'花叢', fn(){ doAction_GatherFlower(); } },
+    { id:'forest_flower6', x1:397, y1:193, x2:446, y2:229, interactHint:'花叢', fn(){ doAction_GatherFlower(); } },
+    { id:'forest_flower7', x1:477, y1:206, x2:539, y2:287, interactHint:'花叢', fn(){ doAction_GatherFlower(); } },
+    { id:'forest_flower8', x1:531, y1:282, x2:612, y2:346, interactHint:'花叢', fn(){ doAction_GatherFlower(); } },
+    { id:'forest_stone1',  x1:586, y1:381, x2:637, y2:474, interactHint:'石頭', fn(){ doAction_GatherStone(); } },
+    { id:'forest_nest',   x1:494, y1:123, x2:541, y2:161, interactHint:'鳥巢', fn(){ doAction_CollectEggs(); } },
   ],
   room: [
     { id:'to_lobby',   x1:109, y1:397, x2:293, y2:476, sceneHint:'→ 前往大廳', isScene:true,
@@ -1525,6 +1568,14 @@ const ZONES = {
 // ══════════════════════════════════════
 const OBSTACLES = {
   kitchen: [],
+  outside: [
+    { x1:193, y1:98,  x2:448, y2:218 },
+    { x1:448, y1:1,   x2:600, y2:113 },
+    { x1:552, y1:1,   x2:639, y2:57 },
+    { x1:6,   y1:208, x2:128, y2:241 },
+    { x1:6,   y1:312, x2:128, y2:343 },
+    { x1:0,   y1:448, x2:636, y2:477 },
+  ],
   room: [
     { x1:415, y1:1,   x2:538, y2:190 },   // 書架牆角
     { x1:6,   y1:1,   x2:476, y2:145 },   // 上方牆
@@ -1546,7 +1597,13 @@ const OBSTACLES = {
     { x1:202, y1:434, x2:340, y2:476 },   // 出入口兩側
   ],
   forest: [
-    { x1:133, y1:268, x2:524, y2:443 },
+    { x1:195, y1:240, x2:278, y2:469 },
+    { x1:371, y1:234, x2:472, y2:477 },
+    { x1:77,  y1:329, x2:553, y2:425 },
+    { x1:136, y1:273, x2:497, y2:343 },
+    { x1:162, y1:255, x2:492, y2:285 },
+    { x1:95,  y1:310, x2:534, y2:349 },
+    { x1:198, y1:419, x2:465, y2:477 },
   ],
 };
 
@@ -1805,6 +1862,36 @@ function isNearReid() {
 function isNearFairy() {
   if (G.fairyCaught || G.scene !== 'forest' || G.timePeriod !== 'evening' || G.day % 2 !== 0) return false;
   return Math.hypot(G.eldrin.x - G.fairy.x, G.eldrin.y - G.fairy.y) < 65;
+}
+
+function isNearChicken() {
+  if (!G || G.scene !== 'forest' || G.timePeriod !== 'morning' || G.carryingChicken) return false;
+  return Math.hypot(G.eldrin.x - G.chicken.x, G.eldrin.y - G.chicken.y) < 48;
+}
+
+function pickUpChicken() {
+  if (!isNearChicken()) return;
+  G.carryingChicken = true;
+  G.chicken.walkDir = {dx:0, dy:0};
+  G.chicken.walkTimer = 0;
+  G.chicken.walkFrame = 0;
+  toast('抱起雞');
+}
+
+function dropChicken(resetPosition = false) {
+  if (!G || !G.carryingChicken) return;
+  G.carryingChicken = false;
+  if (resetPosition) {
+    G.chicken.x = 250;
+    G.chicken.y = 180;
+  } else {
+    G.chicken.x = Math.max(25, Math.min(615, G.eldrin.x + 18));
+    G.chicken.y = Math.max(95, Math.min(470, G.eldrin.y + 8));
+  }
+  G.chicken.walkDir = {dx:0, dy:0};
+  G.chicken.walkTimer = 60;
+  G.chicken.walkFrame = 0;
+  toast('放下雞');
 }
 
 function openRedMenu() {
@@ -2194,6 +2281,7 @@ function initState() {
     fairy: { x: 320, y: 240, vx: 0.4 }, fairyCaught: false,
     redFairy: { x: 332, y: 362, vx: 0.25, vy: 0.15 },
     chicken: { x: 250, y: 180, walkTimer: 0, walkDir: {dx:0,dy:0}, walkFrame: 0, walkTick: 0, facing: 'right' },
+    carryingChicken: false,
     woodCooldown: 0, bushCooldown: 0, stoneCooldown: 0, flowerCooldown: 0,
     herbHarvesting: false, herbHarvestTimer: 0, herbReady: false,
     fishFishing: false, fishTimer: 0, fishReady: false,
@@ -2357,6 +2445,7 @@ function renderScene() {
   document.getElementById('outside-objects').style.display = G.scene === 'outside' ? 'block' : 'none';
   document.getElementById('lobby-objects').style.display  = G.scene === 'lobby'   ? 'block' : 'none';
   document.getElementById('room-objects').style.display   = G.scene === 'room'    ? 'block' : 'none';
+  document.getElementById('forest-objects').style.display = G.scene === 'forest'  ? 'block' : 'none';
   // 戶外物件夜晚素材切換
   if (G.scene === 'outside') {
     const folder = G.timePeriod === 'evening' ? 'bg_outside_night/' : 'bg_outside/';
@@ -2365,11 +2454,15 @@ function renderScene() {
       const filename = src.replace('bg_outside_night/', '').replace('bg_outside/', '');
       img.setAttribute('src', folder + filename);
     });
+    setOutsideFarmVisual(G.herbReady);
   }
-  document.getElementById('forest-nest').style.display = G.scene === 'forest' ? 'block' : 'none';
   const showEggs = G.scene === 'forest' && G.nestEggs > 0 && G.timePeriod === 'morning';
-  document.getElementById('nest-egg-1').style.display = showEggs ? 'block' : 'none';
-  document.getElementById('nest-egg-2').style.display = showEggs ? 'block' : 'none';
+  const forestNest = document.getElementById('forest-nest');
+  const forestNestImg = forestNest ? forestNest.querySelector('img') : null;
+  if (forestNest) forestNest.style.display = G.scene === 'forest' ? 'block' : 'none';
+  if (forestNestImg) forestNestImg.src = showEggs ? 'bg_forest/bg_forest_Nest_egg.png' : 'bg_forest/bg_forest_Nest.png';
+  document.getElementById('nest-egg-1').style.display = 'none';
+  document.getElementById('nest-egg-2').style.display = 'none';
   const soupObj = document.getElementById('soup-obj');
   if (G.scene === 'kitchen' && G.soupReady) {
     document.getElementById('soup-obj-img').src = G.soupIsSpecial ? 'food_02.png' : 'food_01.png';
@@ -2484,10 +2577,17 @@ function renderChars() {
   if (G.scene === 'forest' && G.timePeriod === 'morning' && chickenInfo) {
     const ch = G.chicken;
     const chickenH = Math.round(sceneCharH() * 0.5);
+    if (G.carryingChicken) {
+      ch.x = G.eldrin.x + 16;
+      ch.y = G.eldrin.y - Math.round(sceneCharH() * 0.48);
+      ch.walkFrame = 0;
+      ch.facing = G.eldrin.pose === 'sideL' ? 'left' : 'right';
+    }
     setChickenFrame(ch.walkFrame, ch.facing === 'left', chickenH);
     const cw = parseFloat(cwChicken.style.width) || chickenH;
     cwChicken.style.left = (ch.x - cw / 2) + 'px';
     cwChicken.style.top  = (ch.y - chickenH) + 'px';
+    cwChicken.style.zIndex = G.carryingChicken ? '16' : (ch.y >= G.eldrin.y ? '14' : '9');
     cwChicken.style.display = 'block';
     chickenSleep.style.display = 'none';
   } else if (G.scene === 'forest' && G.timePeriod === 'evening') {
@@ -2498,59 +2598,71 @@ function renderChars() {
     chickenSleep.style.display = 'none';
   }
 
-  // ── 深度排序：角色與場景物件的前後關係 ──
+  // ── 深度排序：角色與戶外物件的前後關係 ──
   if (G.scene === 'outside') {
-    // sortY = 物件地面 Y；角色腳 Y > sortY → 角色在前，反之物件遮住角色
     const depthObjs = [
-      // 樹（top + height * 0.88）
-      { id: 'outside-tree-1', sortY: 343 + Math.round(129 * 0.88) },
-      { id: 'outside-tree-2', sortY: 361 + Math.round(129 * 0.88) },
-      { id: 'outside-tree-3', sortY: -21 + Math.round(118 * 0.88) },
-      { id: 'outside-tree-4', sortY:  21 + Math.round(120 * 0.88) },
-      { id: 'outside-tree-5', sortY: -43 + Math.round(123 * 0.88) },
-      { id: 'outside-tree-6', sortY: -15 + Math.round(123 * 0.88) },
-      { id: 'outside-tree-7', sortY:  -4 + Math.round(109 * 0.88) },
+      { id: 'outside-house', sortY: -12 + Math.round(268 * 0.5) },
+      { id: 'outside-tree-1', sortY: 345 + Math.round(129 * 0.88) },
+      { id: 'outside-tree-2', sortY: 346 + Math.round(129 * 0.88) },
+      { id: 'outside-tree-3', sortY: -25 + Math.round(118 * 0.88) },
+      { id: 'outside-tree-4', sortY: 20 + Math.round(120 * 0.88) },
+      { id: 'outside-tree-6', sortY: -39 + Math.round(123 * 0.88) },
+      { id: 'outside-tree-7', sortY: 26 + Math.round(109 * 0.88) },
       { id: 'outside-tree-8', sortY: 345 + Math.round(129 * 0.88) },
-      // 房子（中間 top + height * 0.5）
-      { id: 'outside-house',   sortY: -30 + Math.round(268 * 0.5) },
-      // 柵欄（底部 top + height）
-      { id: 'outside-fence-1', sortY: 441 + 27 },
-      { id: 'outside-fence-2', sortY: 441 + 27 },
-      { id: 'outside-fence-3', sortY: 443 + 27 },
-      { id: 'outside-fence-4', sortY: 440 + 27 },
-      { id: 'outside-fence-5', sortY: 442 + 27 },
-      // 草叢（底部 top + height）
-      { id: 'outside-grass-1', sortY: 116 + 42 },
-      { id: 'outside-grass-2', sortY: 169 + 42 },
-      { id: 'outside-grass-3', sortY: 194 + 41 },
-      { id: 'outside-grass-4', sortY: 144 + 42 },
-      { id: 'outside-grass-5', sortY: 140 + 42 },
-      { id: 'outside-grass-6', sortY: 217 + 42 },
-      { id: 'outside-grass-7', sortY: 156 + 38 },
-      { id: 'outside-grass-8', sortY: 231 + 43 },
-      // 木桶、箱子（底部）
-      { id: 'outside-barrel',  sortY: 167 + 42 },
-      { id: 'outside-box-1',   sortY: 167 + 41 },
-      { id: 'outside-box-2',   sortY: 180 + 38 },
-      { id: 'outside-box-3',   sortY: 154 + 37 },
-      // 額外樹木
+      { id: 'outside-tree-9', sortY: -46 + Math.round(94 * 0.88) },
       { id: 'outside-tree-10', sortY: 311 + Math.round(122 * 0.88) },
-      { id: 'outside-tree-11', sortY:  14 + Math.round(123 * 0.88) },
-      // 釣魚物件（底部）
+      { id: 'outside-tree-11', sortY: 14 + Math.round(123 * 0.88) },
+      { id: 'outside-fence-1', sortY: 440 + 27 },
+      { id: 'outside-fence-2', sortY: 440 + 27 },
+      { id: 'outside-fence-3', sortY: 440 + 27 },
+      { id: 'outside-fence-4', sortY: 439 + 27 },
+      { id: 'outside-fence-5', sortY: 439 + 27 },
+      { id: 'outside-grass-1', sortY: 130 + 42 },
+      { id: 'outside-grass-2', sortY: 187 + 42 },
+      { id: 'outside-grass-3', sortY: 207 + 41 },
+      { id: 'outside-grass-4', sortY: 142 + 42 },
+      { id: 'outside-grass-5', sortY: 158 + 42 },
+      { id: 'outside-grass-6', sortY: 220 + 42 },
+      { id: 'outside-grass-7', sortY: 156 + 38 },
+      { id: 'outside-grass-8', sortY: 236 + 43 },
       { id: 'outside-fishing-1', sortY: 60 + Math.round(51 * 0.9) },
     ];
     depthObjs.forEach(({ id, sortY }) => {
       const obj = document.getElementById(id);
       if (!obj) return;
-      // 角色腳 Y > 樹根 Y → 角色在前（z:14）；反之在後（z:8）
-      if (G.eldrin.y > sortY) {
-        obj.style.zIndex = '8';
-      } else {
-        obj.style.zIndex = '14';
-      }
+      obj.style.zIndex = G.eldrin.y > sortY ? '8' : '15';
     });
-    // 釣魚道具視覺（閒置 / 釣中 / 已上鉤）
+    ['outside-farm-1', 'outside-farm-2'].forEach(id => {
+      const farm = document.getElementById(id);
+      if (farm) farm.style.zIndex = '10';
+    });
     setOutsideFishingVisual(G.fishReady ? 'ready' : G.fishFishing ? 'fishing' : 'idle');
+  }
+  if (G.scene === 'forest') {
+    const forestDepthObjs = [
+      { id: 'forest-light-1', sortY: 175 + 53 },
+      { id: 'forest-fishing-1', sortY: 208 + Math.round(78 * 0.9) },
+      { id: 'forest-grass-1', sortY: 26 + 41 },
+      { id: 'forest-grass-2', sortY: 107 + 42 },
+      { id: 'forest-grass-3', sortY: 129 + 42 },
+      { id: 'forest-grass-4', sortY: 51 + 43 },
+      { id: 'forest-grass-5', sortY: 142 + 43 },
+      { id: 'forest-grass-6', sortY: 150 + 43 },
+      { id: 'forest-tree-1', sortY: 70 + Math.round(129 * 0.88) },
+      { id: 'forest-tree-2', sortY: 35 + Math.round(123 * 0.88) },
+      { id: 'forest-tree-3', sortY: 142 + Math.round(129 * 0.88) },
+      { id: 'forest-tree-4', sortY: -23 + Math.round(123 * 0.88) },
+      { id: 'forest-tree-5', sortY: 167 + Math.round(123 * 0.88) },
+      { id: 'forest-tree-6', sortY: 208 + Math.round(123 * 0.88) },
+      { id: 'forest-nest', sortY: 125 + 36 },
+    ];
+    forestDepthObjs.forEach(({ id, sortY }) => {
+      const obj = document.getElementById(id);
+      if (!obj) return;
+      obj.style.zIndex = G.eldrin.y > sortY ? '8' : '15';
+    });
+    const prospect = document.getElementById('forest-prospect');
+    if (prospect) prospect.style.zIndex = '45';
   }
   updateLobbyDepth();
   updateRoomDepth();
@@ -2677,6 +2789,14 @@ function updateHints() {
   }
   if (isNearFairy()) {
     hi.textContent = '妖精';
+    hi.style.display = 'block'; hs.style.display = 'none'; return;
+  }
+  if (G.carryingChicken) {
+    hi.textContent = '放下雞';
+    hi.style.display = 'block'; hs.style.display = 'none'; return;
+  }
+  if (isNearChicken()) {
+    hi.textContent = '抱起雞';
     hi.style.display = 'block'; hs.style.display = 'none'; return;
   }
   if (near && !zone && (!G.bloodMoon7Active || G.avarenScene === 'forest')) {
@@ -3103,7 +3223,7 @@ function gameLoop() {
   if (G.woodCooldown > 0) G.woodCooldown--;
 
   // ── 雞的漫步（森林場景）──
-  if (G.scene === 'forest' && !G.paused) {
+  if (G.scene === 'forest' && !G.paused && !G.carryingChicken) {
     const ch = G.chicken;
     if (G.timePeriod !== 'morning') { /* 晚上雞在睡覺，不移動 */ } else {
     const chickenSpd = 0.6;
@@ -3219,6 +3339,7 @@ function gameLoop() {
       SFX.collect();
       G.fishFishing = false;
       G.fishReady = true;
+      setOutsideFishingVisual('ready');
       document.getElementById('fish-scene-label').textContent = '🎣 釣到了！回來收取';
       document.getElementById('fish-scene-bar').style.background = 'linear-gradient(90deg,#a07020,#e0b030)';
       toast('🎣 漁獲完成！回池塘收取');
@@ -3234,6 +3355,7 @@ function gameLoop() {
       SFX.collect();
       G.herbHarvesting = false;
       G.herbReady = true;
+      setOutsideFarmVisual(true, true);
       document.querySelector('#herb-harvest-wrap .herb-harvest-label').textContent = '🌿 採收完成！回來收取';
       document.getElementById('herb-harvest-bar').style.background = 'linear-gradient(90deg,#a07020,#e0b030)';
       G.bubbleText = '……（藥草田好像收成了。）';
@@ -3349,6 +3471,10 @@ document.addEventListener('keydown', e => {
       sellSoupToReid();
     } else if (G.scene === 'kitchen' && G.soupReady && isNearSoup() && !G.carryingSoup) {
       doSoupInteract();
+    } else if (G.carryingChicken) {
+      dropChicken();
+    } else if (isNearChicken()) {
+      pickUpChicken();
     } else if (isNearFairy()) {
       G.fairyCaught = true;
       G.fairyItem++;
@@ -3657,6 +3783,7 @@ function doAction_Gather() {
   if (G.herbReady) {
     SFX.collect();
     G.herbReady = false;
+    setOutsideFarmVisual(false);
     document.getElementById('herb-harvest-wrap').style.display = 'none';
     document.querySelector('#herb-harvest-wrap .herb-harvest-label').textContent = '🌿 藥草採收中…';
     document.getElementById('herb-harvest-bar').style.background = 'linear-gradient(90deg, #206020, #60c040)';
@@ -3670,6 +3797,7 @@ function doAction_Gather() {
   if (G.fatigue >= 80) { warn('艾德林太疲勞了，需要休息才能工作。'); return; }
   G.herbHarvesting = true;
   G.herbHarvestTimer = HERB_HARVEST_MAX;
+  setOutsideFarmVisual(false);
   document.getElementById('herb-harvest-wrap').style.display = 'block';
   document.getElementById('herb-harvest-bar').style.width = '0%';
   storyAuto('旁白', '你在藥草田插下採收的標記。藥草將在一段時間後自動收成，你可以先去做其他事。');
@@ -3701,6 +3829,7 @@ function doAction_Fish() {
   if (G.fishReady) {
     SFX.collect();
     G.fishReady = false;
+    setOutsideFishingVisual('idle');
     document.getElementById('fish-scene-wrap').style.display = 'none';
     document.getElementById('fish-scene-label').textContent = '🎣 垂釣中…';
     document.getElementById('fish-scene-bar').style.background = 'linear-gradient(90deg,#205880,#40a0e0)';
@@ -3714,6 +3843,7 @@ function doAction_Fish() {
   if (G.fatigue >= 80) { warn('艾德林太疲勞了，需要休息才能工作。'); return; }
   G.fishFishing = true;
   G.fishTimer = FISH_MAX;
+  setOutsideFishingVisual('fishing');
   document.getElementById('fish-scene-wrap').style.display = 'block';
   document.getElementById('fish-scene-bar').style.width = '0%';
   storyAuto('旁白', '你把魚竿輕輕放進池塘裡，靜靜等待。魚兒會在一段時間後上鉤，你可以先去做其他事。');
@@ -4544,6 +4674,7 @@ function changeScene(to, startOverride) {
       kitchen: { x:260, y:360 },
       forest:  { x:320, y:140 },
     };
+    if (G.scene === 'forest' && to !== 'forest' && G.carryingChicken) dropChicken(true);
     G.scene = to;
     G.sceneCooldown = 90;
     const pos = startOverride || startPos[to];
@@ -5593,12 +5724,29 @@ const SOE_PRESETS_BY_SCENE = {
     'bg_room/bg_room_dhair02.png',
     'bg_room/bg_room_bedside table.png',
   ],
+  forest: [
+    'bg_forest/bg_forest_light.png',
+    'bg_forest/bg_forest_fishing01.png',
+    'bg_forest/bg_forest_fishing02.png',
+    'bg_forest/bg_forest_Nest.png',
+    'bg_forest/bg_forest_Nest_egg.png',
+    'bg_forest/bg_forest_prospect.png',
+    'bg_forest/bg_outside_tree.png',
+    'bg_forest/bg_outside_tree02.png',
+    'bg_forest/bg_outside_grass01.png',
+    'bg_forest/bg_outside_grass02.png',
+    'bg_forest/bg_outside_grass03.png',
+    'bg_forest/bg_outside_grass04.png',
+    'bg_forest/bg_outside_grass05.png',
+    'bg_forest/bg_outside_grass06.png',
+  ],
 };
 
 function soeGetExistContainer() {
   const scene = (typeof G !== 'undefined' && G) ? G.scene : 'outside';
   if (scene === 'lobby') return document.getElementById('lobby-objects');
   if (scene === 'room')  return document.getElementById('room-objects');
+  if (scene === 'forest') return document.getElementById('forest-objects');
   return document.getElementById('outside-objects');
 }
 
@@ -5612,7 +5760,7 @@ function soeInitPresets() {
     return;
   }
   presets.forEach(src => {
-    const name = src.split('/').pop().replace(/^bg_(outside|lobby|room)_?/, '').replace('.png', '');
+    const name = src.split('/').pop().replace(/^bg_(outside|lobby|room|forest)_?/, '').replace('.png', '');
     const btn = document.createElement('button');
     btn.className = 'soe-btn';
     btn.textContent = name;
@@ -5665,7 +5813,7 @@ function soeAttachToExisting() {
     const img = el.querySelector('img');
     if (!img) return;
     const rawSrc = img.getAttribute('src');
-    const srcShort = rawSrc.split('/').pop().replace(/^bg_(outside|lobby|room)_?/, '').replace('.png','');
+    const srcShort = rawSrc.split('/').pop().replace(/^bg_(outside|lobby|room|forest)_?/, '').replace('.png','');
     const x = parseInt(el.style.left) || 0;
     const y = parseInt(el.style.top) || 0;
 
@@ -5787,7 +5935,7 @@ function soeUpdateList() {
   }
   list.innerHTML = soe.objects.map(obj => `
     <div class="soe-item">
-      <span class="soe-item-name">${obj.src.split('/').pop().replace(/^bg_(outside|lobby|room)_?/,'').replace('.png','')}</span>
+      <span class="soe-item-name">${obj.src.split('/').pop().replace(/^bg_(outside|lobby|room|forest)_?/,'').replace('.png','')}</span>
       <span class="soe-item-pos">x:${obj.x} y:${obj.y}</span>
       <span class="soe-item-size">${obj.w}×${obj.h}</span>
       <span style="color:#c0a060;font-size:10px;width:36px;text-align:center;">z:${obj.z}</span>
@@ -5862,7 +6010,7 @@ document.addEventListener('mousemove', e => {
     const label = d.el.querySelector('.soe-exist-label');
     if (label) {
       const srcShort = d.el.querySelector('img').getAttribute('src')
-        .split('/').pop().replace(/^bg_(outside|lobby|room)_?/, '').replace('.png','');
+        .split('/').pop().replace(/^bg_(outside|lobby|room|forest)_?/, '').replace('.png','');
       label.textContent = `${srcShort}  ${x},${y}`;
     }
   }
