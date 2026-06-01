@@ -121,6 +121,19 @@ body {
   background: #ffbc88; opacity: 0;
   mix-blend-mode: multiply; pointer-events: none; z-index: 593;
 }
+#rain-canvas {
+  display: none; position: absolute; inset: 0;
+  width: 640px; height: 480px;
+  pointer-events: none; z-index: 590;
+  image-rendering: pixelated;
+}
+#rain-tint-overlay {
+  display: none; position: absolute; inset: 0;
+  background: #aec3dc;
+  mix-blend-mode: multiply;
+  opacity: 0.45;
+  pointer-events: none; z-index: 589;
+}
 
 /* ── 血月疊層 ── */
 #blood-moon-7-overlay {
@@ -1231,6 +1244,8 @@ body {
       </div>
       <div id="nest-egg-1" style="display:none;position:absolute;left:462px;top:101px;width:14px;height:13px;z-index:12;pointer-events:none;"><img src="egg.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
       <div id="nest-egg-2" style="display:none;position:absolute;left:470px;top:101px;width:14px;height:13px;z-index:12;pointer-events:none;"><img src="egg.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+      <div id="rain-tint-overlay"></div>
+      <canvas id="rain-canvas" width="640" height="480"></canvas>
       <canvas id="debug-canvas" width="640" height="480" style="position:absolute;inset:0;pointer-events:none;z-index:700;"></canvas>
       <div id="debug-coords" style="display:none;position:absolute;top:6px;right:8px;background:rgba(0,0,0,0.75);color:#fff;font-size:14px;font-family:monospace;padding:3px 8px;z-index:710;pointer-events:none;"></div>
       <div id="avaren-bubble" class="zone-hint"></div>
@@ -1305,6 +1320,8 @@ body {
         style="background:#0a0a1a;border:1px solid #3a3a90;color:#8080e0;">🌿 阿瓦倫良好</button>
       <button onclick="debugAddAllItems()"
         style="background:#0a1a06;border:1px solid #3a6a10;color:#80d040;">📦 物品+10</button>
+      <button id="btn-toggle-rain" onclick="toggleRainWeather()"
+        style="background:#08121a;border:1px solid #304a60;color:#9fc8e8;">☔ 關雨</button>
       <button id="btn-sleep" onclick="sleepNow()"
         style="background:#241a0c;border:1px solid #5a3818;color:#c0a060;">🌙 入睡</button>
     </div>
@@ -1562,6 +1579,66 @@ const GATHER_SEARCH_MAX = 120; // 採集搜索 2秒 × 60fps
 const DAY_REAL_SECONDS = 480;  // 8分鐘真實時間
 const MORNING_SECONDS  = 240;  // 前4分鐘（早上）
 const START_HOUR = 8;
+const RAIN_DROP_COUNT = 75;
+
+let rainDrops = [];
+
+function initRainDrops() {
+  rainDrops = Array.from({ length: RAIN_DROP_COUNT }, () => ({
+    x: Math.random() * SCENE_W,
+    y: Math.random() * SCENE_H,
+    len: Math.random() * 6 + 7,
+    speed: Math.random() * 3 + 5,
+    drift: Math.random() * 0.8 + 0.9,
+    alpha: Math.random() * 0.18 + 0.20,
+  }));
+}
+
+function updateWeatherFx() {
+  const canvas = document.getElementById('rain-canvas');
+  if (!canvas) return;
+  const rainVisible = G.weather === 'rain' && (G.scene === 'outside' || G.scene === 'forest');
+  const tint = document.getElementById('rain-tint-overlay');
+  if (tint) tint.style.display = rainVisible ? 'block' : 'none';
+  canvas.style.display = rainVisible ? 'block' : 'none';
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, SCENE_W, SCENE_H);
+  if (!rainVisible) return;
+  if (!rainDrops.length) initRainDrops();
+
+  ctx.save();
+  ctx.lineWidth = 1;
+  ctx.lineCap = 'round';
+  rainDrops.forEach(drop => {
+    ctx.strokeStyle = `rgba(190,220,255,${drop.alpha})`;
+    ctx.beginPath();
+    ctx.moveTo(drop.x, drop.y);
+    ctx.lineTo(drop.x - drop.drift * 1.8, drop.y + drop.len);
+    ctx.stroke();
+
+    drop.x -= drop.drift;
+    drop.y += drop.speed;
+    if (drop.y > SCENE_H + 20 || drop.x < -20) {
+      drop.x = Math.random() * SCENE_W + 30;
+      drop.y = -20;
+    }
+  });
+  ctx.restore();
+}
+
+function updateRainButton() {
+  const btn = document.getElementById('btn-toggle-rain');
+  if (!btn || !G) return;
+  btn.textContent = G.weather === 'rain' ? '☔ 關雨' : '☔ 開雨';
+  btn.style.color = G.weather === 'rain' ? '#9fc8e8' : '#6f8798';
+}
+
+function toggleRainWeather() {
+  if (!G) return;
+  G.weather = G.weather === 'rain' ? 'clear' : 'rain';
+  updateRainButton();
+  updateWeatherFx();
+}
 
 // ══════════════════════════════════════
 //  SPRITE SYSTEM (CSS-based, no canvas)
@@ -2884,6 +2961,7 @@ function initState() {
     day: 1, maxDays: 10,
     scene: 'outside',
     avarenScene: 'room',
+    weather: 'rain',
     pain: 100, curse: 100, mood: 10, trust: 10,
     avarenHunger: 70, eldrinHunger: 80, fatigue: 0,
     money: 15, food: 4, herb: 2, wood: 0, bug: 0, fish: 0, stone: 0, fairyItem: 0, whiteFlower: 0, apple: 0, vegetable: 0, egg: 0,
@@ -3019,6 +3097,7 @@ function renderHUD() {
   document.getElementById('r-apple').textContent = G.apple;
   document.getElementById('r-vegetable').textContent = G.vegetable;
   document.getElementById('r-egg').textContent = G.egg;
+  updateRainButton();
   renderTime();
 }
 
@@ -3718,6 +3797,7 @@ function gameLoop() {
 
   if (G.paused) {
     if (G.sleepAnimActive) { updateRoomDepth(); renderChars(); }
+    updateWeatherFx();
     raf = requestAnimationFrame(gameLoop);
     return;
   }
@@ -4579,6 +4659,7 @@ function gameLoop() {
   // 場景冷卻倒數（防止切換後立刻又觸發）
   if (G.sceneCooldown > 0) G.sceneCooldown--;
 
+  updateWeatherFx();
   renderChars();
   updateHints();
   raf = requestAnimationFrame(gameLoop);
@@ -6769,6 +6850,7 @@ function loadFromSlot(n) {
   fade.style.transition = 'opacity 0.7s ease'; fade.style.opacity = '1';
   setTimeout(() => {
     try { zeRestoreSaved(); initState(); Object.assign(G, JSON.parse(data.state)); } catch(e) { zeRestoreSaved(); initState(); }
+    if (!G.weather) G.weather = 'rain';
     document.getElementById('title-screen').style.display = 'none';
     document.getElementById('game-screen').style.display  = 'block';
     document.getElementById('blood-moon-badge').style.display = 'none';
