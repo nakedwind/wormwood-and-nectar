@@ -266,6 +266,21 @@ body {
   border: 5px solid transparent; border-top-color: #2a4a7a; border-bottom: none;
 }
 
+#noah-bubble {
+  display: none; position: absolute;
+  background: rgba(16,18,16,0.93); border: 1px solid #5f765f;
+  padding: 6px 12px; font-size: 10px; color: #d8ead2;
+  white-space: nowrap; pointer-events: none; z-index: 25;
+  transform: translateX(-50%);
+  border-radius: 10px;
+  box-shadow: 0 0 8px rgba(120,160,110,0.25);
+}
+#noah-bubble::after {
+  content: ''; position: absolute; bottom: -6px; left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent; border-top-color: #5f765f; border-bottom: none;
+}
+
 /* ── RIGHT PANEL ── */
 #right-panel {
   flex: 1; background: #0c0904; border-left: 1px solid #3a2810;
@@ -685,6 +700,14 @@ body {
   align-items: center; gap: 10px;
   cursor: pointer;
 }
+#action-scene-overlay.speaker-right {
+  flex-direction: row-reverse;
+  padding: 10px 12px 10px 34px;
+}
+#action-scene-overlay.speaker-right #asc-arrow {
+  right: auto;
+  left: 12px;
+}
 #asc-portrait {
   width: 64px; height: 64px;
   object-fit: cover; image-rendering: pixelated;
@@ -704,6 +727,10 @@ body {
   font-weight: 500; white-space: pre-line;
 }
 .asc-text-avaren { color: #88c0f0; }
+.asc-text-eldrin { color: #e8d6a8; }
+.asc-text-red { color: #e8aaa0; }
+.asc-text-winter { color: #a8c8e8; }
+.asc-text-noah { color: #d8ead2; }
 #asc-btn {
   display: block; margin-top: 8px;
   border-radius: 20px; padding: 7px 18px;
@@ -999,6 +1026,15 @@ body {
   z-index: 22;
   animation: steamRise var(--sdur) ease-out forwards;
 }
+.tea-steam-puff {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(252,254,246,0.92);
+  filter: blur(5px);
+  pointer-events: none;
+  z-index: 480;
+  animation: steamRise var(--sdur) ease-out forwards;
+}
 .soe-exist-label {
   position: absolute; bottom: 100%; left: 0; margin-bottom: 2px;
   background: rgba(10,6,2,0.92); color: #60c0f0; font-size: 11px;
@@ -1078,6 +1114,7 @@ body {
 #avaren-bubble       { z-index: 600; }
 #red-bubble          { z-index: 600; }
 #winter-bubble       { z-index: 600; }
+#noah-bubble         { z-index: 600; }
 #room-label          { z-index: 600; }
 #blood-moon-7-overlay{ z-index: 605; }
 .item-popup          { z-index: 600; }
@@ -1251,6 +1288,7 @@ body {
       <div id="avaren-bubble" class="zone-hint"></div>
       <div id="red-bubble"></div>
       <div id="winter-bubble"></div>
+      <div id="noah-bubble"></div>
       <div id="avaren-heart" style="display:none;position:absolute;font-size:23px;pointer-events:none;z-index:605;transform:translateX(-50%);transition:opacity 0.2s;"></div>
       <div id="farm-growth-wrap">
         <div class="herb-harvest-label" id="farm-growth-label">🌱 農田生長中…</div>
@@ -2397,6 +2435,132 @@ const RED_COMMISSIONS = [
     deliver(){ story('旁白', '雷德小心翼翼地遞過來一個布包。'); story('雷德','「這東西感覺很重要，我一路都沒敢亂丟。」他拍拍胸脯，看起來很得意。'); }},
 ];
 
+const NOAH_DAY2_INTRO = [
+  { speaker:'諾亞', text:'「艾德林。」\n\n他站在小屋外，聲音很輕，像是怕驚動屋裡的人。' },
+  { speaker:'諾亞', text:'「我早上看見煙囪有煙，就想你們應該還在這裡。」' },
+  { speaker:'艾德林', text:'「諾亞……你怎麼來了？」' },
+  { speaker:'諾亞', text:'「我不放心。」\n\n「阿瓦倫的狀況呢？昨晚有比較穩定嗎？」' },
+  { speaker:'艾德林', text:'「還在昏睡。詛咒沒有退，但也沒有更糟。」' },
+  { speaker:'諾亞', text:'「那就好。」\n\n他像是終於能呼吸一樣，慢慢鬆開手指。' },
+  { speaker:'諾亞', text:'「這間小屋已經很久沒有人用了。能讓你們暫時躲在這裡，我反而覺得它終於又有了用處。」' },
+  { speaker:'艾德林', text:'「謝謝你。沒有這裡，我不知道該帶他去哪裡。」' },
+  { speaker:'諾亞', text:'「不要跟我道謝。」\n\n「你以前救過我。現在只是輪到我幫你。」' },
+  { speaker:'諾亞', text:'「如果需要藥材、食物，或是外面的消息，就告訴我。你不要一個人硬撐，好嗎？」' },
+];
+
+const NOAH_DLG_STATUS = [
+  '「你看起來又一夜沒睡。艾德林，照顧別人以前，也要先讓自己站得住。」',
+  '「阿瓦倫如果醒來以後害怕陌生人，我可以待在戶外。我只想確認你們還安全。」',
+  '「這裡不容易被外人發現，你可以放心待在這裡。」',
+  '「我帶了一點乾糧放在廚房裡。不是什麼好東西，但能撐一陣子。」',
+  '「你有在吃東西嗎？不是問阿瓦倫，是問你。」',
+  '「最近有沒有聽到什麼可疑的動靜？我會多注意有沒有人在找你們。」',
+  '「你的眼睛告訴我你又沒睡好。」',
+  '「阿瓦倫……那孩子還好嗎？」',
+];
+
+const NOAH_DLG_HOUSE = [
+  '「這裡以前是我家的別墅。」\n\n「…… 後來發生那件事，家裡就沒有人再來了。」',
+  '「小屋有點舊，但牆很厚，夜裡也不容易被外面看見燈火。」',
+  '「如果哪裡漏水或壞掉，告訴我。我還記得這裡每一塊木板的聲音。」',
+  '「這裡以前春天會有很多花。現在少了，但院子裡還是會長出來。」',
+  '「我母親以前說，這間屋子比主宅安靜，適合讓人把心放下來。」',
+  '「門鎖有點舊，從裡面扣上會卡住。你如果要逃，不要走正門。」',
+  '「我知道幾條從後林離開的小路。必要的時候，我會帶你走。」',
+  '「這張桌子以前總是放著茶。現在看見杯子還在，我有點意外。」',
+  '「以前我妹妹很喜歡這裡。她說這裡的光線到下午會變得很漂亮。」',
+];
+const NOAH_SPEAK_DLG = [
+  '你們還安全就好。',
+  '小屋裡有哪裡需要修嗎？',
+  '今天的風有點冷，別站太久。',
+  '阿瓦倫還在睡嗎……',
+  '如果缺什麼，跟我說。',
+  '這裡暫時很安全。',
+  '你也要休息，艾德林。',
+  '煙囪有煙，真好。',
+  '我會在附近看著。',
+  '不要一個人硬撐。',
+  '我很久沒在這裡坐下喝茶了。',
+  '以前這裡不是這麼安靜。',
+  '有些地方，我以為自己再也不會回來。',
+  '湖邊的路最好晚上別走。那裡的聲音會騙人。',
+  '如果夜裡聽見有人叫你的名字，不要回頭。',
+];
+const NOAH_LOBBY_POS = { x: 43, y: 372 };
+const NOAH_FOREST_LAKE_POS = { x: 326, y: 256 };
+const DAY2_FAIRY_BOUNDS = { x1: 250, y1: 347, x2: 412, y2: 405 };
+
+const NOAH_DAY2_LAKE_STORY = [
+  { speaker:'旁白', text:'夜晚的森林很安靜。\n\n滿月落在湖面上，水光像一層薄薄的銀霜。\n你在湖邊看見諾亞。' },
+  { speaker:'旁白', text:'他站在岸邊，沒有回頭。\n只是安靜地望著湖面。' },
+  { speaker:'艾德林', text:'「諾亞。」' },
+  { speaker:'諾亞', text:'「……艾德林。」' },
+  { speaker:'艾德林', text:'「這麼晚了，你在這裡做什麼？」\n「湖邊有妖精...很危險，快點離開這裡吧」' },
+  { speaker:'諾亞', text:'「別擔心，我沒事的，滿月的時候，妖精蠱惑不了人。」' },
+  { speaker:'旁白', text:'他沉默了一會兒。' },
+  { speaker:'諾亞', text:'「我只是......很想念米蕾兒」' },
+  { speaker:'艾德林', text:'「……諾亞」' },
+  { speaker:'旁白', text:'諾亞的聲音很輕。\n輕得幾乎要被湖水吞掉。' },
+  { speaker:'諾亞', text:'「她很喜歡這裡。」\n「她說這片湖不像湖，像一面會發光的鏡子。」\n「只要往裡面看，就能看到別的世界。」' },
+  { speaker:'旁白', text:'他低下眼。' },
+  { speaker:'諾亞', text:'「那天，我們也是在這裡玩。」\n「我只是一小會兒沒有看著她。」' },
+  { speaker:'旁白', text:'他垂下眼，聲音低了下去。' },
+  { speaker:'諾亞', text:'「真的只有一小會兒。」\n「我回頭的時候，她就不見了。」' },
+  { speaker:'艾德林', text:'「……」' },
+  { speaker:'諾亞', text:'「我喊她的名字。」\n「森林裡沒有回音。」\n「湖邊也沒有。」' },
+  { speaker:'旁白', text:'風從湖面上掠過。\n銀白的月光碎了一下。' },
+  { speaker:'諾亞', text:'「後來，大人們來了。」\n「他們在湖邊找到了米蕾兒的鞋子。」\n「一隻。」' },
+  { speaker:'旁白', text:'他停了很久。' },
+  { speaker:'諾亞', text:'「他們找了很久。」\n「一直找到天黑，找到第二天。」\n「可是沒有找到米蕾兒。」' },
+  { speaker:'諾亞', text:'「大人們說，她掉進湖裡了。」\n「他們說那片湖很深，水底有亂流。」\n「他們說，有些人落水以後，就是找不回來。」' },
+  { speaker:'旁白', text:'他慢慢吸了一口氣。' },
+  { speaker:'諾亞', text:'「可是我沒有看見。」\n「我沒有看見她掉下去。」\n「沒有看見她沉下去。」' },
+  { speaker:'艾德林', text:'「諾亞……」' },
+  { speaker:'諾亞', text:'「所以我一直覺得，她只是迷路了。」\n「她只是被帶去了什麼地方。」\n「只要我一直找，一直喊她，她就會回來。」' },
+  { speaker:'旁白', text:'湖面安靜得像沒有底。' },
+  { speaker:'諾亞', text:'「所有人都說我該接受。」\n「可是他們沒有找到她。」\n「他們只找到一隻鞋子。」' },
+  { speaker:'旁白', text:'他輕輕笑了一下。\n那聲音不像笑。' },
+  { speaker:'諾亞', text:'「可是米蕾兒怎麼可能會只剩下一隻鞋子呢？」' },
+  { speaker:'旁白', text:'長久的沉默落下。' },
+  { speaker:'諾亞', text:'「有一天晚上，我真的聽見她的聲音。」' },
+  { speaker:'諾亞', text:'「她在叫我哥哥。」\n「她說她不是死了。」\n「她說她只是找不到回家的路。」\n「她說她的腳很冷，因為鞋子掉在岸邊了。」' },
+  { speaker:'艾德林', text:'「那不是米蕾兒。」' },
+  { speaker:'諾亞', text:'「我知道。」' },
+  { speaker:'旁白', text:'他停了一下。' },
+  { speaker:'諾亞', text:'「我都知道...」' },
+  { speaker:'諾亞', text:'「可是那時候，我真的以為是她。」\n「因為它知道鞋子的事。」\n「它知道我一直想聽的那句話。」' },
+  { speaker:'艾德林', text:'「它說了什麼？」' },
+  { speaker:'諾亞', text:'「它說——」\n「哥哥，我沒有死。」' },
+  { speaker:'旁白', text:'諾亞抬起手，像是想碰一下湖面的月光。\n但他的手停在半空，沒有再往前。' },
+  { speaker:'諾亞', text:'「我走進水裡。」\n「湖水淹到我的膝蓋、腰、胸口。」\n「我聽見她一直哭，一直叫我。」\n「我想，只要我再往前一步就好。」' },
+  { speaker:'艾德林', text:'「我把你拉回來了。」' },
+  { speaker:'諾亞', text:'「嗯。」' },
+  { speaker:'旁白', text:'他終於轉頭看向你。' },
+  { speaker:'諾亞', text:'「艾德林，是你救了我。」\n「你抓住我的手，把我從湖裡拖回來。」\n「我還記得你那時候全身都在發抖，卻一直對我說——」' },
+  { speaker:'艾德林', text:'「『那不是她。』」' },
+  { speaker:'諾亞', text:'「對。」\n「你一直說，那不是她。」\n「你說米蕾兒已經死了。」\n「你說不可以把自己的命交給假裝成她的東西。」' },
+  { speaker:'旁白', text:'諾亞安靜地笑了一下。\n那不是開心的笑，只是很疲憊、很柔軟。' },
+  { speaker:'諾亞', text:'「我那時候很恨你。」\n「因為你把我從她身邊拉走了。」' },
+  { speaker:'艾德林', text:'「我知道。」' },
+  { speaker:'諾亞', text:'「可是後來我也知道。」\n「如果沒有你，我早就死在這裡了。」' },
+  { speaker:'旁白', text:'他看向湖面。\n滿月倒映在水中，安靜得像一隻閉上的眼睛。' },
+  { speaker:'諾亞', text:'「所以這一次，我也想幫助你。」\n「你救阿瓦倫的樣子，和那時候的我很像。」' },
+  { speaker:'旁白', text:'諾亞停頓了一會兒。' },
+  { speaker:'諾亞', text:'「如果她還活著，現在應該能和阿瓦倫當好朋友吧？」' },
+  { speaker:'艾德林', text:'「他們一定能成為很好的朋友」' },
+  { speaker:'諾亞', text:'「我真的很想她。」' },
+  { speaker:'艾德林', text:'「嗯...我知道」' },
+  { speaker:'旁白', text:'湖面上的月光輕輕晃動。\n滿月照在森林上。\n今晚，湖裡沒有誰在呼喚誰。\n\n只有水聲。\n只有月光。\n只有活著的人，安靜地站在岸邊。' },
+];
+
+const NOAH_LAKE_AFTER_DLG = [
+  '「今晚的湖很安靜。這樣就好。」',
+  '「米蕾兒以前很喜歡月亮。」',
+  '「你不用擔心我。我只是……想再站一會兒。」',
+  '「艾德林，謝謝你當年拉住我。」',
+];
+
 function isNearReid() {
   if (G.scene !== 'outside' || G.day % 2 === 0 || G.timePeriod !== 'morning') return false;
   return Math.hypot(G.red.x - G.eldrin.x, G.red.y - G.eldrin.y) < 40;
@@ -2405,6 +2569,21 @@ function isNearReid() {
 function isNearWinter() {
   if (G.scene !== 'forest' || G.day % 2 !== 0 || G.timePeriod !== 'morning') return false;
   return Math.hypot(G.winter.x - G.eldrin.x, G.winter.y - G.eldrin.y) < 75;
+}
+
+function isNearNoah() {
+  if (G.day !== 2) return false;
+  if (G.scene === 'outside' && G.timePeriod === 'morning') {
+    return Math.hypot(G.noah.x - G.eldrin.x, G.noah.y - G.eldrin.y) < 55;
+  }
+  if (G.scene === 'lobby' && G.timePeriod === 'morning' && G.noahDay2IntroSeen) {
+    return Math.hypot(NOAH_LOBBY_POS.x - G.eldrin.x, NOAH_LOBBY_POS.y - G.eldrin.y) < 55;
+  }
+  if (G.scene === 'forest' && G.timePeriod === 'evening') {
+    const inTalkBox = G.eldrin.x >= 285 && G.eldrin.x <= 367 && G.eldrin.y >= 198 && G.eldrin.y <= 285;
+    return inTalkBox || Math.hypot(NOAH_FOREST_LAKE_POS.x - G.eldrin.x, NOAH_FOREST_LAKE_POS.y - G.eldrin.y) < 85;
+  }
+  return false;
 }
 
 function isNearFairy() {
@@ -2526,6 +2705,68 @@ function showRedCommissionMenu() {
   items.push({ name:'和雷德聊聊', fx:'（免費）', req:()=>true,
     run(){ story('雷德', pick(RED_DLG)); }});
   showActionMenu('迷路勇者・雷德', items);
+}
+
+function openNoahMenu() {
+  SFX.interact();
+  const noah = G.noah;
+  const noahInLobby = G.scene === 'lobby' && G.noahDay2IntroSeen;
+  const noahAtLake = G.scene === 'forest' && G.day === 2 && G.timePeriod === 'evening';
+  const noahX = noahInLobby ? NOAH_LOBBY_POS.x : noahAtLake ? NOAH_FOREST_LAKE_POS.x : noah.x;
+  const noahY = noahInLobby ? NOAH_LOBBY_POS.y : noahAtLake ? NOAH_FOREST_LAKE_POS.y : noah.y;
+  noah.walkDir = {dx:0, dy:0};
+  noah.walkTimer = 90;
+  noah.walkFrame = 0;
+
+  const faceEldrin = () => {
+    const ddx = G.eldrin.x - noahX, ddy = G.eldrin.y - noahY;
+    if (Math.abs(ddx) > Math.abs(ddy)) noah.pose = ddx < 0 ? 'sideL' : 'sideR';
+    else noah.pose = ddy < 0 ? 'back' : 'front';
+  };
+  const queueNoahLine = text => {
+    if (noahInLobby) {
+      G.noahLobbyTalking = true;
+      faceEldrin();
+    }
+    story('諾亞', text);
+    if (noahInLobby) {
+      storyThen(() => {
+        G.noahLobbyTalking = false;
+        G.noah.pose = 'front';
+      });
+    }
+  };
+
+  if (noahAtLake) {
+    G.noahLakeTalking = true;
+    if (!G.noahLakeMoonSeen) {
+      G.noahLakeMoonSeen = true;
+      noah.pose = 'back';
+      NOAH_DAY2_LAKE_STORY.forEach(line => story(line.speaker, line.text));
+    } else {
+      faceEldrin();
+      story('諾亞', pick(NOAH_LAKE_AFTER_DLG));
+    }
+    storyThen(() => {
+      G.noahLakeTalking = false;
+      G.noah.pose = 'front';
+    });
+    return;
+  }
+
+  if (!G.noahDay2IntroSeen) {
+    G.noahDay2IntroSeen = true;
+    faceEldrin();
+    NOAH_DAY2_INTRO.forEach(line => story(line.speaker, line.text));
+    return;
+  }
+
+  showActionMenu('小屋主人・諾亞', [
+    { name:'詢問近況', fx:'（免費）', req:()=>true,
+      run(){ queueNoahLine(pick(NOAH_DLG_STATUS)); } },
+    { name:'關於這間小屋', fx:'（免費）', req:()=>true,
+      run(){ queueNoahLine(pick(NOAH_DLG_HOUSE)); } },
+  ]);
 }
 
 // ══ 溫特泡泡台詞 ══
@@ -2967,7 +3208,7 @@ function initState() {
     money: 15, food: 4, herb: 2, wood: 0, bug: 0, fish: 0, stone: 0, fairyItem: 0, whiteFlower: 0, apple: 0, vegetable: 0, egg: 0,
     nestEggs: 0,
     cookIngredient: null,
-    fairy: { x: 320, y: 240, vx: 0.4 }, fairyCaught: false,
+    fairy: { x: 320, y: 240, vx: 0.4, vy: 0.2 }, fairyCaught: false,
     redFairy: { x: 332, y: 362, vx: 0.25, vy: 0.15 },
     chicken: { x: 250, y: 180, walkTimer: 0, walkDir: {dx:0,dy:0}, walkFrame: 0, walkTick: 0, facing: 'right', pushVx:0, pushVy:0 },
     chicken2: { x: 480, y: 160, walkTimer: 40, walkDir: {dx:0,dy:0}, walkFrame: 2, walkTick: 0, facing: 'left', pushVx:0, pushVy:0 },
@@ -2984,6 +3225,10 @@ function initState() {
     coldPotion: 0, cursePotion: 0, forgetPotion: 0,
     usedForgetMagic: false, moodLocked: false, bloodMoon7Happened: false,
     day4EventTriggered: false, day4AvarenGone: false, day4AvarenNotified: false,
+    noahDay2IntroSeen: false,
+    noahLobbyTalking: false,
+    noahLakeMoonSeen: false,
+    noahLakeTalking: false,
     cookActive: false, cookTimer: 0, cookReady: false, soupReady: false, carryingSoup: false, soupIsSpecial: false, cookSelectedKeys: [],
     actionSceneActive: false, actionSceneTimer: 0, actionSceneMax: 0,
     actionSceneOnDone: null, actionSceneLines: [], actionSceneLineIdx: 0, actionSceneLineTick: 0,
@@ -3164,6 +3409,8 @@ function renderScene() {
   document.getElementById('cook-scene-wrap').style.display =
     (G.scene === 'kitchen' && G.cookActive) ? 'block' : 'none';
   if (G.scene === 'kitchen' && G.cookActive) startSteam();
+  if (G.scene === 'lobby') startLobbyTeaSteam();
+  else stopLobbyTeaSteam();
   document.getElementById('outside-objects').style.display  = G.scene === 'outside'  ? 'block' : 'none';
   document.getElementById('lobby-objects').style.display    = G.scene === 'lobby'    ? 'block' : 'none';
   document.getElementById('room-objects').style.display     = G.scene === 'room'     ? 'block' : 'none';
@@ -3346,16 +3593,22 @@ function renderChars() {
   // ── Noah ──
   const noah = G.noah;
   const cwNoah = document.getElementById('cw-noah');
-  const noahVisible = G.scene === 'outside' && G.day === 2 && G.timePeriod === 'morning';
+  const noahInLobby = G.scene === 'lobby' && G.day === 2 && G.timePeriod === 'morning' && G.noahDay2IntroSeen;
+  const noahAtLake = G.scene === 'forest' && G.day === 2 && G.timePeriod === 'evening';
+  const noahVisible = (G.scene === 'outside' && G.day === 2 && G.timePeriod === 'morning') || noahInLobby || noahAtLake;
+  const noahDrawX = noahInLobby ? NOAH_LOBBY_POS.x : noahAtLake ? NOAH_FOREST_LAKE_POS.x : noah.x;
+  const noahDrawY = noahInLobby ? NOAH_LOBBY_POS.y : noahAtLake ? NOAH_FOREST_LAKE_POS.y : noah.y;
   if (noahVisible && spriteInfo.noah) {
+    if (noahInLobby && !G.noahLobbyTalking) noah.pose = 'front';
+    if (noahAtLake && !G.noahLakeTalking) noah.pose = 'front';
     const noahBlink = noah.blinkPhase >= 0 && noah.pose === 'front';
     const noahPose  = noahBlink ? 'blink' : noah.pose;
     const noahFrame = noahBlink ? BLINK_SEQ[noah.blinkPhase].row : noah.walkFrame;
     const dw = setPose('noah', noahPose, noahFrame, dispH);
-    cwNoah.style.left    = (noah.x - dw / 2) + 'px';
-    cwNoah.style.top     = (noah.y - dispH) + 'px';
+    cwNoah.style.left    = (noahDrawX - dw / 2) + 'px';
+    cwNoah.style.top     = (noahDrawY - dispH) + 'px';
     cwNoah.style.display = 'block';
-    cwNoah.style.zIndex  = String(Math.floor(noah.y));
+    cwNoah.style.zIndex  = String(Math.floor(noahDrawY));
   } else {
     cwNoah.style.display = 'none';
   }
@@ -3380,6 +3633,17 @@ function renderChars() {
     redBub.style.top     = (rd.y - dispH - 40) + 'px';
   } else {
     redBub.style.display = 'none';
+  }
+
+  // ── Noah bubble ──
+  const noahBub = document.getElementById('noah-bubble');
+  if (noahVisible && noah.bubbleTimer > 0 && !isDlgBlocking()) {
+    noahBub.textContent   = noah.bubbleText;
+    noahBub.style.display = 'block';
+    noahBub.style.left    = noahDrawX + 'px';
+    noahBub.style.top     = (noahDrawY - dispH - 40) + 'px';
+  } else {
+    noahBub.style.display = 'none';
   }
 
   // ── Chicken ──
@@ -3592,7 +3856,7 @@ function renderChars() {
   setShadow('shadow-avaren', av.x, av.y - 10, dispH, avVisible && !G.sleepAnimActive);
   setShadow('shadow-red',    rd.x, rd.y - 5,  dispH, rdVisible);
   setShadow('shadow-winter', wt.x, wt.y - 5,  dispH, wtVisible);
-  setShadow('shadow-noah',   noah.x, noah.y - 5, dispH, noahVisible);
+  setShadow('shadow-noah',   noahDrawX, noahDrawY - 5, dispH, noahVisible);
 }
 
 function updateHints() {
@@ -3609,6 +3873,7 @@ function updateHints() {
   hs.style.left = hintX; hs.style.top = hintY;
 
   const nearRed = isNearReid();
+  const nearNoah = isNearNoah();
   // 收取提示（完成待領取）
   if (zone && zone.id === 'farm' && G.farmStage >= 5) {
     hi.textContent = '收取藥草';
@@ -3674,6 +3939,10 @@ function updateHints() {
     hi.style.display = 'block';
     hs.style.display = 'none';
     return;
+  }
+  if (nearNoah && !near) {
+    hi.textContent = '諾亞';
+    hi.style.display = 'block'; hs.style.display = 'none'; return;
   }
   if (isNearFairy()) {
     hi.textContent = '妖精';
@@ -3782,9 +4051,17 @@ function gameLoop() {
       // 偶數夜：在森林產生妖精
       if (G.day % 2 === 0) {
         G.fairyCaught = false;
-        G.fairy.x = 180 + Math.random() * 260;
-        G.fairy.y = 235 + Math.random() * 20;
-        G.fairy.vx = (Math.random() < 0.5 ? 1 : -1) * (0.3 + Math.random() * 0.3);
+        if (G.day === 2) {
+          G.fairy.x = DAY2_FAIRY_BOUNDS.x1 + Math.random() * (DAY2_FAIRY_BOUNDS.x2 - DAY2_FAIRY_BOUNDS.x1);
+          G.fairy.y = DAY2_FAIRY_BOUNDS.y1 + Math.random() * (DAY2_FAIRY_BOUNDS.y2 - DAY2_FAIRY_BOUNDS.y1);
+          G.fairy.vx = (Math.random() < 0.5 ? 1 : -1) * (0.25 + Math.random() * 0.25);
+          G.fairy.vy = (Math.random() < 0.5 ? 1 : -1) * (0.12 + Math.random() * 0.18);
+        } else {
+          G.fairy.x = 180 + Math.random() * 260;
+          G.fairy.y = 235 + Math.random() * 20;
+          G.fairy.vx = (Math.random() < 0.5 ? 1 : -1) * (0.3 + Math.random() * 0.3);
+          G.fairy.vy = 0;
+        }
       }
     });
   }
@@ -3870,8 +4147,18 @@ function gameLoop() {
 
   // ── 妖精飄動（偶數夜，森林，未抓到）──
   if (G.scene === 'forest' && G.timePeriod === 'evening' && G.day % 2 === 0 && !G.fairyCaught) {
-    G.fairy.x += G.fairy.vx;
-    if (G.fairy.x < 170 || G.fairy.x > 460) G.fairy.vx *= -1;
+    if (G.day === 2) {
+      if (G.fairy.vy == null) G.fairy.vy = 0.18;
+      G.fairy.x += G.fairy.vx;
+      G.fairy.y += G.fairy.vy;
+      if (G.fairy.x < DAY2_FAIRY_BOUNDS.x1 || G.fairy.x > DAY2_FAIRY_BOUNDS.x2) G.fairy.vx *= -1;
+      if (G.fairy.y < DAY2_FAIRY_BOUNDS.y1 || G.fairy.y > DAY2_FAIRY_BOUNDS.y2) G.fairy.vy *= -1;
+      G.fairy.x = Math.max(DAY2_FAIRY_BOUNDS.x1, Math.min(DAY2_FAIRY_BOUNDS.x2, G.fairy.x));
+      G.fairy.y = Math.max(DAY2_FAIRY_BOUNDS.y1, Math.min(DAY2_FAIRY_BOUNDS.y2, G.fairy.y));
+    } else {
+      G.fairy.x += G.fairy.vx;
+      if (G.fairy.x < 170 || G.fairy.x > 460) G.fairy.vx *= -1;
+    }
   }
 
   // 艾德林走路動畫＋腳步聲
@@ -4275,6 +4562,27 @@ function gameLoop() {
       } else {
         noah.walkFrame = 0; noah.walkTick = 0;
       }
+    }
+  }
+
+  // 諾亞頭上泡泡隨機說話（第2天白天，戶外或初登場後的大廳）
+  {
+    const noah = G.noah;
+    const noahVisibleNow = G.day === 2 && G.timePeriod === 'morning' &&
+      (G.scene === 'outside' || (G.scene === 'lobby' && G.noahDay2IntroSeen));
+    if (noahVisibleNow && !isDlgBlocking() && !G.noahLobbyTalking) {
+      if (noah.bubbleTimer > 0) {
+        noah.bubbleTimer--;
+      } else {
+        noah.autoSpeakTimer--;
+        if (noah.autoSpeakTimer <= 0) {
+          noah.bubbleText = pick(NOAH_SPEAK_DLG);
+          noah.bubbleTimer = 220;
+          noah.autoSpeakTimer = Math.floor(Math.random() * 260) + 180;
+        }
+      }
+    } else if (!noahVisibleNow) {
+      noah.bubbleTimer = 0;
     }
   }
 
@@ -4758,6 +5066,8 @@ document.addEventListener('keydown', e => {
       pickUpChicken();
     } else if (isNearChicken2()) {
       pickUpChicken2();
+    } else if (isNearNoah()) {
+      openNoahMenu();
     } else if (isNearFairy()) {
       G.fairyCaught = true;
       G.fairyItem++;
@@ -4805,6 +5115,9 @@ document.getElementById('scene-wrap').addEventListener('mouseleave', () => {
 // Click on Avaren
 document.getElementById('cw-avaren').addEventListener('click', () => {
   if (G && !G.paused) openAvarenMenu();
+});
+document.getElementById('cw-noah').addEventListener('click', () => {
+  if (G && !G.paused && isNearNoah()) openNoahMenu();
 });
 
 // ══════════════════════════════════════
@@ -5708,26 +6021,54 @@ function startActionScene(lines, max, onDone) {
   document.getElementById('action-scene-overlay').style.display = 'flex';
 }
 
-const NPC_SPEAKERS = new Set(['旁白', '阿瓦倫', '雷德', '溫特']);
+const NPC_SPEAKERS = new Set(['旁白', '艾德林', '阿瓦倫', '雷德', '溫特', '諾亞']);
+const SPEAKER_AVATARS = {
+  '艾德林': 'eldrin_avatar.png',
+  '阿瓦倫': 'avaren_avatar.png',
+  '雷德': 'red_avatar.png',
+  '溫特': 'winter_avatar.png',
+  '諾亞': 'noah_avatar.png',
+};
+const SPEAKER_TEXT_CLASS = {
+  '艾德林': 'asc-text-eldrin',
+  '阿瓦倫': 'asc-text-avaren',
+  '雷德': 'asc-text-red',
+  '溫特': 'asc-text-winter',
+  '諾亞': 'asc-text-noah',
+};
+function applySpeakerPortrait(speaker, portraitEl) {
+  const src = SPEAKER_AVATARS[speaker];
+  if (!src) {
+    portraitEl.style.display = 'none';
+    portraitEl.removeAttribute('src');
+    return;
+  }
+  portraitEl.src = src;
+  portraitEl.alt = speaker;
+  portraitEl.style.display = 'block';
+}
+function setSpeakerLayout(speaker) {
+  const overlay = document.getElementById('action-scene-overlay');
+  if (!overlay) return;
+  overlay.classList.toggle('speaker-right', speaker === '艾德林');
+}
 // 判斷對話框是否在阻擋模式（actionScene 或手動旁白顯示中）
 function isDlgBlocking() {
   return G.actionSceneActive || (storyQueue.length > 0 && !storyQueue[0].autoClose);
 }
 function _ascShowLine(idx) {
   const line     = G.actionSceneLines[idx];
-  const isNarr   = line.speaker === '旁白';
-  const isAvaren = line.speaker === '阿瓦倫';
   const isChar   = !NPC_SPEAKERS.has(line.speaker);
   const textEl    = document.getElementById('asc-text');
   const btn       = document.getElementById('asc-btn');
   const portrait  = document.getElementById('asc-portrait');
   const arrow     = document.getElementById('asc-arrow');
+  setSpeakerLayout(line.speaker);
   document.getElementById('asc-speaker').textContent = '— ' + line.speaker + ' —';
   // 文字區：旁白和阿瓦倫顯示文字，艾德林留空（台詞在按鈕上）
   textEl.textContent = isChar ? '' : line.text;
-  textEl.className   = isAvaren ? 'asc-text asc-text-avaren' : 'asc-text';
-  // 頭像：阿瓦倫說話時顯示
-  portrait.style.display = isAvaren ? 'block' : 'none';
+  textEl.className   = 'asc-text' + (SPEAKER_TEXT_CLASS[line.speaker] ? ' ' + SPEAKER_TEXT_CLASS[line.speaker] : '');
+  applySpeakerPortrait(line.speaker, portrait);
   // 艾德林：台詞按鈕；旁白/阿瓦倫：用右下角 ▼ 箭頭
   btn.textContent    = isChar ? line.text : '';
   btn.className      = isChar ? 'asc-btn-char' : 'asc-btn-narr';
@@ -5874,15 +6215,14 @@ function _showStory() {
   }
 
   const item     = storyQueue[0];
-  const isNarr   = item.speaker === '旁白';
-  const isAvaren = item.speaker === '阿瓦倫';
   const isChar   = !NPC_SPEAKERS.has(item.speaker);
 
   document.getElementById('asc-speaker').textContent = '— ' + item.speaker + ' —';
+  setSpeakerLayout(item.speaker);
   const textEl = document.getElementById('asc-text');
   textEl.textContent = isChar ? '' : item.text;
-  textEl.className   = isAvaren ? 'asc-text asc-text-avaren' : 'asc-text';
-  document.getElementById('asc-portrait').style.display = isAvaren ? 'block' : 'none';
+  textEl.className   = 'asc-text' + (SPEAKER_TEXT_CLASS[item.speaker] ? ' ' + SPEAKER_TEXT_CLASS[item.speaker] : '');
+  applySpeakerPortrait(item.speaker, document.getElementById('asc-portrait'));
   const btn = document.getElementById('asc-btn');
   btn.textContent = isChar ? item.text : '';
   btn.className   = isChar ? 'asc-btn-char' : 'asc-btn-narr';
@@ -6427,9 +6767,17 @@ function skipToEvening() {
     // 偶數夜：在森林產生妖精
     if (G.day % 2 === 0) {
       G.fairyCaught = false;
-      G.fairy.x = 180 + Math.random() * 260;
-      G.fairy.y = 235 + Math.random() * 20;
-      G.fairy.vx = (Math.random() < 0.5 ? 1 : -1) * (0.3 + Math.random() * 0.3);
+      if (G.day === 2) {
+        G.fairy.x = DAY2_FAIRY_BOUNDS.x1 + Math.random() * (DAY2_FAIRY_BOUNDS.x2 - DAY2_FAIRY_BOUNDS.x1);
+        G.fairy.y = DAY2_FAIRY_BOUNDS.y1 + Math.random() * (DAY2_FAIRY_BOUNDS.y2 - DAY2_FAIRY_BOUNDS.y1);
+        G.fairy.vx = (Math.random() < 0.5 ? 1 : -1) * (0.25 + Math.random() * 0.25);
+        G.fairy.vy = (Math.random() < 0.5 ? 1 : -1) * (0.12 + Math.random() * 0.18);
+      } else {
+        G.fairy.x = 180 + Math.random() * 260;
+        G.fairy.y = 235 + Math.random() * 20;
+        G.fairy.vx = (Math.random() < 0.5 ? 1 : -1) * (0.3 + Math.random() * 0.3);
+        G.fairy.vy = 0;
+      }
     }
   });
 }
@@ -6851,6 +7199,11 @@ function loadFromSlot(n) {
   setTimeout(() => {
     try { zeRestoreSaved(); initState(); Object.assign(G, JSON.parse(data.state)); } catch(e) { zeRestoreSaved(); initState(); }
     if (!G.weather) G.weather = 'rain';
+    if (!G.noah) G.noah = { x: 500, y: 360, pose: 'front', walkTick: 0, walkFrame: 0, walkDir:{dx:0,dy:0}, walkTimer:0, bubbleTimer:0, bubbleText:'', autoSpeakTimer:260, blinkTimer: 340, blinkPhase: -1, blinkPhaseTick: 0, pushVx:0, pushVy:0 };
+    if (G.noahDay2IntroSeen == null) G.noahDay2IntroSeen = false;
+    if (G.noahLobbyTalking == null) G.noahLobbyTalking = false;
+    if (G.noahLakeMoonSeen == null) G.noahLakeMoonSeen = false;
+    if (G.noahLakeTalking == null) G.noahLakeTalking = false;
     document.getElementById('title-screen').style.display = 'none';
     document.getElementById('game-screen').style.display  = 'block';
     document.getElementById('blood-moon-badge').style.display = 'none';
@@ -7630,6 +7983,36 @@ function startSteam() {
 function stopSteam() {
   if (_steamInterval) { clearInterval(_steamInterval); _steamInterval = null; }
   document.querySelectorAll('.steam-puff').forEach(el => el.remove());
+}
+
+// ── 大廳熱茶霧氣 ──
+let _lobbyTeaSteamInterval = null;
+function startLobbyTeaSteam() {
+  if (_lobbyTeaSteamInterval) return;
+  const scene = document.getElementById('scene-wrap');
+  const baseX = 59;
+  const baseY = 358;
+
+  _lobbyTeaSteamInterval = setInterval(() => {
+    if (!G || G.scene !== 'lobby') return;
+    const puff = document.createElement('div');
+    puff.className = 'tea-steam-puff';
+    const size  = 7 + Math.random() * 7;
+    const drift = ((Math.random() - 0.5) * 12).toFixed(1);
+    const dur   = (3.2 + Math.random() * 1.2).toFixed(2);
+    const ox    = (Math.random() - 0.5) * 8;
+    puff.style.cssText =
+      `left:${(baseX + ox - size / 2).toFixed(0)}px;` +
+      `top:${baseY.toFixed(0)}px;` +
+      `width:${size.toFixed(0)}px;height:${size.toFixed(0)}px;` +
+      `--sdrift:${drift}px;--sdur:${dur}s;`;
+    scene.appendChild(puff);
+    setTimeout(() => puff.remove(), dur * 1000 + 100);
+  }, 820);
+}
+function stopLobbyTeaSteam() {
+  if (_lobbyTeaSteamInterval) { clearInterval(_lobbyTeaSteamInterval); _lobbyTeaSteamInterval = null; }
+  document.querySelectorAll('.tea-steam-puff').forEach(el => el.remove());
 }
 
 // 火爐動畫物件：直接移動已存在的 #kitchen-stove
