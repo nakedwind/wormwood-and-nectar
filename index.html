@@ -1144,10 +1144,12 @@ body {
       <div id="shadow-avaren" class="char-shadow"></div>
       <div id="shadow-red"    class="char-shadow"></div>
       <div id="shadow-winter" class="char-shadow"></div>
+      <div id="shadow-noah"   class="char-shadow"></div>
       <div id="cw-eldrin" class="char-wrap"><img id="sp-eldrin" src="character_eldrin.png" alt=""></div>
       <div id="cw-avaren" class="char-wrap"><img id="sp-avaren" src="character_avaren.png" alt=""></div>
       <div id="cw-red"    class="char-wrap"><img id="sp-red"    src="character_red.png"    alt=""></div>
       <div id="cw-winter" class="char-wrap"><img id="sp-winter" src="character_winter.png" alt=""></div>
+      <div id="cw-noah"   class="char-wrap"><img id="sp-noah"   src="character_noah.png"   alt=""></div>
       <div id="cw-fairy"><img src="Fairy.png" alt="妖精"></div>
       <div id="cw-red-fairy"><img src="Fairy.png" alt="紅妖精"></div>
       <div id="cw-chicken"  style="display:none;position:absolute;z-index:12;pointer-events:none;overflow:hidden;"><img id="sp-chicken"  src="chicken.png" style="position:absolute;image-rendering:pixelated;"></div>
@@ -1870,14 +1872,14 @@ function updateRoomDepth() {
   });
 }
 
-const spriteInfo = { eldrin:null, avaren:null, red:null, winter:null };
+const spriteInfo = { eldrin:null, avaren:null, red:null, winter:null, noah:null };
 
 let chickenInfo = null;
 
 function loadSprites(cb) {
   let n = 0;
-  const done = () => { if (++n === 5) cb(); };
-  ['eldrin','avaren','red','winter'].forEach(name => {
+  const done = () => { if (++n === 6) cb(); };
+  ['eldrin','avaren','red','winter','noah'].forEach(name => {
     const img = document.getElementById('sp-' + name);
     const init = () => {
       const fw = img.naturalWidth  / SPRITE_COLS;
@@ -2919,6 +2921,7 @@ function initState() {
     avaren: { x: 190, y: 220, pose: 'back', walkTick: 0, walkFrame: 0, wanderDir:{dx:0,dy:0}, wanderTimer:0, gatherTimer: 3600, hasSeenRed: false, nearRedTimer: 0, blinkTimer: 260, blinkPhase: -1, blinkPhaseTick: 0, sleepEye: 0, pushVx:0, pushVy:0 },
     red:    { x: 150, y: 360, pose: 'front', walkTick: 0, walkFrame: 0, walkDir:{dx:0,dy:0}, walkTimer:0, bubbleTimer:0, bubbleText:'', autoSpeakTimer:180, blinkTimer: 310, blinkPhase: -1, blinkPhaseTick: 0, pushVx:0, pushVy:0 },
     winter: { x: 300, y: 120, pose: 'sideR', walkTick: 0, walkFrame: 0, walkDir:{dx:0,dy:0}, walkTimer:0, bubbleTimer:0, bubbleText:'', autoSpeakTimer:320, blinkTimer: 280, blinkPhase: -1, blinkPhaseTick: 0, pushVx:0, pushVy:0 },
+    noah:   { x: 500, y: 360, pose: 'front', walkTick: 0, walkFrame: 0, walkDir:{dx:0,dy:0}, walkTimer:0, bubbleTimer:0, bubbleText:'', autoSpeakTimer:260, blinkTimer: 340, blinkPhase: -1, blinkPhaseTick: 0, pushVx:0, pushVy:0 },
     redCommission: null,
     redDelivered: false,
     bubbleTimer: 0,
@@ -3261,6 +3264,23 @@ function renderChars() {
     cwWt.style.display = 'none';
   }
 
+  // ── Noah ──
+  const noah = G.noah;
+  const cwNoah = document.getElementById('cw-noah');
+  const noahVisible = G.scene === 'outside' && G.day === 2 && G.timePeriod === 'morning';
+  if (noahVisible && spriteInfo.noah) {
+    const noahBlink = noah.blinkPhase >= 0 && noah.pose === 'front';
+    const noahPose  = noahBlink ? 'blink' : noah.pose;
+    const noahFrame = noahBlink ? BLINK_SEQ[noah.blinkPhase].row : noah.walkFrame;
+    const dw = setPose('noah', noahPose, noahFrame, dispH);
+    cwNoah.style.left    = (noah.x - dw / 2) + 'px';
+    cwNoah.style.top     = (noah.y - dispH) + 'px';
+    cwNoah.style.display = 'block';
+    cwNoah.style.zIndex  = String(Math.floor(noah.y));
+  } else {
+    cwNoah.style.display = 'none';
+  }
+
   // ── Winter bubble ──
   const winterBub = document.getElementById('winter-bubble');
   if (wtVisible && wt.bubbleTimer > 0 && !isDlgBlocking()) {
@@ -3493,6 +3513,7 @@ function renderChars() {
   setShadow('shadow-avaren', av.x, av.y - 10, dispH, avVisible && !G.sleepAnimActive);
   setShadow('shadow-red',    rd.x, rd.y - 5,  dispH, rdVisible);
   setShadow('shadow-winter', wt.x, wt.y - 5,  dispH, wtVisible);
+  setShadow('shadow-noah',   noah.x, noah.y - 5, dispH, noahVisible);
 }
 
 function updateHints() {
@@ -3761,6 +3782,7 @@ function gameLoop() {
     };
     if (G.avarenScene === G.scene && !G.carryingChicken)                          tryPush(G.avaren);
     if (G.scene === 'outside' && G.day % 2 === 1)                                 tryPush(G.red);
+    if (G.scene === 'outside' && G.day === 2 && G.timePeriod === 'morning')        tryPush(G.noah);
     if (G.scene === 'forest' && G.day % 2 === 0 && G.timePeriod === 'morning')    tryPush(G.winter);
     if (G.scene === 'forest' && !G.carryingChicken)                               tryPush(G.chicken);
     if (G.scene === 'forest' && !G.carryingChicken2)                              tryPush(G.chicken2);
@@ -4020,6 +4042,28 @@ function gameLoop() {
     }
   }
 
+  // 諾亞眨眼
+  { const noah = G.noah;
+    if (noah.blinkPhase >= 0) {
+      noah.blinkPhaseTick--;
+      if (noah.blinkPhaseTick <= 0) {
+        noah.blinkPhase++;
+        if (noah.blinkPhase >= BLINK_SEQ.length) {
+          noah.blinkPhase = -1;
+          noah.blinkTimer = Math.floor(Math.random() * 240) + 180;
+        } else {
+          noah.blinkPhaseTick = BLINK_SEQ[noah.blinkPhase].dur;
+        }
+      }
+    } else {
+      noah.blinkTimer--;
+      if (noah.blinkTimer <= 0) {
+        noah.blinkPhase = 0;
+        noah.blinkPhaseTick = BLINK_SEQ[0].dur;
+      }
+    }
+  }
+
   // 阿瓦倫看見雷德的反應（A初見、B靠近）
   if (G.scene === 'outside' && G.day % 2 === 1 && G.timePeriod === 'morning' && G.avarenScene === 'outside') {
     const av = G.avaren;
@@ -4109,6 +4153,49 @@ function gameLoop() {
       }
     }
     } // end else (非對話中)
+  }
+
+  // 諾亞隨機走動（第2天，戶外，白天）：沿用雷德的活動模式
+  if (G.scene === 'outside' && G.day === 2 && G.timePeriod === 'morning') {
+    const noah = G.noah;
+    if (isDlgBlocking()) {
+      const ddx = el.x - noah.x, ddy = el.y - noah.y;
+      if (Math.abs(ddx) > Math.abs(ddy)) { noah.pose = ddx < 0 ? 'sideL' : 'sideR'; }
+      else { noah.pose = ddy < 0 ? 'back' : 'front'; }
+      noah.walkFrame = 0; noah.walkTick = 0;
+    } else {
+      noah.walkTimer--;
+      if (noah.walkTimer <= 0) {
+        const dirs = [{dx:-1,dy:0},{dx:1,dy:0},{dx:0,dy:-1},{dx:0,dy:1},{dx:0,dy:0},{dx:0,dy:0}];
+        noah.walkDir = dirs[Math.floor(Math.random() * dirs.length)];
+        noah.walkTimer = Math.floor(Math.random() * 90) + 60;
+      }
+      const ndx = noah.walkDir.dx * SPEED * 0.25;
+      const ndy = noah.walkDir.dy * SPEED * 0.25;
+      const noahNewX = noah.x + ndx;
+      const noahNewY = noah.y + ndy;
+      const noahInZone = (
+        (noahNewX >= 10  && noahNewX <= 636 && noahNewY >= 355 && noahNewY <= 443) ||
+        (noahNewX >= 190 && noahNewX <= 591 && noahNewY >= 253 && noahNewY <= 385)
+      );
+      if (noahInZone) {
+        noah.x = noahNewX;
+        noah.y = noahNewY;
+      } else {
+        noah.walkDir = {dx:0, dy:0};
+        noah.walkTimer = 0;
+      }
+      if      (ndx < 0) noah.pose = 'sideL';
+      else if (ndx > 0) noah.pose = 'sideR';
+      else if (ndy < 0) noah.pose = 'back';
+      else if (ndy > 0) noah.pose = 'front';
+      if (ndx !== 0 || ndy !== 0) {
+        noah.walkTick++;
+        if (noah.walkTick % 8 === 0) noah.walkFrame = (noah.walkFrame + 1) % 4;
+      } else {
+        noah.walkFrame = 0; noah.walkTick = 0;
+      }
+    }
   }
 
   // 溫特隨機走動（偶數天，森林，白天）
@@ -4305,6 +4392,7 @@ function gameLoop() {
 
     applyPushForScene(G.avaren, G.avarenScene);
     applyPushForScene(G.red, 'outside', redValidZone);
+    applyPushForScene(G.noah, 'outside', redValidZone);
     applyPushForScene(G.winter, 'forest', winterValidZone);
   }
   { const ch = G.chicken;
@@ -6389,6 +6477,8 @@ function continueAfterNight(prevText) {
   G.redDelivered = false;
   G.winter.x = 300; G.winter.y = 120; G.winter.walkDir = {dx:0,dy:0}; G.winter.walkTimer = 60;
   G.winter.bubbleTimer = 0; G.winter.autoSpeakTimer = 320;
+  G.noah.x = 500; G.noah.y = 360; G.noah.pose = 'front'; G.noah.walkDir = {dx:0,dy:0}; G.noah.walkTimer = 0;
+  G.noah.bubbleTimer = 0; G.noah.autoSpeakTimer = 260;
   changeScene('room', { x: 260, y: 380 });
   let redMsg = '';
   if (G.day % 2 === 1) {
