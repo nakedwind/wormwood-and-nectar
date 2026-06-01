@@ -337,20 +337,21 @@ body {
 .fill-fatigue { background: linear-gradient(90deg, #304060, #5070a0); }
 .stat-num { font-size: 12px; color: #d0d0c8; font-weight: 600; width: 24px; text-align: right; }
 
-#monster-slime {
+#monster-slime, #monster-slime2 {
   display: none; position: absolute;
   width: 28px; height: 22px;
   z-index: 16; pointer-events: none;
   transform-origin: center bottom;
-  animation: slimeHop 1.05s ease-in-out infinite;
+  animation: slimeHop 1.83s ease-in-out infinite;
 }
-#monster-slime img {
+#monster-slime2 { animation-delay: -0.9s; }
+#monster-slime img, #monster-slime2 img {
   width: 100%; height: 100%;
   object-fit: contain; image-rendering: pixelated;
 }
 @keyframes slimeHop {
   0%, 100% { transform: translateY(0) scale(1, 1); }
-  35%      { transform: translateY(-5px) scale(0.96, 1.07); }
+  35%      { transform: translateY(-14px) scale(0.96, 1.07); }
   62%      { transform: translateY(0) scale(1.08, 0.88); }
   78%      { transform: translateY(-1px) scale(0.98, 1.02); }
 }
@@ -1243,6 +1244,7 @@ body {
       <div id="cw-chicken"  style="display:none;position:absolute;z-index:12;pointer-events:none;overflow:hidden;"><img id="sp-chicken"  src="chicken.png" style="position:absolute;image-rendering:pixelated;"></div>
       <div id="cw-chicken2" style="display:none;position:absolute;z-index:12;pointer-events:none;overflow:hidden;"><img id="sp-chicken2" src="chicken.png" style="position:absolute;image-rendering:pixelated;"></div>
       <div id="monster-slime"><img src="Monster_Slime.png" alt="史萊姆"></div>
+      <div id="monster-slime2"><img src="Monster_Slime.png" alt="史萊姆2"></div>
       <!-- ══ 小鳥（直接放 scene-wrap，不受 outside-objects 疊層影響）══ -->
       <div id="outside-bird" style="display:none;position:absolute;left:300px;top:330px;width:20px;height:20px;z-index:14;pointer-events:none;overflow:hidden;"><div class="bird-hop" style="width:20px;height:20px;position:relative;"><img src="bg_outside/bird.png" style="position:absolute;top:0;left:0;height:20px;width:20px;image-rendering:pixelated;"></div></div>
       <div id="forest-bird" style="display:none;position:absolute;left:200px;top:300px;width:20px;height:20px;z-index:14;pointer-events:none;overflow:hidden;"><div class="bird-hop" style="width:20px;height:20px;position:relative;"><img src="bg_forest/bird.png" style="position:absolute;top:0;left:0;height:20px;width:20px;image-rendering:pixelated;"></div></div>
@@ -1293,21 +1295,25 @@ body {
       </div>
       <!-- ══ 森林場景物件 ══ -->
       <div id="forest-objects" style="display:none;">
-        <div id="forest-light-1" style="position:absolute;left:360px;top:175px;width:28px;height:53px;z-index:10;pointer-events:none;"><img src="bg_forest/bg_forest_light.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
-        <div id="forest-fishing-1" style="position:absolute;left:261px;top:208px;width:38px;height:78px;z-index:10;pointer-events:none;"><img src="bg_forest/bg_forest_fishing01.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
-        <div id="forest-grass-1" style="position:absolute;left:139px;top:26px;width:49px;height:41px;z-index:10;pointer-events:none;"><img src="bg_forest/bg_outside_grass01.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
-        <div id="forest-grass-2" style="position:absolute;left:416px;top:107px;width:51px;height:42px;z-index:10;pointer-events:none;"><img src="bg_forest/bg_outside_grass02.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
-        <div id="forest-grass-3" style="position:absolute;left:448px;top:129px;width:50px;height:42px;z-index:10;pointer-events:none;"><img src="bg_forest/bg_outside_grass03.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
-        <div id="forest-grass-4" style="position:absolute;left:112px;top:51px;width:52px;height:43px;z-index:10;pointer-events:none;"><img src="bg_forest/bg_outside_grass06.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
-        <div id="forest-grass-5" style="position:absolute;left:435px;top:142px;width:52px;height:43px;z-index:10;pointer-events:none;"><img src="bg_forest/bg_outside_grass06.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
-        <div id="forest-grass-6" style="position:absolute;left:481px;top:150px;width:52px;height:43px;z-index:10;pointer-events:none;"><img src="bg_forest/bg_outside_grass06.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
-        <div id="forest-tree-1" style="position:absolute;left:72px;top:70px;width:73px;height:129px;z-index:10;pointer-events:none;"><img src="bg_forest/bg_outside_tree.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
-        <div id="forest-tree-2" style="position:absolute;left:-18px;top:35px;width:99px;height:123px;z-index:10;pointer-events:none;"><img src="bg_forest/bg_outside_tree02.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
-        <div id="forest-tree-3" style="position:absolute;left:-9px;top:142px;width:73px;height:129px;z-index:10;pointer-events:none;"><img src="bg_forest/bg_outside_tree.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
-        <div id="forest-tree-4" style="position:absolute;left:493px;top:-23px;width:71px;height:123px;z-index:10;pointer-events:none;"><img src="bg_forest/bg_outside_tree.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
-        <div id="forest-tree-5" style="position:absolute;left:544px;top:167px;width:99px;height:123px;z-index:10;pointer-events:none;"><img src="bg_forest/bg_outside_tree02.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
-        <div id="forest-tree-6" style="position:absolute;left:580px;top:208px;width:99px;height:123px;z-index:10;pointer-events:none;"><img src="bg_forest/bg_outside_tree02.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
-        <div id="forest-nest" style="position:absolute;left:493px;top:125px;width:49px;height:36px;z-index:2;pointer-events:none;"><img src="bg_forest/bg_forest_Nest.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+        <div id="forest-light-1" style="position:absolute;left:360px;top:175px;width:28px;height:53px;z-index:228;pointer-events:none;"><img src="bg_forest/bg_forest_light.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+        <div id="forest-fishing-1" style="position:absolute;left:261px;top:208px;width:38px;height:78px;z-index:278;pointer-events:none;"><img src="bg_forest/bg_forest_fishing02.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+        <div id="forest-grass-1" style="position:absolute;left:139px;top:26px;width:49px;height:41px;z-index:67;pointer-events:none;"><img src="bg_forest/bg_outside_grass01.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+        <div id="forest-grass-2" style="position:absolute;left:416px;top:107px;width:51px;height:42px;z-index:149;pointer-events:none;"><img src="bg_forest/bg_outside_grass02.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+        <div id="forest-grass-3" style="position:absolute;left:448px;top:129px;width:50px;height:42px;z-index:171;pointer-events:none;"><img src="bg_forest/bg_outside_grass03.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+        <div id="forest-grass-4" style="position:absolute;left:112px;top:51px;width:52px;height:43px;z-index:94;pointer-events:none;"><img src="bg_forest/bg_outside_grass06.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+        <div id="forest-grass-5" style="position:absolute;left:435px;top:142px;width:52px;height:43px;z-index:185;pointer-events:none;"><img src="bg_forest/bg_outside_grass06.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+        <div id="forest-grass-6" style="position:absolute;left:481px;top:150px;width:52px;height:43px;z-index:193;pointer-events:none;"><img src="bg_forest/bg_outside_grass06.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+        <div id="forest-tree-1" style="position:absolute;left:72px;top:70px;width:73px;height:129px;z-index:184;pointer-events:none;"><img src="bg_forest/bg_outside_tree.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+        <div id="forest-tree-2" style="position:absolute;left:-18px;top:35px;width:99px;height:123px;z-index:143;pointer-events:none;"><img src="bg_forest/bg_outside_tree02.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+        <div id="forest-tree-3" style="position:absolute;left:-9px;top:142px;width:73px;height:129px;z-index:256;pointer-events:none;"><img src="bg_forest/bg_outside_tree.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+        <div id="forest-tree-4" style="position:absolute;left:493px;top:-23px;width:71px;height:123px;z-index:85;pointer-events:none;"><img src="bg_forest/bg_outside_tree.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+        <div id="forest-tree-5" style="position:absolute;left:544px;top:167px;width:99px;height:123px;z-index:275;pointer-events:none;"><img src="bg_forest/bg_outside_tree02.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+        <div id="forest-tree-6" style="position:absolute;left:580px;top:208px;width:99px;height:123px;z-index:316;pointer-events:none;"><img src="bg_forest/bg_outside_tree02.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+        <div id="forest-nest" style="position:absolute;left:493px;top:125px;width:49px;height:36px;z-index:1;pointer-events:none;"><img src="bg_forest/bg_forest_Nest.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+        <div id="forest-mushroom-1" style="position:absolute;left:43px;top:145px;width:14px;height:15px;z-index:10;pointer-events:none;"><img src="bg_forest/mushroom.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+        <div id="forest-mushroom-2" style="position:absolute;left:75px;top:178px;width:20px;height:21px;z-index:10;pointer-events:none;"><img src="bg_forest/mushroom02.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+        <div id="forest-mushroom-3" style="position:absolute;left:565px;top:44px;width:20px;height:21px;z-index:10;pointer-events:none;"><img src="bg_forest/mushroom02.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+        <div id="forest-mushroom-4" style="position:absolute;left:584px;top:286px;width:14px;height:15px;z-index:10;pointer-events:none;"><img src="bg_forest/mushroom.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
         <div id="forest-prospect" style="position:absolute;left:-19px;top:305px;width:633px;height:179px;z-index:490;pointer-events:none;"><img src="bg_forest/bg_forest_prospect.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
       </div>
       <!-- ══ 廚房場景物件層 ══ -->
@@ -1420,6 +1426,7 @@ body {
           <button class="ze-btn" onclick="zeDeleteSelected()" style="color:#ff8080;border-color:#602020;">✕ 刪除選取</button>
           <button class="ze-btn" onclick="zeApplyGameZones()" style="color:#80ffb0;border-color:#306050;">✔ 套用並儲存</button>
           <button class="ze-btn" onclick="zeResetGameZones()" style="color:#ff9080;border-color:#503020;">↺ 重置預設</button>
+          <button class="ze-btn" id="ze-copy-claude-btn" onclick="zeCopyForClaude()" style="color:#a0d0ff;border-color:#204060;">📋 複製給Claude</button>
         </div>
 
         <div style="border-top:1px solid #2a1e08;margin:6px 0 4px;"></div>
@@ -1652,7 +1659,8 @@ body {
 const SCENE_W = 640, SCENE_H = 480;
 const CHAR_H  = 90;
 const SPEED   = 3;
-const SLIME_HOME = { x: 540, y: 180 };
+const SLIME_HOME  = { x: 540, y: 180 };
+const SLIME2_HOME = { x: 130, y: 155 };
 const SLIME_SPEED = 0.42;
 const SLIME_DAMAGE = 8;
 const DAY_HOURS = 13; // 07:00 ~ 22:00
@@ -1901,9 +1909,9 @@ function updateBirds() {
 
     // 玩家靠近時逃跑；太近時直接飛走
     const playerDist = Math.hypot(G.eldrin.x - s.x, G.eldrin.y - s.y);
-    const FLY_RANGE = 28;
+    const FLY_RANGE = 55;
     if (playerDist < FLY_RANGE) { triggerBirdFlyAway(scene); return; }
-    const FLEE_RANGE = 55;
+    const FLEE_RANGE = 100;
     if (playerDist < FLEE_RANGE) {
       if (s.pause > 5) s.pause = 5; // 縮短停頓，快速反應
       if (s.pause > 0) { s.pause--; return; }
@@ -1971,45 +1979,57 @@ function updateBirds() {
   });
 }
 
-function updateSlimeMonster() {
-  const el = document.getElementById('monster-slime');
-  if (!el || !G || !G.slime) return;
+function updateOneSlime(slime, elId, homeX, homeY) {
+  const el = document.getElementById(elId);
+  if (!el) return;
   const active = G.scene === 'forest' && G.timePeriod === 'morning' && !G.sleepAnimActive;
-  if (!active) {
-    el.style.display = 'none';
-    return;
-  }
+  if (!active) { el.style.display = 'none'; return; }
 
-  const slime = G.slime;
-  if (slime.x == null || slime.y == null) {
-    slime.x = SLIME_HOME.x;
-    slime.y = SLIME_HOME.y;
-  }
+  if (slime.x == null) { slime.x = homeX; slime.y = homeY; }
   if (slime.attackCooldown > 0) slime.attackCooldown--;
+
+  const HOP_CYCLE   = 110;
+  const HOP_AIR_END = 68;
+  slime.hopTick = ((slime.hopTick || 0) + 1) % HOP_CYCLE;
+  const inAir = slime.hopTick < HOP_AIR_END;
 
   if (!G.paused && !isDlgBlocking()) {
     const dx = G.eldrin.x - slime.x;
     const dy = G.eldrin.y - slime.y;
     const dist = Math.hypot(dx, dy) || 1;
-    const nx = slime.x + (dx / dist) * SLIME_SPEED;
-    const ny = slime.y + (dy / dist) * SLIME_SPEED;
-    if (!isObstacleAt(nx, ny)) {
-      slime.x = nx;
-      slime.y = ny;
-    } else if (!isObstacleAt(nx, slime.y)) {
-      slime.x = nx;
-    } else if (!isObstacleAt(slime.x, ny)) {
-      slime.y = ny;
+
+    if (inAir) {
+      const spd = SLIME_SPEED * (HOP_CYCLE / HOP_AIR_END);
+      const nx = slime.x + (dx / dist) * spd;
+      const ny = slime.y + (dy / dist) * spd;
+      if (!isObstacleAt(nx, ny)) {
+        slime.x = nx; slime.y = ny;
+      } else if (!isObstacleAt(nx, slime.y)) {
+        slime.x = nx;
+      } else if (!isObstacleAt(slime.x, ny)) {
+        slime.y = ny;
+      }
     }
 
     if (dist < 26 && slime.attackCooldown <= 0) {
       chg('eldrinHp', -SLIME_DAMAGE);
       slime.attackCooldown = 90;
       const push = 18;
-      G.eldrin.x = Math.max(30, Math.min(SCENE_W - 30, G.eldrin.x + (dx / dist) * push));
-      G.eldrin.y = Math.max(CHAR_H - 40, Math.min(SCENE_H - 10, G.eldrin.y + (dy / dist) * push));
+      const minY = CHAR_H - 40;
+      let px = Math.max(30, Math.min(SCENE_W - 30, G.eldrin.x + (dx / dist) * push));
+      let py = Math.max(minY, Math.min(SCENE_H - 10, G.eldrin.y + (dy / dist) * push));
+      if (isObstacleAt(px, py)) {
+        let rescued = false;
+        for (let d = 2; d <= 80 && !rescued; d += 2) {
+          for (const [ddx, ddy] of [[0,1],[0,-1],[1,0],[-1,0],[1,1],[-1,1],[1,-1],[-1,-1]]) {
+            const tx = Math.max(30, Math.min(SCENE_W-30, px + ddx*d));
+            const ty = Math.max(minY, Math.min(SCENE_H-10, py + ddy*d));
+            if (!isObstacleAt(tx, ty)) { px = tx; py = ty; rescued = true; break; }
+          }
+        }
+      }
+      G.eldrin.x = px; G.eldrin.y = py;
       renderHUD();
-      // 攻擊音效 + 角色紅色閃爍
       SFX.hit();
       const cwEl = document.getElementById('cw-eldrin');
       if (cwEl) { cwEl.classList.remove('char-hit'); void cwEl.offsetWidth; cwEl.classList.add('char-hit'); }
@@ -2019,9 +2039,15 @@ function updateSlimeMonster() {
   }
 
   el.style.left = Math.round(slime.x - 14) + 'px';
-  el.style.top = Math.round(slime.y - 22) + 'px';
+  el.style.top  = Math.round(slime.y - 22) + 'px';
   el.style.zIndex = String(Math.floor(slime.y));
   el.style.display = 'block';
+}
+
+function updateSlimeMonster() {
+  if (!G || !G.slime) return;
+  updateOneSlime(G.slime,  'monster-slime',  SLIME_HOME.x,  SLIME_HOME.y);
+  updateOneSlime(G.slime2, 'monster-slime2', SLIME2_HOME.x, SLIME2_HOME.y);
 }
 
 function setForestFishingVisual(state) {
@@ -2168,20 +2194,20 @@ function sceneCharH() {
 // ══════════════════════════════════════
 const ZONES = {
   outside: [
-    { id:'to_lobby',  x1:288, y1:208, x2:354, y2:252, sceneHint:'→ 進入小屋', isScene:true,
+    { id:'to_lobby',  x1:290, y1:208, x2:356, y2:252, sceneHint:'→ 進入小屋', isScene:true,
       fn(){ changeScene('lobby'); } },
-    { id:'farm',      x1:20,  y1:220, x2:186, y2:305, interactHint:'種植',
+    { id:'farm',      x1:15,  y1:231, x2:181, y2:316, interactHint:'種植',
       fn(){ doAction_Gather(); } },
-    { id:'gate',      x1:257, y1:407, x2:400, y2:467, interactHint:'柵欄門',
+    { id:'gate',      x1:257, y1:425, x2:400, y2:467, interactHint:'柵欄門',
       fn(){ openGateMenu(); } },
     { id:'pond',  x1:447, y1:14,  x2:604, y2:122, interactHint:'垂釣', fn(){ doAction_Fish(); } },
-    { id:'stone', x1:551, y1:235, x2:639, y2:346, interactHint:'礦石',                  fn(){ doAction_GatherStone(); } },
+    { id:'stone', x1:570, y1:258, x2:639, y2:346, interactHint:'礦石',                  fn(){ doAction_GatherStone(); } },
     { id:'tree1', x1:6,   y1:7,   x2:186, y2:119, interactHint:'樹木', fn(){ doAction_GatherWood(); } },
     { id:'tree2', x1:8,   y1:406, x2:58,  y2:469, interactHint:'樹木', fn(){ doAction_GatherWood(); } },
     { id:'tree3', x1:142, y1:413, x2:197, y2:469, interactHint:'樹木', fn(){ doAction_GatherWood(); } },
     { id:'tree4', x1:503, y1:408, x2:554, y2:471, interactHint:'樹木', fn(){ doAction_GatherWood(); } },
     { id:'tree5', x1:582, y1:373, x2:631, y2:429, interactHint:'樹木', fn(){ doAction_GatherWood(); } },
-    { id:'tree6', x1:587, y1:86,  x2:631, y2:135, interactHint:'樹木', fn(){ doAction_GatherWood(); } },
+    { id:'tree6', x1:583, y1:105, x2:627, y2:154, interactHint:'樹木', fn(){ doAction_GatherWood(); } },
     { id:'bush1', x1:20,  y1:137, x2:153, y2:203, interactHint:'草叢', fn(){ doAction_GatherBush(); } },
     { id:'bush2', x1:440, y1:191, x2:528, y2:284, interactHint:'草叢', fn(){ doAction_GatherBush(); } },
   ],
@@ -2190,7 +2216,7 @@ const ZONES = {
       fn(){ changeScene('room'); } },
     { id:'to_outside', x1:198, y1:444, x2:342, y2:477, sceneHint:'→ 前往戶外', isScene:true,
       fn(){ changeScene('outside', {x:319, y:265}); } },
-    { id:'to_kitchen', x1:361, y1:91,  x2:523, y2:153, sceneHint:'→ 前往廚房（布簾）', isScene:true,
+    { id:'to_kitchen', x1:361, y1:99,  x2:523, y2:161, sceneHint:'→ 前往廚房（布簾）', isScene:true,
       fn(){ changeScene('kitchen'); } },
     { id:'cabinet',    x1:8,   y1:91,  x2:323, y2:211, interactHint:'研究',
       fn(){ doAction_Research(); } },
@@ -2202,7 +2228,7 @@ const ZONES = {
       fn(){ doAction_Cook(); } },
   ],
   forest: [
-    { id:'to_outside',    x1:286, y1:8,   x2:359, y2:73,  sceneHint:'→ 返回戶外', isScene:true,
+    { id:'to_outside',    x1:286, y1:8,   x2:359, y2:52,  sceneHint:'→ 返回戶外', isScene:true,
       fn(){ changeScene('outside', {x:325, y:426}); } },
     { id:'forest_pond',   x1:247, y1:232, x2:345, y2:288, interactHint:'垂釣',
       fn(){ doAction_ForestFish(); } },
@@ -2222,11 +2248,11 @@ const ZONES = {
     { id:'forest_nest',   x1:494, y1:123, x2:541, y2:161, interactHint:'鳥巢', fn(){ doAction_CollectEggs(); } },
   ],
   room: [
-    { id:'to_lobby',   x1:109, y1:397, x2:293, y2:476, sceneHint:'→ 前往大廳', isScene:true,
+    { id:'to_lobby',   x1:109, y1:444, x2:212, y2:476, sceneHint:'→ 前往大廳', isScene:true,
       fn(){ changeScene('lobby', {x:591, y:100}); } },
     { id:'bed',        x1:389, y1:287, x2:535, y2:458, interactHint:'入睡',
       fn(){ doAction_Sleep(); } },
-    { id:'bookshelf',  x1:434, y1:11,  x2:539, y2:178, interactHint:'讀書',
+    { id:'bookshelf',  x1:431, y1:42,  x2:536, y2:209, interactHint:'讀書',
       fn(){ doAction_ReadBook(); } },
     { id:'save_desk',  x1:228, y1:97,  x2:384, y2:195, interactHint:'存檔',
       fn(){ doAction_Save(); } },
@@ -2239,8 +2265,8 @@ const ZONES = {
 const OBSTACLES = {
   kitchen: [
     { x1:2,   y1:6,   x2:639, y2:261 },  // 上方牆壁/火爐區
-    { x1:8,   y1:3,   x2:102, y2:479 },  // 左側牆壁
-    { x1:536, y1:5,   x2:636, y2:476 },  // 右側牆壁
+    { x1:8,   y1:3,   x2:106, y2:479 },  // 左側牆壁
+    { x1:529, y1:6,   x2:637, y2:477 },  // 右側牆壁
     { x1:76,  y1:459, x2:249, y2:477 },  // 下方左段
     { x1:401, y1:457, x2:566, y2:479 },  // 下方右段
     { x1:434, y1:347, x2:545, y2:433 },  // 桌椅區
@@ -2248,46 +2274,64 @@ const OBSTACLES = {
   ],
   outside: [
     { x1:193, y1:99,  x2:449, y2:233 },
-    { x1:448, y1:1,   x2:600, y2:113 },
+    { x1:446, y1:1,   x2:600, y2:73 },
     { x1:552, y1:1,   x2:639, y2:57 },
-    { x1:465, y1:61,  x2:606, y2:113 },
     { x1:6,   y1:208, x2:128, y2:241 },
     { x1:6,   y1:312, x2:128, y2:343 },
     { x1:0,   y1:448, x2:636, y2:477 },
-    { x1:594, y1:277, x2:638, y2:341 }, // 右側圍欄/柵欄
+    { x1:594, y1:277, x2:638, y2:341 },
+    { x1:594, y1:277, x2:638, y2:341 },
+    { x1:3,   y1:104, x2:36,  y2:148 },
+    { x1:107, y1:103, x2:143, y2:145 },
+    { x1:462, y1:62,  x2:590, y2:111 },
+    { x1:561, y1:209, x2:601, y2:238 },
+    { x1:589, y1:96,  x2:631, y2:146 },
+    { x1:595, y1:398, x2:634, y2:441 },
+    { x1:52,  y1:63,  x2:83,  y2:103 },
+    { x1:149, y1:52,  x2:179, y2:89 },
   ],
   room: [
-    { x1:415, y1:1,   x2:538, y2:190 },   // 書架牆角
-    { x1:6,   y1:1,   x2:476, y2:145 },   // 上方牆
+    { x1:414, y1:2,   x2:537, y2:191 },   // 書架牆角
+    { x1:8,   y1:0,   x2:478, y2:144 },   // 上方牆
     { x1:9,   y1:6,   x2:111, y2:473 },   // 左牆
-    { x1:79,  y1:80,  x2:137, y2:327 },
-    { x1:126, y1:89,  x2:172, y2:169 },
-    { x1:228, y1:64,  x2:384, y2:162 },   // 書桌
+    { x1:79,  y1:80,  x2:142, y2:327 },
+    { x1:126, y1:89,  x2:177, y2:172 },
+    { x1:228, y1:64,  x2:384, y2:171 },   // 書桌
     { x1:487, y1:215, x2:540, y2:281 },   // 床頭櫃
-    { x1:284, y1:195, x2:335, y2:260 },   // 椅子
+    { x1:284, y1:195, x2:335, y2:263 },   // 椅子
     { x1:380, y1:262, x2:538, y2:306 },   // 床上緣
-    { x1:380, y1:418, x2:552, y2:474 },   // 床下緣
-    { x1:536, y1:3,   x2:632, y2:475 },   // 右牆
+    { x1:380, y1:404, x2:552, y2:474 },   // 床下緣
+    { x1:518, y1:2,   x2:622, y2:474 },   // 右牆
   ],
   lobby: [
     { x1:4,   y1:2,   x2:359, y2:181 },   // 吧台上方
-    { x1:4,   y1:237, x2:388, y2:307 },   // 吧台主體
+    { x1:4,   y1:225, x2:402, y2:307 },   // 吧台主體
     { x1:6,   y1:372, x2:80,  y2:472 },   // 椅子/桌子
-    { x1:524, y1:5,   x2:544, y2:377 },   // 右側牆柱
-    { x1:360, y1:3,   x2:526, y2:137 },   // 上方布簾/樓梯區
+    { x1:504, y1:5,   x2:559, y2:377 },   // 右側牆柱
+    { x1:360, y1:3,   x2:526, y2:147 },   // 上方布簾/樓梯區
   ],
   forest: [
-    { x1:195, y1:240, x2:278, y2:469 },
+    { x1:195, y1:240, x2:278, y2:475 },
     { x1:371, y1:234, x2:472, y2:477 },
-    { x1:77,  y1:329, x2:553, y2:425 },
+    { x1:73,  y1:329, x2:559, y2:422 },
     { x1:136, y1:273, x2:497, y2:343 },
     { x1:162, y1:255, x2:492, y2:285 },
     { x1:95,  y1:310, x2:534, y2:349 },
-    { x1:198, y1:419, x2:465, y2:477 },
-    { x1:599, y1:423, x2:637, y2:473 }, // 右下角石頭
-    { x1:616, y1:379, x2:637, y2:432 }, // 右側樹幹
-    { x1:116, y1:288, x2:142, y2:316 }, // 左側小樹
-    { x1:170, y1:237, x2:206, y2:265 }, // 左上小樹
+    { x1:122, y1:385, x2:510, y2:443 },
+    { x1:599, y1:423, x2:637, y2:473 },
+    { x1:616, y1:379, x2:637, y2:432 },
+    { x1:116, y1:288, x2:142, y2:316 },
+    { x1:170, y1:237, x2:206, y2:265 },
+    { x1:94,  y1:175, x2:127, y2:207 },
+    { x1:16,  y1:131, x2:46,  y2:165 },
+    { x1:11,  y1:239, x2:43,  y2:278 },
+    { x1:514, y1:70,  x2:545, y2:107 },
+    { x1:74,  y1:55,  x2:104, y2:92 },
+    { x1:608, y1:299, x2:642, y2:340 },
+    { x1:577, y1:263, x2:610, y2:299 },
+    { x1:6,   y1:6,   x2:61,  y2:71 },
+    { x1:469, y1:10,  x2:502, y2:55 },
+    { x1:553, y1:8,   x2:589, y2:62 },
   ],
 };
 
@@ -3313,7 +3357,8 @@ function initState() {
     cookIngredient: null,
     fairy: { x: 320, y: 240, vx: 0.4, vy: 0.2 }, fairyCaught: false,
     redFairy: { x: 332, y: 362, vx: 0.25, vy: 0.15 },
-    slime: { x: SLIME_HOME.x, y: SLIME_HOME.y, attackCooldown: 0, hopTick: 0 },
+    slime:  { x: SLIME_HOME.x,  y: SLIME_HOME.y,  attackCooldown: 0, hopTick: 0 },
+    slime2: { x: SLIME2_HOME.x, y: SLIME2_HOME.y, attackCooldown: 0, hopTick: 35 },
     chicken: { x: 250, y: 180, walkTimer: 0, walkDir: {dx:0,dy:0}, walkFrame: 0, walkTick: 0, facing: 'right', pushVx:0, pushVy:0 },
     chicken2: { x: 480, y: 160, walkTimer: 40, walkDir: {dx:0,dy:0}, walkFrame: 2, walkTick: 0, facing: 'left', pushVx:0, pushVy:0 },
     carryingChicken2: false,
@@ -7377,7 +7422,8 @@ function loadFromSlot(n) {
     try { zeRestoreSaved(); initState(); Object.assign(G, JSON.parse(data.state)); } catch(e) { zeRestoreSaved(); initState(); }
     if (!G.weather) G.weather = 'rain';
     if (G.eldrinHp == null) G.eldrinHp = 100;
-    if (!G.slime) G.slime = { x: SLIME_HOME.x, y: SLIME_HOME.y, attackCooldown: 0, hopTick: 0 };
+    if (!G.slime)  G.slime  = { x: SLIME_HOME.x,  y: SLIME_HOME.y,  attackCooldown: 0, hopTick: 0 };
+    if (!G.slime2) G.slime2 = { x: SLIME2_HOME.x, y: SLIME2_HOME.y, attackCooldown: 0, hopTick: 35 };
     if (!G.noah) G.noah = { x: 500, y: 360, pose: 'front', walkTick: 0, walkFrame: 0, walkDir:{dx:0,dy:0}, walkTimer:0, bubbleTimer:0, bubbleText:'', autoSpeakTimer:260, blinkTimer: 340, blinkPhase: -1, blinkPhaseTick: 0, pushVx:0, pushVy:0 };
     if (G.noahDay2IntroSeen == null) G.noahDay2IntroSeen = false;
     if (G.noahLobbyTalking == null) G.noahLobbyTalking = false;
@@ -7828,6 +7874,24 @@ function zeUpdatePanel() {
   ).join('\n');
 }
 
+function zeCopyForClaude() {
+  const scenes = ['outside','lobby','room','kitchen','forest'];
+  let lines = [];
+  scenes.forEach(s => {
+    const z = localStorage.getItem('ze_zones_' + s);
+    const o = localStorage.getItem('ze_obs_' + s);
+    if (z) lines.push('zones_' + s + ': ' + z);
+    if (o) lines.push('obs_' + s + ': ' + o);
+  });
+  if (lines.length === 0) { alert('沒有已儲存的座標資料'); return; }
+  navigator.clipboard.writeText(lines.join('\n')).then(() => {
+    const btn = document.getElementById('ze-copy-claude-btn');
+    const orig = btn.textContent;
+    btn.textContent = '✓ 已複製！直接貼給Claude';
+    setTimeout(() => { btn.textContent = orig; }, 3000);
+  });
+}
+
 function zeCopyCoords() {
   if (zeRects.length === 0) { alert('尚未繪製任何區域'); return; }
   const text = zeRects.map(r =>
@@ -8031,6 +8095,8 @@ const SOE_PRESETS_BY_SCENE = {
     'bg_forest/bg_outside_grass04.png',
     'bg_forest/bg_outside_grass05.png',
     'bg_forest/bg_outside_grass06.png',
+    'bg_forest/mushroom.png',
+    'bg_forest/mushroom02.png',
   ],
   kitchen: [
     'bg_kitchen/bg_kitchen_stove',   // 特殊：燃燒動畫（雙幀）
