@@ -226,6 +226,7 @@ body {
   background: rgba(8,14,36,0.93); border: 1px solid #2a4e96;
   padding: 6px 12px; font-size: 10px; color: #98c0ee;
   white-space: nowrap; pointer-events: none; z-index: 25;
+  letter-spacing: 0;
   transform: translateX(-50%);
   border-radius: 10px;
   box-shadow: 0 0 8px rgba(40,80,180,0.25);
@@ -316,6 +317,24 @@ body {
 .fill-hunger  { background: linear-gradient(90deg, #607010, #a0b820); }
 .fill-fatigue { background: linear-gradient(90deg, #304060, #5070a0); }
 .stat-num { font-size: 12px; color: #d0d0c8; font-weight: 600; width: 24px; text-align: right; }
+
+#monster-slime {
+  display: none; position: absolute;
+  width: 28px; height: 22px;
+  z-index: 16; pointer-events: none;
+  transform-origin: center bottom;
+  animation: slimeHop 1.05s ease-in-out infinite;
+}
+#monster-slime img {
+  width: 100%; height: 100%;
+  object-fit: contain; image-rendering: pixelated;
+}
+@keyframes slimeHop {
+  0%, 100% { transform: translateY(0) scale(1, 1); }
+  35%      { transform: translateY(-5px) scale(0.96, 1.07); }
+  62%      { transform: translateY(0) scale(1.08, 0.88); }
+  78%      { transform: translateY(-1px) scale(0.98, 1.02); }
+}
 
 /* Resources */
 #res-block { background: #120e06; border: 1px solid #2e1e08; padding: 10px; }
@@ -1204,6 +1223,7 @@ body {
       <div id="cw-red-fairy"><img src="Fairy.png" alt="紅妖精"></div>
       <div id="cw-chicken"  style="display:none;position:absolute;z-index:12;pointer-events:none;overflow:hidden;"><img id="sp-chicken"  src="chicken.png" style="position:absolute;image-rendering:pixelated;"></div>
       <div id="cw-chicken2" style="display:none;position:absolute;z-index:12;pointer-events:none;overflow:hidden;"><img id="sp-chicken2" src="chicken.png" style="position:absolute;image-rendering:pixelated;"></div>
+      <div id="monster-slime"><img src="Monster_Slime.png" alt="史萊姆"></div>
       <!-- ══ 小鳥（直接放 scene-wrap，不受 outside-objects 疊層影響）══ -->
       <div id="outside-bird" style="display:none;position:absolute;left:300px;top:330px;width:20px;height:20px;z-index:14;pointer-events:none;overflow:hidden;"><div class="bird-hop" style="width:20px;height:20px;position:relative;"><img src="bg_outside/bird.png" style="position:absolute;top:0;left:0;height:20px;width:20px;image-rendering:pixelated;"></div></div>
       <div id="forest-bird" style="display:none;position:absolute;left:200px;top:300px;width:20px;height:20px;z-index:14;pointer-events:none;overflow:hidden;"><div class="bird-hop" style="width:20px;height:20px;position:relative;"><img src="bg_forest/bird.png" style="position:absolute;top:0;left:0;height:20px;width:20px;image-rendering:pixelated;"></div></div>
@@ -1467,9 +1487,9 @@ body {
           <div id="val-el-hunger" class="stat-num">80</div>
         </div>
         <div class="stat-row">
-          <div class="stat-lbl">😴 疲勞</div>
-          <div class="stat-bg"><div id="bar-fatigue" class="stat-fill fill-fatigue" style="width:0%"></div></div>
-          <div id="val-fatigue" class="stat-num">0</div>
+          <div class="stat-lbl">❤️ HP</div>
+          <div class="stat-bg"><div id="bar-fatigue" class="stat-fill fill-hp" style="width:100%"></div></div>
+          <div id="val-fatigue" class="stat-num">100</div>
         </div>
       </div>
 
@@ -1605,6 +1625,9 @@ body {
 const SCENE_W = 640, SCENE_H = 480;
 const CHAR_H  = 90;
 const SPEED   = 3;
+const SLIME_HOME = { x: 540, y: 180 };
+const SLIME_SPEED = 0.42;
+const SLIME_DAMAGE = 8;
 const DAY_HOURS = 13; // 07:00 ~ 22:00
 const HERB_HARVEST_MAX = 1800; // 30秒 × 60fps（保留相容）
 const FARM_STAGE_MAX        = 3600; // 每個生長階段 60秒
@@ -1805,7 +1828,7 @@ function updateBirds() {
   Object.entries(BIRD_SCENES).forEach(([scene, cfg]) => {
     const el = document.getElementById(cfg.id);
     if (!el) return;
-    if (G.scene !== scene) { el.style.display = 'none'; return; }
+    if (G.scene !== scene || G.timePeriod !== 'morning') { el.style.display = 'none'; return; }
     const s = _birdState[scene];
     if (s.gone) {
       el.style.display = 'none';
@@ -1919,6 +1942,54 @@ function updateBirds() {
     // 下次跳躍間隔（約 1～3 秒）
     s.pause = 60 + Math.floor(Math.random() * 120);
   });
+}
+
+function updateSlimeMonster() {
+  const el = document.getElementById('monster-slime');
+  if (!el || !G || !G.slime) return;
+  const active = G.scene === 'forest' && !G.sleepAnimActive;
+  if (!active) {
+    el.style.display = 'none';
+    return;
+  }
+
+  const slime = G.slime;
+  if (slime.x == null || slime.y == null) {
+    slime.x = SLIME_HOME.x;
+    slime.y = SLIME_HOME.y;
+  }
+  if (slime.attackCooldown > 0) slime.attackCooldown--;
+
+  if (!G.paused && !isDlgBlocking()) {
+    const dx = G.eldrin.x - slime.x;
+    const dy = G.eldrin.y - slime.y;
+    const dist = Math.hypot(dx, dy) || 1;
+    const nx = slime.x + (dx / dist) * SLIME_SPEED;
+    const ny = slime.y + (dy / dist) * SLIME_SPEED;
+    if (!isObstacleAt(nx, ny)) {
+      slime.x = nx;
+      slime.y = ny;
+    } else if (!isObstacleAt(nx, slime.y)) {
+      slime.x = nx;
+    } else if (!isObstacleAt(slime.x, ny)) {
+      slime.y = ny;
+    }
+
+    if (dist < 26 && slime.attackCooldown <= 0) {
+      chg('eldrinHp', -SLIME_DAMAGE);
+      slime.attackCooldown = 90;
+      const push = 18;
+      G.eldrin.x = Math.max(30, Math.min(SCENE_W - 30, G.eldrin.x + (dx / dist) * push));
+      G.eldrin.y = Math.max(CHAR_H - 40, Math.min(SCENE_H - 10, G.eldrin.y + (dy / dist) * push));
+      renderHUD();
+      toast(`史萊姆攻擊！HP -${SLIME_DAMAGE}`);
+    }
+  }
+
+  el.style.left = Math.round(slime.x - 14) + 'px';
+  el.style.top = Math.round(slime.y - 22) + 'px';
+  el.style.zIndex = String(Math.floor(slime.y));
+  el.style.display = 'block';
 }
 
 function setForestFishingVisual(state) {
@@ -2856,9 +2927,9 @@ const WINTER_TRADE = [
     req: () => G.money >= 80,
     run() { chg('money',-80); chg('curse',-8); renderHUD();
       story('溫特','……用的時候小心一點。這種東西，量用多了會有反效果。'); } },
-  { name:'魔物安撫香', desc:'讓附近魔物平靜的草藥，疲勞-10', cost: 30,
+  { name:'魔物安撫香', desc:'讓附近魔物平靜的草藥，HP+10', cost: 30,
     req: () => G.money >= 30,
-    run() { chg('money',-30); chg('fatigue',-10); renderHUD();
+    run() { chg('money',-30); chg('eldrinHp',10); renderHUD();
       story('溫特','……點著以後放在窗邊。不只對魔物，對人也有效。'); } },
 ];
 
@@ -3204,12 +3275,13 @@ function initState() {
     avarenScene: 'room',
     weather: 'rain',
     pain: 100, curse: 100, mood: 10, trust: 10,
-    avarenHunger: 70, eldrinHunger: 80, fatigue: 0,
+    avarenHunger: 70, eldrinHunger: 80, eldrinHp: 100, fatigue: 0,
     money: 15, food: 4, herb: 2, wood: 0, bug: 0, fish: 0, stone: 0, fairyItem: 0, whiteFlower: 0, apple: 0, vegetable: 0, egg: 0,
     nestEggs: 0,
     cookIngredient: null,
     fairy: { x: 320, y: 240, vx: 0.4, vy: 0.2 }, fairyCaught: false,
     redFairy: { x: 332, y: 362, vx: 0.25, vy: 0.15 },
+    slime: { x: SLIME_HOME.x, y: SLIME_HOME.y, attackCooldown: 0, hopTick: 0 },
     chicken: { x: 250, y: 180, walkTimer: 0, walkDir: {dx:0,dy:0}, walkFrame: 0, walkTick: 0, facing: 'right', pushVx:0, pushVy:0 },
     chicken2: { x: 480, y: 160, walkTimer: 40, walkDir: {dx:0,dy:0}, walkFrame: 2, walkTick: 0, facing: 'left', pushVx:0, pushVy:0 },
     carryingChicken2: false,
@@ -3327,7 +3399,8 @@ function renderHUD() {
     document.getElementById('val-' + id).textContent = v;
   };
   set('pain', G.pain); set('curse', G.curse); set('mood', G.mood); set('trust', G.trust);
-  set('av-hunger', G.avarenHunger); set('el-hunger', G.eldrinHunger); set('fatigue', G.fatigue);
+  if (G.eldrinHp == null) G.eldrinHp = 100;
+  set('av-hunger', G.avarenHunger); set('el-hunger', G.eldrinHunger); set('fatigue', G.eldrinHp);
   document.getElementById('r-coldPotion').textContent  = G.coldPotion;
   document.getElementById('r-cursePotion').textContent = G.cursePotion;
   document.getElementById('r-forgetPotion').textContent = G.forgetPotion;
@@ -3768,6 +3841,7 @@ function renderChars() {
   updateRoomDepth();
   updateKitchenDepth();
   updateBirds();
+  updateSlimeMonster();
 
   // ── Kettle carry icon (follows player) ──
   const kettleCarry = document.getElementById('kettle-carry-icon');
@@ -5312,7 +5386,7 @@ function doAction_GatherWood() {
   if (G.woodCooldown > 0) { warn('樹木還需要一點時間恢復，稍後再來。'); return; }
   if (G.actionSceneActive) { warn('正在進行其他行動。'); return; }
   if (G.gatherSearchActive) return;
-  if (G.fatigue >= 80) { warn('艾德林太疲勞了，需要休息才能工作。'); return; }
+  if ((G.eldrinHp ?? 100) <= 20) { warn('艾德林 HP 太低了，需要休息才能工作。'); return; }
   G.woodCooldown = 360;
   startGatherSearch('🌲 搜索中…', () => {
     const roll = Math.random();
@@ -5335,7 +5409,7 @@ function doAction_GatherFlower() {
   if (G.bloodMoon7Active) { warn('無法行動。'); return; }
   if (G.timePeriod !== 'morning') { timeWarn('搜尋花叢是白天的行動。'); return; }
   if (G.flowerCooldown > 0) { warn('花叢已經找過了，等一下再來。'); return; }
-  if (G.fatigue >= 80) { warn('艾德林太疲勞了，需要休息才能工作。'); return; }
+  if ((G.eldrinHp ?? 100) <= 20) { warn('艾德林 HP 太低了，需要休息才能工作。'); return; }
   if (G.actionSceneActive) { warn('正在進行其他行動。'); return; }
   if (G.gatherSearchActive) return;
   G.flowerCooldown = 360;
@@ -5360,7 +5434,7 @@ function doAction_GatherBush() {
   if (G.bloodMoon7Active) { warn('無法行動。'); return; }
   if (G.timePeriod !== 'morning') { timeWarn('搜尋草叢是早上的行動。'); return; }
   if (G.bushCooldown > 0) { warn('草叢已經翻找過了，等一下再來。'); return; }
-  if (G.fatigue >= 80) { warn('艾德林太疲勞了，需要休息才能工作。'); return; }
+  if ((G.eldrinHp ?? 100) <= 20) { warn('艾德林 HP 太低了，需要休息才能工作。'); return; }
   if (G.actionSceneActive) { warn('正在進行其他行動。'); return; }
   if (G.gatherSearchActive) return;
   G.bushCooldown = 360;
@@ -5438,7 +5512,7 @@ function doAction_ForestFish() {
   if (G.bloodMoon7Active) { warn('無法行動。'); return; }
   if (G.timePeriod !== 'morning') { timeWarn('釣魚是白天的行動。'); return; }
   if (G.forestFishFishing) { warn('魚竿已經下水了，請稍候。'); return; }
-  if (G.fatigue >= 80) { warn('艾德林太疲勞了，需要休息才能工作。'); return; }
+  if ((G.eldrinHp ?? 100) <= 20) { warn('艾德林 HP 太低了，需要休息才能工作。'); return; }
   G.forestFishFishing = true;
   G.forestFishTimer = FISH_MAX;
   setForestFishingVisual('fishing');
@@ -5462,7 +5536,7 @@ function doAction_Fish() {
   if (G.bloodMoon7Active) { warn('無法行動。'); return; }
   if (G.timePeriod !== 'morning') { timeWarn('釣魚是白天的行動。'); return; }
   if (G.fishFishing) { warn('魚竿已經下水了，請稍候。'); return; }
-  if (G.fatigue >= 80) { warn('艾德林太疲勞了，需要休息才能工作。'); return; }
+  if ((G.eldrinHp ?? 100) <= 20) { warn('艾德林 HP 太低了，需要休息才能工作。'); return; }
   G.fishFishing = true;
   G.fishTimer = FISH_MAX;
   setOutsideFishingVisual('fishing');
@@ -5477,7 +5551,7 @@ function doAction_GatherStone() {
   if (G.stoneCooldown > 0) { warn('這裡剛翻找過了，等一下再來。'); return; }
   if (G.actionSceneActive) { warn('正在進行其他行動。'); return; }
   if (G.gatherSearchActive) return;
-  if (G.fatigue >= 80) { warn('艾德林太疲勞了，需要休息才能工作。'); return; }
+  if ((G.eldrinHp ?? 100) <= 20) { warn('艾德林 HP 太低了，需要休息才能工作。'); return; }
   G.stoneCooldown = 360;
   startGatherSearch('🪨 搜索中…', () => {
     if (Math.random() < 0.60) {
@@ -5920,7 +5994,7 @@ function doAction_Cook() {
   if (G.soupReady) { warn('廚房裡已有一碗湯，先取用再烹飪。'); return; }
   if (G.carryingSoup) { warn('你手上還拿著湯，先處理完再說。'); return; }
   if (G.money < 3) { warn('金錢不足（需要3金）！'); return; }
-  if (G.fatigue >= 80) { warn('艾德林太疲勞了，需要休息才能工作。'); return; }
+  if ((G.eldrinHp ?? 100) <= 20) { warn('艾德林 HP 太低了，需要休息才能工作。'); return; }
   openCookSelectPanel();
 }
 
@@ -5942,7 +6016,7 @@ function doAction_Research() {
   }
   if (G.timePeriod !== 'evening') { timeWarn('研究藥水是晚上的行動。'); return; }
   if (G.researchActive) { warn('已經在研究藥水了，請稍候。'); return; }
-  if (G.fatigue >= 80) { warn('艾德林太疲勞了，需要休息才能工作。'); return; }
+  if ((G.eldrinHp ?? 100) <= 20) { warn('艾德林 HP 太低了，需要休息才能工作。'); return; }
   showActionMenu('選擇研究的藥水', [
     {
       name: '治療藥水', fx: '藥材-2  疼痛-5（使用後）',
@@ -5991,7 +6065,7 @@ function doAction_ReadBook() {
   if (G.paused || G.actionSceneActive) return;
   if (G.day4AvarenGone) { warn('阿瓦倫不在。'); return; }
   if (G.timePeriod !== 'evening') { timeWarn('讀書是晚上的行動。'); return; }
-  if (G.fatigue >= 80) { warn('艾德林太疲勞了，需要休息才能工作。'); return; }
+  if ((G.eldrinHp ?? 100) <= 20) { warn('艾德林 HP 太低了，需要休息才能工作。'); return; }
   startActionScene([
     { speaker: '旁白',   text: pick(NARR_READ) },
     { speaker: '阿瓦倫', text: pick(AVAREN_READ_DLG) },
@@ -6021,8 +6095,9 @@ function startActionScene(lines, max, onDone) {
   document.getElementById('action-scene-overlay').style.display = 'flex';
 }
 
-const NPC_SPEAKERS = new Set(['旁白', '艾德林', '阿瓦倫', '雷德', '溫特', '諾亞']);
+const NPC_SPEAKERS = new Set(['旁白', '你', '艾德林', '阿瓦倫', '雷德', '溫特', '諾亞']);
 const SPEAKER_AVATARS = {
+  '你': 'eldrin_avatar.png',
   '艾德林': 'eldrin_avatar.png',
   '阿瓦倫': 'avaren_avatar.png',
   '雷德': 'red_avatar.png',
@@ -6030,6 +6105,7 @@ const SPEAKER_AVATARS = {
   '諾亞': 'noah_avatar.png',
 };
 const SPEAKER_TEXT_CLASS = {
+  '你': 'asc-text-eldrin',
   '艾德林': 'asc-text-eldrin',
   '阿瓦倫': 'asc-text-avaren',
   '雷德': 'asc-text-red',
@@ -6050,7 +6126,7 @@ function applySpeakerPortrait(speaker, portraitEl) {
 function setSpeakerLayout(speaker) {
   const overlay = document.getElementById('action-scene-overlay');
   if (!overlay) return;
-  overlay.classList.toggle('speaker-right', speaker === '艾德林');
+  overlay.classList.toggle('speaker-right', speaker === '艾德林' || speaker === '你');
 }
 // 判斷對話框是否在阻擋模式（actionScene 或手動旁白顯示中）
 function isDlgBlocking() {
@@ -6334,6 +6410,7 @@ function chg(stat, d) {
   else if (stat==='curse')       G.curse       = clamp(G.curse+d,0,100);
   else if (stat==='avarenHunger') G.avarenHunger = clamp(G.avarenHunger+d,0,100);
   else if (stat==='eldrinHunger') G.eldrinHunger = clamp(G.eldrinHunger+d,0,100);
+  else if (stat==='eldrinHp')     G.eldrinHp     = clamp((G.eldrinHp ?? 100)+d,0,100);
   else if (stat==='fatigue')     G.fatigue     = clamp(G.fatigue+d,0,100);
   else if (stat==='mood')        G.mood        = clamp(G.mood+d,0,100);
   else if (stat==='trust')       G.trust       = clamp(G.trust+d,0,100);
@@ -6822,9 +6899,9 @@ function endDay() {
   }
   // 飢餓歸零的後果
   if (G.avarenHunger <= 0) chg('pain', +10);
-  if (G.eldrinHunger <= 0) chg('fatigue', +15);
-  // 每晚睡眠恢復疲勞
-  chg('fatigue', -20);
+  if (G.eldrinHunger <= 0) chg('eldrinHp', -15);
+  // 每晚睡眠恢復 HP
+  chg('eldrinHp', 20);
 
   // Random curse removal at end of day
   const removed = Math.floor(Math.random() * 6) + 1; // 1-6
@@ -7040,7 +7117,7 @@ function endGame(type) {
     <div class="end-stat">詛咒剩餘 <span>${G.curse}</span></div>
     <div class="end-stat">知識程度 <span>${G.trust}</span></div>
     <div class="end-stat">心情（好感）<span>${G.mood}</span></div>
-    <div class="end-stat">艾德林疲勞 <span>${G.fatigue}</span></div>
+    <div class="end-stat">艾德林 HP <span>${G.eldrinHp ?? 100}</span></div>
   `;
 }
 
@@ -7199,6 +7276,8 @@ function loadFromSlot(n) {
   setTimeout(() => {
     try { zeRestoreSaved(); initState(); Object.assign(G, JSON.parse(data.state)); } catch(e) { zeRestoreSaved(); initState(); }
     if (!G.weather) G.weather = 'rain';
+    if (G.eldrinHp == null) G.eldrinHp = 100;
+    if (!G.slime) G.slime = { x: SLIME_HOME.x, y: SLIME_HOME.y, attackCooldown: 0, hopTick: 0 };
     if (!G.noah) G.noah = { x: 500, y: 360, pose: 'front', walkTick: 0, walkFrame: 0, walkDir:{dx:0,dy:0}, walkTimer:0, bubbleTimer:0, bubbleText:'', autoSpeakTimer:260, blinkTimer: 340, blinkPhase: -1, blinkPhaseTick: 0, pushVx:0, pushVy:0 };
     if (G.noahDay2IntroSeen == null) G.noahDay2IntroSeen = false;
     if (G.noahLobbyTalking == null) G.noahLobbyTalking = false;
