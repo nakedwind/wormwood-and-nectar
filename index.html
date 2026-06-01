@@ -187,6 +187,25 @@ body {
   image-rendering: pixelated; display: block;
 }
 #cw-eldrin { z-index: 13; }
+/* 被攻擊紅色閃爍（直接套在 img 上，不影響透明區域）*/
+@keyframes charHit {
+  0%   { filter: sepia(1) hue-rotate(300deg); }
+  100% { filter: none; }
+}
+#cw-eldrin.char-hit img {
+  animation: charHit 0.45s ease-out forwards;
+}
+/* 低血量邊框光暈 */
+@keyframes vignetteFlash {
+  0%, 100% { opacity: 0.25; }
+  50%       { opacity: 0.85; }
+}
+#hp-vignette {
+  display: none; position: fixed; inset: 0; z-index: 19;
+  pointer-events: none;
+  box-shadow: inset 0 0 100px 50px rgba(200, 0, 0, 0.6);
+  animation: vignetteFlash 1.2s ease-in-out infinite;
+}
 #cw-avaren { z-index: 9; }
 #cw-red    { z-index: 8; }
 #cw-winter { z-index: 8; }
@@ -1617,7 +1636,15 @@ body {
 
 </div><!-- #app -->
 <div id="night-fade"></div>
+<div id="hp-vignette"></div>
 <div id="sleep-dim" style="display:none;position:fixed;inset:0;background:#000;z-index:20;opacity:0;pointer-events:none;"></div>
+<div id="death-overlay" style="display:none;position:fixed;inset:0;z-index:110;background:transparent;cursor:pointer;pointer-events:auto;">
+  <div id="death-text-box" style="position:absolute;bottom:calc(15% + 100px);left:50%;transform:translateX(-50%);width:680px;max-width:calc(100% - 48px);background:rgba(8,5,2,0.88);border:1px solid #4a3214;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,0.35);padding:18px 48px 18px 20px;min-height:70px;">
+    <div style="font-size:13px;color:#a0a098;letter-spacing:3px;margin-bottom:8px;">― 旁白 ―</div>
+    <div id="death-text-content" style="font-size:16px;color:#d4d4cc;line-height:1.7;font-weight:500;white-space:pre-line;"></div>
+    <div style="position:absolute;bottom:10px;right:16px;color:#c0a060;font-size:16px;animation:arrowBlink 1.2s ease-in-out infinite;">▼</div>
+  </div>
+</div>
 <script>
 // ══════════════════════════════════════
 //  CONSTANTS
@@ -1947,7 +1974,7 @@ function updateBirds() {
 function updateSlimeMonster() {
   const el = document.getElementById('monster-slime');
   if (!el || !G || !G.slime) return;
-  const active = G.scene === 'forest' && !G.sleepAnimActive;
+  const active = G.scene === 'forest' && G.timePeriod === 'morning' && !G.sleepAnimActive;
   if (!active) {
     el.style.display = 'none';
     return;
@@ -1982,7 +2009,12 @@ function updateSlimeMonster() {
       G.eldrin.x = Math.max(30, Math.min(SCENE_W - 30, G.eldrin.x + (dx / dist) * push));
       G.eldrin.y = Math.max(CHAR_H - 40, Math.min(SCENE_H - 10, G.eldrin.y + (dy / dist) * push));
       renderHUD();
+      // 攻擊音效 + 角色紅色閃爍
+      SFX.hit();
+      const cwEl = document.getElementById('cw-eldrin');
+      if (cwEl) { cwEl.classList.remove('char-hit'); void cwEl.offsetWidth; cwEl.classList.add('char-hit'); }
       toast(`史萊姆攻擊！HP -${SLIME_DAMAGE}`);
+      if ((G.eldrinHp ?? 100) <= 0) { triggerEldrinDeath(); return; }
     }
   }
 
@@ -3843,6 +3875,10 @@ function renderChars() {
   updateBirds();
   updateSlimeMonster();
 
+  // ── 低血量邊框光暈 ──
+  const vignette = document.getElementById('hp-vignette');
+  if (vignette) vignette.style.display = ((G.eldrinHp ?? 100) < 20) ? 'block' : 'none';
+
   // ── Kettle carry icon (follows player) ──
   const kettleCarry = document.getElementById('kettle-carry-icon');
   if (G.carryingKettle && kettleCarry) {
@@ -5057,6 +5093,19 @@ document.addEventListener('keydown', e => {
   if (document.getElementById('title-screen').style.display !== 'none') {
     const hasContinue = document.getElementById('title-continue-btn').style.display !== 'none';
     titleScreenKeyNav(e, hasContinue);
+    return;
+  }
+
+  // 結局畫面：空白鍵 / Enter 再玩一次
+  if (document.getElementById('ending-screen').style.display === 'flex') {
+    if (e.key === ' ' || e.key === 'Enter') { restartGame(); return; }
+    return;
+  }
+
+  // 死亡旁白 overlay：空白鍵 / Enter 推進
+  const deathOverlay = document.getElementById('death-overlay');
+  if (deathOverlay && deathOverlay.style.display !== 'none') {
+    if (e.key === ' ' || e.key === 'Enter') { deathOverlay.click(); return; }
     return;
   }
 
@@ -7090,13 +7139,64 @@ const ENDINGS = {
     desc:`你沒能撐住。\n\n阿瓦倫的健康在某個夜晚急遽崩潰，\n詛咒趁虛而入，將他完全吞噬。\n那間破舊的小屋，從此空蕩蕩的。` },
   avaren_death: { cls:'end-bad', title:'血月之後',
     desc:`血月夜的折磨太深重了。\n\n清晨，當你走進房間，阿瓦倫已經沒有了呼吸。\n\n黑色的詛咒紋路蔓延遍了他的全身，靜止了下來。\n他的臉很平靜——比活著的任何時候都還要平靜。\n\n你來得太晚了。\n\n「……對不起。」\n\n這兩個字，你說了太多遍，\n每一遍都沒有用。` },
+  eldrin_death: { cls:'end-bad', title:'倒下',
+    desc:`你沒能撐住。\n\n地面的泥土變得很近，視野一點一點模糊。\n黑暗裡，你想起的最後一件事——\n是阿瓦倫還在小屋裡等你回去。\n\n但你的身體，再也站不起來了。\n\n沒有人告訴阿瓦倫，那天以後艾德林去了哪裡。\n那扇門，就這樣永遠地關上了。` },
 };
 
+let _eldrinDeathTriggered = false;
+function triggerEldrinDeath() {
+  if (_eldrinDeathTriggered) return;
+  _eldrinDeathTriggered = true;
+  G.paused = true;
+  switchBGM('bgm-sad');
+  // 立即關掉低血量光暈
+  const vig = document.getElementById('hp-vignette');
+  if (vig) vig.style.display = 'none';
+
+  // 先黑屏（night-fade），完全黑後在黑幕上顯示旁白
+  const fade = document.getElementById('night-fade');
+  fade.style.transition = 'none';
+  fade.style.opacity = '0';
+  fade.style.display = 'block';
+  fade.getBoundingClientRect();
+  fade.style.transition = 'opacity 1.8s ease';
+  fade.style.opacity = '1';
+
+  setTimeout(() => {
+    // 黑幕完成，在上方顯示旁白（death-overlay z-index:110）
+    const lines = [
+      '你的腳軟了。',
+      '視野開始模糊，地面的泥土變得很近。',
+      '……阿瓦倫還在等你回去。',
+      '但你的身體，再也撐不住了。',
+    ];
+    const overlay = document.getElementById('death-overlay');
+    const content = document.getElementById('death-text-content');
+    let idx = 0;
+    content.textContent = lines[0];
+    overlay.style.display = 'block';
+    overlay.onclick = () => {
+      idx++;
+      if (idx < lines.length) {
+        content.textContent = lines[idx];
+      } else {
+        overlay.style.display = 'none';
+        overlay.onclick = null;
+        fade.style.display = 'none';
+        endGame('eldrin_death');
+      }
+    };
+  }, 1800);
+}
+
 function endGame(type) {
+  const vigEl = document.getElementById('hp-vignette');
+  if (vigEl) vigEl.style.display = 'none';
   cancelAnimationFrame(raf);
   let ending;
   if (type === 'crisis') ending = ENDINGS.crisis;
   else if (type === 'avaren_death') ending = ENDINGS.avaren_death;
+  else if (type === 'eldrin_death') ending = ENDINGS.eldrin_death;
   else if (G.curse > 75)                          ending = ENDINGS.bad_curse;
   else if (G.curse < 30)                          ending = ENDINGS.best;
   else if (G.mood > 70 && G.trust < 30)           ending = ENDINGS.regret;
@@ -7407,6 +7507,8 @@ const SFX = (() => {
     footstep() { tone(90, 'sine', 0.22, 0, 0.06); tone(55, 'sine', 0.12, 0, 0.04); },
     // 碰撞彈開：輕巧短促撞擊
     bump()     { tone(300, 'sine', 0.09, 0, 0.04); tone(200, 'sine', 0.06, 0.03, 0.05); },
+    // 受到攻擊：低沉衝擊音
+    hit()      { tone(160, 'sawtooth', 0.18, 0, 0.03); tone(90, 'square', 0.12, 0.02, 0.10); },
   };
 })();
 
