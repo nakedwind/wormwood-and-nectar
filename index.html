@@ -285,7 +285,7 @@ body {
   white-space: nowrap; pointer-events: none; z-index: 25;
   transform: translateX(-50%);
   border-radius: 10px;
-  box-shadow: 0 0 8px rgba(120,160,110,0.25);
+  box-shadow: none;
 }
 #noah-bubble::after {
   content: ''; position: absolute; bottom: -6px; left: 50%;
@@ -756,6 +756,16 @@ body {
 #action-scene-overlay.speaker-right {
   flex-direction: row-reverse;
   padding: 10px 12px 10px 34px;
+}
+#action-scene-overlay.black-narration {
+  position: fixed;
+  left: 50%;
+  bottom: 364px;
+  z-index: 900;
+  width: 520px;
+  max-width: calc(100vw - 48px);
+  transform: translateX(-50%) scale(1.5);
+  transform-origin: bottom center;
 }
 #action-scene-overlay.speaker-right #asc-arrow {
   right: auto;
@@ -2297,6 +2307,7 @@ const AVAREN_SPRITE_DEFAULT = 'character_avaren.png';
 const AVAREN_SPRITE_DAY1 = 'character_avaren_day1.png';
 const AVAREN_SPRITE_DAY1_BANDAGING = 'character_avaren_day1Bandaging.png';
 const AVAREN_SPRITE_DAY2 = 'character_avaren_day2.png';
+const AVAREN_SPRITE_CURSE02 = 'character_avaren_curse02.png';
 
 let chickenInfo = null;
 
@@ -2363,7 +2374,9 @@ function setCharacterSprite(name, src) {
 
 function updateAvarenSpriteForState() {
   let src = AVAREN_SPRITE_DEFAULT;
-  if (G && G.day === 1 && isAvarenUnconscious()) {
+  if (G && G.bloodMoon7Active) {
+    src = AVAREN_SPRITE_CURSE02;
+  } else if (G && G.day === 1 && isAvarenUnconscious()) {
     src = G.avarenDay1Bandaged ? AVAREN_SPRITE_DAY1_BANDAGING : AVAREN_SPRITE_DAY1;
   } else if (G && isAvarenBedRest()) {
     src = AVAREN_SPRITE_DAY2;
@@ -2561,6 +2574,13 @@ function getActiveZone() {
 function isNearAvaren() {
   return G.avarenScene === G.scene &&
     Math.hypot(G.eldrin.x - G.avaren.x, G.eldrin.y - G.avaren.y) < 60;
+}
+
+function canInteractBloodMoonAvaren() {
+  return G.bloodMoon7Active &&
+    G.scene === 'forest' &&
+    G.avarenScene === 'forest' &&
+    G.bloodMoon7MemoryIndex >= BLOOD_MOON_MEMORIES.length;
 }
 
 // ══════════════════════════════════════
@@ -2921,7 +2941,7 @@ function isNearReid() {
 }
 
 function isNearWinter() {
-  if (G.scene !== 'forest' || G.day % 2 !== 0 || G.timePeriod !== 'morning') return false;
+  if (G.scene !== 'forest' || !isWinterDay() || G.timePeriod !== 'morning') return false;
   return Math.hypot(G.winter.x - G.eldrin.x, G.winter.y - G.eldrin.y) < 75;
 }
 
@@ -3570,6 +3590,10 @@ function isReidDay(day = G.day) {
   return day === 3 || day === 5 || day === 7 || day === 9;
 }
 
+function isWinterDay(day = G.day) {
+  return day === 4 || day === 6 || day === 8;
+}
+
 function isAvarenUnconscious() {
   return G && !G.avarenAwake && !G.day4AvarenGone && !G.bloodMoon7Active;
 }
@@ -3605,6 +3629,81 @@ function markAvarenDay1Bandaged() {
     G.avarenDay1Bandaged = true;
     updateAvarenSpriteForState();
   }
+}
+
+function showBlackNarration(lines, onDone) {
+  const fade = document.getElementById('night-fade');
+  const overlay = document.getElementById('action-scene-overlay');
+  storyQueue.length = 0;
+  if (_storyAutoTimer) { clearTimeout(_storyAutoTimer); _storyAutoTimer = null; }
+  overlay.style.display = 'none';
+  if (overlay.parentElement !== document.body) document.body.appendChild(overlay);
+  overlay.classList.add('black-narration');
+  fade.style.transition = 'none';
+  fade.style.opacity = '1';
+  fade.style.display = 'block';
+  G.paused = true;
+  lines.forEach(text => story('旁白', text));
+  storyThen(onDone);
+}
+
+function enterDay8MorningAfterForget() {
+  const fade = document.getElementById('night-fade');
+  const overlay = document.getElementById('action-scene-overlay');
+  storyQueue.length = 0;
+  if (_storyAutoTimer) { clearTimeout(_storyAutoTimer); _storyAutoTimer = null; }
+  overlay.style.display = 'none';
+  overlay.classList.remove('black-narration');
+  const sceneWrap = document.getElementById('scene-wrap');
+  if (sceneWrap && overlay.parentElement !== sceneWrap) sceneWrap.appendChild(overlay);
+  G.day = 8;
+  G.timePeriod = 'morning';
+  G.periodTransitioned = false;
+  G.dayEndTriggered = false;
+  G.dayStartMs = performance.now();
+  G.bloodMoon7Active = false;
+  G.bloodMoon7Calmed = false;
+  G.bloodMoon7Failed = false;
+  G.bloodMoon7Happened = false;
+  G.bloodMoon7PlayerVisited = false;
+  G.bloodMoon7MemoryIndex = 0;
+  G.bloodMoon7MemoryTimer = 800;
+  G.nestEggs = 2;
+  G.forestMushrooms = { 1: false, 2: false, 3: false, 4: false };
+  G.avarenScene = 'room';
+  G.avaren.x = 190; G.avaren.y = 220; G.avaren.pose = 'front'; G.avaren.sleepEye = 0;
+  G.eldrin.x = 260; G.eldrin.y = 380; G.eldrin.pose = 'front'; G.eldrin.sleepEye = 0;
+  G.scene = 'room';
+  G.sceneCooldown = 90;
+  G.redDelivered = false;
+  G.winter.x = 300; G.winter.y = 120; G.winter.walkDir = {dx:0,dy:0}; G.winter.walkTimer = 60;
+  G.winter.bubbleTimer = 0; G.winter.autoSpeakTimer = 320;
+  G.noah.x = 500; G.noah.y = 360; G.noah.pose = 'front'; G.noah.walkDir = {dx:0,dy:0}; G.noah.walkTimer = 0;
+  G.noah.bubbleTimer = 0; G.noah.autoSpeakTimer = 260;
+  document.getElementById('blood-moon-7-overlay').style.display = 'none';
+  switchBGM('bgm');
+  renderHUD();
+  renderScene();
+  renderChars();
+  G.paused = false;
+  fade.style.display = 'block';
+  fade.style.opacity = '1';
+  fade.getBoundingClientRect();
+  fade.style.transition = 'opacity 1.8s ease';
+  fade.style.opacity = '0';
+  setTimeout(() => { fade.style.display = 'none'; }, 1800);
+  storyAuto('旁白', '第 8 天開始了。清晨七點，新的一天。');
+  if (raf) cancelAnimationFrame(raf);
+  raf = requestAnimationFrame(gameLoop);
+}
+
+function finishForgetMagicNight() {
+  showBlackNarration([
+    '黑暗壓了下來。\n血月的光被樹影切碎，最後連碎片也沉進了夜裡。',
+    '你抱著失去意識的阿瓦倫，很久都沒有鬆手。\n他的呼吸很輕，卻還在。',
+    '詛咒的聲音像退潮一樣遠去。\n留下來的只有疲憊、疼痛，還有一片安靜得近乎空白的夜。',
+    '你不知道他會忘記多少。\n也不知道自己留下了多少。\n\n但至少，這個夜晚結束了。'
+  ], enterDay8MorningAfterForget);
 }
 
 function triggerAvarenDay2WakeIntro() {
@@ -3987,8 +4086,9 @@ function renderChars() {
   updateAvarenSpriteForState();
   const avVisible = G.avarenScene === G.scene || G.sleepAnimActive;
   if (avVisible && spriteInfo.avaren) {
-    const avSleep = av.sleepEye > 0 && av.pose === 'front';
-    const avBlink = !avSleep && av.blinkPhase >= 0 && av.pose === 'front';
+    const avCanBlink = !G.bloodMoon7Active;
+    const avSleep = avCanBlink && av.sleepEye > 0 && av.pose === 'front';
+    const avBlink = avCanBlink && !avSleep && av.blinkPhase >= 0 && av.pose === 'front';
     const avPose  = (avSleep || avBlink) ? 'blink' : av.pose;
     const avFrame = avSleep ? av.sleepEye : avBlink ? BLINK_SEQ[av.blinkPhase].row : av.walkFrame;
     const dw = setPose('avaren', avPose, avFrame, dispH);
@@ -4049,7 +4149,7 @@ function renderChars() {
   // ── Winter ──
   const wt = G.winter;
   const cwWt = document.getElementById('cw-winter');
-  const wtVisible = G.scene === 'forest' && G.day % 2 === 0 && G.timePeriod === 'morning';
+  const wtVisible = G.scene === 'forest' && isWinterDay() && G.timePeriod === 'morning';
   if (wtVisible && spriteInfo.winter) {
     const wtBlink = wt.blinkPhase >= 0 && wt.pose === 'front';
     const wtPose  = wtBlink ? 'blink' : wt.pose;
@@ -4455,7 +4555,7 @@ function updateHints() {
     hi.textContent = '抱起雞';
     hi.style.display = 'block'; hs.style.display = 'none'; return;
   }
-  if (near && !zone && (!G.bloodMoon7Active || G.avarenScene === 'forest')) {
+  if (near && !zone && (!G.bloodMoon7Active || canInteractBloodMoonAvaren())) {
     hi.textContent = G.bloodMoon7Active ? '忘卻藥水' : '阿瓦倫';
     hi.style.display = 'block';
     hs.style.display = 'none';
@@ -4507,6 +4607,8 @@ function gameLoop() {
         G.avarenScene = 'room';
         switchBGM('bgm-bloodmoon');
         G.avaren.x = 190; G.avaren.y = 220;
+        G.avaren.sleepEye = 0;
+        G.avaren.blinkPhase = -1;
         G.curse = clamp(Math.floor(G.curse * 2), 0, 100);
         G.pain  = clamp(Math.floor(G.pain  * 2), 0, 100);
         renderHUD();
@@ -4637,7 +4739,7 @@ function gameLoop() {
     if (!isAvarenUnconscious() && !isAvarenBedRest() && G.avarenScene === G.scene && !G.carryingChicken) tryPush(G.avaren);
     if (G.scene === 'outside' && isReidDay() && G.timePeriod === 'morning')        tryPush(G.red);
     if (G.scene === 'outside' && G.day === 2 && G.timePeriod === 'morning')        tryPush(G.noah);
-    if (G.scene === 'forest' && G.day % 2 === 0 && G.timePeriod === 'morning')    tryPush(G.winter);
+    if (G.scene === 'forest' && isWinterDay() && G.timePeriod === 'morning')       tryPush(G.winter);
     if (G.scene === 'forest' && !G.carryingChicken)                               tryPush(G.chicken);
     if (G.scene === 'forest' && !G.carryingChicken2)                              tryPush(G.chicken2);
   }
@@ -4700,7 +4802,7 @@ function gameLoop() {
 
     if (G.avarenScene === 'forest') {
       // 森林：阿瓦倫站在湖邊凝視，不亂走
-      av.x = 336; av.y = 255; av.pose = 'front';
+      av.x = 321; av.y = 255; av.pose = 'front';
       av.walkFrame = 0;
       // 紅妖精緩慢飄動
       const rf = G.redFairy;
@@ -4752,7 +4854,7 @@ function gameLoop() {
     // 記憶閃回（觸發場景轉移）
     if (!G.paused && G.bloodMoon7PlayerVisited) {
       G.bloodMoon7MemoryTimer--;
-      if (G.bloodMoon7MemoryTimer <= 0 && G.bloodMoon7MemoryIndex < BLOOD_MOON_MEMORIES.length) {
+      if (G.bloodMoon7MemoryTimer <= 0 && (G.bloodMoon7MemoryIndex < 3 || (G.bloodMoon7MemoryIndex === 3 && G.scene === 'forest' && G.avarenScene === 'forest'))) {
         const mem = BLOOD_MOON_MEMORIES[G.bloodMoon7MemoryIndex];
         const idx = G.bloodMoon7MemoryIndex;
         G.bloodMoon7MemoryIndex++;
@@ -4769,10 +4871,11 @@ function gameLoop() {
             G.avaren.wanderTimer = 0;
             story('旁白', '阿瓦倫衝出了小屋，跑進了夜色之中……');
           } else if (idx === 2) {
-            G.avarenScene = 'forest';
-            G.avaren.x = 320; G.avaren.y = 200;
-            G.avaren.wanderTimer = 0;
-            story('旁白', '阿瓦倫消失在森林深處……');
+            G.avarenScene = 'gone';
+            renderChars();
+            story('旁白', '阿瓦倫的身影忽然被夜色吞沒。\n你只看見他踉蹌著越過樹影，消失在森林的方向。');
+          } else if (idx === 3) {
+            story('旁白', '湖面泛著血色的月光。\n阿瓦倫站在岸邊，像是聽見了什麼不存在的呼喚。');
           }
         });
       }
@@ -5096,8 +5199,8 @@ function gameLoop() {
     }
   }
 
-  // 溫特隨機走動（偶數天，森林，白天）
-  if (G.scene === 'forest' && G.day % 2 === 0 && G.timePeriod === 'morning') {
+  // 溫特隨機走動（第4、6、8天，森林，白天）
+  if (G.scene === 'forest' && isWinterDay() && G.timePeriod === 'morning') {
     const wt = G.winter;
     if (isDlgBlocking()) {
       // 對話中：面向艾德林，不移動
@@ -5663,9 +5766,9 @@ document.getElementById('cw-noah').addEventListener('click', () => {
 //  AVAREN INTERACTION MENU
 // ══════════════════════════════════════
 function openAvarenMenu() {
-  // 血月夜：只有第四段（阿瓦倫在森林）才能互動
+  // 血月夜：第4個記憶事件結束後，才能在森林湖邊互動
   if (G.bloodMoon7Active) {
-    if (G.avarenScene !== 'forest') return;
+    if (!canInteractBloodMoonAvaren()) return;
     SFX.interact();
     showActionMenu('阿瓦倫——', [
     {
@@ -5704,11 +5807,8 @@ function openAvarenMenu() {
           G.bloodMoon7Active = false;
           switchBGM('bgm');
           document.getElementById('blood-moon-7-overlay').style.display = 'none';
-          G.avarenScene = 'room';
-          G.avaren.x = 190; G.avaren.y = 300; G.avaren.pose = 'front';
           renderHUD();
-          changeScene('room', {x: 260, y: 380});
-          setTimeout(() => endDay(), 1200);
+          finishForgetMagicNight();
         };
         showEvent('🌀', '——遺忘——',
           '你拿出魔法走近他——\n\n「……別……別靠近我！」\n\n阿瓦倫猛地轉身，雙手用力推開你。\n你踉蹌著往後退了幾步。',
@@ -7029,7 +7129,7 @@ function changeScene(to, startOverride) {
   // 全黑後更新場景和座標
   setTimeout(() => {
     const fromScene = G.scene;
-    const avarenWouldFollow = !isAvarenUnconscious() && G.mood > 50 && G.avarenScene === fromScene && !(G.day === 7 && G.timePeriod === 'morning') && !G.day4AvarenGone;
+    const avarenWouldFollow = !G.bloodMoon7Active && !isAvarenUnconscious() && G.mood > 50 && G.avarenScene === fromScene && !(G.day === 7 && G.timePeriod === 'morning') && !G.day4AvarenGone;
     const startPos = {
       outside: { x:295, y:460 },
       lobby:   { x:240, y:380 },
@@ -7047,7 +7147,7 @@ function changeScene(to, startOverride) {
     const pos = startOverride || startPos[to];
     G.eldrin.x = pos.x;
     G.eldrin.y = pos.y;
-    if (!isAvarenUnconscious() && G.mood > 50 && to !== 'forest' && !(G.day === 7 && G.timePeriod === 'morning') && !G.day4AvarenGone) {
+    if (!G.bloodMoon7Active && !isAvarenUnconscious() && G.mood > 50 && to !== 'forest' && !(G.day === 7 && G.timePeriod === 'morning') && !G.day4AvarenGone) {
       G.avarenScene = to;
       // 阿瓦倫跟著切換場景時，出現在入口旁（艾德林起始點附近）
       const avStartPos = {
@@ -7095,6 +7195,16 @@ function changeScene(to, startOverride) {
           setTimeout(() => {
             storyAuto('旁白', '你四處找了找，都沒有找到阿瓦倫的身影。');
           }, 400);
+        }
+        if (to === 'forest' && G.bloodMoon7Active && G.bloodMoon7MemoryIndex === 3 && G.avarenScene === 'gone') {
+          G.avarenScene = 'forest';
+          G.avaren.x = 321;
+          G.avaren.y = 255;
+          G.avaren.wanderTimer = 0;
+          G.bloodMoon7MemoryTimer = Math.floor(Math.random() * 500) + 600;
+          renderScene();
+          renderHUD();
+          renderChars();
         }
       }, 400);
     }, 200);
@@ -7368,6 +7478,8 @@ function jumpToBloodMoon() {
   G.bloodMoon7Happened = true;
   G.avarenScene = 'room';
   G.avaren.x = 190; G.avaren.y = 220;
+  G.avaren.sleepEye = 0;
+  G.avaren.blinkPhase = -1;
   G.curse = clamp(Math.floor(G.curse * 2), 0, 100);
   G.pain  = clamp(Math.floor(G.pain  * 2), 0, 100);
   renderHUD();
@@ -7400,6 +7512,8 @@ function skipToEvening() {
       G.avarenScene = 'room';
       switchBGM('bgm-bloodmoon');
       G.avaren.x = 190; G.avaren.y = 220;
+      G.avaren.sleepEye = 0;
+      G.avaren.blinkPhase = -1;
       G.curse = clamp(Math.floor(G.curse * 2), 0, 100);
       G.pain  = clamp(Math.floor(G.pain  * 2), 0, 100);
       renderHUD();
