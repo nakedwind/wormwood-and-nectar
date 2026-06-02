@@ -926,6 +926,20 @@ body {
   100% { opacity: 0; transform: translateY(-210px) translateX(var(--fly-dx, 40px)); }
 }
 
+/* ── 藥水浮動發光 ── */
+#lobby-potion {
+  animation: potionFloat 2.4s ease-in-out infinite, potionGlow 2.4s ease-in-out infinite;
+  z-index: 590 !important;
+}
+@keyframes potionFloat {
+  0%,100% { transform: translateY(0px); }
+  50%      { transform: translateY(-4px); }
+}
+@keyframes potionGlow {
+  0%,100% { filter: drop-shadow(0 0 3px rgba(200,180,255,0.4)); }
+  50%      { filter: drop-shadow(0 0 8px rgba(200,180,255,0.9)); }
+}
+
 @keyframes fishingReadyBob {
   0%,100% { transform: scaleY(1); }
   45%      { transform: scaleY(0.94); }
@@ -1414,6 +1428,7 @@ body {
         <div id="lobby-night-glow-1" class="lobby-night-glow"></div>
         <div id="lobby-night-glow-2" class="lobby-night-glow"></div>
         <div id="lobby-counter" style="position:absolute;left:-12px;top:152px;width:410px;height:138px;z-index:10;pointer-events:none;"><img src="bg_lobby/bg_lobby_counter.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+        <div id="lobby-potion" style="display:none;position:absolute;left:126px;top:172px;width:45px;height:43px;z-index:12;pointer-events:none;"><img id="lobby-potion-img" src="Medicine_blue.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
         <div id="lobby-chair"   style="position:absolute;left:6px;top:270px;width:74px;height:135px;z-index:10;pointer-events:none;"><img src="bg_lobby/bg_lobby_chair.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
         <div id="lobby-table"   style="position:absolute;left:2px;top:352px;width:85px;height:136px;z-index:10;pointer-events:none;"><img src="bg_lobby/bg_lobby_table.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
       </div>
@@ -2443,6 +2458,8 @@ const ZONES = {
       fn(){ changeScene('outside', {x:319, y:265}); } },
     { id:'to_kitchen', x1:361, y1:99,  x2:523, y2:161, sceneHint:'→ 前往廚房（布簾）', isScene:true,
       fn(){ changeScene('kitchen'); } },
+    { id:'lobby_potion', x1:110, y1:165, x2:185, y2:225,
+      fn(){ doAction_Research(); } },
     { id:'cabinet',    x1:8,   y1:91,  x2:323, y2:211, interactHint:'研究',
       fn(){ doAction_Research(); } },
   ],
@@ -3996,13 +4013,24 @@ function renderScene() {
   document.getElementById('farm-growth-wrap').style.display =
     (G.scene === 'outside' && G.farmStage >= 2 && G.farmStage < 5) ? 'block' : 'none';
   document.getElementById('herb-harvest-wrap').style.display =
-    (G.scene === 'outside' && (G.herbHarvesting || G.herbReady)) ? 'block' : 'none';
+    (G.scene === 'outside' && G.timePeriod === 'morning' && (G.herbHarvesting || G.herbReady)) ? 'block' : 'none';
   document.getElementById('fish-scene-wrap').style.display =
     (G.scene === 'outside' && (G.fishFishing || G.fishReady)) ? 'block' : 'none';
   document.getElementById('fish-forest-wrap').style.display =
     (G.scene === 'forest' && (G.forestFishFishing || G.forestFishReady)) ? 'block' : 'none';
   document.getElementById('research-scene-wrap').style.display =
     (G.scene === 'lobby' && (G.researchActive || G.researchReady)) ? 'block' : 'none';
+  const potionEl2  = document.getElementById('lobby-potion');
+  const potionImg2 = document.getElementById('lobby-potion-img');
+  if (potionEl2 && potionImg2) {
+    if (G.scene === 'lobby' && G.researchReady) {
+      const src2 = G.researchType === 'cold' ? 'Medicine_red.png' : G.researchType === 'forget' ? 'Medicine_green.png' : 'Medicine_blue.png';
+      potionImg2.src = src2;
+      potionEl2.style.display = 'block';
+    } else {
+      potionEl2.style.display = 'none';
+    }
+  }
   document.getElementById('cook-scene-wrap').style.display =
     (G.scene === 'kitchen' && G.cookActive) ? 'block' : 'none';
   if (G.scene === 'kitchen' && G.cookActive) startSteam();
@@ -4027,6 +4055,7 @@ function renderScene() {
     const folder = G.timePeriod === 'evening' ? 'bg_lobby - night/' : 'bg_lobby/';
     document.querySelectorAll('#lobby-objects img').forEach(img => {
       const src = img.getAttribute('src');
+      if (!src.startsWith('bg_lobby')) return; // 藥水等非場景圖片不切換
       const filename = src.replace('bg_lobby - night/', '').replace('bg_lobby/', '');
       img.setAttribute('src', folder + filename);
     });
@@ -4549,7 +4578,7 @@ function updateHints() {
     hi.textContent = '🎣 垂釣中，請稍候…';
     hi.style.display = 'block'; hs.style.display = 'none'; return;
   }
-  if (zone && zone.id === 'cabinet' && G.researchReady) {
+  if (zone && (zone.id === 'lobby_potion' || zone.id === 'cabinet') && G.researchReady) {
     const rLabel = G.researchType === 'cold' ? '治療藥水（疼痛-5）' : G.researchType === 'curse' ? '解咒藥水（詛咒-5）' : '忘卻藥水（血月夜使用）';
     hi.textContent = `取回${rLabel}`;
     hi.style.display = 'block'; hs.style.display = 'none'; return;
@@ -5537,6 +5566,13 @@ function gameLoop() {
       G.researchReady = true;
       document.getElementById('research-scene-label').textContent = '🔬 研究完成！回來取回藥水';
       document.getElementById('research-scene-bar').style.background = 'linear-gradient(90deg,#a07020,#e0b030)';
+      const potionEl  = document.getElementById('lobby-potion');
+      const potionImg = document.getElementById('lobby-potion-img');
+      if (potionEl && potionImg) {
+        const src = G.researchType === 'cold' ? 'Medicine_red.png' : G.researchType === 'forget' ? 'Medicine_green.png' : 'Medicine_blue.png';
+        potionImg.src = src;
+        potionEl.style.display = 'block';
+      }
       toast('🔬 藥水完成！回書櫃取回');
     }
   }
@@ -5600,8 +5636,10 @@ function gameLoop() {
         if (farmBar) farmBar.style.width = '100%';
         if (farmBar) farmBar.style.background = 'linear-gradient(90deg,#a07020,#e0b030)';
         if (farmLabel) farmLabel.textContent = '🌿成熟期(可收成!)';
-        G.bubbleText = '……（藥草田好像收成了。）';
-        G.bubbleTimer = 220;
+        const hBar = document.getElementById('herb-harvest-bar');
+        const hLabel = document.querySelector('#herb-harvest-wrap .herb-harvest-label');
+        if (hBar) { hBar.style.width = '100%'; hBar.style.background = 'linear-gradient(90deg,#a07020,#e0b030)'; }
+        if (hLabel) hLabel.textContent = '🌿 藥草已就緒！';
         if (G.scene === 'outside') toast('🌿 農田收成了！回藥草田收取');
       } else {
         if (farmBar) farmBar.style.background = 'linear-gradient(90deg,#206020,#60c040)';
@@ -6166,6 +6204,7 @@ function waterFarm() {
 }
 
 function doAction_Gather() {
+  if (G.timePeriod !== 'morning') { timeWarn('農田的作業是白天的行動。'); return; }
   // 第5階段：收成
   if (G.farmStage >= 5 && G.herbReady) {
     SFX.collect();
@@ -6174,6 +6213,10 @@ function doAction_Gather() {
     G.farmGrowthTimer = 0;
     G.farmWatered = false;
     setOutsideFarmVisual();
+    const hBar2 = document.getElementById('herb-harvest-bar');
+    const hLabel2 = document.querySelector('#herb-harvest-wrap .herb-harvest-label');
+    if (hBar2) { hBar2.style.width = '0%'; hBar2.style.background = 'linear-gradient(90deg,#206020,#60c040)'; }
+    if (hLabel2) hLabel2.textContent = '🌿 藥草採收中…';
     chg('herb', 2); chg('vegetable', 2); renderHUD();
     toast('🌿 藥材 +2　🥬 蔬菜 +2');
     return;
@@ -6726,6 +6769,8 @@ function doAction_Research() {
     const label = G.researchType === 'cold' ? '治療藥水' : '解咒藥水';
     G.researchReady = false;
     document.getElementById('research-scene-wrap').style.display = 'none';
+    const potionEl = document.getElementById('lobby-potion');
+    if (potionEl) potionEl.style.display = 'none';
     document.getElementById('research-scene-label').textContent = '🔬 研究藥水中…';
     document.getElementById('research-scene-bar').style.background = 'linear-gradient(90deg,#402080,#8040e0)';
     if (G.researchType === 'cold') chg('coldPotion', 1);
