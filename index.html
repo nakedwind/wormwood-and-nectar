@@ -187,14 +187,6 @@ body {
   image-rendering: pixelated; display: block;
 }
 #cw-eldrin { z-index: 13; }
-/* 被攻擊紅色閃爍（直接套在 img 上，不影響透明區域）*/
-@keyframes charHit {
-  0%   { filter: sepia(1) hue-rotate(300deg); }
-  100% { filter: none; }
-}
-#cw-eldrin.char-hit img {
-  animation: charHit 0.45s ease-out forwards;
-}
 /* 低血量邊框光暈 */
 @keyframes vignetteFlash {
   0%, 100% { opacity: 0.25; }
@@ -349,11 +341,18 @@ body {
   width: 100%; height: 100%;
   object-fit: contain; image-rendering: pixelated;
 }
+#cw-eldrin.damage-flash {
+  animation: eldrinDamageFlash 0.26s ease-out;
+}
 @keyframes slimeHop {
   0%, 100% { transform: translateY(0) scale(1, 1); }
   35%      { transform: translateY(-14px) scale(0.96, 1.07); }
   62%      { transform: translateY(0) scale(1.08, 0.88); }
   78%      { transform: translateY(-1px) scale(0.98, 1.02); }
+}
+@keyframes eldrinDamageFlash {
+  0%   { filter: sepia(1) saturate(3.2) hue-rotate(-38deg) brightness(1.28); }
+  100% { filter: none; }
 }
 
 /* Resources */
@@ -873,11 +872,12 @@ body {
 }
 /* ── 小鳥跳躍動畫 ── */
 .bird-hop.scene-bird-hop {
-  animation: birdHop 0.22s ease-out;
+  animation: birdHop 0.34s ease-out;
 }
 @keyframes birdHop {
   0%   { transform: translateY(0px); }
-  35%  { transform: translateY(-4px); }
+  18%  { transform: translateY(-2px); }
+  48%  { transform: translateY(-6px); }
   100% { transform: translateY(0px); }
 }
 /* ── 小鳥飛走動畫 ── */
@@ -1049,6 +1049,108 @@ body {
 
 /* ── 火爐精靈圖動畫 ── */
 #kitchen-stove { }
+#kitchen-stove-glow {
+  display: none;
+  position: absolute;
+  left: 145px; top: 160px;
+  width: 74px; height: 74px;
+  z-index: 590;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 48% 54%,
+      rgba(255, 190, 86, 0.36) 0%,
+      rgba(255, 126, 42, 0.22) 33%,
+      rgba(255, 86, 24, 0.10) 56%,
+      rgba(255, 86, 24, 0) 78%);
+  filter: blur(7px);
+  mix-blend-mode: plus-lighter;
+  animation: stoveGlowPulse 2.8s ease-in-out infinite;
+}
+#kitchen-candle-glow {
+  display: none;
+  position: absolute;
+  left: 462px; top: 334px;
+  width: 52px; height: 48px;
+  z-index: 590;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 53% 48%,
+      rgba(255, 225, 126, 0.48) 0%,
+      rgba(255, 176, 66, 0.26) 31%,
+      rgba(255, 126, 34, 0.12) 55%,
+      rgba(255, 126, 34, 0) 78%);
+  filter: blur(5px);
+  mix-blend-mode: plus-lighter;
+  animation: candleGlowPulse 2.4s ease-in-out infinite;
+}
+@keyframes stoveGlowPulse {
+  0%, 100% { opacity: 0.72; transform: scale(0.98); }
+  45%      { opacity: 1; transform: scale(1.04); }
+  70%      { opacity: 0.8; transform: scale(1.01); }
+}
+@keyframes candleGlowPulse {
+  0%, 100% { opacity: 0.68; transform: scale(0.97); }
+  50%      { opacity: 1; transform: scale(1.06); }
+}
+#forest-lamp-glow {
+  display: none;
+  position: absolute;
+  left: 335px; top: 176px;
+  width: 48px; height: 51px;
+  z-index: 229;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 50%,
+      rgba(255, 232, 140, 0.58) 0%,
+      rgba(255, 190, 76, 0.34) 34%,
+      rgba(255, 156, 48, 0.13) 60%,
+      rgba(255, 156, 48, 0) 82%);
+  filter: blur(4px);
+  mix-blend-mode: plus-lighter;
+  animation: forestLampGlowPulse 2.7s ease-in-out infinite;
+}
+@keyframes forestLampGlowPulse {
+  0%, 100% { opacity: 0.72; transform: scale(0.96); }
+  48%      { opacity: 1; transform: scale(1.08); }
+}
+.lobby-night-glow {
+  display: none;
+  position: absolute;
+  z-index: 480;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 50%,
+      rgba(255, 232, 140, 0.58) 0%,
+      rgba(255, 190, 76, 0.34) 34%,
+      rgba(255, 156, 48, 0.13) 60%,
+      rgba(255, 156, 48, 0) 82%);
+  filter: blur(4px);
+  mix-blend-mode: plus-lighter;
+  animation: forestLampGlowPulse 2.7s ease-in-out infinite;
+}
+#lobby-night-glow-1 {
+  left: 323px; top: 156px;
+  width: 48px; height: 44px;
+}
+#lobby-night-glow-2 {
+  left: 56px; top: 154px;
+  width: 75px; height: 70px;
+}
+#room-night-glow-1 {
+  left: 469px; top: 172px;
+  width: 74px; height: 58px;
+}
+.mushroom-blue-glow {
+  animation: mushroomBlueGlow 3.4s ease-in-out infinite;
+}
+@keyframes mushroomBlueGlow {
+  0%, 100% {
+    filter: brightness(1.12) contrast(1.04);
+  }
+  50% {
+    filter: brightness(1.34) contrast(1.08);
+  }
+}
 
 /* ── 烹飪蒸氣 ── */
 @keyframes steamRise {
@@ -1281,12 +1383,15 @@ body {
       </div>
       <!-- ══ 大廳場景物件層 ══ -->
       <div id="lobby-objects" style="display:none;">
+        <div id="lobby-night-glow-1" class="lobby-night-glow"></div>
+        <div id="lobby-night-glow-2" class="lobby-night-glow"></div>
         <div id="lobby-counter" style="position:absolute;left:-12px;top:152px;width:410px;height:138px;z-index:10;pointer-events:none;"><img src="bg_lobby/bg_lobby_counter.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
         <div id="lobby-chair"   style="position:absolute;left:6px;top:270px;width:74px;height:135px;z-index:10;pointer-events:none;"><img src="bg_lobby/bg_lobby_chair.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
         <div id="lobby-table"   style="position:absolute;left:2px;top:352px;width:85px;height:136px;z-index:10;pointer-events:none;"><img src="bg_lobby/bg_lobby_table.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
       </div>
       <!-- ══ 房間場景物件層 ══ -->
       <div id="room-objects" style="display:none;">
+        <div id="room-night-glow-1" class="lobby-night-glow"></div>
         <div id="room-dhair02"    style="position:absolute;left:275px;top:150px;width:69px;height:51px;z-index:10;pointer-events:none;"><img src="bg_room/bg_room_dhair02.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
 
         <div id="room-bedside"    style="position:absolute;left:480px;top:189px;width:62px;height:89px;z-index:10;pointer-events:none;"><img src="bg_room/bg_room_bedside table.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
@@ -1295,6 +1400,7 @@ body {
       </div>
       <!-- ══ 森林場景物件 ══ -->
       <div id="forest-objects" style="display:none;">
+        <div id="forest-lamp-glow"></div>
         <div id="forest-light-1" style="position:absolute;left:360px;top:175px;width:28px;height:53px;z-index:228;pointer-events:none;"><img src="bg_forest/bg_forest_light.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
         <div id="forest-fishing-1" style="position:absolute;left:261px;top:208px;width:38px;height:78px;z-index:278;pointer-events:none;"><img src="bg_forest/bg_forest_fishing02.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
         <div id="forest-grass-1" style="position:absolute;left:139px;top:26px;width:49px;height:41px;z-index:67;pointer-events:none;"><img src="bg_forest/bg_outside_grass01.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
@@ -1310,7 +1416,7 @@ body {
         <div id="forest-tree-5" style="position:absolute;left:544px;top:167px;width:99px;height:123px;z-index:275;pointer-events:none;"><img src="bg_forest/bg_outside_tree02.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
         <div id="forest-tree-6" style="position:absolute;left:580px;top:208px;width:99px;height:123px;z-index:316;pointer-events:none;"><img src="bg_forest/bg_outside_tree02.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
         <div id="forest-nest" style="position:absolute;left:493px;top:125px;width:49px;height:36px;z-index:1;pointer-events:none;"><img src="bg_forest/bg_forest_Nest.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
-        <div id="forest-mushroom-1" style="position:absolute;left:43px;top:145px;width:14px;height:15px;z-index:10;pointer-events:none;"><img src="bg_forest/mushroom.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+        <div id="forest-mushroom-1" style="position:absolute;left:43px;top:145px;width:14px;height:15px;z-index:270;pointer-events:none;"><img src="bg_forest/mushroom.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
         <div id="forest-mushroom-2" style="position:absolute;left:75px;top:178px;width:20px;height:21px;z-index:10;pointer-events:none;"><img src="bg_forest/mushroom02.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
         <div id="forest-mushroom-3" style="position:absolute;left:565px;top:44px;width:20px;height:21px;z-index:10;pointer-events:none;"><img src="bg_forest/mushroom02.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
         <div id="forest-mushroom-4" style="position:absolute;left:584px;top:286px;width:14px;height:15px;z-index:10;pointer-events:none;"><img src="bg_forest/mushroom.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
@@ -1319,6 +1425,8 @@ body {
       <!-- ══ 廚房場景物件層 ══ -->
       <div id="kitchen-objects" style="display:none;">
         <!-- 火爐：8幀精靈圖動畫 -->
+        <div id="kitchen-stove-glow"></div>
+        <div id="kitchen-candle-glow"></div>
         <div id="kitchen-stove" style="position:absolute;left:92px;top:35px;width:179px;height:220px;z-index:10;pointer-events:none;"></div>
         <div id="kitchen-table" style="position:absolute;left:426px;top:333px;width:120px;height:103px;z-index:12;pointer-events:none;"><img src="bg_kitchen/bg_kitchen_table.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
 
@@ -1533,6 +1641,7 @@ body {
           <div class="res-item">🌸 白藥花 <b id="r-white-flower">0</b></div>
           <div class="res-item">🍎 蘋果 <b id="r-apple">0</b></div>
           <div class="res-item">🥦 蔬菜 <b id="r-vegetable">0</b></div>
+          <div class="res-item">🍄 蘑菇 <b id="r-mushroom">0</b></div>
           <div class="res-item">🥚 鳥蛋 <b id="r-egg">0</b></div>
           <div class="res-item">💊 治療藥水 <b id="r-coldPotion">0</b></div>
           <div class="res-item">🔮 解咒藥水 <b id="r-cursePotion">0</b></div>
@@ -1805,7 +1914,7 @@ const _birdFlyIntervals = {};
   Object.entries(BIRD_SCENES).forEach(([scene, cfg]) => {
     const mx = cfg.initX !== undefined ? cfg.initX : (cfg.x1 + cfg.x2) / 2;
     const my = cfg.initY !== undefined ? cfg.initY : (cfg.y1 + cfg.y2) / 2;
-    _birdState[scene] = { x: mx, y: my, pause: 60 + Math.floor(Math.random() * 80), facing: 1, gone: false, flyingAway: false, respawnTimer: 0 };
+    _birdState[scene] = { x: mx, y: my, tx: null, ty: null, hopTick: Math.floor(Math.random()*40), pause: 60 + Math.floor(Math.random() * 80), facing: 1, gone: false, flyingAway: false, respawnTimer: 0 };
     const el = document.getElementById(cfg.id);
     if (el) {
       el.style.left    = Math.round(mx - 10) + 'px';
@@ -1874,6 +1983,7 @@ function updateBirds() {
           const mx = cfg.initX !== undefined ? cfg.initX : (cfg.x1 + cfg.x2) / 2;
           const my = cfg.initY !== undefined ? cfg.initY : (cfg.y1 + cfg.y2) / 2;
           s.x = mx; s.y = my;
+          s.tx = null; s.ty = null; s.hopTick = 0;
           s.gone = false; s.flyingAway = false;
           s.pause = 60 + Math.floor(Math.random() * 60);
           s.facing = 1;
@@ -1911,52 +2021,65 @@ function updateBirds() {
     const playerDist = Math.hypot(G.eldrin.x - s.x, G.eldrin.y - s.y);
     const FLY_RANGE = 55;
     if (playerDist < FLY_RANGE) { triggerBirdFlyAway(scene); return; }
+    s.hopTick = (s.hopTick || 0) + 1;
+
     const FLEE_RANGE = 100;
     if (playerDist < FLEE_RANGE) {
-      if (s.pause > 5) s.pause = 5; // 縮短停頓，快速反應
-      if (s.pause > 0) { s.pause--; return; }
       // 往玩家反方向逃
       const fx = s.x - G.eldrin.x;
       const fy = s.y - G.eldrin.y;
       const fd = Math.hypot(fx, fy) || 1;
-      const fleeDist = 10 + Math.random() * 7;
-      let nx = s.x + (fx / fd) * fleeDist;
-      let ny = s.y + (fy / fd) * fleeDist;
+      const fleeSpeed = 1.15;
+      let nx = s.x + (fx / fd) * fleeSpeed;
+      let ny = s.y + (fy / fd) * fleeSpeed;
       nx = Math.max(cfg.x1, Math.min(cfg.x2, nx));
       ny = Math.max(cfg.y1, Math.min(cfg.y2, ny));
       if (!isObstacleAt(nx, ny)) { s.x = nx; s.y = ny; }
+      s.tx = null; s.ty = null;
       s.facing = fx > 0 ? 1 : -1;
-      s.pause = 8;
+      s.pause = 18;
       el.style.left = Math.round(s.x - 10) + 'px';
       el.style.top  = Math.round(s.y - 10) + 'px';
       el.style.transform = '';
       const birdImgF = el.querySelector('img');
       if (birdImgF) birdImgF.style.transform = s.facing > 0 ? 'scaleX(-1)' : 'scaleX(1)';
       const hopElF = el.querySelector('.bird-hop');
-      if (hopElF) { hopElF.classList.remove('scene-bird-hop'); void hopElF.offsetWidth; hopElF.classList.add('scene-bird-hop'); }
+      if (hopElF && s.hopTick % 22 === 0) { hopElF.classList.remove('scene-bird-hop'); void hopElF.offsetWidth; hopElF.classList.add('scene-bird-hop'); }
       return;
     }
 
     if (s.pause > 0) { s.pause--; return; }
 
-    // 隨機挑一個目標點（嘗試最多5次找不在障礙的位置）
-    let tx = s.x, ty = s.y;
-    for (let i = 0; i < 5; i++) {
-      const cx = cfg.x1 + Math.random() * (cfg.x2 - cfg.x1);
-      const cy = cfg.y1 + Math.random() * (cfg.y2 - cfg.y1);
-      if (!isObstacleAt(cx, cy)) { tx = cx; ty = cy; break; }
+    // 隨機挑一個附近目標點，之後每幀慢慢走過去，避免看起來像瞬移。
+    if (s.tx == null || s.ty == null) {
+      for (let i = 0; i < 8; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const dist = 28 + Math.random() * 52;
+        const cx = Math.max(cfg.x1, Math.min(cfg.x2, s.x + Math.cos(angle) * dist));
+        const cy = Math.max(cfg.y1, Math.min(cfg.y2, s.y + Math.sin(angle) * dist));
+        if (!isObstacleAt(cx, cy)) { s.tx = cx; s.ty = cy; break; }
+      }
+      if (s.tx == null || s.ty == null) {
+        s.pause = 45 + Math.floor(Math.random() * 60);
+        return;
+      }
     }
 
-    // 每次只跳一小步
-    const dx = tx - s.x;
-    const dy = ty - s.y;
+    const dx = s.tx - s.x;
+    const dy = s.ty - s.y;
     const dist = Math.hypot(dx, dy);
-    const hopDist = 8 + Math.random() * 12;
-    if (dist > 4) {
-      const r = Math.min(hopDist / dist, 1);
+    const moveSpeed = 0.52;
+    if (dist > 1.5) {
+      const r = Math.min(moveSpeed / dist, 1);
       s.x += dx * r;
       s.y += dy * r;
       s.facing = dx > 0 ? 1 : -1;
+    } else {
+      s.x = s.tx;
+      s.y = s.ty;
+      s.tx = null;
+      s.ty = null;
+      s.pause = 55 + Math.floor(Math.random() * 110);
     }
 
     // 更新位置與方向
@@ -1968,14 +2091,11 @@ function updateBirds() {
 
     // 觸發跳躍動畫（套在內層 .bird-hop，不影響翻轉）
     const hopEl = el.querySelector('.bird-hop');
-    if (hopEl) {
+    if (hopEl && s.hopTick % 22 === 0) {
       hopEl.classList.remove('scene-bird-hop');
       void hopEl.offsetWidth;
       hopEl.classList.add('scene-bird-hop');
     }
-
-    // 下次跳躍間隔（約 1～3 秒）
-    s.pause = 60 + Math.floor(Math.random() * 120);
   });
 }
 
@@ -2014,6 +2134,7 @@ function updateOneSlime(slime, elId, homeX, homeY) {
     if (dist < 26 && slime.attackCooldown <= 0) {
       chg('eldrinHp', -SLIME_DAMAGE);
       slime.attackCooldown = 90;
+      triggerEldrinDamageFlash();
       const push = 18;
       const minY = CHAR_H - 40;
       let px = Math.max(30, Math.min(SCENE_W - 30, G.eldrin.x + (dx / dist) * push));
@@ -2031,8 +2152,7 @@ function updateOneSlime(slime, elId, homeX, homeY) {
       G.eldrin.x = px; G.eldrin.y = py;
       renderHUD();
       SFX.hit();
-      const cwEl = document.getElementById('cw-eldrin');
-      if (cwEl) { cwEl.classList.remove('char-hit'); void cwEl.offsetWidth; cwEl.classList.add('char-hit'); }
+
       toast(`史萊姆攻擊！HP -${SLIME_DAMAGE}`);
       if ((G.eldrinHp ?? 100) <= 0) { triggerEldrinDeath(); return; }
     }
@@ -2044,10 +2164,50 @@ function updateOneSlime(slime, elId, homeX, homeY) {
   el.style.display = 'block';
 }
 
+function triggerEldrinDamageFlash() {
+  const el = document.getElementById('cw-eldrin');
+  if (!el) return;
+  el.classList.remove('damage-flash');
+  void el.offsetWidth;
+  el.classList.add('damage-flash');
+  setTimeout(() => el.classList.remove('damage-flash'), 380);
+}
+
 function updateSlimeMonster() {
   if (!G || !G.slime) return;
   updateOneSlime(G.slime,  'monster-slime',  SLIME_HOME.x,  SLIME_HOME.y);
   updateOneSlime(G.slime2, 'monster-slime2', SLIME2_HOME.x, SLIME2_HOME.y);
+}
+
+function resetForestMushrooms() {
+  G.forestMushrooms = { 1: true, 2: true, 3: true, 4: true };
+}
+
+function isForestMushroomAvailable(id) {
+  return G.scene === 'forest'
+    && G.timePeriod === 'evening'
+    && !!G.forestMushrooms
+    && G.forestMushrooms[id] !== false;
+}
+
+function updateForestMushroomVisuals() {
+  for (let i = 1; i <= 4; i++) {
+    const el = document.getElementById('forest-mushroom-' + i);
+    if (!el) continue;
+    const available = isForestMushroomAvailable(i);
+    el.style.display = available ? 'block' : 'none';
+    const img = el.querySelector('img');
+    if (img) img.classList.toggle('mushroom-blue-glow', available);
+  }
+}
+
+function doAction_CollectMushroom(id) {
+  if (!isForestMushroomAvailable(id)) return;
+  G.forestMushrooms[id] = false;
+  chg('mushroom', 1);
+  renderHUD();
+  updateForestMushroomVisuals();
+  toast('🍄 蘑菇 +1');
 }
 
 function setForestFishingVisual(state) {
@@ -2194,20 +2354,20 @@ function sceneCharH() {
 // ══════════════════════════════════════
 const ZONES = {
   outside: [
-    { id:'to_lobby',  x1:290, y1:208, x2:356, y2:252, sceneHint:'→ 進入小屋', isScene:true,
+    { id:'to_lobby',  x1:288, y1:208, x2:354, y2:252, sceneHint:'→ 進入小屋', isScene:true,
       fn(){ changeScene('lobby'); } },
-    { id:'farm',      x1:15,  y1:231, x2:181, y2:316, interactHint:'種植',
+    { id:'farm',      x1:16,  y1:234, x2:182, y2:319, interactHint:'種植',
       fn(){ doAction_Gather(); } },
-    { id:'gate',      x1:257, y1:425, x2:400, y2:467, interactHint:'柵欄門',
+    { id:'gate',      x1:257, y1:407, x2:400, y2:467, interactHint:'柵欄門',
       fn(){ openGateMenu(); } },
     { id:'pond',  x1:447, y1:14,  x2:604, y2:122, interactHint:'垂釣', fn(){ doAction_Fish(); } },
-    { id:'stone', x1:570, y1:258, x2:639, y2:346, interactHint:'礦石',                  fn(){ doAction_GatherStone(); } },
+    { id:'stone', x1:551, y1:235, x2:639, y2:346, interactHint:'礦石', fn(){ doAction_GatherStone(); } },
     { id:'tree1', x1:6,   y1:7,   x2:186, y2:119, interactHint:'樹木', fn(){ doAction_GatherWood(); } },
     { id:'tree2', x1:8,   y1:406, x2:58,  y2:469, interactHint:'樹木', fn(){ doAction_GatherWood(); } },
     { id:'tree3', x1:142, y1:413, x2:197, y2:469, interactHint:'樹木', fn(){ doAction_GatherWood(); } },
     { id:'tree4', x1:503, y1:408, x2:554, y2:471, interactHint:'樹木', fn(){ doAction_GatherWood(); } },
     { id:'tree5', x1:582, y1:373, x2:631, y2:429, interactHint:'樹木', fn(){ doAction_GatherWood(); } },
-    { id:'tree6', x1:583, y1:105, x2:627, y2:154, interactHint:'樹木', fn(){ doAction_GatherWood(); } },
+    { id:'tree6', x1:587, y1:86,  x2:631, y2:135, interactHint:'樹木', fn(){ doAction_GatherWood(); } },
     { id:'bush1', x1:20,  y1:137, x2:153, y2:203, interactHint:'草叢', fn(){ doAction_GatherBush(); } },
     { id:'bush2', x1:440, y1:191, x2:528, y2:284, interactHint:'草叢', fn(){ doAction_GatherBush(); } },
   ],
@@ -2232,6 +2392,10 @@ const ZONES = {
       fn(){ changeScene('outside', {x:325, y:426}); } },
     { id:'forest_pond',   x1:247, y1:232, x2:345, y2:288, interactHint:'垂釣',
       fn(){ doAction_ForestFish(); } },
+    { id:'forest_mushroom_1', x1:35,  y1:137, x2:65,  y2:168, interactHint:'蘑菇', condition(){ return isForestMushroomAvailable(1); }, fn(){ doAction_CollectMushroom(1); } },
+    { id:'forest_mushroom_2', x1:67,  y1:170, x2:104, y2:207, interactHint:'蘑菇', condition(){ return isForestMushroomAvailable(2); }, fn(){ doAction_CollectMushroom(2); } },
+    { id:'forest_mushroom_3', x1:557, y1:36,  x2:594, y2:73,  interactHint:'蘑菇', condition(){ return isForestMushroomAvailable(3); }, fn(){ doAction_CollectMushroom(3); } },
+    { id:'forest_mushroom_4', x1:576, y1:278, x2:606, y2:309, interactHint:'蘑菇', condition(){ return isForestMushroomAvailable(4); }, fn(){ doAction_CollectMushroom(4); } },
     { id:'forest_tree1',  x1:5,   y1:8,   x2:105, y2:119, interactHint:'樹木', fn(){ doAction_GatherWood(); } },
     { id:'forest_tree2',  x1:5,   y1:361, x2:69,  y2:477, interactHint:'樹木', fn(){ doAction_GatherWood(); } },
     { id:'forest_tree3',  x1:556, y1:195, x2:637, y2:318, interactHint:'樹木', fn(){ doAction_GatherWood(); } },
@@ -2274,21 +2438,13 @@ const OBSTACLES = {
   ],
   outside: [
     { x1:193, y1:99,  x2:449, y2:233 },
-    { x1:446, y1:1,   x2:600, y2:73 },
-    { x1:552, y1:1,   x2:639, y2:57 },
+    { x1:448, y1:1,   x2:600, y2:113 },
+    { x1:552, y1:1,   x2:639, y2:57  },
+    { x1:465, y1:61,  x2:606, y2:113 },
     { x1:6,   y1:208, x2:128, y2:241 },
     { x1:6,   y1:312, x2:128, y2:343 },
     { x1:0,   y1:448, x2:636, y2:477 },
     { x1:594, y1:277, x2:638, y2:341 },
-    { x1:594, y1:277, x2:638, y2:341 },
-    { x1:3,   y1:104, x2:36,  y2:148 },
-    { x1:107, y1:103, x2:143, y2:145 },
-    { x1:462, y1:62,  x2:590, y2:111 },
-    { x1:561, y1:209, x2:601, y2:238 },
-    { x1:589, y1:96,  x2:631, y2:146 },
-    { x1:595, y1:398, x2:634, y2:441 },
-    { x1:52,  y1:63,  x2:83,  y2:103 },
-    { x1:149, y1:52,  x2:179, y2:89 },
   ],
   room: [
     { x1:414, y1:2,   x2:537, y2:191 },   // 書架牆角
@@ -2325,13 +2481,14 @@ const OBSTACLES = {
     { x1:94,  y1:175, x2:127, y2:207 },
     { x1:16,  y1:131, x2:46,  y2:165 },
     { x1:11,  y1:239, x2:43,  y2:278 },
-    { x1:514, y1:70,  x2:545, y2:107 },
-    { x1:74,  y1:55,  x2:104, y2:92 },
+    { x1:512, y1:70,  x2:543, y2:107 },
+    { x1:74,  y1:55,  x2:104, y2:92  },
     { x1:608, y1:299, x2:642, y2:340 },
     { x1:577, y1:263, x2:610, y2:299 },
-    { x1:6,   y1:6,   x2:61,  y2:71 },
-    { x1:469, y1:10,  x2:502, y2:55 },
-    { x1:553, y1:8,   x2:589, y2:62 },
+    { x1:6,   y1:6,   x2:61,  y2:71  },
+    { x1:469, y1:10,  x2:502, y2:55  },
+    { x1:555, y1:5,   x2:591, y2:59  },
+    { x1:610, y1:9,   x2:646, y2:191 },
   ],
 };
 
@@ -2346,6 +2503,7 @@ function getActiveZone() {
   const el = G.eldrin;
   const zones = ZONES[G.scene] || [];
   for (const z of zones) {
+    if (z.condition && !z.condition()) continue;
     if (el.x >= z.x1 && el.x <= z.x2 && el.y >= z.y1 && el.y <= z.y2) return z;
   }
   return null;
@@ -3352,8 +3510,9 @@ function initState() {
     weather: 'rain',
     pain: 100, curse: 100, mood: 10, trust: 10,
     avarenHunger: 70, eldrinHunger: 80, eldrinHp: 100, fatigue: 0,
-    money: 15, food: 4, herb: 2, wood: 0, bug: 0, fish: 0, stone: 0, fairyItem: 0, whiteFlower: 0, apple: 0, vegetable: 0, egg: 0,
+    money: 15, food: 4, herb: 2, wood: 0, bug: 0, fish: 0, stone: 0, fairyItem: 0, whiteFlower: 0, apple: 0, vegetable: 0, mushroom: 0, egg: 0,
     nestEggs: 0,
+    forestMushrooms: { 1: false, 2: false, 3: false, 4: false },
     cookIngredient: null,
     fairy: { x: 320, y: 240, vx: 0.4, vy: 0.2 }, fairyCaught: false,
     redFairy: { x: 332, y: 362, vx: 0.25, vy: 0.15 },
@@ -3378,6 +3537,7 @@ function initState() {
     noahLobbyTalking: false,
     noahLakeMoonSeen: false,
     noahLakeTalking: false,
+    avarenWaitedForForest: false,
     cookActive: false, cookTimer: 0, cookReady: false, soupReady: false, carryingSoup: false, soupIsSpecial: false, cookSelectedKeys: [],
     actionSceneActive: false, actionSceneTimer: 0, actionSceneMax: 0,
     actionSceneOnDone: null, actionSceneLines: [], actionSceneLineIdx: 0, actionSceneLineTick: 0,
@@ -3491,6 +3651,7 @@ function renderHUD() {
   document.getElementById('r-white-flower').textContent = G.whiteFlower;
   document.getElementById('r-apple').textContent = G.apple;
   document.getElementById('r-vegetable').textContent = G.vegetable;
+  document.getElementById('r-mushroom').textContent = G.mushroom ?? 0;
   document.getElementById('r-egg').textContent = G.egg;
   updateRainButton();
   renderTime();
@@ -3615,6 +3776,17 @@ function renderScene() {
       stove.style.backgroundImage = `url(${folder + filename})`;
     }
   }
+  const kitchenGlow = document.getElementById('kitchen-stove-glow');
+  if (kitchenGlow) kitchenGlow.style.display = (G.scene === 'kitchen' && G.timePeriod === 'evening') ? 'block' : 'none';
+  const kitchenCandleGlow = document.getElementById('kitchen-candle-glow');
+  if (kitchenCandleGlow) kitchenCandleGlow.style.display = (G.scene === 'kitchen' && G.timePeriod === 'evening') ? 'block' : 'none';
+  const forestLampGlow = document.getElementById('forest-lamp-glow');
+  if (forestLampGlow) forestLampGlow.style.display = (G.scene === 'forest' && G.timePeriod === 'evening') ? 'block' : 'none';
+  document.querySelectorAll('#lobby-night-glow-1, #lobby-night-glow-2').forEach(el => {
+    el.style.display = (G.scene === 'lobby' && G.timePeriod === 'evening') ? 'block' : 'none';
+  });
+  const roomNightGlow = document.getElementById('room-night-glow-1');
+  if (roomNightGlow) roomNightGlow.style.display = (G.scene === 'room' && G.timePeriod === 'evening') ? 'block' : 'none';
   const showEggs = G.scene === 'forest' && G.nestEggs > 0 && G.timePeriod === 'morning';
   const forestNest = document.getElementById('forest-nest');
   const forestNestImg = forestNest ? forestNest.querySelector('img') : null;
@@ -3624,6 +3796,7 @@ function renderScene() {
       ? 'bg_forest_night/bg_forest_Nest_sleep.png'
       : showEggs ? 'bg_forest/bg_forest_Nest_egg.png' : 'bg_forest/bg_forest_Nest.png';
   }
+  updateForestMushroomVisuals();
   document.getElementById('nest-egg-1').style.display = 'none';
   document.getElementById('nest-egg-2').style.display = 'none';
   const soupObj = document.getElementById('soup-obj');
@@ -3903,6 +4076,10 @@ function renderChars() {
       { id: 'forest-tree-4', sortY: -23 + Math.round(123 * 0.88) },
       { id: 'forest-tree-5', sortY: 167 + Math.round(123 * 0.88) },
       { id: 'forest-tree-6', sortY: 208 + Math.round(123 * 0.88) },
+      { id: 'forest-mushroom-1', sortY: 145 + 15 },
+      { id: 'forest-mushroom-2', sortY: 178 + 21 },
+      { id: 'forest-mushroom-3', sortY: 44 + 21 },
+      { id: 'forest-mushroom-4', sortY: 286 + 15 },
     ];
     forestDepthObjs.forEach(({ id, sortY }) => {
       const obj = document.getElementById(id);
@@ -3955,6 +4132,7 @@ function renderChars() {
       // 場景區域（藍）
       ctx.globalAlpha = 0.35;
       (ZONES[G.scene] || []).forEach(z => {
+        if (z.condition && !z.condition()) return;
         ctx.fillStyle = z.isScene ? '#4488ff' : '#ffdd00';
         ctx.fillRect(z.x1, z.y1, z.x2 - z.x1, z.y2 - z.y1);
         ctx.globalAlpha = 0.9;
@@ -4156,6 +4334,7 @@ function gameLoop() {
     G.periodTransitioned = true;
     doNightFade(() => {
       G.timePeriod = 'evening';
+      resetForestMushrooms();
       const nightBg = BG_NIGHT[G.scene];
       document.getElementById('scene-bg').style.backgroundImage = `url('${nightBg}')`;
       document.getElementById('scene-bg-top').style.opacity = '0';
@@ -6483,7 +6662,7 @@ function showHeart(icon) {
 const STAT_EL_MAP = {
   money:'r-money', herb:'r-herb', wood:'r-wood', bug:'r-bug',
   fish:'r-fish', stone:'r-stone', fairyItem:'r-fairy', whiteFlower:'r-white-flower',
-  apple:'r-apple', vegetable:'r-vegetable', egg:'r-egg',
+  apple:'r-apple', vegetable:'r-vegetable', mushroom:'r-mushroom', egg:'r-egg',
   coldPotion:'r-coldPotion', cursePotion:'r-cursePotion', forgetPotion:'r-forgetPotion',
 };
 function pingStatEl(stat) {
@@ -6521,6 +6700,7 @@ function chg(stat, d) {
   else if (stat==='forgetPotion') G.forgetPotion = Math.max(0,G.forgetPotion+d);
   else if (stat==='apple')        G.apple        = Math.max(0,G.apple+d);
   else if (stat==='vegetable')    G.vegetable    = Math.max(0,G.vegetable+d);
+  else if (stat==='mushroom')     G.mushroom     = Math.max(0,(G.mushroom ?? 0)+d);
   else if (stat==='whiteFlower')  G.whiteFlower  = Math.max(0,G.whiteFlower+d);
   else if (stat==='fairyItem')    G.fairyItem    = Math.max(0,G.fairyItem+d);
 }
@@ -6550,6 +6730,8 @@ function changeScene(to, startOverride) {
 
   // 全黑後更新場景和座標
   setTimeout(() => {
+    const fromScene = G.scene;
+    const avarenWouldFollow = G.mood > 50 && G.avarenScene === fromScene && !(G.day === 7 && G.timePeriod === 'morning') && !G.day4AvarenGone;
     const startPos = {
       outside: { x:295, y:460 },
       lobby:   { x:240, y:380 },
@@ -6557,6 +6739,9 @@ function changeScene(to, startOverride) {
       kitchen: { x:260, y:360 },
       forest:  { x:320, y:140 },
     };
+    if (to === 'forest' && avarenWouldFollow && !G.bloodMoon7Active) {
+      G.avarenWaitedForForest = true;
+    }
     if (G.scene === 'forest' && to !== 'forest' && G.carryingChicken) dropChicken(true);
     if (G.scene === 'forest' && to !== 'forest' && G.carryingChicken2) dropChicken2(true);
     G.scene = to;
@@ -6564,7 +6749,7 @@ function changeScene(to, startOverride) {
     const pos = startOverride || startPos[to];
     G.eldrin.x = pos.x;
     G.eldrin.y = pos.y;
-    if (G.mood > 50 && !(G.day === 7 && G.timePeriod === 'morning') && !G.day4AvarenGone) {
+    if (G.mood > 50 && to !== 'forest' && !(G.day === 7 && G.timePeriod === 'morning') && !G.day4AvarenGone) {
       G.avarenScene = to;
       // 阿瓦倫跟著切換場景時，出現在入口旁（艾德林起始點附近）
       const avStartPos = {
@@ -6576,6 +6761,21 @@ function changeScene(to, startOverride) {
       };
       const avPos = avStartPos[to];
       if (avPos) { G.avaren.x = avPos.x; G.avaren.y = avPos.y; }
+      if (fromScene === 'forest' && to === 'outside' && G.avarenWaitedForForest) {
+        G.avarenWaitedForForest = false;
+        G.bubbleText = pick([
+          '……你去哪裡了？我一直在等你。',
+          '為什麼我不可以跟你一起去？',
+          '不要丟下我一個人。'
+        ]);
+        G.bubbleTimer = 480;
+        G.autoSpeakTimer = 260;
+        SFX.bubble();
+      }
+    } else if (to === 'forest' && G.avarenScene === 'forest' && !G.bloodMoon7Active) {
+      G.avarenScene = 'room';
+      G.avaren.x = 190;
+      G.avaren.y = 220;
     }
     renderScene();
     renderHUD();
@@ -6819,6 +7019,7 @@ function debugAddAllItems() {
   chg('vegetable',  10);
   chg('whiteFlower',10);
   chg('fairyItem',  10);
+  chg('mushroom',   10);
   renderHUD();
   story('旁白', '【除錯】所有物品 +10。');
 }
@@ -6861,6 +7062,7 @@ function jumpToBloodMoon() {
   // 立刻觸發入夜
   G.periodTransitioned = true;
   G.timePeriod = 'evening';
+  resetForestMushrooms();
   G.dayStartMs = performance.now() - MORNING_SECONDS * 1000;
   crossfadeBackground(BG_NIGHT[G.scene]);
   G.bloodMoon7Active = true;
@@ -6887,6 +7089,7 @@ function skipToEvening() {
   G.dayStartMs = performance.now() - MORNING_SECONDS * 1000;
   doNightFade(() => {
     G.timePeriod = 'evening';
+    resetForestMushrooms();
     const nightBg = BG_NIGHT[G.scene];
     document.getElementById('scene-bg').style.backgroundImage = `url('${nightBg}')`;
     document.getElementById('scene-bg-top').style.opacity = '0';
@@ -7068,6 +7271,7 @@ function continueAfterNight(prevText) {
   G.periodTransitioned = false;
   G.dayEndTriggered = false;
   G.nestEggs = 2; // 每天早晨鳥巢重新出現2顆蛋
+  G.forestMushrooms = { 1: false, 2: false, 3: false, 4: false };
   renderHUD();
   G.avarenScene = G.day4AvarenGone ? 'gone' : 'room';
   G.avaren.x = 190; G.avaren.y = 220; G.avaren.pose = 'back';
@@ -7422,6 +7626,15 @@ function loadFromSlot(n) {
     try { zeRestoreSaved(); initState(); Object.assign(G, JSON.parse(data.state)); } catch(e) { zeRestoreSaved(); initState(); }
     if (!G.weather) G.weather = 'rain';
     if (G.eldrinHp == null) G.eldrinHp = 100;
+    if (G.mushroom == null) G.mushroom = 0;
+    if (!G.forestMushrooms) {
+      G.forestMushrooms = G.timePeriod === 'evening'
+        ? { 1: true, 2: true, 3: true, 4: true }
+        : { 1: false, 2: false, 3: false, 4: false };
+    }
+    for (let i = 1; i <= 4; i++) {
+      if (G.forestMushrooms[i] == null) G.forestMushrooms[i] = G.timePeriod === 'evening';
+    }
     if (!G.slime)  G.slime  = { x: SLIME_HOME.x,  y: SLIME_HOME.y,  attackCooldown: 0, hopTick: 0 };
     if (!G.slime2) G.slime2 = { x: SLIME2_HOME.x, y: SLIME2_HOME.y, attackCooldown: 0, hopTick: 35 };
     if (!G.noah) G.noah = { x: 500, y: 360, pose: 'front', walkTick: 0, walkFrame: 0, walkDir:{dx:0,dy:0}, walkTimer:0, bubbleTimer:0, bubbleText:'', autoSpeakTimer:260, blinkTimer: 340, blinkPhase: -1, blinkPhaseTick: 0, pushVx:0, pushVy:0 };
@@ -7429,6 +7642,7 @@ function loadFromSlot(n) {
     if (G.noahLobbyTalking == null) G.noahLobbyTalking = false;
     if (G.noahLakeMoonSeen == null) G.noahLakeMoonSeen = false;
     if (G.noahLakeTalking == null) G.noahLakeTalking = false;
+    if (G.avarenWaitedForForest == null) G.avarenWaitedForForest = false;
     document.getElementById('title-screen').style.display = 'none';
     document.getElementById('game-screen').style.display  = 'block';
     document.getElementById('blood-moon-badge').style.display = 'none';
