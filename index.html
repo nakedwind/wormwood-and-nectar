@@ -293,6 +293,21 @@ body {
   border: 5px solid transparent; border-top-color: #5f765f; border-bottom: none;
 }
 
+#eldrin-emote {
+  display: none; position: absolute;
+  width: 28px; height: 28px; line-height: 28px;
+  text-align: center; color: #fff6c8;
+  font-size: 24px; font-weight: 900;
+  text-shadow: 0 2px 0 #3a1c08, 0 0 8px rgba(255,220,90,0.9);
+  pointer-events: none; z-index: 606;
+  transform: translateX(-50%);
+  animation: eldrin-emote-pop 0.7s ease-in-out infinite;
+}
+@keyframes eldrin-emote-pop {
+  0%, 100% { transform: translateX(-50%) translateY(0) scale(1); }
+  45% { transform: translateX(-50%) translateY(-5px) scale(1.12); }
+}
+
 /* ── RIGHT PANEL ── */
 #right-panel {
   flex: 1; background: #0c0904; border-left: 1px solid #3a2810;
@@ -1442,6 +1457,7 @@ body {
       <div id="red-bubble"></div>
       <div id="winter-bubble"></div>
       <div id="noah-bubble"></div>
+      <div id="eldrin-emote">!</div>
       <div id="avaren-heart" style="display:none;position:absolute;font-size:23px;pointer-events:none;z-index:605;transform:translateX(-50%);transition:opacity 0.2s;"></div>
       <div id="farm-growth-wrap">
         <div class="herb-harvest-label" id="farm-growth-label">🌱 農田生長中…</div>
@@ -2277,6 +2293,10 @@ function updateRoomDepth() {
 }
 
 const spriteInfo = { eldrin:null, avaren:null, red:null, winter:null, noah:null };
+const AVAREN_SPRITE_DEFAULT = 'character_avaren.png';
+const AVAREN_SPRITE_DAY1 = 'character_avaren_day1.png';
+const AVAREN_SPRITE_DAY1_BANDAGING = 'character_avaren_day1Bandaging.png';
+const AVAREN_SPRITE_DAY2 = 'character_avaren_day2.png';
 
 let chickenInfo = null;
 
@@ -2289,6 +2309,7 @@ function loadSprites(cb) {
       const fw = img.naturalWidth  / SPRITE_COLS;
       const fh = img.naturalHeight / SPRITE_ROWS_N;
       spriteInfo[name] = { fw, fh };
+      img.dataset.spriteSrc = img.getAttribute('src') || '';
       done();
     };
     if (img.complete && img.naturalWidth > 0) init();
@@ -2320,6 +2341,34 @@ function setChickenFrame(frame, facingLeft, dispH, wrapId='cw-chicken', imgId='s
   img.style.left    = (-(frame % chickenInfo.frames) * fw) + 'px';
   img.style.top     = '0px';
   wrap.style.transform = facingLeft ? 'scaleX(-1)' : 'scaleX(1)';
+}
+
+function refreshSpriteInfo(name) {
+  const img = document.getElementById('sp-' + name);
+  if (!img || !img.naturalWidth) return;
+  spriteInfo[name] = {
+    fw: img.naturalWidth / SPRITE_COLS,
+    fh: img.naturalHeight / SPRITE_ROWS_N,
+  };
+}
+
+function setCharacterSprite(name, src) {
+  const img = document.getElementById('sp-' + name);
+  if (!img || img.dataset.spriteSrc === src) return;
+  img.dataset.spriteSrc = src;
+  img.onload = () => refreshSpriteInfo(name);
+  img.src = src;
+  if (img.complete && img.naturalWidth > 0) refreshSpriteInfo(name);
+}
+
+function updateAvarenSpriteForState() {
+  let src = AVAREN_SPRITE_DEFAULT;
+  if (G && G.day === 1 && isAvarenUnconscious()) {
+    src = G.avarenDay1Bandaged ? AVAREN_SPRITE_DAY1_BANDAGING : AVAREN_SPRITE_DAY1;
+  } else if (G && isAvarenBedRest()) {
+    src = AVAREN_SPRITE_DAY2;
+  }
+  setCharacterSprite('avaren', src);
 }
 
 // dispH: 傳入想要的顯示高度; walkFrame: 走路動畫幀（切換縱向排）
@@ -2414,8 +2463,8 @@ const ZONES = {
   room: [
     { id:'to_lobby',   x1:109, y1:444, x2:212, y2:476, sceneHint:'→ 前往大廳', isScene:true,
       fn(){ changeScene('lobby', {x:591, y:100}); } },
-    { id:'bed',        x1:389, y1:287, x2:535, y2:458, interactHint:'入睡',
-      fn(){ doAction_Sleep(); } },
+    { id:'bed',        x1:355, y1:289, x2:529, y2:460, interactHint:'床邊',
+      fn(){ openBedMenu(); } },
     { id:'bookshelf',  x1:431, y1:42,  x2:536, y2:209, interactHint:'讀書',
       fn(){ doAction_ReadBook(); } },
     { id:'save_desk',  x1:228, y1:97,  x2:384, y2:195, interactHint:'存檔',
@@ -2867,7 +2916,7 @@ const NOAH_LAKE_AFTER_DLG = [
 ];
 
 function isNearReid() {
-  if (G.scene !== 'outside' || G.day % 2 === 0 || G.timePeriod !== 'morning') return false;
+  if (G.scene !== 'outside' || !isReidDay() || G.timePeriod !== 'morning') return false;
   return Math.hypot(G.red.x - G.eldrin.x, G.red.y - G.eldrin.y) < 40;
 }
 
@@ -3327,6 +3376,27 @@ const NARR_TALK = [
   '你問了他一個很小的問題。他猶豫了很久，最後用手指在地上輕輕點了一下——算是回答了。',
   '你說著說著，發現阿瓦倫不知不覺移近了一些，靠著牆坐，距離你只差一個手臂的長度。',
 ];
+const AVAREN_DAY2_WAKE_STORY = [
+  { speaker: '旁白', text: '你靠近床邊時，阿瓦倫的眼睫輕輕顫了一下。' },
+  { speaker: '旁白', text: '他沒有像昨天那樣沉沉睡著。\n那雙半睜的眼睛慢慢聚焦，像是花了很久，才終於認出你。' },
+  { speaker: '艾德林', text: '阿瓦倫……？' },
+  { speaker: '阿瓦倫', text: '……' },
+  { speaker: '旁白', text: '阿瓦倫張了張嘴，聲音很輕，幾乎被棉被和晨光吞掉。' },
+  { speaker: '阿瓦倫', text: '……艾……德林。' },
+  { speaker: '艾德林', text: '你醒了。你真的醒了……' },
+  { speaker: '阿瓦倫', text: '……吵。' },
+  { speaker: '旁白', text: '他的眉頭很淺地皺了一下。\n那不像責怪，反而像是用盡力氣，才擠出這麼一點反應。' },
+  { speaker: '艾德林', text: '抱歉。我小聲一點。你哪裡痛？還能看清楚我嗎？' },
+  { speaker: '阿瓦倫', text: '……看得見。' },
+  { speaker: '阿瓦倫', text: '……很痛。可是……比昨天安靜。' },
+  { speaker: '艾德林', text: '我會繼續想辦法。你先不要勉強說話，醒著就好。' },
+  { speaker: '阿瓦倫', text: '……你……一直在嗎？' },
+  { speaker: '艾德林', text: '嗯。我在。' },
+  { speaker: '旁白', text: '阿瓦倫安靜地看著你。\n他的眼睛仍然疲憊，卻不像昨夜那樣完全沉在黑暗裡。' },
+  { speaker: '阿瓦倫', text: '……不要走太遠。' },
+  { speaker: '艾德林', text: '好。我不走太遠。' },
+  { speaker: '旁白', text: '他似乎想再說什麼，但很快又疲倦地垂下眼。\n這一次，他沒有昏迷。\n只是清醒著，慢慢呼吸。' },
+];
 const NARR_CHAT = [
   '你坐在阿瓦倫身旁陪著他。時間慢慢流逝，但你覺得，這樣的時間是值得的。',
   '你們說了很多，也有很長的沉默。最後他說了一句你沒想到的話，你不知道該怎麼回，只是笑了笑。',
@@ -3496,6 +3566,65 @@ function getAvarenDlg() {
 
 function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 
+function isReidDay(day = G.day) {
+  return day === 3 || day === 5 || day === 7 || day === 9;
+}
+
+function isAvarenUnconscious() {
+  return G && !G.avarenAwake && !G.day4AvarenGone && !G.bloodMoon7Active;
+}
+
+function placeAvarenUnconscious() {
+  if (!G || !G.avaren) return;
+  G.avarenScene = 'room';
+  G.avaren.x = 458;
+  G.avaren.y = 360;
+  G.avaren.pose = 'front';
+  G.avaren.walkFrame = 0;
+  G.avaren.walkTick = 0;
+  G.avaren.sleepEye = 2;
+}
+
+function isAvarenBedRest() {
+  return G && G.avarenAwake && G.avarenBedRest && G.day === 2 && !G.day4AvarenGone && !G.bloodMoon7Active;
+}
+
+function placeAvarenBedRest() {
+  if (!G || !G.avaren) return;
+  G.avarenScene = 'room';
+  G.avaren.x = 458;
+  G.avaren.y = 360;
+  G.avaren.pose = 'front';
+  G.avaren.walkFrame = 0;
+  G.avaren.walkTick = 0;
+  G.avaren.sleepEye = G.avaren.restBlinkPhase > 0 ? 2 : 1;
+}
+
+function markAvarenDay1Bandaged() {
+  if (G && G.day === 1 && isAvarenUnconscious()) {
+    G.avarenDay1Bandaged = true;
+    updateAvarenSpriteForState();
+  }
+}
+
+function triggerAvarenDay2WakeIntro() {
+  if (!isAvarenBedRest() || G.avarenDay2WakeIntroSeen) return;
+  G.avarenDay2WakeIntroSeen = true;
+  G.avarenDay2WakeTalkPending = true;
+  G.eldrinEmoteText = '!';
+  G.eldrinEmoteTimer = 360;
+  storyAuto('旁白', '床邊傳來很輕、很輕的呼吸聲。\n你回過頭，看見阿瓦倫的眼睛半睜著。\n\n阿瓦倫清醒了。');
+}
+
+function playAvarenDay2WakeTalk() {
+  if (!isAvarenBedRest() || !G.avarenDay2WakeTalkPending) return false;
+  G.avarenDay2WakeTalkPending = false;
+  startActionScene(AVAREN_DAY2_WAKE_STORY, 400, () => {
+    storyAuto('旁白', '阿瓦倫仍然很虛弱。\n現在可以餵他吃飯，也可以繼續照顧他的傷勢。');
+  });
+  return true;
+}
+
 // ══════════════════════════════════════
 //  GAME STATE
 // ══════════════════════════════════════
@@ -3538,6 +3667,11 @@ function initState() {
     noahLakeMoonSeen: false,
     noahLakeTalking: false,
     avarenWaitedForForest: false,
+    avarenAwake: false,
+    avarenBedRest: false,
+    avarenDay1Bandaged: false,
+    avarenDay2WakeIntroSeen: false,
+    avarenDay2WakeTalkPending: false,
     cookActive: false, cookTimer: 0, cookReady: false, soupReady: false, carryingSoup: false, soupIsSpecial: false, cookSelectedKeys: [],
     actionSceneActive: false, actionSceneTimer: 0, actionSceneMax: 0,
     actionSceneOnDone: null, actionSceneLines: [], actionSceneLineIdx: 0, actionSceneLineTick: 0,
@@ -3550,7 +3684,7 @@ function initState() {
     paused: false, sleepAnimActive: false,
     keys: {},
     eldrin: { x: 260, y: 350, pose: 'front', walkTick: 0, walkFrame: 0, blinkTimer: 200, blinkPhase: -1, blinkPhaseTick: 0, sleepEye: 0 },
-    avaren: { x: 190, y: 220, pose: 'back', walkTick: 0, walkFrame: 0, wanderDir:{dx:0,dy:0}, wanderTimer:0, gatherTimer: 3600, hasSeenRed: false, nearRedTimer: 0, blinkTimer: 260, blinkPhase: -1, blinkPhaseTick: 0, sleepEye: 0, pushVx:0, pushVy:0 },
+    avaren: { x: 458, y: 360, pose: 'front', walkTick: 0, walkFrame: 0, wanderDir:{dx:0,dy:0}, wanderTimer:0, gatherTimer: 3600, hasSeenRed: false, nearRedTimer: 0, blinkTimer: 260, blinkPhase: -1, blinkPhaseTick: 0, sleepEye: 2, restBlinkTimer: 180, restBlinkPhase: 0, pushVx:0, pushVy:0 },
     red:    { x: 150, y: 360, pose: 'front', walkTick: 0, walkFrame: 0, walkDir:{dx:0,dy:0}, walkTimer:0, bubbleTimer:0, bubbleText:'', autoSpeakTimer:180, blinkTimer: 310, blinkPhase: -1, blinkPhaseTick: 0, pushVx:0, pushVy:0 },
     winter: { x: 300, y: 120, pose: 'sideR', walkTick: 0, walkFrame: 0, walkDir:{dx:0,dy:0}, walkTimer:0, bubbleTimer:0, bubbleText:'', autoSpeakTimer:320, blinkTimer: 280, blinkPhase: -1, blinkPhaseTick: 0, pushVx:0, pushVy:0 },
     noah:   { x: 500, y: 360, pose: 'front', walkTick: 0, walkFrame: 0, walkDir:{dx:0,dy:0}, walkTimer:0, bubbleTimer:0, bubbleText:'', autoSpeakTimer:260, blinkTimer: 340, blinkPhase: -1, blinkPhaseTick: 0, pushVx:0, pushVy:0 },
@@ -3558,6 +3692,8 @@ function initState() {
     redDelivered: false,
     bubbleTimer: 0,
     bubbleText: '',
+    eldrinEmoteTimer: 0,
+    eldrinEmoteText: '!',
     sceneCooldown: 0,
     sceneTransitioning: false,
     manualPaused: false,
@@ -3565,7 +3701,7 @@ function initState() {
     debugMode: false,
     heartTimer: 0,
     heartIcon: '',
-    autoSpeakTimer: 300,
+    autoSpeakTimer: 360,
   };
 }
 
@@ -3831,10 +3967,24 @@ function renderChars() {
       cwEl.style.zIndex = String(Math.floor(el.y));
     }
   }
+  const eldrinEmote = document.getElementById('eldrin-emote');
+  if (eldrinEmote) {
+    if (G.eldrinEmoteTimer > 0 && !G.sleepAnimActive) {
+      eldrinEmote.textContent = G.eldrinEmoteText || '!';
+      eldrinEmote.style.left = el.x + 'px';
+      eldrinEmote.style.top = (el.y - dispH - 34) + 'px';
+      eldrinEmote.style.display = 'block';
+    } else {
+      eldrinEmote.style.display = 'none';
+    }
+  }
 
   // ── Avaren ──
   const av = G.avaren;
   const cwAv = document.getElementById('cw-avaren');
+  if (isAvarenUnconscious()) placeAvarenUnconscious();
+  else if (isAvarenBedRest()) placeAvarenBedRest();
+  updateAvarenSpriteForState();
   const avVisible = G.avarenScene === G.scene || G.sleepAnimActive;
   if (avVisible && spriteInfo.avaren) {
     const avSleep = av.sleepEye > 0 && av.pose === 'front';
@@ -3860,7 +4010,7 @@ function renderChars() {
   // ── Reid ──
   const rd = G.red;
   const cwRd = document.getElementById('cw-red');
-  const rdVisible = G.scene === 'outside' && G.day % 2 === 1 && G.timePeriod === 'morning';
+  const rdVisible = G.scene === 'outside' && isReidDay() && G.timePeriod === 'morning';
   if (rdVisible && spriteInfo.red) {
     const rdBlink = rd.blinkPhase >= 0 && rd.pose === 'front';
     const rdPose  = rdBlink ? 'blink' : rd.pose;
@@ -4207,6 +4357,18 @@ function updateHints() {
 
   const nearRed = isNearReid();
   const nearNoah = isNearNoah();
+  if (G.carryingSoup && near && G.avarenScene === G.scene) {
+    hi.textContent = '阿瓦倫';
+    hi.style.display = 'block'; hs.style.display = 'none'; return;
+  }
+  if (zone && zone.id === 'bed') {
+    hi.textContent = '床邊';
+    hi.style.display = 'block'; hs.style.display = 'none'; return;
+  }
+  if (isAvarenUnconscious() && near) {
+    hi.textContent = '照顧阿瓦倫';
+    hi.style.display = 'block'; hs.style.display = 'none'; return;
+  }
   // 收取提示（完成待領取）
   if (zone && zone.id === 'farm' && G.farmStage >= 5) {
     hi.textContent = '收取藥草';
@@ -4254,8 +4416,8 @@ function updateHints() {
     hi.textContent = '放下水壺';
     hi.style.display = 'block'; hs.style.display = 'none'; return;
   }
-  if (G.carryingSoup && isNearAvaren() && G.avarenScene === G.scene) {
-    hi.textContent = '料理';
+  if (G.carryingSoup && G.scene === 'kitchen' && isNearSoupSpot()) {
+    hi.textContent = '放回料理';
     hi.style.display = 'block'; hs.style.display = 'none'; return;
   }
   if (G.carryingSoup && isNearReid()) {
@@ -4405,6 +4567,7 @@ function gameLoop() {
     return;
   }
   renderTime(_elapsed);
+  if (G.eldrinEmoteTimer > 0) G.eldrinEmoteTimer--;
 
   if (G.paused) {
     if (G.sleepAnimActive) { updateRoomDepth(); renderChars(); }
@@ -4471,8 +4634,8 @@ function gameLoop() {
         }
       }
     };
-    if (G.avarenScene === G.scene && !G.carryingChicken)                          tryPush(G.avaren);
-    if (G.scene === 'outside' && G.day % 2 === 1)                                 tryPush(G.red);
+    if (!isAvarenUnconscious() && !isAvarenBedRest() && G.avarenScene === G.scene && !G.carryingChicken) tryPush(G.avaren);
+    if (G.scene === 'outside' && isReidDay() && G.timePeriod === 'morning')        tryPush(G.red);
     if (G.scene === 'outside' && G.day === 2 && G.timePeriod === 'morning')        tryPush(G.noah);
     if (G.scene === 'forest' && G.day % 2 === 0 && G.timePeriod === 'morning')    tryPush(G.winter);
     if (G.scene === 'forest' && !G.carryingChicken)                               tryPush(G.chicken);
@@ -4632,15 +4795,15 @@ function gameLoop() {
     else { av.pose = ddy < 0 ? 'back' : 'front'; }
     av.walkFrame = 0; av.walkTick = 0;
   }
-  if (!isDlgBlocking() && !G.bloodMoon7Active && !day7Morning && G.mood > 50 && G.avarenScene === G.scene) {
+  if (!isAvarenUnconscious() && !isAvarenBedRest() && !isDlgBlocking() && !G.bloodMoon7Active && !day7Morning && G.mood > 50 && G.avarenScene === G.scene) {
     const av = G.avaren;
     const ddx = el.x - av.x, ddy = el.y - av.y;
     const d = Math.hypot(ddx, ddy);
     const followSpd = G.mood > 80 ? SPEED * 0.65 : SPEED * 0.32;
     const wanderSpd = G.mood > 80 ? SPEED * 0.28 : SPEED * 0.14;
-    const reidPresent = G.scene === 'outside' && G.day % 2 === 1;
-    const followDist = reidPresent ? 55 : 100;  // 雷德在場時貼緊艾德林
-    const wanderMax  = reidPresent ? 50 : 95;
+    const reidPresent = G.scene === 'outside' && isReidDay() && G.timePeriod === 'morning';
+    const followDist = G.mood >= 80 ? (reidPresent ? 85 : 105) : 135;
+    const wanderMax  = G.mood >= 80 ? (reidPresent ? 80 : 105) : 130;
     const sceneObs = OBSTACLES[G.scene] || [];
     const avBlocked = (nx, ny) => sceneObs.some(o => nx >= o.x1 && nx <= o.x2 && ny >= o.y1 && ny <= o.y2);
     if (d > followDist) {
@@ -4673,6 +4836,19 @@ function gameLoop() {
         if (av.walkTick % 8 === 0) av.walkFrame = (av.walkFrame + 1) % 4;
       } else {
         av.pose = 'front'; av.walkFrame = 0; av.walkTick = 0;
+      }
+    }
+  }
+
+  if (isAvarenBedRest() && !G.paused && !isDlgBlocking()) {
+    const av = G.avaren;
+    if (av.restBlinkPhase > 0) {
+      av.restBlinkPhase--;
+    } else {
+      av.restBlinkTimer--;
+      if (av.restBlinkTimer <= 0) {
+        av.restBlinkPhase = 10;
+        av.restBlinkTimer = Math.floor(Math.random() * 240) + 180;
       }
     }
   }
@@ -4766,7 +4942,7 @@ function gameLoop() {
   }
 
   // 阿瓦倫看見雷德的反應（A初見、B靠近）
-  if (G.scene === 'outside' && G.day % 2 === 1 && G.timePeriod === 'morning' && G.avarenScene === 'outside') {
+  if (!isAvarenUnconscious() && G.scene === 'outside' && isReidDay() && G.timePeriod === 'morning' && G.avarenScene === 'outside') {
     const av = G.avaren;
     const rd = G.red;
     const distAvToRed = Math.hypot(av.x - rd.x, av.y - rd.y);
@@ -4790,7 +4966,7 @@ function gameLoop() {
   }
 
   // 阿瓦倫戶外採集（信任>50）
-  if (G.scene === 'outside' && G.trust > 50 && G.avarenScene === 'outside' && !G.paused) {
+  if (!isAvarenUnconscious() && G.scene === 'outside' && G.trust > 50 && G.avarenScene === 'outside' && !G.paused) {
     G.avaren.gatherTimer--;
     if (G.avaren.gatherTimer <= 0) {
       G.avaren.gatherTimer = Math.floor(Math.random() * 1800) + 2700;
@@ -4798,8 +4974,8 @@ function gameLoop() {
     }
   }
 
-  // 雷德隨機走動（奇數天，戶外，白天）
-  if (G.scene === 'outside' && G.day % 2 === 1 && G.timePeriod === 'morning') {
+  // 雷德隨機走動（第3、5、7、9天，戶外，白天）
+  if (G.scene === 'outside' && isReidDay() && G.timePeriod === 'morning') {
     const rd = G.red;
     if (isDlgBlocking()) {
       // 對話中：面向艾德林，不移動
@@ -5280,7 +5456,7 @@ function gameLoop() {
   }
 
   // 阿瓦倫不定時自動說話
-  if (!G.bloodMoon7Active) {
+  if (!isAvarenUnconscious() && !G.bloodMoon7Active) {
     if (G.bubbleTimer > 0) {
       G.bubbleTimer--;
     } else if (G.avarenScene === G.scene) {
@@ -5289,11 +5465,11 @@ function gameLoop() {
         G.bubbleText = (G.day === 7 && G.timePeriod === 'morning')
           ? pick(AVAREN_DAY7_DLG)
           : G.moodLocked ? pick(AVAREN_BETRAYAL_DLG) : getAvarenDlg();
-        G.bubbleTimer = 220;
+        G.bubbleTimer = 300;
         SFX.bubble();
         G.autoSpeakTimer = G.moodLocked
-          ? Math.floor(Math.random() * 120) + 80
-          : Math.floor(Math.random() * 300) + 200;
+          ? Math.floor(Math.random() * 300) + 360
+          : Math.floor(Math.random() * 540) + 360;
       }
     }
   }
@@ -5330,6 +5506,16 @@ document.addEventListener('keydown', e => {
   const deathOverlay = document.getElementById('death-overlay');
   if (deathOverlay && deathOverlay.style.display !== 'none') {
     if (e.key === ' ' || e.key === 'Enter') { deathOverlay.click(); return; }
+    return;
+  }
+
+  // 事件框：空白鍵 / Enter 等同按下繼續
+  const eventOverlay = document.getElementById('event-overlay');
+  if (eventOverlay && eventOverlay.style.display === 'flex') {
+    if (e.key === ' ' || e.key === 'Enter') {
+      e.preventDefault();
+      if (!e.repeat) closeEvent();
+    }
     return;
   }
 
@@ -5392,7 +5578,13 @@ document.addEventListener('keydown', e => {
     const zone = getActiveZone();
     const near = isNearAvaren();
     if (G.carryingSoup && near && G.avarenScene === G.scene) {
-      giveSoupToAvaren();
+      openAvarenMenu();
+    } else if (zone && zone.id === 'bed') {
+      openBedMenu();
+    } else if (isAvarenUnconscious() && near) {
+      openAvarenMenu();
+    } else if (G.carryingSoup && G.scene === 'kitchen' && isNearSoupSpot()) {
+      putBackSoup();
     } else if (G.carryingSoup && isNearReid()) {
       sellSoupToReid();
     } else if (G.scene === 'kitchen' && G.soupReady && isNearSoup() && !G.carryingSoup) {
@@ -5538,6 +5730,57 @@ function openAvarenMenu() {
 
   SFX.interact();
   G.avaren.pose = 'front';
+  if (playAvarenDay2WakeTalk()) return;
+  if (isAvarenUnconscious()) {
+    placeAvarenUnconscious();
+    showActionMenu('照顧阿瓦倫', [
+      {
+        name: '確認狀態', fx: '不花時間',
+        req: () => true,
+        run() {
+          story('旁白', '阿瓦倫躺在床上，雙眼緊閉，呼吸很淺。\n黑霧像潮濕的影子一樣貼在他的身上。');
+        }
+      },
+      {
+        name: '給治療藥水', fx: () => `疼痛-5  剩餘×${G.coldPotion}`,
+        req: () => G.coldPotion > 0 && !G.actionSceneActive,
+        run() {
+          chg('coldPotion', -1); chg('pain', -5); renderHUD();
+          story('旁白', '你小心地讓阿瓦倫喝下治療藥水。\n他的呼吸稍微平穩了一點。');
+          toast('💊 治療藥水發揮了效果  疼痛 -5');
+        }
+      },
+      {
+        name: '給解咒藥水', fx: () => `詛咒-5  剩餘×${G.cursePotion}`,
+        req: () => G.cursePotion > 0 && !G.actionSceneActive,
+        run() {
+          chg('cursePotion', -1); chg('curse', -5); renderHUD();
+          story('旁白', '你把解咒藥水餵給阿瓦倫。\n纏在他身上的黑霧輕輕顫動，淡去了一些。');
+          toast('🔮 解咒藥水發揮了效果  詛咒 -5');
+        }
+      },
+      {
+        name: '包紮換藥', fx: '藥材-1  疼痛-3',
+        req: () => G.herb > 0 && !G.actionSceneActive,
+        run() {
+          chg('herb', -1); chg('pain', -3); renderHUD();
+          markAvarenDay1Bandaged();
+          story('旁白', '你替阿瓦倫重新包紮傷口，換上乾淨的藥草敷料。\n他的眉頭似乎鬆開了一點。');
+          toast('🌿 包紮換藥  藥材 -1 / 疼痛 -3');
+        }
+      },
+      {
+        name: '除咒儀式', fx: '艾德林HP-5  詛咒-3',
+        req: () => (G.eldrinHp ?? 100) > 5 && !G.actionSceneActive,
+        run() {
+          chg('eldrinHp', -5); chg('curse', -3); renderHUD();
+          story('旁白', '你握住阿瓦倫冰冷的手，把一小段詛咒引到自己身上。\n胸口一陣刺痛，但黑霧淡去了一些。');
+          toast('🔮 除咒儀式  艾德林HP -5 / 詛咒 -3');
+        }
+      },
+    ]);
+    return;
+  }
   if (G.moodLocked) {
     showActionMenu('阿瓦倫——', [
       {
@@ -5552,7 +5795,17 @@ function openAvarenMenu() {
     ]);
     return;
   }
-  showActionMenu('和阿瓦倫互動', [
+  const avarenMenuItems = [];
+  if (G.carryingSoup) {
+    avarenMenuItems.push({
+      name: '遞給他料理', fx: '餵食阿瓦倫',
+      req: () => !isAvarenUnconscious(),
+      run() {
+        giveSoupToAvaren();
+      }
+    });
+  }
+  avarenMenuItems.push(
     {
       name: '和阿瓦倫說說話', fx: '知識+2  不花時間',
       req: () => true,
@@ -5599,6 +5852,27 @@ function openAvarenMenu() {
       }
     },
     {
+      name: '包紮換藥', fx: '藥材-1  疼痛-3',
+      req: () => G.herb > 0 && !G.actionSceneActive,
+      run() {
+        chg('herb', -1); chg('pain', -3); renderHUD();
+        markAvarenDay1Bandaged();
+        story('旁白', '你替阿瓦倫重新包紮傷口，換上乾淨的藥草敷料。');
+        story('阿瓦倫', pick(['……謝謝。', '……好一點了。', '……（安靜地低下頭）']));
+        toast('🌿 包紮換藥  藥材 -1 / 疼痛 -3');
+      }
+    },
+    {
+      name: '除咒儀式', fx: '艾德林HP-5  詛咒-3',
+      req: () => (G.eldrinHp ?? 100) > 5 && !G.actionSceneActive,
+      run() {
+        chg('eldrinHp', -5); chg('curse', -3); renderHUD();
+        story('旁白', '你握住阿瓦倫的手，低聲念出除咒的咒文。\n一點黑霧轉移到你身上，又被你壓了下去。');
+        story('阿瓦倫', pick(['……不要太勉強。', '……你也會痛吧。', '……（抿住嘴，沒有把手抽回去）']));
+        toast('🔮 除咒儀式  艾德林HP -5 / 詛咒 -3');
+      }
+    },
+    {
       name: '照顧阿瓦倫（換藥、梳理）', fx: '疼痛-15  心情+8  花費15秒',
       req: () => !G.actionSceneActive && !G.day4AvarenGone && G.timePeriod === 'evening',
       run() {
@@ -5631,7 +5905,8 @@ function openAvarenMenu() {
         });
       }
     },
-  ]);
+  );
+  showActionMenu('和阿瓦倫互動', avarenMenuItems);
 }
 
 // ══════════════════════════════════════
@@ -6027,6 +6302,28 @@ function isNearSoup() {
   return Math.hypot(G.eldrin.x - SOUP_POS.x, G.eldrin.y - SOUP_POS.y) < 120;
 }
 
+function isNearSoupSpot() {
+  return Math.hypot(G.eldrin.x - SOUP_POS.x, G.eldrin.y - SOUP_POS.y) < 120;
+}
+
+function putBackSoup() {
+  if (!G.carryingSoup || G.scene !== 'kitchen' || !isNearSoupSpot()) return;
+  G.carryingSoup = false;
+  G.soupReady = true;
+  const soupSrc = G.soupIsSpecial ? 'food_02.png' : 'food_01.png';
+  const obj = document.getElementById('soup-obj');
+  const objImg = document.getElementById('soup-obj-img');
+  const carry = document.getElementById('soup-carry-icon');
+  if (objImg) objImg.src = soupSrc;
+  if (obj) {
+    obj.style.left = (SOUP_POS.x - 24) + 'px';
+    obj.style.top  = (SOUP_POS.y - 48) + 'px';
+    obj.style.display = 'block';
+  }
+  if (carry) carry.style.display = 'none';
+  toast('🍲 已把料理放回桌上');
+}
+
 function openCookSelectPanel() {
   G.cookSelectedKeys = [];
   cookSelectCursor = 0;
@@ -6122,7 +6419,7 @@ function confirmCookStart() {
 
 function doSoupInteract() {
   SFX.interact();
-  showActionMenu('桌上的湯——', [
+  showActionMenu('桌上的料理——', [
     {
       name: '自己吃', fx: '艾德林飢餓+15  心情+3',
       req: () => true,
@@ -6139,14 +6436,14 @@ function doSoupInteract() {
       }
     },
     {
-      name: '端給阿瓦倫', fx: '帶著湯去找阿瓦倫',
-      req: () => !G.day4AvarenGone,
+      name: '端起食物', fx: '拿起料理，可以拿去給別人或放回桌上',
+      req: () => true,
       run() {
         G.carryingSoup = true;
         G.soupReady = false;
         document.getElementById('soup-obj').style.display = 'none';
-        storyAuto('旁白', '你小心地端著湯，準備送給阿瓦倫。');
-        toast('🍲 端著湯，找到阿瓦倫後按空白鍵');
+        storyAuto('旁白', '你小心地端起料理。');
+        toast('🍲 端著料理，可以放回桌上或拿去給別人');
       }
     },
   ]);
@@ -6487,10 +6784,11 @@ function showActionMenu(heading, items) {
       // 若 run() 啟動了睡眠動畫，保持暫停狀態；否則正常解除暫停
       if (!G.sleepAnimActive) G.paused = false;
       menuBtns = [];
-      if (G.mood > 50 && G.avarenScene === G.scene) {
+      if (!isAvarenUnconscious() && G.mood > 50 && G.avarenScene === G.scene) {
         G.bubbleText = pick(AVAREN_DLG.possess.concat(['……（跟著你）']));
         if (G.mood <= 80) G.bubbleText = pick(['……（靠近你）', '……艾德林。', '……（悄悄跟著）']);
-        G.bubbleTimer = 200;
+        G.bubbleTimer = 300;
+        G.autoSpeakTimer = Math.floor(Math.random() * 540) + 360;
       }
     };
     list.appendChild(btn);
@@ -6731,7 +7029,7 @@ function changeScene(to, startOverride) {
   // 全黑後更新場景和座標
   setTimeout(() => {
     const fromScene = G.scene;
-    const avarenWouldFollow = G.mood > 50 && G.avarenScene === fromScene && !(G.day === 7 && G.timePeriod === 'morning') && !G.day4AvarenGone;
+    const avarenWouldFollow = !isAvarenUnconscious() && G.mood > 50 && G.avarenScene === fromScene && !(G.day === 7 && G.timePeriod === 'morning') && !G.day4AvarenGone;
     const startPos = {
       outside: { x:295, y:460 },
       lobby:   { x:240, y:380 },
@@ -6749,7 +7047,7 @@ function changeScene(to, startOverride) {
     const pos = startOverride || startPos[to];
     G.eldrin.x = pos.x;
     G.eldrin.y = pos.y;
-    if (G.mood > 50 && to !== 'forest' && !(G.day === 7 && G.timePeriod === 'morning') && !G.day4AvarenGone) {
+    if (!isAvarenUnconscious() && G.mood > 50 && to !== 'forest' && !(G.day === 7 && G.timePeriod === 'morning') && !G.day4AvarenGone) {
       G.avarenScene = to;
       // 阿瓦倫跟著切換場景時，出現在入口旁（艾德林起始點附近）
       const avStartPos = {
@@ -6810,6 +7108,7 @@ function doAction_Sleep() {
   if (G.paused || G.actionSceneActive) return;
   if (G.timePeriod !== 'evening') { timeWarn('現在還是早上，先去做些事吧。'); return; }
   if (G.bloodMoon7Active) { warn('無法行動。'); return; }
+  if (G.carryingSoup) { warn('拿著料理無法入睡'); return; }
   showActionMenu('今晚要怎麼做？', [
     {
       name: '入睡', fx: '結束今天',
@@ -7161,10 +7460,32 @@ function sleepNow() {
   endDay();
 }
 
+function openBedMenu() {
+  showActionMenu('床邊', [
+    {
+      name: '入睡',
+      fx: '結束今天',
+      req: () => true,
+      run() {
+        setTimeout(() => doAction_Sleep(), 0);
+      }
+    },
+    {
+      name: '照顧阿瓦倫',
+      fx: '開啟照顧選單',
+      req: () => G.avarenScene === 'room' && !G.day4AvarenGone,
+      run() {
+        setTimeout(() => openAvarenMenu(), 0);
+      }
+    },
+  ]);
+}
+
 function endDay() {
   G.dayEndTriggered = true;
   G.paused = true;
   cancelAnimationFrame(raf);
+  const avarenWakesOnDay2 = G.day === 1 && G.pain < 95 && G.curse < 95;
 
   // 血月夜結束：清除疊層，判定死亡條件
   if (G.bloodMoon7Active) {
@@ -7218,6 +7539,15 @@ function endDay() {
     : `夜晚悄然降臨。\n\n你精疲力竭地坐在床邊，\n今夜的解咒似乎沒什麼效果……`;
 
   G.day++;
+  if (G.day === 2 && avarenWakesOnDay2) {
+    G.avarenAwake = true;
+    G.avarenBedRest = true;
+    G.avarenDay2WakeIntroSeen = false;
+    G.avarenDay2WakeTalkPending = false;
+    G.avaren.restBlinkTimer = 120;
+    G.avaren.restBlinkPhase = 0;
+    G.avaren.sleepEye = 1;
+  }
   if (G.day === 10 && !G.bloodMoonDone) {
     G.bloodMoonDone = true;
     showEvent('🌕', '血月降臨', `第十天的夜晚，天空升起了血紅色的月亮。\n\n阿瓦倫劇烈顫抖，黑霧像被點燃一樣暴漲——\n詛咒強化了！\n\n「……別放開。」他第一次主動抓住了你的手。`, () => {
@@ -7272,9 +7602,16 @@ function continueAfterNight(prevText) {
   G.dayEndTriggered = false;
   G.nestEggs = 2; // 每天早晨鳥巢重新出現2顆蛋
   G.forestMushrooms = { 1: false, 2: false, 3: false, 4: false };
+  if (G.day > 2) G.avarenBedRest = false;
   renderHUD();
   G.avarenScene = G.day4AvarenGone ? 'gone' : 'room';
-  G.avaren.x = 190; G.avaren.y = 220; G.avaren.pose = 'back';
+  if (isAvarenUnconscious()) {
+    placeAvarenUnconscious();
+  } else if (isAvarenBedRest()) {
+    placeAvarenBedRest();
+  } else {
+    G.avaren.x = 190; G.avaren.y = 220; G.avaren.pose = 'back'; G.avaren.sleepEye = 0;
+  }
   G.avaren.gatherTimer = Math.floor(Math.random() * 1800) + 2700;
   G.avaren.hasSeenRed = false; G.avaren.nearRedTimer = 0;
   G.red.x = 150; G.red.y = 360;
@@ -7285,14 +7622,15 @@ function continueAfterNight(prevText) {
   G.noah.bubbleTimer = 0; G.noah.autoSpeakTimer = 260;
   changeScene('room', { x: 260, y: 380 });
   let redMsg = '';
-  if (G.day % 2 === 1) {
+  if (isReidDay()) {
     if (G.redCommission && G.redCommission.returnDay === G.day) {
       redMsg = '\n雷德出現在戶外，背包鼓鼓的——他把委託的物品帶回來了。';
     } else {
-      redMsg = '\n今天是奇數天，雷德出現在戶外。';
+      redMsg = '\n雷德出現在戶外。';
     }
   }
   storyAuto('旁白', `第 ${G.day} 天開始了。清晨七點，新的一天。${redMsg}`);
+  triggerAvarenDay2WakeIntro();
   fadeInFromBlack();
   if (G.day === 10) document.getElementById('blood-moon-badge').style.display = 'block';
   // 第5天：阿瓦倫從外頭回來
@@ -7643,6 +7981,17 @@ function loadFromSlot(n) {
     if (G.noahLakeMoonSeen == null) G.noahLakeMoonSeen = false;
     if (G.noahLakeTalking == null) G.noahLakeTalking = false;
     if (G.avarenWaitedForForest == null) G.avarenWaitedForForest = false;
+    if (G.avarenAwake == null) G.avarenAwake = G.day > 1;
+    if (G.avarenBedRest == null) G.avarenBedRest = false;
+    if (G.avarenDay1Bandaged == null) G.avarenDay1Bandaged = false;
+    if (G.avarenDay2WakeIntroSeen == null) G.avarenDay2WakeIntroSeen = false;
+    if (G.avarenDay2WakeTalkPending == null) G.avarenDay2WakeTalkPending = false;
+    if (G.eldrinEmoteTimer == null) G.eldrinEmoteTimer = 0;
+    if (G.eldrinEmoteText == null) G.eldrinEmoteText = '!';
+    if (G.avaren.restBlinkTimer == null) G.avaren.restBlinkTimer = 180;
+    if (G.avaren.restBlinkPhase == null) G.avaren.restBlinkPhase = 0;
+    if (isAvarenUnconscious()) placeAvarenUnconscious();
+    else if (isAvarenBedRest()) placeAvarenBedRest();
     document.getElementById('title-screen').style.display = 'none';
     document.getElementById('game-screen').style.display  = 'block';
     document.getElementById('blood-moon-badge').style.display = 'none';
@@ -7679,7 +8028,7 @@ function startGame() {
 
   renderHUD();
   renderScene();
-  story('旁白', '清晨的光透過樹葉縫隙灑落。你和阿瓦倫來到這裡的第一天。前方是那間破舊的小屋。\n今天是奇數天，戶外有個迷路的紅髮勇者在晃蕩。');
+  story('旁白', '清晨的光透過樹葉縫隙灑落。你和阿瓦倫來到這裡的第一天。前方是那間破舊的小屋。');
 
   initStoveAnimation();
 
