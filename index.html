@@ -1308,6 +1308,9 @@ body {
 <audio id="bgm-sad" loop>
   <source src="music/backgroundmusicforvideos-sad-sad-music-467341.mp3" type="audio/mpeg">
 </audio>
+<audio id="bgm-day8" loop>
+  <source src="music/harumachimusic-a-mysterious-little-box-ancient-like-folk-music-233859.mp3" type="audio/mpeg">
+</audio>
 
 <!-- ══ TITLE ══ -->
 <div id="title-screen">
@@ -1338,7 +1341,7 @@ body {
           <div class="settings-row">
             <span class="settings-label">🔊 音量</span>
             <input type="range" id="settings-vol" min="0" max="100" value="0"
-              oninput="['bgm','bgm-bloodmoon','bgm-sad'].forEach(id=>{const e=document.getElementById(id);if(!e.paused)e.volume=this.value/100;});">
+              oninput="['bgm','bgm-bloodmoon','bgm-sad','bgm-day8'].forEach(id=>{const e=document.getElementById(id);if(!e.paused)e.volume=this.value/100;});">
           </div>
           <button id="pause-btn" onclick="togglePause()">⏸ 暫停遊戲</button>
         </div>
@@ -3384,6 +3387,15 @@ const NARR_RESEARCH = [
   '書頁碎了一角，你小心地把它拼回原位。這本書比你還要懂得阿瓦倫身上的詛咒。',
   '你把調好的藥水拿給阿瓦倫看。他盯著那瓶子看了一會兒，伸出手，讓你幫他用。',
 ];
+const NARR_NIGHT_RESEARCH = [
+  '夜深了。艾德林坐在書桌前，翻開一本又一本關於詛咒與藥草的書。',
+  '燭火很小，字跡很密。你一行一行讀下去，試著從那些古老的句子裡找出能救阿瓦倫的方法。',
+  '你把藥草磨成粉，又把失敗的配方劃掉。紙上的墨跡暈開，像一小片乾涸的黑霧。',
+  '房間另一側傳來阿瓦倫微弱的呼吸聲。你沒有回頭，只是把書頁翻得更輕了一點。',
+  '你不知道這些努力能不能來得及。\n但你還不能睡。\n至少今晚，還不能。',
+  '燭光在書桌上慢慢縮小。你的眼睛發酸，手指也因為疲憊而發冷。',
+  '你把最後一行筆記寫完時，天色仍然很黑。\n黑暗像水一樣漫上來，淹沒了書頁，也淹沒了這一夜。',
+];
 const NARR_TALK = [
   '你輕聲和阿瓦倫說了幾句話。他沒有回應太多，但你能感覺到他稍微放鬆了。',
   '你說了一些今天的事。阿瓦倫沒有看你，但他在聽。',
@@ -3681,7 +3693,7 @@ function enterDay8MorningAfterForget() {
   G.noah.x = 500; G.noah.y = 360; G.noah.pose = 'front'; G.noah.walkDir = {dx:0,dy:0}; G.noah.walkTimer = 0;
   G.noah.bubbleTimer = 0; G.noah.autoSpeakTimer = 260;
   document.getElementById('blood-moon-7-overlay').style.display = 'none';
-  switchBGM('bgm');
+  switchBGM('bgm-day8');
   renderHUD();
   renderScene();
   renderChars();
@@ -3704,6 +3716,37 @@ function finishForgetMagicNight() {
     '詛咒的聲音像退潮一樣遠去。\n留下來的只有疲憊、疼痛，還有一片安靜得近乎空白的夜。',
     '你不知道他會忘記多少。\n也不知道自己留下了多少。\n\n但至少，這個夜晚結束了。'
   ], enterDay8MorningAfterForget);
+}
+
+function finishBloodMoonNightWithoutForget() {
+  const fade = document.getElementById('night-fade');
+  storyQueue.length = 0;
+  if (_storyAutoTimer) { clearTimeout(_storyAutoTimer); _storyAutoTimer = null; }
+  document.getElementById('action-scene-overlay').style.display = 'none';
+  fade.style.transition = 'none';
+  fade.style.opacity = '1';
+  fade.style.display = 'block';
+  G.paused = true;
+  G.bloodMoon7Active = false;
+  G.bloodMoon7Calmed = false;
+  switchBGM('bgm');
+  document.getElementById('blood-moon-7-overlay').style.display = 'none';
+  setTimeout(() => {
+    if (G.pain >= 70 && G.curse >= 70) {
+      showEvent('💀', '——阿瓦倫沒能撐過來——',
+        '血月夜的折磨太深重了。\n\n黑暗退去以前，你聽見房間裡的呼吸聲越來越微弱。\n\n清晨，當你走進房間，\n阿瓦倫已經沒有了呼吸。',
+        () => endGame('avaren_death'), 'red');
+      return;
+    }
+    showEvent('💔', '第8天清晨',
+      '血月夜終於過去了。\n\n你走進房間，阿瓦倫縮在最遠的角落，背對著你。\n他沒有說話，但你感覺到了。\n\n那一夜他一個人撐過去的，沒有人能替他擋下。\n\n他記得你在那裡。\n他也記得你做了什麼、沒有做什麼。\n\n「……走開。」\n\n他沒有再說別的話。',
+      () => {
+        G.mood = 5;
+        G.moodLocked = true;
+        renderHUD();
+        enterDay8MorningAfterForget();
+      }, 'red');
+  }, 500);
 }
 
 function triggerAvarenDay2WakeIntro() {
@@ -4622,6 +4665,7 @@ function gameLoop() {
             () => { storyAuto('旁白', '夜幕低垂，血月升起。現在可以進入房間照顧阿瓦倫了。'); }, 'red');
         }, 500);
       } else {
+        fadeSwitchBGM('bgm-day8');
         setTimeout(() => {
           storyAuto('旁白', '夜幕低垂。太陽沉入山後，晚上的時間開始了。\n現在可以進屋照顧阿瓦倫了。');
         }, 400);
@@ -7219,6 +7263,19 @@ function doAction_Sleep() {
   if (G.timePeriod !== 'evening') { timeWarn('現在還是早上，先去做些事吧。'); return; }
   if (G.bloodMoon7Active) { warn('無法行動。'); return; }
   if (G.carryingSoup) { warn('拿著料理無法入睡'); return; }
+  if (G.day <= 2) {
+    showActionMenu('今晚要怎麼做？', [
+      {
+        name: '入睡', fx: '熬夜研究，結束今天',
+        req: () => true,
+        run() {
+          G.paused = true;
+          playNightResearchAnimation(() => { endDay(); });
+        }
+      },
+    ]);
+    return;
+  }
   showActionMenu('今晚要怎麼做？', [
     {
       name: '入睡', fx: '結束今天',
@@ -7281,6 +7338,77 @@ function doAction_Sleep() {
 
 function fadeSleepToBlack() {
   playSleepAnimation(() => { endDay(); }, []);
+}
+
+function playNightResearchAnimation(onComplete) {
+  const fade = document.getElementById('night-fade');
+  const dim  = document.getElementById('sleep-dim');
+  const el = G.eldrin;
+  const av = G.avaren;
+  storyQueue.length = 0;
+  if (_storyAutoTimer) { clearTimeout(_storyAutoTimer); _storyAutoTimer = null; }
+  document.getElementById('action-scene-overlay').style.display = 'none';
+  document.getElementById('hint-interact').style.display = 'none';
+  G.bubbleTimer = 0;
+  dim.style.transition = 'none';
+  dim.style.opacity = '0';
+  dim.style.display = 'none';
+  G.sleepAnimActive = true;
+  el.sleepEye = 0;
+  if (av) av.sleepEye = 0;
+  SFX.night();
+  fade.style.display = 'block';
+  fade.style.opacity = '0';
+  fade.getBoundingClientRect();
+  fade.style.transition = 'opacity 0.8s ease';
+  fade.style.opacity = '1';
+  setTimeout(() => {
+    G.scene = 'room';
+    G.avarenScene = G.day4AvarenGone ? 'gone' : 'room';
+    el.x = 309;
+    el.y = 190;
+    el.pose = 'back';
+    el.walkFrame = 0;
+    el.walkTick = 0;
+    renderScene();
+    renderHUD();
+    renderChars();
+    fade.style.transition = 'opacity 0.8s ease';
+    fade.style.opacity = '0';
+    setTimeout(() => {
+      fade.style.display = 'none';
+      [
+        pick(NARR_NIGHT_RESEARCH),
+        pick(NARR_NIGHT_RESEARCH),
+        pick(NARR_NIGHT_RESEARCH),
+      ].forEach(text => storyAutoFast('旁白', text));
+      setTimeout(() => {
+        dim.style.display = 'block';
+        dim.style.opacity = '0';
+        dim.style.transition = 'none';
+        dim.getBoundingClientRect();
+        dim.style.transition = 'opacity 6s ease';
+        dim.style.opacity = '1';
+      }, 3000);
+      setTimeout(() => {
+        storyQueue.length = 0;
+        if (_storyAutoTimer) { clearTimeout(_storyAutoTimer); _storyAutoTimer = null; }
+        document.getElementById('action-scene-overlay').style.display = 'none';
+        fade.style.transition = 'none';
+        fade.style.display = 'block';
+        fade.style.opacity = '1';
+        dim.style.transition = 'none';
+        dim.style.opacity = '0';
+        dim.style.display = 'none';
+        G.sleepAnimActive = false;
+        el.sleepEye = 0;
+        if (av) av.sleepEye = 0;
+        document.getElementById('cw-eldrin').style.zIndex = '';
+        document.getElementById('cw-avaren').style.zIndex = '';
+        setTimeout(onComplete, 500);
+      }, 10500);
+    }, 850);
+  }, 850);
 }
 
 function playSleepAnimation(onComplete, lines) {
@@ -7527,6 +7655,7 @@ function skipToEvening() {
           () => { storyAuto('旁白', '夜幕低垂，血月升起。現在可以進入房間照顧阿瓦倫了。'); }, 'red');
       }, 500);
     } else {
+      fadeSwitchBGM('bgm-day8');
       setTimeout(() => {
         storyAuto('旁白', '夜幕低垂。太陽沉入山後，晚上的時間開始了。\n現在可以進屋照顧阿瓦倫了。');
       }, 400);
@@ -7600,6 +7729,11 @@ function endDay() {
   G.paused = true;
   cancelAnimationFrame(raf);
   const avarenWakesOnDay2 = G.day === 1 && G.pain < 95 && G.curse < 95;
+
+  if (G.bloodMoon7Active && !G.usedForgetMagic) {
+    finishBloodMoonNightWithoutForget();
+    return;
+  }
 
   // 血月夜結束：清除疊層，判定死亡條件
   if (G.bloodMoon7Active) {
@@ -7716,6 +7850,8 @@ function continueAfterNight(prevText) {
   G.dayEndTriggered = false;
   G.nestEggs = 2; // 每天早晨鳥巢重新出現2顆蛋
   G.forestMushrooms = { 1: false, 2: false, 3: false, 4: false };
+  if (G.day === 8) switchBGM('bgm-day8');
+  else switchBGM('bgm');
   if (G.day > 2) G.avarenBedRest = false;
   renderHUD();
   G.avarenScene = G.day4AvarenGone ? 'gone' : 'room';
@@ -8151,7 +8287,8 @@ function startGame() {
 }
 
 function switchBGM(id) {
-  const all = ['bgm', 'bgm-bloodmoon', 'bgm-sad'];
+  if (bgmFadeTimer) { clearInterval(bgmFadeTimer); bgmFadeTimer = null; }
+  const all = ['bgm', 'bgm-bloodmoon', 'bgm-sad', 'bgm-day8'];
   all.forEach(aid => {
     const el = document.getElementById(aid);
     if (aid === id) {
@@ -8164,10 +8301,46 @@ function switchBGM(id) {
   });
 }
 
+let bgmFadeTimer = null;
+function fadeSwitchBGM(id, duration = 2400) {
+  if (bgmFadeTimer) { clearInterval(bgmFadeTimer); bgmFadeTimer = null; }
+  const all = ['bgm', 'bgm-bloodmoon', 'bgm-sad', 'bgm-day8'];
+  const target = document.getElementById(id);
+  if (!target) return;
+  const maxVolume = Number(document.getElementById('settings-vol').value) / 100;
+  if (!target.paused && all.every(aid => aid === id || document.getElementById(aid).paused)) {
+    target.volume = maxVolume;
+    return;
+  }
+  const from = all
+    .map(aid => document.getElementById(aid))
+    .filter(el => el && el !== target && !el.paused);
+  target.currentTime = 0;
+  target.volume = 0;
+  target.play().catch(() => {});
+  const steps = Math.max(1, Math.floor(duration / 80));
+  let step = 0;
+  bgmFadeTimer = setInterval(() => {
+    step++;
+    const t = Math.min(1, step / steps);
+    from.forEach(el => { el.volume = maxVolume * (1 - t); });
+    target.volume = maxVolume * t;
+    if (t >= 1) {
+      from.forEach(el => { el.pause(); el.currentTime = 0; });
+      target.volume = maxVolume;
+      clearInterval(bgmFadeTimer);
+      bgmFadeTimer = null;
+    }
+  }, 80);
+}
+
 function restartGame() {
   document.getElementById('ending-screen').style.display = 'none';
   document.getElementById('title-screen').style.display  = 'flex';
-  document.getElementById('bgm').pause();
+  ['bgm', 'bgm-bloodmoon', 'bgm-sad', 'bgm-day8'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.pause(); el.currentTime = 0; }
+  });
   const _hasSave = hasSave();
   const btn = document.getElementById('title-continue-btn');
   if (btn) btn.style.display = _hasSave ? 'block' : 'none';
