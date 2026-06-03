@@ -1437,8 +1437,17 @@ body {
 <audio id="sfx-slime">
   <source src="music/音效/史萊姆.mp3" type="audio/mpeg">
 </audio>
+<audio id="sfx-slime-2">
+  <source src="music/音效/史萊姆.mp3" type="audio/mpeg">
+</audio>
 <audio id="sfx-bird-flap">
   <source src="music/音效/拍翅膀.mp3" type="audio/mpeg">
+</audio>
+<audio id="sfx-bird-wiki-1">
+  <source src="music/音效/wiki01.m4a" type="audio/mp4">
+</audio>
+<audio id="sfx-bird-wiki-2">
+  <source src="music/音效/wiki02.mp3" type="audio/mpeg">
 </audio>
 <audio id="sfx-chicken-1">
   <source src="music/音效/雞1聲.mp3" type="audio/mpeg">
@@ -2109,6 +2118,7 @@ const BIRD_SCENES = {
 };
 const _birdState = {};
 const _birdFlyIntervals = {};
+let _birdAmbientTimer = 0;
 (function initBirds() {
   Object.entries(BIRD_SCENES).forEach(([scene, cfg]) => {
     const mx = cfg.initX !== undefined ? cfg.initX : (cfg.x1 + cfg.x2) / 2;
@@ -2122,6 +2132,10 @@ const _birdFlyIntervals = {};
     }
   });
 })();
+
+function playRandomBirdWiki(scale = 6.4) {
+  playLoopingAudio(Math.random() < 0.5 ? 'sfx-bird-wiki-1' : 'sfx-bird-wiki-2', scale);
+}
 
 function triggerBirdFlyAway(scene) {
   const cfg = BIRD_SCENES[scene];
@@ -2153,7 +2167,8 @@ function triggerBirdFlyAway(scene) {
   el.classList.remove('scene-bird-flyaway');
   void el.offsetWidth;
   el.classList.add('scene-bird-flyaway');
-  playLoopingAudio('sfx-bird-flap', 6.0);
+  playLoopingAudio('sfx-bird-flap', 3.5);
+  playRandomBirdWiki(8.0);
 
   // 動畫結束後隱藏並清除
   setTimeout(() => {
@@ -2166,6 +2181,23 @@ function triggerBirdFlyAway(scene) {
     s.flyingAway = false;
     s.respawnTimer = 1800; // 約30秒後重新出現
   }, 2100);
+}
+
+function updateBirdAmbientSfx() {
+  const activeScene = G && (G.scene === 'outside' || G.scene === 'forest') && G.timePeriod === 'morning';
+  if (!activeScene || G.manualPaused || isDlgBlocking()) {
+    _birdAmbientTimer = 0;
+    return;
+  }
+  if (_birdAmbientTimer <= 0) {
+    _birdAmbientTimer = 420 + Math.floor(Math.random() * 480);
+    return;
+  }
+  _birdAmbientTimer--;
+  if (_birdAmbientTimer <= 0) {
+    playRandomBirdWiki(4.4);
+    _birdAmbientTimer = 420 + Math.floor(Math.random() * 480);
+  }
 }
 
 function updateBirds() {
@@ -2310,17 +2342,13 @@ function updateOneSlime(slime, elId, homeX, homeY) {
 
   const HOP_CYCLE   = 110;
   const HOP_AIR_END = 68;
-  slime.hopTick = ((slime.hopTick || 0) + 1) % HOP_CYCLE;
+  const prevHopTick = slime.hopTick || 0;
+  slime.hopTick = (prevHopTick + 1) % HOP_CYCLE;
   const inAir = slime.hopTick < HOP_AIR_END;
-  // 用 CSS 動畫時間偵測落地點（62% = 1.83s * 0.62 ≈ 1135ms）
-  const anim = el.getAnimations ? el.getAnimations()[0] : null;
-  if (anim) {
-    const duration = 1830;
-    const landingMs = duration * 0.62;
-    const prev = slime._lastAnimTime ?? 0;
-    const curr = anim.currentTime % duration;
-    if (prev < landingMs && curr >= landingMs) playLoopingAudio('sfx-slime', 3.0);
-    slime._lastAnimTime = curr;
+  // 落地瞬間（從 inAir 切換到 onGround 的第一幀）
+  if (prevHopTick === HOP_AIR_END - 1) {
+    const sfxId = elId === 'monster-slime' ? 'sfx-slime' : 'sfx-slime-2';
+    playLoopingAudio(sfxId, 3.0);
   }
 
   if (!G.paused && !isDlgBlocking()) {
@@ -5889,6 +5917,7 @@ function gameLoop() {
     G._chickenSfxTimer = 0;
   }
 
+  updateBirdAmbientSfx();
   updateWeatherFx();
   updateOutdoorWalkSfx();
   updateIndoorWalkSfx();
