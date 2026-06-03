@@ -3829,6 +3829,9 @@ function initState() {
     coldPotion: 0, cursePotion: 0, forgetPotion: 0,
     usedForgetMagic: false, moodLocked: false, bloodMoon7Happened: false,
     day4EventTriggered: false, day4AvarenGone: false, day4AvarenNotified: false,
+    introDay0Active: false,
+    introDay0NoahVisible: false,
+    introDay0HideEldrin: false,
     noahDay2IntroSeen: false,
     noahLobbyTalking: false,
     noahLakeMoonSeen: false,
@@ -4131,7 +4134,10 @@ function renderChars() {
   // ── Eldrin ──
   const el = G.eldrin;
   const cwEl = document.getElementById('cw-eldrin');
-  if (spriteInfo.eldrin) {
+  if (G.introDay0HideEldrin) {
+    cwEl.style.display = 'none';
+  } else if (spriteInfo.eldrin) {
+    cwEl.style.display = 'block';
     const elSleep = el.sleepEye > 0 && el.pose === 'front';
     const elBlink = !elSleep && el.blinkPhase >= 0 && el.pose === 'front';
     const elPose  = (elSleep || elBlink) ? 'blink' : el.pose;
@@ -4148,7 +4154,7 @@ function renderChars() {
   }
   const eldrinEmote = document.getElementById('eldrin-emote');
   if (eldrinEmote) {
-    if (G.eldrinEmoteTimer > 0 && !G.sleepAnimActive) {
+    if (G.eldrinEmoteTimer > 0 && !G.sleepAnimActive && !G.introDay0HideEldrin) {
       eldrinEmote.textContent = G.eldrinEmoteText || '!';
       eldrinEmote.style.left = el.x + 'px';
       eldrinEmote.style.top = (el.y - dispH - 34) + 'px';
@@ -4248,7 +4254,7 @@ function renderChars() {
   const cwNoah = document.getElementById('cw-noah');
   const noahInLobby = G.scene === 'lobby' && G.day === 2 && G.timePeriod === 'morning' && G.noahDay2IntroSeen;
   const noahAtLake = G.scene === 'forest' && G.day === 2 && G.timePeriod === 'evening';
-  const noahVisible = (G.scene === 'outside' && G.day === 2 && G.timePeriod === 'morning') || noahInLobby || noahAtLake;
+  const noahVisible = (G.scene === 'outside' && G.day === 2 && G.timePeriod === 'morning') || noahInLobby || noahAtLake || (G.introDay0Active && G.introDay0NoahVisible);
   const noahDrawX = noahInLobby ? NOAH_LOBBY_POS.x : noahAtLake ? NOAH_FOREST_LAKE_POS.x : noah.x;
   const noahDrawY = noahInLobby ? NOAH_LOBBY_POS.y : noahAtLake ? NOAH_FOREST_LAKE_POS.y : noah.y;
   if (noahVisible && spriteInfo.noah) {
@@ -8316,9 +8322,194 @@ function doAction_Save() {
   openSavePanel('both');
 }
 
+function waitMs(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function faceToward(entity, fromX, fromY, toX, toY) {
+  const dx = toX - fromX;
+  const dy = toY - fromY;
+  if (Math.abs(dx) > Math.abs(dy)) entity.pose = dx < 0 ? 'sideL' : 'sideR';
+  else entity.pose = dy < 0 ? 'back' : 'front';
+}
+
+function animateNpcTo(entity, target, duration = 2200) {
+  return new Promise(resolve => {
+    const startX = entity.x;
+    const startY = entity.y;
+    const startTime = performance.now();
+    faceToward(entity, startX, startY, target.x, target.y);
+    const step = now => {
+      const t = Math.min(1, (now - startTime) / duration);
+      const ease = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+      entity.x = startX + (target.x - startX) * ease;
+      entity.y = startY + (target.y - startY) * ease;
+      entity.walkTick++;
+      if (entity.walkTick % 8 === 0) entity.walkFrame = (entity.walkFrame + 1) % 4;
+      renderChars();
+      if (t < 1) {
+        requestAnimationFrame(step);
+      } else {
+        entity.x = target.x;
+        entity.y = target.y;
+        entity.walkFrame = 0;
+        entity.walkTick = 0;
+        faceToward(entity, startX, startY, target.x, target.y);
+        renderChars();
+        resolve();
+      }
+    };
+    requestAnimationFrame(step);
+  });
+}
+
+function fadeToBlack(duration = 700) {
+  const fade = document.getElementById('night-fade');
+  fade.style.display = 'block';
+  fade.style.transition = `opacity ${duration}ms ease`;
+  fade.style.opacity = '1';
+  return waitMs(duration);
+}
+
+function fadeFromBlack(duration = 1800) {
+  const fade = document.getElementById('night-fade');
+  fade.style.display = 'block';
+  fade.style.opacity = '1';
+  fade.getBoundingClientRect();
+  fade.style.transition = `opacity ${duration}ms ease`;
+  fade.style.opacity = '0';
+  return waitMs(duration).then(() => { fade.style.display = 'none'; });
+}
+
+function playActionScene(lines) {
+  return new Promise(resolve => startActionScene(lines, 0, resolve));
+}
+
+function forceClearNightFade() {
+  const fade = document.getElementById('night-fade');
+  if (!fade) return;
+  fade.style.transition = 'none';
+  fade.style.opacity = '0';
+  fade.style.display = 'none';
+}
+
+function prepareNightFadeBlack() {
+  const fade = document.getElementById('night-fade');
+  if (!fade) return;
+  fade.style.transition = 'none';
+  fade.style.opacity = '1';
+  fade.style.display = 'block';
+}
+
+function setupDay0IntroState() {
+  G.day = 0;
+  G.scene = 'outside';
+  G.timePeriod = 'evening';
+  G.introDay0Active = true;
+  G.introDay0NoahVisible = true;
+  G.introDay0HideEldrin = true;
+  G.manualPaused = true;
+  G.paused = true;
+  G.pauseStartTime = performance.now();
+  G.dayStartMs = performance.now();
+  G.noah.x = 84;
+  G.noah.y = 336;
+  G.noah.pose = 'sideR';
+  G.noah.walkFrame = 0;
+  G.noah.walkTick = 0;
+  G.eldrin.x = 560;
+  G.eldrin.y = 230;
+  G.eldrin.pose = 'sideL';
+}
+
+async function finishDay0IntroToDay1() {
+  await fadeToBlack(900);
+  storyQueue.length = 0;
+  if (_storyAutoTimer) { clearTimeout(_storyAutoTimer); _storyAutoTimer = null; }
+  clearDialogueTypewriter();
+  initState();
+  G.day = 1;
+  G.scene = 'outside';
+  G.timePeriod = 'morning';
+  G.introDay0Active = false;
+  G.introDay0NoahVisible = false;
+  G.introDay0HideEldrin = false;
+  G.manualPaused = false;
+  G.paused = false;
+  G.dayStartMs = performance.now();
+  renderHUD();
+  renderScene();
+  renderChars();
+  await fadeFromBlack(1600);
+  story('旁白', '清晨的光透過樹葉縫隙灑落。你和阿瓦倫來到這裡的第一天。前方是那間破舊的小屋。');
+}
+
+async function playDay0OpeningIntro() {
+  storyQueue.length = 0;
+  if (_storyAutoTimer) { clearTimeout(_storyAutoTimer); _storyAutoTimer = null; }
+  clearDialogueTypewriter();
+
+  setupDay0IntroState();
+  renderHUD();
+  renderScene();
+  renderChars();
+
+  forceClearNightFade();
+  await waitMs(350);
+  await animateNpcTo(G.noah, { x: 320, y: 252 }, 3200);
+  await waitMs(450);
+  await fadeToBlack(600);
+
+  G.scene = 'lobby';
+  G.introDay0HideEldrin = false;
+  G.noah.x = 320;
+  G.noah.y = 430;
+  G.noah.pose = 'back';
+  G.eldrin.x = 558;
+  G.eldrin.y = 220;
+  G.eldrin.pose = 'sideL';
+  renderHUD();
+  renderScene();
+  renderChars();
+  await fadeFromBlack(1200);
+  await animateNpcTo(G.noah, { x: 430, y: 310 }, 1800);
+  G.noah.pose = 'sideR';
+  G.eldrin.pose = 'sideL';
+  renderChars();
+
+  await playActionScene([
+    { speaker: '旁白', text: '夜已經很深了。\n潮濕的風穿過森林，樹影在小屋外低低搖晃。' },
+    { speaker: '旁白', text: '諾亞推門進來時，艾德林正站在大廳的樓梯旁。\n他的臉色比夜色還要蒼白。' },
+    { speaker: '諾亞', text: '艾德林，我把附近的痕跡都處理掉了。至少今晚，他們不會找到這裡。' },
+    { speaker: '艾德林', text: '謝謝你……諾亞。' },
+    { speaker: '諾亞', text: '不用跟我道謝。這間小屋本來就很久沒有人來了，用來躲藏正好。' },
+    { speaker: '諾亞', text: '阿瓦倫呢？那孩子的狀況怎麼樣？' },
+    { speaker: '艾德林', text: '還在房間裡昏迷。\n呼吸很弱，身上的詛咒也沒有退下去。' },
+    { speaker: '艾德林', text: '都是我的錯。' },
+    { speaker: '艾德林', text: '如果我再早一點發現，如果我能更快帶他離開……他就不會變成現在這樣。' },
+    { speaker: '諾亞', text: '艾德林。' },
+    { speaker: '諾亞', text: '你已經把他帶出來了。這不是誰都做得到的事。' },
+    { speaker: '艾德林', text: '可是那孩子還在受苦。' },
+    { speaker: '諾亞', text: '所以你才會留在這裡，不是嗎？' },
+    { speaker: '諾亞', text: '你會想辦法救他。你一直都是這樣的人。' },
+    { speaker: '諾亞', text: '今晚先讓他休息。你也一樣。等天亮之後，我會再過來看你們。' },
+    { speaker: '艾德林', text: '……嗯。' },
+    { speaker: '諾亞', text: '不要一個人把所有事情都扛起來。至少在這裡，你們不是孤身一人。' },
+    { speaker: '旁白', text: '諾亞留下這句話後，輕輕關上了門。\n小屋重新安靜下來。' },
+    { speaker: '旁白', text: '樓上傳來極輕的呼吸聲。\n艾德林站在原地，很久都沒有動。' }
+  ]);
+
+  await animateNpcTo(G.noah, { x: 318, y: 440 }, 1700);
+  G.introDay0NoahVisible = false;
+  renderChars();
+  await waitMs(350);
+  await finishDay0IntroToDay1();
+}
+
 function startGame() {
   zeRestoreSaved(); // 套用之前用區域編輯器儲存的座標
   initState();
+  forceClearNightFade();
   document.getElementById('title-screen').style.display = 'none';
   document.getElementById('game-screen').style.display  = 'block';
   document.getElementById('blood-moon-badge').style.display = 'none';
@@ -8329,11 +8520,11 @@ function startGame() {
   bgm.volume = 0;
   bgm.play().catch(() => {});
 
+  initStoveAnimation();
   renderHUD();
   renderScene();
+  renderChars();
   story('旁白', '清晨的光透過樹葉縫隙灑落。你和阿瓦倫來到這裡的第一天。前方是那間破舊的小屋。');
-
-  initStoveAnimation();
 
   if (raf) cancelAnimationFrame(raf);
   raf = requestAnimationFrame(gameLoop);
