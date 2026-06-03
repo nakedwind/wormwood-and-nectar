@@ -80,6 +80,19 @@ body {
   box-shadow: 0 0 0 2px #80e080, 0 0 24px rgba(60,200,60,0.8);
   background: linear-gradient(135deg, #2a5a2a, #1a3a1a);
 }
+#title-skip-btn {
+  position: absolute; bottom: 166px; left: 50%; transform: translateX(-50%);
+  background: linear-gradient(135deg, #3a1a1a, #220e0e);
+  border: 1px solid #906040; color: #c8a070;
+  padding: 12px 0; width: 200px; font-size: 17px; font-family: inherit;
+  cursor: pointer; letter-spacing: 4px; white-space: nowrap;
+  transition: all 0.2s; border-radius: 24px;
+  box-shadow: 0 0 12px rgba(180,100,40,0.3);
+}
+#title-skip-btn:hover {
+  background: linear-gradient(135deg, #5a2a1a, #3a1a0e);
+  box-shadow: 0 0 24px rgba(200,130,60,0.6);
+}
 
 /* ══ GAME SCREEN ══ */
 #game-screen { display: none; }
@@ -104,6 +117,7 @@ body {
   animation: pulse 1.5s infinite;
 }
 @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+@keyframes day0HintPulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
 /* ── 白天色調疊層（z-index 591~593：高於所有場景物件，低於 UI 的 600） ── */
 #day-tint-overlay {
@@ -1325,6 +1339,37 @@ body {
 <audio id="bgm-day8" loop>
   <source src="music/harumachimusic-a-mysterious-little-box-ancient-like-folk-music-233859.mp3" type="audio/mpeg">
 </audio>
+<audio id="sfx-day0-rain" loop>
+  <source src="music/音效/下雨.mp3" type="audio/mpeg">
+</audio>
+<audio id="sfx-day0-walk" loop>
+  <source src="music/音效/雨で濡れた道路を歩く (mp3cut.net).mp3" type="audio/mpeg">
+</audio>
+<audio id="sfx-door-open">
+  <source src="music/音效/開門.mp3" type="audio/mpeg">
+</audio>
+<audio id="sfx-dialogue-next">
+  <source src="music/音效/對話框下一頁音效.mp3" type="audio/mpeg">
+</audio>
+<audio id="sfx-indoor-walk" loop>
+  <source src="music/音效/室內走路音效.mp3" type="audio/mpeg">
+</audio>
+<audio id="sfx-outdoor-walk" loop>
+  <source src="music/音效/戶外走路.mp3" type="audio/mpeg">
+</audio>
+<audio id="sfx-gather-stone">
+  <source src="music/音效/搜尋石頭.mp3" type="audio/mpeg">
+</audio>
+<audio id="sfx-gather-bush">
+  <source src="music/音效/搜尋草叢草叢.mp3" type="audio/mpeg">
+</audio>
+<audio id="sfx-gather-wood">
+  <source src="music/音效/搜尋樹木.mp3" type="audio/mpeg">
+</audio>
+<audio id="sfx-curtain">
+  <source src="music/音效/素材/布料摩擦.mp3" type="audio/mpeg">
+
+</audio>
 
 <!-- ══ TITLE ══ -->
 <div id="title-screen">
@@ -1332,6 +1377,7 @@ body {
     <img id="title-cover" src="Game cover.png" alt="苦艾與甘露">
     <div id="title-game-title">苦艾與甘露</div>
     <div id="title-intro"></div>
+    <button id="title-skip-btn" onclick="skipToDay1()">跳到第一天</button>
     <button id="title-continue-btn" onclick="openSavePanel('load')">繼續遊戲</button>
     <button id="title-start-btn" onclick="startGame()">開始遊戲</button>
   </div>
@@ -1354,8 +1400,8 @@ body {
         <div id="settings-panel">
           <div class="settings-row">
             <span class="settings-label">🔊 音量</span>
-            <input type="range" id="settings-vol" min="0" max="100" value="0"
-              oninput="['bgm','bgm-bloodmoon','bgm-sad','bgm-day8'].forEach(id=>{const e=document.getElementById(id);if(!e.paused)e.volume=this.value/100;});">
+            <input type="range" id="settings-vol" min="0" max="100" value="10"
+              oninput="['bgm','bgm-bloodmoon','bgm-sad','bgm-day8','sfx-day0-rain','sfx-day0-walk'].forEach(id=>{const e=document.getElementById(id);if(!e.paused)e.volume=this.value/100;});">
           </div>
           <button id="pause-btn" onclick="togglePause()">⏸ 暫停遊戲</button>
         </div>
@@ -1477,6 +1523,7 @@ body {
       </div>
       <div id="nest-egg-1" style="display:none;position:absolute;left:462px;top:101px;width:14px;height:13px;z-index:12;pointer-events:none;"><img src="egg.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
       <div id="nest-egg-2" style="display:none;position:absolute;left:470px;top:101px;width:14px;height:13px;z-index:12;pointer-events:none;"><img src="egg.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+      <div id="day0-room-hint" style="display:none;position:absolute;left:541px;top:6px;z-index:601;pointer-events:none;padding:5px 10px;background:rgba(8,5,2,0.88);border:1px solid #4a3214;border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,0.4);font-size:12px;color:#f0e8c0;letter-spacing:1px;white-space:nowrap;animation:day0HintPulse 1.8s infinite;">↑ 前往房間</div>
       <div id="rain-tint-overlay"></div>
       <canvas id="rain-canvas" width="640" height="480"></canvas>
       <canvas id="debug-canvas" width="640" height="480" style="position:absolute;inset:0;pointer-events:none;z-index:700;"></canvas>
@@ -2394,6 +2441,8 @@ function updateAvarenSpriteForState() {
   let src = AVAREN_SPRITE_DEFAULT;
   if (G && G.bloodMoon7Active) {
     src = AVAREN_SPRITE_CURSE02;
+  } else if (G && G.day === 0) {
+    src = AVAREN_SPRITE_DAY1;
   } else if (G && G.day === 1 && isAvarenUnconscious()) {
     src = G.avarenDay1Bandaged ? AVAREN_SPRITE_DAY1_BANDAGING : AVAREN_SPRITE_DAY1;
   } else if (G && isAvarenBedRest()) {
@@ -2435,7 +2484,7 @@ function sceneCharH() {
 const ZONES = {
   outside: [
     { id:'to_lobby',  x1:290, y1:208, x2:356, y2:252, sceneHint:'→ 進入小屋', isScene:true,
-      fn(){ changeScene('lobby'); } },
+      fn(){ playLoopingAudio('sfx-door-open', 6.0); changeScene('lobby'); } },
     { id:'farm',      x1:15,  y1:231, x2:181, y2:316, interactHint:'種植',
       fn(){ doAction_Gather(); } },
     { id:'gate',      x1:257, y1:425, x2:400, y2:467, interactHint:'柵欄門',
@@ -2453,19 +2502,19 @@ const ZONES = {
   ],
   lobby: [
     { id:'to_room',    x1:545, y1:0,   x2:637, y2:108, sceneHint:'→ 前往房間（樓梯）', isScene:true,
-      fn(){ changeScene('room'); } },
+      fn(){ playLoopingAudio('sfx-door-open', 6.0); changeScene('room'); } },
     { id:'to_outside', x1:198, y1:444, x2:342, y2:477, sceneHint:'→ 前往戶外', isScene:true,
-      fn(){ changeScene('outside', {x:319, y:265}); } },
+      fn(){ playLoopingAudio('sfx-door-open', 6.0); changeScene('outside', {x:319, y:265}); } },
     { id:'to_kitchen', x1:361, y1:99,  x2:523, y2:161, sceneHint:'→ 前往廚房（布簾）', isScene:true,
-      fn(){ changeScene('kitchen'); } },
+      fn(){ playLoopingAudio('sfx-curtain', 6.0); changeScene('kitchen'); } },
     { id:'lobby_potion', x1:110, y1:165, x2:185, y2:225,
-      fn(){ doAction_Research(); } },
+      fn(){ doAction_PickupPotion(); } },
     { id:'cabinet',    x1:8,   y1:91,  x2:323, y2:211, interactHint:'研究',
-      fn(){ doAction_Research(); } },
+      fn(){ doAction_StartResearch(); } },
   ],
   kitchen: [
     { id:'to_lobby',   x1:251, y1:453, x2:400, y2:479, sceneHint:'→ 返回大廳', isScene:true,
-      fn(){ changeScene('lobby', {x:454, y:159}); } },
+      fn(){ playLoopingAudio('sfx-curtain', 6.0); changeScene('lobby', {x:454, y:159}); } },
     { id:'stove',      x1:95,  y1:138, x2:403, y2:275, interactHint:'烹飪',
       fn(){ doAction_Cook(); } },
   ],
@@ -2495,11 +2544,11 @@ const ZONES = {
   ],
   room: [
     { id:'to_lobby',   x1:109, y1:444, x2:212, y2:476, sceneHint:'→ 前往大廳', isScene:true,
-      fn(){ changeScene('lobby', {x:591, y:100}); } },
+      fn(){ playLoopingAudio('sfx-door-open', 6.0); changeScene('lobby', {x:591, y:100}); } },
     { id:'bed',        x1:355, y1:289, x2:529, y2:460, interactHint:'床邊',
       fn(){ openBedMenu(); } },
-    { id:'bookshelf',  x1:431, y1:42,  x2:536, y2:209, interactHint:'讀書',
-      fn(){ doAction_ReadBook(); } },
+    { id:'bookshelf',  x1:431, y1:42,  x2:536, y2:209, interactHint:'書櫃',
+      fn(){ doAction_BookshelfMenu(); } },
     { id:'save_desk',  x1:228, y1:97,  x2:384, y2:195, interactHint:'存檔',
       fn(){ doAction_Save(); } },
   ],
@@ -2594,14 +2643,17 @@ function getActiveZone() {
   const zones = ZONES[G.scene] || [];
   for (const z of zones) {
     if (z.condition && !z.condition()) continue;
+    if (G.day === 0 && G.scene === 'lobby' && z.isScene && z.id !== 'to_room') continue;
+    if (G.day === 0 && G.scene === 'room' && z.id === 'bed') continue;
     if (el.x >= z.x1 && el.x <= z.x2 && el.y >= z.y1 && el.y <= z.y2) return z;
   }
   return null;
 }
 
 function isNearAvaren() {
+  const range = (G && G.day === 0) ? 130 : 60;
   return G.avarenScene === G.scene &&
-    Math.hypot(G.eldrin.x - G.avaren.x, G.eldrin.y - G.avaren.y) < 60;
+    Math.hypot(G.eldrin.x - G.avaren.x, G.eldrin.y - G.avaren.y) < range;
 }
 
 function canInteractBloodMoonAvaren() {
@@ -4543,6 +4595,10 @@ function updateHints() {
 
   const nearRed = isNearReid();
   const nearNoah = isNearNoah();
+  if (G.day === 0 && G.scene === 'room' && near) {
+    hi.textContent = '阿瓦倫';
+    hi.style.display = 'block'; hs.style.display = 'none'; return;
+  }
   if (G.carryingSoup && near && G.avarenScene === G.scene) {
     hi.textContent = '阿瓦倫';
     hi.style.display = 'block'; hs.style.display = 'none'; return;
@@ -4584,7 +4640,7 @@ function updateHints() {
     hi.textContent = '🎣 垂釣中，請稍候…';
     hi.style.display = 'block'; hs.style.display = 'none'; return;
   }
-  if (zone && (zone.id === 'lobby_potion' || zone.id === 'cabinet') && G.researchReady) {
+  if (zone && zone.id === 'lobby_potion' && G.researchReady) {
     const rLabel = G.researchType === 'cold' ? '治療藥水（疼痛-5）' : G.researchType === 'curse' ? '解咒藥水（詛咒-5）' : '忘卻藥水（血月夜使用）';
     hi.textContent = `取回${rLabel}`;
     hi.style.display = 'block'; hs.style.display = 'none'; return;
@@ -4678,7 +4734,10 @@ function gameLoop() {
   // ── 真實時間追蹤（手動暫停時凍結時間）──
   const _now = G.manualPaused ? G.pauseStartTime : performance.now();
   const _elapsed = (_now - G.dayStartMs) / 1000;
-  if (!G.manualPaused && !G.periodTransitioned && _elapsed >= MORNING_SECONDS) {
+  if (G.day === 0) {
+    renderTime(0);
+    if (G.eldrinEmoteTimer > 0) G.eldrinEmoteTimer--;
+  } else if (!G.manualPaused && !G.periodTransitioned && _elapsed >= MORNING_SECONDS) {
     G.periodTransitioned = true;
     doNightFade(() => {
       G.timePeriod = 'evening';
@@ -4750,13 +4809,15 @@ function gameLoop() {
       }
     });
   }
-  if (!G.manualPaused && !G.dayEndTriggered && _elapsed >= DAY_REAL_SECONDS) {
+  if (G.day !== 0 && !G.manualPaused && !G.dayEndTriggered && _elapsed >= DAY_REAL_SECONDS) {
     G.dayEndTriggered = true;
     endDay();
     return;
   }
-  renderTime(_elapsed);
-  if (G.eldrinEmoteTimer > 0) G.eldrinEmoteTimer--;
+  if (G.day !== 0) {
+    renderTime(_elapsed);
+    if (G.eldrinEmoteTimer > 0) G.eldrinEmoteTimer--;
+  }
 
   if (G.paused) {
     if (G.sleepAnimActive) { updateRoomDepth(); renderChars(); }
@@ -5579,7 +5640,7 @@ function gameLoop() {
         potionImg.src = src;
         potionEl.style.display = 'block';
       }
-      toast('🔬 藥水完成！回書櫃取回');
+      toast('🔬 藥水研究完成');
     }
   }
 
@@ -5677,6 +5738,8 @@ function gameLoop() {
   if (G.sceneCooldown > 0) G.sceneCooldown--;
 
   updateWeatherFx();
+  updateOutdoorWalkSfx();
+  updateIndoorWalkSfx();
   renderChars();
   updateHints();
   raf = requestAnimationFrame(gameLoop);
@@ -5776,7 +5839,9 @@ document.addEventListener('keydown', e => {
     // 否則觸發場景互動
     const zone = getActiveZone();
     const near = isNearAvaren();
-    if (G.carryingSoup && near && G.avarenScene === G.scene) {
+    if (G.day === 0 && G.scene === 'room' && near) {
+      playDay0AvarenMonologue();
+    } else if (G.carryingSoup && near && G.avarenScene === G.scene) {
       openAvarenMenu();
     } else if (zone && zone.id === 'bed') {
       openBedMenu();
@@ -5852,7 +5917,12 @@ document.getElementById('scene-wrap').addEventListener('mouseleave', () => {
 
 // Click on Avaren
 document.getElementById('cw-avaren').addEventListener('click', () => {
-  if (G && !G.paused) openAvarenMenu();
+  if (!G || G.paused) return;
+  if (G.day === 0 && G.scene === 'room' && isNearAvaren()) {
+    playDay0AvarenMonologue();
+    return;
+  }
+  openAvarenMenu();
 });
 document.getElementById('cw-noah').addEventListener('click', () => {
   if (G && !G.paused && isNearNoah()) openNoahMenu();
@@ -5862,6 +5932,10 @@ document.getElementById('cw-noah').addEventListener('click', () => {
 //  AVAREN INTERACTION MENU
 // ══════════════════════════════════════
 function openAvarenMenu() {
+  if (G.day === 0 && G.scene === 'room') {
+    playDay0AvarenMonologue();
+    return;
+  }
   // 血月夜：第4個記憶事件結束後，才能在森林湖邊互動
   if (G.bloodMoon7Active) {
     if (!canInteractBloodMoonAvaren()) return;
@@ -6132,6 +6206,7 @@ function doAction_GatherWood() {
   if (G.gatherSearchActive) return;
   if ((G.eldrinHp ?? 100) <= 20) { warn('艾德林 HP 太低了，需要休息才能工作。'); return; }
   G.woodCooldown = 360;
+  playLoopingAudio('sfx-gather-wood', 4.0);
   startGatherSearch('🌲 搜索中…', () => {
     const roll = Math.random();
     if (roll < 0.30) {
@@ -6182,6 +6257,7 @@ function doAction_GatherBush() {
   if (G.actionSceneActive) { warn('正在進行其他行動。'); return; }
   if (G.gatherSearchActive) return;
   G.bushCooldown = 360;
+  playLoopingAudio('sfx-gather-bush', 2.0);
   startGatherSearch('🌿 搜索中…', () => {
     const roll = Math.random();
     if (roll < 0.38) {
@@ -6302,6 +6378,7 @@ function doAction_GatherStone() {
   if (G.gatherSearchActive) return;
   if ((G.eldrinHp ?? 100) <= 20) { warn('艾德林 HP 太低了，需要休息才能工作。'); return; }
   G.stoneCooldown = 360;
+  playLoopingAudio('sfx-gather-stone', 4.0);
   startGatherSearch('🪨 搜索中…', () => {
     if (Math.random() < 0.60) {
       chg('stone', 1); renderHUD();
@@ -6769,24 +6846,26 @@ function doAction_Cook() {
   openCookSelectPanel();
 }
 
-function doAction_Research() {
-  if (G.researchReady) {
-    SFX.collect();
-    const label = G.researchType === 'cold' ? '治療藥水' : '解咒藥水';
-    G.researchReady = false;
-    document.getElementById('research-scene-wrap').style.display = 'none';
-    const potionEl = document.getElementById('lobby-potion');
-    if (potionEl) potionEl.style.display = 'none';
-    document.getElementById('research-scene-label').textContent = '🔬 研究藥水中…';
-    document.getElementById('research-scene-bar').style.background = 'linear-gradient(90deg,#402080,#8040e0)';
-    if (G.researchType === 'cold') chg('coldPotion', 1);
-    else if (G.researchType === 'curse') chg('cursePotion', 1);
-    else if (G.researchType === 'forget') chg('forgetPotion', 1);
-    G.researchType = null;
-    renderHUD();
-    story('旁白', `你取回配製好的${label}，小心地收進背包。`);
-    return;
-  }
+function doAction_PickupPotion() {
+  if (!G.researchReady) return;
+  SFX.collect();
+  const label = G.researchType === 'cold' ? '治療藥水' : '解咒藥水';
+  G.researchReady = false;
+  document.getElementById('research-scene-wrap').style.display = 'none';
+  const potionEl = document.getElementById('lobby-potion');
+  if (potionEl) potionEl.style.display = 'none';
+  document.getElementById('research-scene-label').textContent = '🔬 研究藥水中…';
+  document.getElementById('research-scene-bar').style.background = 'linear-gradient(90deg,#402080,#8040e0)';
+  if (G.researchType === 'cold') chg('coldPotion', 1);
+  else if (G.researchType === 'curse') chg('cursePotion', 1);
+  else if (G.researchType === 'forget') chg('forgetPotion', 1);
+  G.researchType = null;
+  renderHUD();
+  story('旁白', `你取回配製好的${label}，小心地收進背包。`);
+}
+
+function doAction_StartResearch() {
+  if (G.researchReady) { warn('藥水已完成，請先靠近藥水取回。'); return; }
   if (G.timePeriod !== 'evening') { timeWarn('研究藥水是晚上的行動。'); return; }
   if (G.researchActive) { warn('已經在研究藥水了，請稍候。'); return; }
   if ((G.eldrinHp ?? 100) <= 20) { warn('艾德林 HP 太低了，需要休息才能工作。'); return; }
@@ -6833,9 +6912,41 @@ function doAction_Research() {
   ]);
 }
 
-function doAction_ReadBook() {
+function doAction_BookshelfMenu() {
   if (G.bloodMoon7Active) { warn('無法行動。'); return; }
   if (G.paused || G.actionSceneActive) return;
+  showActionMenu('書櫃', [
+    {
+      name: '讀書',
+      fx: '',
+      run() { doAction_ReadAlone(); }
+    },
+    {
+      name: '唸書給阿瓦倫聽',
+      fx: '信任+10  心情+3',
+      req() { return G.day >= 3; },
+      run() { doAction_ReadBook(); }
+    },
+  ]);
+}
+
+function doAction_ReadAlone() {
+  if (G.timePeriod !== 'evening') { timeWarn('讀書是晚上的行動。'); return; }
+  if ((G.eldrinHp ?? 100) <= 20) { warn('艾德林 HP 太低了，需要休息才能工作。'); return; }
+  startActionScene([
+    { speaker: '旁白', text: pick([
+      '你在燭光下翻開一本書，試著讓自己靜下心來。',
+      '書頁的氣味讓這間小屋有了一點不一樣的感覺。',
+      '你讀了幾頁，腦子裡想的卻還是阿瓦倫的事。',
+      '字句在眼前流過，你試著記下幾個有用的段落。',
+      '燭火搖著，你把書翻到做了記號的那一頁，繼續讀。',
+    ]) },
+  ], 0, () => {
+    renderHUD();
+  });
+}
+
+function doAction_ReadBook() {
   if (G.day4AvarenGone) { warn('阿瓦倫不在。'); return; }
   if (G.timePeriod !== 'evening') { timeWarn('讀書是晚上的行動。'); return; }
   if ((G.eldrinHp ?? 100) <= 20) { warn('艾德林 HP 太低了，需要休息才能工作。'); return; }
@@ -6885,6 +6996,69 @@ const SPEAKER_TEXT_CLASS = {
   '溫特': 'asc-text-winter',
   '諾亞': 'asc-text-noah',
 };
+const DIALOGUE_TYPE_SPEED = 24;
+let _dialogueTypeTimer = null;
+let _dialogueTypeState = null;
+
+function clearDialogueTypewriter() {
+  if (_dialogueTypeTimer) {
+    clearTimeout(_dialogueTypeTimer);
+    _dialogueTypeTimer = null;
+  }
+  _dialogueTypeState = null;
+}
+
+function startDialogueTypewriter({ text, targetEl, arrowEl, showArrowAfter = false, onDone = null }) {
+  clearDialogueTypewriter();
+  const fullText = String(text || '');
+  targetEl.textContent = '';
+  if (arrowEl) arrowEl.style.display = 'none';
+
+  _dialogueTypeState = { text: fullText, targetEl, arrowEl, showArrowAfter, onDone, index: 0 };
+
+  const finish = () => {
+    if (!_dialogueTypeState) return;
+    targetEl.textContent = fullText;
+    if (arrowEl && showArrowAfter) arrowEl.style.display = 'block';
+    const cb = _dialogueTypeState.onDone;
+    clearDialogueTypewriter();
+    if (cb) cb();
+  };
+
+  if (!fullText) {
+    finish();
+    return;
+  }
+
+  const step = () => {
+    if (!_dialogueTypeState) return;
+    _dialogueTypeState.index++;
+    targetEl.textContent = fullText.slice(0, _dialogueTypeState.index);
+    if (_dialogueTypeState.index >= fullText.length) {
+      finish();
+      return;
+    }
+    _dialogueTypeTimer = setTimeout(step, DIALOGUE_TYPE_SPEED);
+  };
+
+  _dialogueTypeTimer = setTimeout(step, DIALOGUE_TYPE_SPEED);
+}
+
+function finishDialogueTypewriter() {
+  if (!_dialogueTypeState) return false;
+  const state = _dialogueTypeState;
+  if (_dialogueTypeTimer) {
+    clearTimeout(_dialogueTypeTimer);
+    _dialogueTypeTimer = null;
+  }
+  state.targetEl.textContent = state.text;
+  if (state.arrowEl && state.showArrowAfter) state.arrowEl.style.display = 'block';
+  const cb = state.onDone;
+  _dialogueTypeState = null;
+  if (cb) cb();
+  return true;
+}
+
 function applySpeakerPortrait(speaker, portraitEl) {
   const src = SPEAKER_AVATARS[speaker];
   if (!src) {
@@ -6915,20 +7089,29 @@ function _ascShowLine(idx) {
   setSpeakerLayout(line.speaker);
   document.getElementById('asc-speaker').textContent = '— ' + line.speaker + ' —';
   // 文字區：旁白和阿瓦倫顯示文字，艾德林留空（台詞在按鈕上）
-  textEl.textContent = isChar ? '' : line.text;
+  textEl.textContent = '';
   textEl.className   = 'asc-text' + (SPEAKER_TEXT_CLASS[line.speaker] ? ' ' + SPEAKER_TEXT_CLASS[line.speaker] : '');
   applySpeakerPortrait(line.speaker, portrait);
   // 艾德林：台詞按鈕；旁白/阿瓦倫：用右下角 ▼ 箭頭
-  btn.textContent    = isChar ? line.text : '';
+  btn.textContent    = '';
   btn.className      = isChar ? 'asc-btn-char' : 'asc-btn-narr';
-  arrow.style.display = isChar ? 'none' : 'block';
+  arrow.style.display = 'none';
+  startDialogueTypewriter({
+    text: line.text,
+    targetEl: isChar ? btn : textEl,
+    arrowEl: arrow,
+    showArrowAfter: !isChar
+  });
 }
 
 function ascAdvance() {
+  if (finishDialogueTypewriter()) return;
+  playLoopingAudio('sfx-dialogue-next', 5.0);
   G.actionSceneLineIdx++;
   if (G.actionSceneLineIdx >= G.actionSceneLines.length) {
     SFX.complete();
     G.actionSceneActive = false;
+    clearDialogueTypewriter();
     document.getElementById('action-scene-overlay').style.display = 'none';
     if (G.actionSceneOnDone) { const cb = G.actionSceneOnDone; G.actionSceneOnDone = null; cb(); }
     // action scene 結束後，若旁白佇列有內容則繼續顯示
@@ -6939,6 +7122,7 @@ function ascAdvance() {
 }
 
 function onOverlayClick() {
+  if (finishDialogueTypewriter()) return;
   if (G && G.actionSceneActive) { ascAdvance(); return; }
   if (storyQueue.length > 0 && !storyQueue[0].cb) { advanceStory(); return; }
 }
@@ -7049,6 +7233,7 @@ function _showStory() {
   if (_storyAutoTimer) { clearTimeout(_storyAutoTimer); _storyAutoTimer = null; }
   // action scene 優先，旁白等它結束後再顯示
   if (G && G.actionSceneActive) return;
+  clearDialogueTypewriter();
 
   const overlay = document.getElementById('action-scene-overlay');
 
@@ -7060,6 +7245,7 @@ function _showStory() {
   }
 
   if (storyQueue.length === 0) {
+    clearDialogueTypewriter();
     overlay.style.display = 'none';
     return;
   }
@@ -7070,30 +7256,39 @@ function _showStory() {
   document.getElementById('asc-speaker').textContent = '— ' + item.speaker + ' —';
   setSpeakerLayout(item.speaker);
   const textEl = document.getElementById('asc-text');
-  textEl.textContent = isChar ? '' : item.text;
+  textEl.textContent = '';
   textEl.className   = 'asc-text' + (SPEAKER_TEXT_CLASS[item.speaker] ? ' ' + SPEAKER_TEXT_CLASS[item.speaker] : '');
   applySpeakerPortrait(item.speaker, document.getElementById('asc-portrait'));
   const btn = document.getElementById('asc-btn');
-  btn.textContent = isChar ? item.text : '';
+  btn.textContent = '';
   btn.className   = isChar ? 'asc-btn-char' : 'asc-btn-narr';
   // 自動關閉的旁白不顯示 ▼（不需要玩家點擊）；手動旁白顯示 ▼
-  document.getElementById('asc-arrow').style.display = (isChar || item.autoClose) ? 'none' : 'block';
+  const arrow = document.getElementById('asc-arrow');
+  arrow.style.display = 'none';
   // 自動關閉的旁白不攔截點擊，讓玩家繼續操作
   overlay.style.pointerEvents = item.autoClose ? 'none' : 'auto';
 
   overlay.style.display = 'flex';
 
-  if (item.autoClose) {
-    _storyAutoTimer = setTimeout(() => {
-      advanceStory();
-    }, item.autoDuration || 3200);
-  }
+  startDialogueTypewriter({
+    text: item.text,
+    targetEl: isChar ? btn : textEl,
+    arrowEl: arrow,
+    showArrowAfter: !isChar && !item.autoClose,
+    onDone: item.autoClose ? () => {
+      _storyAutoTimer = setTimeout(() => {
+        advanceStory();
+      }, item.autoDuration || 3200);
+    } : null
+  });
 }
 
 function advanceStory() {
+  if (finishDialogueTypewriter()) return true;
   if (_storyAutoTimer) { clearTimeout(_storyAutoTimer); _storyAutoTimer = null; }
   if (G && G.actionSceneActive) return false;
   if (storyQueue.length === 0) {
+    clearDialogueTypewriter();
     document.getElementById('action-scene-overlay').style.display = 'none';
     return false;
   }
@@ -7212,6 +7407,14 @@ function chg(stat, d) {
 function changeScene(to, startOverride) {
   if (G.carryingKettle) return;
   if (G.sceneTransitioning) return;
+  if (to === 'room' && G.day === 0) {
+    const day0Hint = document.getElementById('day0-room-hint');
+    if (day0Hint) day0Hint.style.display = 'none';
+  }
+  if (G.day === 0 && to !== 'room' && !(G.scene === 'room' && to === 'lobby')) {
+    warn('現在還不能離開。');
+    return;
+  }
   if (G.gatherSearchActive) {
     G.gatherSearchActive = false; G.gatherSearchCb = null;
     document.getElementById('gather-search-wrap').style.display = 'none';
@@ -8306,7 +8509,7 @@ function loadFromSlot(n) {
     document.getElementById('blood-moon-badge').style.display = 'none';
     warn('');
     const bgm = document.getElementById('bgm');
-    bgm.volume = 0; bgm.play().catch(() => {});
+    bgm.volume = 0.1; bgm.play().catch(() => {});
     renderHUD(); renderScene();
     if (raf) cancelAnimationFrame(raf);
     raf = requestAnimationFrame(gameLoop);
@@ -8366,6 +8569,9 @@ function animateNpcTo(entity, target, duration = 2200) {
 function fadeToBlack(duration = 700) {
   const fade = document.getElementById('night-fade');
   fade.style.display = 'block';
+  fade.style.transition = 'none';
+  fade.style.opacity = '0';
+  fade.getBoundingClientRect();
   fade.style.transition = `opacity ${duration}ms ease`;
   fade.style.opacity = '1';
   return waitMs(duration);
@@ -8383,6 +8589,69 @@ function fadeFromBlack(duration = 1800) {
 
 function playActionScene(lines) {
   return new Promise(resolve => startActionScene(lines, 0, resolve));
+}
+
+function settingsVolume() {
+  const slider = document.getElementById('settings-vol');
+  return slider ? Number(slider.value) / 100 : 0.1;
+}
+
+let _outdoorWalkPlaying = false;
+function updateOutdoorWalkSfx() {
+  const outdoorScenes = ['outside', 'forest'];
+  const isOutdoor = outdoorScenes.includes(G.scene);
+  const eldrinWalking = isOutdoor && G.eldrin.walkTick > 0;
+  const shouldPlay = !G.manualPaused && eldrinWalking;
+  const sfx = document.getElementById('sfx-outdoor-walk');
+  if (!sfx) return;
+  if (shouldPlay && !_outdoorWalkPlaying) {
+    sfx.volume = Math.max(0, Math.min(1, settingsVolume() * 1.0));
+    sfx.play().catch(() => {});
+    _outdoorWalkPlaying = true;
+  } else if (!shouldPlay && _outdoorWalkPlaying) {
+    sfx.pause();
+    _outdoorWalkPlaying = false;
+  }
+}
+
+let _indoorWalkPlaying = false;
+function updateIndoorWalkSfx() {
+  const indoorScenes = ['lobby', 'room', 'kitchen'];
+  const isIndoor = indoorScenes.includes(G.scene);
+  const eldrinWalking  = isIndoor && G.eldrin.walkTick > 0;
+  const avarenWalking  = isIndoor && G.avarenScene === G.scene && G.avaren.walkTick > 0;
+  const noahWalking    = isIndoor && G.noah.walkTick > 0;
+  const shouldPlay = !G.manualPaused && (eldrinWalking || avarenWalking || noahWalking);
+  const sfx = document.getElementById('sfx-indoor-walk');
+  if (!sfx) return;
+  if (shouldPlay && !_indoorWalkPlaying) {
+    sfx.volume = Math.max(0, Math.min(1, settingsVolume() * 2.0));
+    sfx.play().catch(() => {});
+    _indoorWalkPlaying = true;
+  } else if (!shouldPlay && _indoorWalkPlaying) {
+    sfx.pause();
+    _indoorWalkPlaying = false;
+  }
+}
+
+function playLoopingAudio(id, scale = 1) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.volume = Math.max(0, Math.min(1, settingsVolume() * scale));
+  el.currentTime = 0;
+  el.play().catch(() => {});
+}
+
+function stopAudio(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.pause();
+  el.currentTime = 0;
+}
+
+function stopDay0IntroSfx() {
+  stopAudio('sfx-day0-rain');
+  stopAudio('sfx-day0-walk');
 }
 
 function forceClearNightFade() {
@@ -8412,14 +8681,222 @@ function setupDay0IntroState() {
   G.paused = true;
   G.pauseStartTime = performance.now();
   G.dayStartMs = performance.now();
-  G.noah.x = 84;
-  G.noah.y = 336;
-  G.noah.pose = 'sideR';
+  G.noah.x = 320;
+  G.noah.y = 417;
+  G.noah.pose = 'back';
   G.noah.walkFrame = 0;
   G.noah.walkTick = 0;
   G.eldrin.x = 560;
   G.eldrin.y = 230;
   G.eldrin.pose = 'sideL';
+}
+
+const DAY0_STATIC_INTRO_LINES = [
+  { speaker: '旁白', text: '夜已經很深了。\n森林裡只有雨聲，還有小屋裡微弱的燈光。' },
+  { speaker: '旁白', text: '諾亞連夜把你們帶到這裡。\n這間很久沒有人使用的小屋，暫時成了你和阿瓦倫的藏身處。' },
+  { speaker: '諾亞', text: '艾德林，我把附近的痕跡都處理掉了。至少今晚，他們不會找到這裡。' },
+  { speaker: '艾德林', text: '謝謝你……諾亞。' },
+  { speaker: '諾亞', text: '不用跟我道謝。這間小屋本來就空著，能幫上你們就好。' },
+  { speaker: '諾亞', text: '阿瓦倫呢？那孩子的狀況怎麼樣？' },
+  { speaker: '艾德林', text: '還在房間裡昏迷。\n呼吸很弱，身上的詛咒也沒有退下去。' },
+  { speaker: '艾德林', text: '都是我的錯。' },
+  { speaker: '艾德林', text: '如果我再早一點發現，如果我能更快帶他離開……他就不會變成現在這樣。' },
+  { speaker: '諾亞', text: '艾德林。' },
+  { speaker: '諾亞', text: '你已經把他帶出來了。這不是誰都做得到的事。' },
+  { speaker: '艾德林', text: '可是那孩子還在受苦。' },
+  { speaker: '諾亞', text: '所以你才會留在這裡，不是嗎？' },
+  { speaker: '諾亞', text: '你會想辦法救他。你一直都是這樣的人。' },
+  { speaker: '諾亞', text: '今晚先讓他休息。你也一樣。等天亮之後，我會再過來看你們。' },
+  { speaker: '艾德林', text: '……嗯。' },
+  { speaker: '諾亞', text: '不要一個人把所有事情都扛起來。至少在這裡，你們不是孤身一人。' },
+  { speaker: '旁白', text: '諾亞輕輕關上門。\n小屋重新安靜下來。' },
+  { speaker: '旁白', text: '樓上傳來極輕的呼吸聲。\n艾德林站在原地，很久都沒有動。' }
+];
+
+const DAY0_AVAREN_MONOLOGUE_LINES = [
+  { speaker: '旁白', text: '房間裡很安靜。\n阿瓦倫躺在床上，呼吸輕得像隨時會被夜色帶走。' },
+  { speaker: '艾德林', text: '阿瓦倫……' },
+  { speaker: '艾德林', text: '對不起。' },
+  { speaker: '艾德林', text: '我明明知道那裡有多危險，卻還是太晚了。' },
+  { speaker: '艾德林', text: '你不該變成這樣。\n不該由你來承受這些。' },
+  { speaker: '旁白', text: '艾德林伸出手，又在碰到阿瓦倫之前停住。' },
+  { speaker: '艾德林', text: '我會想辦法。' },
+  { speaker: '艾德林', text: '不管要花多少時間，我都會把你救回來。' },
+  { speaker: '旁白', text: '窗外的夜色慢慢淡去。\n小屋裡只剩下微弱的呼吸聲，和一個無聲的決定。' }
+];
+
+const DAY0_NOAH_EXIT_LINES = [
+  { speaker: '旁白', text: '諾亞輕輕關上門。\n小屋重新安靜下來。' }
+];
+
+function setupDay0StaticIntroState() {
+  G.day = 0;
+  G.scene = 'lobby';
+  G.timePeriod = 'evening';
+  G.introDay0Active = true;
+  G.introDay0NoahVisible = true;
+  G.introDay0HideEldrin = false;
+  G.manualPaused = true;
+  G.paused = true;
+  G.pauseStartTime = performance.now();
+  G.dayStartMs = performance.now();
+  G.noah.x = 254;
+  G.noah.y = 363;
+  G.noah.pose = 'sideR';
+  G.noah.walkFrame = 0;
+  G.noah.walkTick = 0;
+  G.eldrin.x = 444;
+  G.eldrin.y = 362;
+  G.eldrin.pose = 'sideL';
+}
+
+function setupDay0OutsidePreviewState() {
+  G.day = 0;
+  G.scene = 'outside';
+  G.timePeriod = 'evening';
+  G.introDay0Active = true;
+  G.introDay0NoahVisible = true;
+  G.introDay0HideEldrin = true;
+  G.manualPaused = true;
+  G.paused = true;
+  G.pauseStartTime = performance.now();
+  G.dayStartMs = performance.now();
+  G.noah.x = 325;
+  G.noah.y = 417;
+  G.noah.pose = 'back';
+  G.noah.walkFrame = 0;
+  G.noah.walkTick = 0;
+  G.eldrin.x = 444;
+  G.eldrin.y = 362;
+  G.eldrin.pose = 'sideL';
+}
+
+async function playDay0OutsideWalkThenLobby() {
+  forceClearNightFade();
+  await waitMs(2000);
+  playLoopingAudio('sfx-day0-walk', 1.7);
+  await animateNpcTo(G.noah, { x: 320, y: 252 }, 3000);
+  stopAudio('sfx-day0-walk');
+  await waitMs(150);
+  playLoopingAudio('sfx-door-open', 6.0);
+  await waitMs(300);
+  await fadeToBlack(500);
+  stopAudio('sfx-day0-walk');
+  playLoopingAudio('sfx-day0-rain', 5.0);
+  setupDay0StaticIntroState();
+  renderHUD();
+  renderScene();
+  renderChars();
+  await waitMs(200);
+  await fadeFromBlack(650);
+  return playActionScene(DAY0_STATIC_INTRO_LINES).then(enableDay0FreeControl);
+}
+
+function showDay0StaticLobbyDialogue() {
+  setupDay0StaticIntroState();
+  renderHUD();
+  renderScene();
+  renderChars();
+  return playActionScene(DAY0_STATIC_INTRO_LINES).then(enableDay0FreeControl);
+}
+
+async function enableDay0FreeControl() {
+  G.paused = true;
+  G.manualPaused = true;
+  G.pauseStartTime = performance.now();
+  G.noah.pose = 'front';
+  await animateNpcTo(G.noah, { x: 270, y: 471 }, 1700);
+  playLoopingAudio('sfx-door-open', 6.0);
+  await waitMs(420);
+  G.introDay0Active = false;
+  G.introDay0NoahVisible = false;
+  G.introDay0HideEldrin = false;
+  renderChars();
+  await playActionScene(DAY0_NOAH_EXIT_LINES);
+  fadeSwitchBGM('bgm-day8', 4000);
+  G.manualPaused = false;
+  G.paused = false;
+  G.dayStartMs = performance.now();
+  forceClearNightFade();
+  renderHUD();
+  renderScene();
+  renderChars();
+  const day0Hint = document.getElementById('day0-room-hint');
+  if (day0Hint) day0Hint.style.display = 'block';
+}
+
+function playDay0AvarenMonologue() {
+  if (!G || G.actionSceneActive || G.day !== 0 || G.scene !== 'room') return;
+  G.paused = true;
+  G.manualPaused = true;
+  G.pauseStartTime = performance.now();
+  G.eldrin.pose = 'sideR';
+  renderChars();
+  playActionScene(DAY0_AVAREN_MONOLOGUE_LINES).then(playDay0EldrinStudyScene);
+}
+
+async function playDay0EldrinStudyScene() {
+  // 第1步：艾德林走到椅子（書桌）位置
+  G.paused = true;
+  G.manualPaused = true;
+  G.pauseStartTime = performance.now();
+
+  // 椅背強制顯示在艾德林前面
+  const chairBack = document.getElementById('room-dhair02');
+  if (chairBack) chairBack.style.zIndex = '220';
+
+  // 依序經過三個路徑點，走慢一點
+  const WALK_SPEED = 14; // 毫秒/像素
+  const waypoints = [
+    { x: 249, y: 363 },
+    { x: 249, y: 191 },
+    { x: 309, y: 189 },
+  ];
+  let cx = G.eldrin.x, cy = G.eldrin.y;
+  for (const wp of waypoints) {
+    const dist = Math.hypot(wp.x - cx, wp.y - cy);
+    await animateNpcTo(G.eldrin, wp, Math.max(600, dist * WALK_SPEED));
+    cx = wp.x; cy = wp.y;
+  }
+  G.eldrin.pose = 'back';
+  renderChars();
+
+  // 第2步：旁白
+  await new Promise(resolve => startActionScene([
+    { speaker: '旁白', text: '你帶著阿瓦倫逃離了那棟宅子。可惜你慢了一步。' },
+    { speaker: '旁白', text: '你照顧的那個孩子，身上爬滿了詛咒的紋路，此刻昏迷在床鋪上。' },
+    { speaker: '旁白', text: '呼吸還在，但很微弱。你不敢去想更壞的情況，你認為那是你的錯，你怎麼沒有更早發現。' },
+    { speaker: '旁白', text: '你拖著一身的疲憊坐下來，翻開一本又一本關於詛咒的古籍，一行一行地看。' },
+    { speaker: '旁白', text: '燭火在眼前搖曳。字句開始變得模糊。你的眼皮越來越沉，可是你的手，不願停下來。' },
+  ], 0, resolve));
+
+  // 第3步（之後加入黑幕轉場）
+  await beginDay1AfterStaticIntro();
+}
+
+async function beginDay1AfterStaticIntro() {
+  await fadeToBlack(2000);
+  stopDay0IntroSfx();
+  storyQueue.length = 0;
+  if (_storyAutoTimer) { clearTimeout(_storyAutoTimer); _storyAutoTimer = null; }
+  clearDialogueTypewriter();
+  initState();
+  G.day = 1;
+  G.scene = 'outside';
+  G.timePeriod = 'morning';
+  G.introDay0Active = false;
+  G.introDay0NoahVisible = false;
+  G.introDay0HideEldrin = false;
+  G.manualPaused = false;
+  G.paused = false;
+  G.dayStartMs = performance.now();
+  renderHUD();
+  renderScene();
+  renderChars();
+  G.weather = 'clear';
+  fadeSwitchBGM('bgm', 5000);
+  await fadeFromBlack(2500);
+  story('旁白', '清晨的光透過樹葉縫隙灑落。你和阿瓦倫來到這裡的第一天。前方是那間破舊的小屋。');
 }
 
 async function finishDay0IntroToDay1() {
@@ -8506,28 +8983,52 @@ async function playDay0OpeningIntro() {
   await finishDay0IntroToDay1();
 }
 
-function startGame() {
+async function skipToDay1() {
+  initState();
+  document.getElementById('title-screen').style.display = 'none';
+  document.getElementById('game-screen').style.display  = 'block';
+  document.getElementById('blood-moon-badge').style.display = 'none';
+  warn('');
+  ['bgm','bgm-bloodmoon','bgm-sad','bgm-day8','sfx-day0-rain','sfx-day0-walk'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.pause(); el.currentTime = 0; }
+  });
+  initStoveAnimation();
+  if (raf) cancelAnimationFrame(raf);
+  raf = requestAnimationFrame(gameLoop);
+  await beginDay1AfterStaticIntro();
+}
+
+async function startGame() {
   zeRestoreSaved(); // 套用之前用區域編輯器儲存的座標
   initState();
-  forceClearNightFade();
+  setupDay0OutsidePreviewState();
+  await fadeToBlack(650);
   document.getElementById('title-screen').style.display = 'none';
   document.getElementById('game-screen').style.display  = 'block';
   document.getElementById('blood-moon-badge').style.display = 'none';
   warn('');
 
-  // Start BGM（預設靜音，玩家可自行調整音量滑桿）
-  const bgm = document.getElementById('bgm');
-  bgm.volume = 0;
-  bgm.play().catch(() => {});
+  stopDay0IntroSfx();
+  ['bgm', 'bgm-bloodmoon', 'bgm-sad', 'bgm-day8'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.pause(); el.currentTime = 0; }
+  });
+
+  playLoopingAudio('sfx-day0-rain', 12.0);
 
   initStoveAnimation();
   renderHUD();
   renderScene();
   renderChars();
-  story('旁白', '清晨的光透過樹葉縫隙灑落。你和阿瓦倫來到這裡的第一天。前方是那間破舊的小屋。');
 
   if (raf) cancelAnimationFrame(raf);
   raf = requestAnimationFrame(gameLoop);
+  await waitMs(1000);
+  await fadeFromBlack(800);
+  setTimeout(() => {
+    playDay0OutsideWalkThenLobby();
+  }, 120);
 }
 
 function switchBGM(id) {
@@ -8581,6 +9082,7 @@ function fadeSwitchBGM(id, duration = 2400) {
 function restartGame() {
   document.getElementById('ending-screen').style.display = 'none';
   document.getElementById('title-screen').style.display  = 'flex';
+  stopDay0IntroSfx();
   ['bgm', 'bgm-bloodmoon', 'bgm-sad', 'bgm-day8'].forEach(id => {
     const el = document.getElementById(id);
     if (el) { el.pause(); el.currentTime = 0; }
@@ -8629,6 +9131,10 @@ const SFX = (() => {
                  tone(784, 'sine', 0.14, 0.20, 0.20); },
     // 換場景：輕柔掃場
     scene()    { tone(400, 'sine', 0.06, 0,    0.06); tone(300, 'sine', 0.04, 0.05, 0.07); },
+    // 開門：短促木門聲
+    door()     { tone(170, 'sawtooth', 0.08, 0,    0.10);
+                 tone(120, 'square',   0.05, 0.08, 0.14);
+                 tone(260, 'sine',     0.035,0.22, 0.08); },
     // 無法行動（警告）：低沉雙頓
     deny()     { tone(220, 'square', 0.06, 0,   0.07); tone(180, 'square', 0.04, 0.09, 0.07); },
     // 入睡：漸降催眠音
