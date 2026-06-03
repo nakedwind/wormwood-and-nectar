@@ -1419,6 +1419,9 @@ body {
 <audio id="sfx-dialogue-next">
   <source src="music/音效/對話框下一頁音效.mp3" type="audio/mpeg">
 </audio>
+<audio id="sfx-title-button">
+  <source src="music/音效/按紐.mp3" type="audio/mpeg">
+</audio>
 <audio id="sfx-indoor-walk" loop>
   <source src="music/音效/室內走路音效.mp3" type="audio/mpeg">
 </audio>
@@ -1482,6 +1485,21 @@ body {
 <audio id="sfx-fish-splash">
   <source src="music/音效/進水.mp3" type="audio/mpeg">
 </audio>
+<audio id="sfx-kitchen-stove" loop>
+  <source src="music/音效/火爐.mp3" type="audio/mpeg">
+</audio>
+<audio id="sfx-kitchen-boil" loop>
+  <source src="music/音效/沸騰.mp3" type="audio/mpeg">
+</audio>
+<audio id="sfx-cook-select">
+  <source src="music/音效/選擇.mp3" type="audio/mpeg">
+</audio>
+<audio id="sfx-menu-open">
+  <source src="music/音效/開選單.mp3" type="audio/mpeg">
+</audio>
+<audio id="sfx-cook-lid">
+  <source src="music/音效/蓋鍋子.mp3" type="audio/mpeg">
+</audio>
 <audio id="sfx-curtain">
   <source src="music/音效/素材/布料摩擦.mp3" type="audio/mpeg">
 
@@ -1493,9 +1511,9 @@ body {
     <img id="title-cover" src="Game cover.png" alt="苦艾與甘露">
     <div id="title-game-title">苦艾與甘露</div>
     <div id="title-intro"></div>
-    <button id="title-skip-btn" onclick="skipToDay1()">跳到第一天</button>
-    <button id="title-continue-btn" onclick="openSavePanel('load')">繼續遊戲</button>
-    <button id="title-start-btn" onclick="startGame()">開始遊戲</button>
+    <button id="title-skip-btn" onclick="playTitleButtonSfx(); skipToDay1()">跳到第一天</button>
+    <button id="title-continue-btn" onclick="playTitleButtonSfx(); openSavePanel('load')">繼續遊戲</button>
+    <button id="title-start-btn" onclick="playTitleButtonSfx(); startGame()">開始遊戲</button>
   </div>
 </div>
 
@@ -1518,7 +1536,7 @@ body {
           <div class="settings-row">
             <span class="settings-label">🔊 音量</span>
             <input type="range" id="settings-vol" min="0" max="100" value="10"
-              oninput="['bgm','bgm-bloodmoon','bgm-sad','bgm-day8','sfx-day0-rain','sfx-day0-walk'].forEach(id=>{const e=document.getElementById(id);if(!e.paused)e.volume=this.value/100;});">
+              oninput="['bgm','bgm-bloodmoon','bgm-sad','bgm-day8','sfx-day0-rain','sfx-day0-walk','sfx-kitchen-stove','sfx-kitchen-boil'].forEach(id=>{const e=document.getElementById(id);if(!e.paused)e.volume=this.value/100;});">
           </div>
           <button id="pause-btn" onclick="togglePause()">⏸ 暫停遊戲</button>
         </div>
@@ -4050,6 +4068,7 @@ function initState() {
     actionSceneOnDone: null, actionSceneLines: [], actionSceneLineIdx: 0, actionSceneLineTick: 0,
     dayStartMs: performance.now(), timePeriod: 'morning',
     periodTransitioned: false, dayEndTriggered: false,
+    bgmPreEveningFadeStarted: false,
     timeUsed: 0,
     bloodMoonDone: false,
     bloodMoon7Active: false, bloodMoon7Calmed: false, bloodMoon7Failed: false, bloodMoon7PlayerVisited: false,
@@ -4888,6 +4907,9 @@ function gameLoop() {
   if (G.day === 0) {
     renderTime(0);
     if (G.eldrinEmoteTimer > 0) G.eldrinEmoteTimer--;
+  } else if (!G.manualPaused && G.timePeriod === 'morning' && !G.periodTransitioned && !G.bgmPreEveningFadeStarted && _elapsed >= MORNING_SECONDS - 10) {
+    G.bgmPreEveningFadeStarted = true;
+    fadeOutCurrentBGM(10000);
   } else if (!G.manualPaused && !G.periodTransitioned && _elapsed >= MORNING_SECONDS) {
     G.periodTransitioned = true;
     doNightFade(() => {
@@ -4901,7 +4923,7 @@ function gameLoop() {
         G.bloodMoon7Active = true;
         G.bloodMoon7Happened = true;
         G.avarenScene = 'room';
-        switchBGM('bgm-bloodmoon');
+        fadeSwitchBGM('bgm-bloodmoon', 2400);
         G.avaren.x = 190; G.avaren.y = 220;
         G.avaren.sleepEye = 0;
         G.avaren.blinkPhase = -1;
@@ -5921,6 +5943,7 @@ function gameLoop() {
   updateWeatherFx();
   updateOutdoorWalkSfx();
   updateIndoorWalkSfx();
+  updateKitchenLoopSfx();
   renderChars();
   updateHints();
   raf = requestAnimationFrame(gameLoop);
@@ -6005,7 +6028,7 @@ document.addEventListener('keydown', e => {
 
   // 旁白/對話顯示中：空白鍵 / Enter 推進（要在 isDlgBlocking return 之前處理）
   if ((e.key === ' ' || e.key === 'Enter') && storyQueue.length > 0 && !storyQueue[0].autoClose) {
-    e.preventDefault(); advanceStory(); return;
+    e.preventDefault(); advanceStory(true); return;
   }
 
   if (G.paused || isDlgBlocking() || G.gatherSearchActive) return;
@@ -6016,7 +6039,7 @@ document.addEventListener('keydown', e => {
     // 對話框開著時，空白鍵關閉它
     if (document.getElementById('dialogue-overlay').style.display === 'flex') { closeDlg(); return; }
     // 旁白還有內容時，優先推進旁白
-    if (storyQueue.length > 0) { advanceStory(); return; }
+    if (storyQueue.length > 0) { advanceStory(true); return; }
     // 否則觸發場景互動
     const zone = getActiveZone();
     const near = isNearAvaren();
@@ -6716,7 +6739,9 @@ function cookSelectUpdateFocus() {
 function cookSelectMoveCursor(dir) {
   const items = cookSelectGetItems();
   if (!items.length) return;
+  const prev = cookSelectCursor;
   cookSelectCursor = (cookSelectCursor + dir + items.length) % items.length;
+  if (cookSelectCursor !== prev) playLoopingAudio('sfx-dialogue-next', 5.0);
   cookSelectUpdateFocus();
 }
 
@@ -6810,6 +6835,7 @@ function putBackSoup() {
 }
 
 function openCookSelectPanel() {
+  playLoopingAudio('sfx-menu-open', 4.0);
   G.cookSelectedKeys = [];
   cookSelectCursor = 0;
   renderCookSelectItems();
@@ -6822,6 +6848,7 @@ function closeCookSelect() {
 }
 
 function toggleCookIngredient(key) {
+  playTitleButtonSfx();
   const idx = G.cookSelectedKeys.indexOf(key);
   if (idx >= 0) G.cookSelectedKeys.splice(idx, 1);
   else G.cookSelectedKeys.push(key);
@@ -6878,6 +6905,7 @@ function updateCookSelectSummary() {
 
 function confirmCookStart() {
   if (G.money < 3) { warn('金錢不足（需要3金）！'); closeCookSelect(); return; }
+  playLoopingAudio('sfx-cook-lid', 4.0);
   const SPECIAL_KEYS = ['fairyItem', 'herb', 'bug', 'whiteFlower'];
   G.soupIsSpecial = G.cookSelectedKeys.some(k => SPECIAL_KEYS.includes(k));
   const effects = {};
@@ -7076,11 +7104,13 @@ function doAction_StartResearch() {
   if (G.timePeriod !== 'evening') { timeWarn('研究藥水是晚上的行動。'); return; }
   if (G.researchActive) { warn('已經在研究藥水了，請稍候。'); return; }
   if ((G.eldrinHp ?? 100) <= 20) { warn('艾德林 HP 太低了，需要休息才能工作。'); return; }
+  playLoopingAudio('sfx-menu-open', 4.0);
   showActionMenu('選擇研究的藥水', [
     {
       name: '治療藥水', fx: '藥材-2  疼痛-5（使用後）',
       req: () => G.herb >= 2,
       run() {
+        playTitleButtonSfx();
         chg('herb', -2); chg('mood', -3);
         G.researchActive = true; G.researchTimer = 0; G.researchType = 'cold';
         renderHUD();
@@ -7094,6 +7124,7 @@ function doAction_StartResearch() {
       name: '解咒藥水', fx: '藥材-2  詛咒-5（使用後）',
       req: () => G.herb >= 2,
       run() {
+        playTitleButtonSfx();
         chg('herb', -2); chg('mood', -3);
         G.researchActive = true; G.researchTimer = 0; G.researchType = 'curse';
         renderHUD();
@@ -7107,6 +7138,7 @@ function doAction_StartResearch() {
       name: '忘卻藥水', fx: '藥材-5  蟲材-3  礦石-3  血月夜使用',
       req: () => G.herb >= 5 && G.bug >= 3 && G.stone >= 3 && G.forgetPotion === 0,
       run() {
+        playTitleButtonSfx();
         chg('herb', -5); chg('bug', -3); chg('stone', -3); chg('mood', -3);
         G.researchActive = true; G.researchTimer = 0; G.researchType = 'forget';
         renderHUD();
@@ -7266,6 +7298,10 @@ function finishDialogueTypewriter() {
   return true;
 }
 
+function playDialogueNextSfx() {
+  playLoopingAudio('sfx-dialogue-next', 5.0);
+}
+
 function applySpeakerPortrait(speaker, portraitEl) {
   const src = SPEAKER_AVATARS[speaker];
   if (!src) {
@@ -7312,8 +7348,8 @@ function _ascShowLine(idx) {
 }
 
 function ascAdvance() {
-  if (finishDialogueTypewriter()) return;
-  playLoopingAudio('sfx-dialogue-next', 5.0);
+  if (finishDialogueTypewriter()) { playDialogueNextSfx(); return; }
+  playDialogueNextSfx();
   G.actionSceneLineIdx++;
   if (G.actionSceneLineIdx >= G.actionSceneLines.length) {
     SFX.complete();
@@ -7329,9 +7365,9 @@ function ascAdvance() {
 }
 
 function onOverlayClick() {
-  if (finishDialogueTypewriter()) return;
+  if (finishDialogueTypewriter()) { playDialogueNextSfx(); return; }
   if (G && G.actionSceneActive) { ascAdvance(); return; }
-  if (storyQueue.length > 0 && !storyQueue[0].cb) { advanceStory(); return; }
+  if (storyQueue.length > 0 && !storyQueue[0].cb) { advanceStory(true); return; }
 }
 
 // ══════════════════════════════════════
@@ -7343,6 +7379,7 @@ let menuBtns   = [];
 function menuRunSelected() {
   const btn = menuBtns[menuCursor];
   if (!btn || btn.disabled) return;
+  playTitleButtonSfx();
   if (btn.classList.contains('act-cancel')) { closeAction(); return; }
   btn.click();
 }
@@ -7354,6 +7391,7 @@ function menuMoveCursor(dir) {
     const idx = (menuCursor + dir * i + menuBtns.length) % menuBtns.length;
     if (!menuBtns[idx].disabled) { next = idx; break; }
   }
+  if (next !== menuCursor) playLoopingAudio('sfx-dialogue-next', 5.0);
   menuCursor = next;
   menuBtns.forEach((b, i) => b.classList.toggle('kbd-selected', i === menuCursor));
 }
@@ -7490,8 +7528,11 @@ function _showStory() {
   });
 }
 
-function advanceStory() {
-  if (finishDialogueTypewriter()) return true;
+function advanceStory(manual = false) {
+  if (finishDialogueTypewriter()) {
+    if (manual) playDialogueNextSfx();
+    return true;
+  }
   if (_storyAutoTimer) { clearTimeout(_storyAutoTimer); _storyAutoTimer = null; }
   if (G && G.actionSceneActive) return false;
   if (storyQueue.length === 0) {
@@ -7499,6 +7540,7 @@ function advanceStory() {
     document.getElementById('action-scene-overlay').style.display = 'none';
     return false;
   }
+  if (manual) playDialogueNextSfx();
   storyQueue.shift();
   while (storyQueue.length > 0 && storyQueue[0].cb) {
     const cb = storyQueue.shift().cb;
@@ -8094,6 +8136,8 @@ function jumpToBloodMoon() {
 function skipToEvening() {
   if (G.timePeriod !== 'morning' || G.paused) return;
   G.periodTransitioned = true;
+  G.bgmPreEveningFadeStarted = true;
+  fadeOutCurrentBGM(1200);
   G.dayStartMs = performance.now() - MORNING_SECONDS * 1000;
   doNightFade(() => {
     G.timePeriod = 'evening';
@@ -8107,7 +8151,7 @@ function skipToEvening() {
       G.bloodMoon7Active = true;
       G.bloodMoon7Happened = true;
       G.avarenScene = 'room';
-      switchBGM('bgm-bloodmoon');
+      fadeSwitchBGM('bgm-bloodmoon', 2400);
       G.avaren.x = 190; G.avaren.y = 220;
       G.avaren.sleepEye = 0;
       G.avaren.blinkPhase = -1;
@@ -8316,6 +8360,7 @@ function continueAfterNight(prevText) {
   G.dayStartMs = performance.now();
   G.timePeriod = 'morning';
   G.periodTransitioned = false;
+  G.bgmPreEveningFadeStarted = false;
   G.dayEndTriggered = false;
   G.nestEggs = 2; // 每天早晨鳥巢重新出現2顆蛋
   G.forestMushrooms = { 1: false, 2: false, 3: false, 4: false };
@@ -8420,6 +8465,7 @@ function showEvent(icon, title, desc, cb, theme='blue') {
   document.getElementById('event-overlay').style.display = 'flex';
 }
 function closeEvent() {
+  playDialogueNextSfx();
   document.getElementById('event-overlay').style.display = 'none';
   G.paused = false;
   if (eventCallback) { const cb = eventCallback; eventCallback = null; cb(); }
@@ -8548,19 +8594,28 @@ function titleScreenUpdateFocus(hasContinue) {
 
 function titleScreenKeyNav(e, hasContinue) {
   if (e.key === 'ArrowUp') {
+    const prev = _titleFocus;
     const max = hasContinue ? 2 : 2;
     _titleFocus = _titleFocus >= max ? 0 : _titleFocus + 1;
     if (_titleFocus === 1 && !hasContinue) _titleFocus = 2;
+    if (_titleFocus !== prev) playLoopingAudio('sfx-dialogue-next', 5.0);
     titleScreenUpdateFocus(hasContinue);
   } else if (e.key === 'ArrowDown') {
+    const prev = _titleFocus;
     _titleFocus = _titleFocus <= 0 ? (hasContinue ? 2 : 2) : _titleFocus - 1;
     if (_titleFocus === 1 && !hasContinue) _titleFocus = 0;
+    if (_titleFocus !== prev) playLoopingAudio('sfx-dialogue-next', 5.0);
     titleScreenUpdateFocus(hasContinue);
   } else if (e.key === 'Enter' || e.key === ' ') {
+    playTitleButtonSfx();
     if (_titleFocus === 2) skipToDay1();
     else if (_titleFocus === 1 && hasContinue) openSavePanel('load');
     else startGame();
   }
+}
+
+function playTitleButtonSfx() {
+  playLoopingAudio('sfx-title-button', 8.0);
 }
 
 // ══════════════════════════════════════
@@ -8631,17 +8686,21 @@ function savePanelUpdateFocus() {
 
 function savePanelMoveFocus(dRow, dCol) {
   const maxRow = SLOT_COUNT; // 0..3 = slots, 4 = close
+  const prevRow = _savePanelFocusRow;
+  const prevCol = _savePanelFocusCol;
   _savePanelFocusRow = Math.max(0, Math.min(maxRow, _savePanelFocusRow + dRow));
   if (_savePanelMode === 'both') {
     _savePanelFocusCol = Math.max(0, Math.min(1, _savePanelFocusCol + dCol));
   } else {
     _savePanelFocusCol = 1;
   }
+  if (_savePanelFocusRow !== prevRow || _savePanelFocusCol !== prevCol) playLoopingAudio('sfx-dialogue-next', 5.0);
   savePanelUpdateFocus();
 }
 
 function savePanelConfirm() {
   const row = _savePanelFocusRow;
+  playTitleButtonSfx();
   if (row >= SLOT_COUNT) { closeSavePanel(); return; }
   const slotN = row + 1;
   if (_savePanelMode === 'both' && _savePanelFocusCol === 0) {
@@ -8846,6 +8905,35 @@ function updateIndoorWalkSfx() {
   } else if (!shouldPlay && _indoorWalkPlaying) {
     sfx.pause();
     _indoorWalkPlaying = false;
+  }
+}
+
+let _kitchenStovePlaying = false;
+let _kitchenBoilPlaying = false;
+function updateKitchenLoopSfx() {
+  const inKitchen = G.scene === 'kitchen' && !G.manualPaused;
+  const stove = document.getElementById('sfx-kitchen-stove');
+  const boil = document.getElementById('sfx-kitchen-boil');
+  if (stove) {
+    if (inKitchen) stove.volume = Math.max(0, Math.min(1, settingsVolume() * 1.8));
+    if (inKitchen && !_kitchenStovePlaying) {
+      stove.play().catch(() => {});
+      _kitchenStovePlaying = true;
+    } else if (!inKitchen && _kitchenStovePlaying) {
+      stove.pause();
+      _kitchenStovePlaying = false;
+    }
+  }
+  const shouldBoil = inKitchen && G.cookActive;
+  if (boil) {
+    if (shouldBoil) boil.volume = Math.max(0, Math.min(1, settingsVolume() * 2.0));
+    if (shouldBoil && !_kitchenBoilPlaying) {
+      boil.play().catch(() => {});
+      _kitchenBoilPlaying = true;
+    } else if (!shouldBoil && _kitchenBoilPlaying) {
+      boil.pause();
+      _kitchenBoilPlaying = false;
+    }
   }
 }
 
@@ -9262,6 +9350,27 @@ function switchBGM(id) {
 }
 
 let bgmFadeTimer = null;
+function fadeOutCurrentBGM(duration = 3000) {
+  if (bgmFadeTimer) { clearInterval(bgmFadeTimer); bgmFadeTimer = null; }
+  const active = ['bgm', 'bgm-bloodmoon', 'bgm-sad', 'bgm-day8']
+    .map(id => document.getElementById(id))
+    .filter(el => el && !el.paused);
+  if (!active.length) return;
+  const starts = active.map(el => el.volume);
+  const steps = Math.max(1, Math.floor(duration / 80));
+  let step = 0;
+  bgmFadeTimer = setInterval(() => {
+    step++;
+    const t = Math.min(1, step / steps);
+    active.forEach((el, idx) => { el.volume = starts[idx] * (1 - t); });
+    if (t >= 1) {
+      active.forEach(el => { el.pause(); el.currentTime = 0; });
+      clearInterval(bgmFadeTimer);
+      bgmFadeTimer = null;
+    }
+  }, 80);
+}
+
 function fadeSwitchBGM(id, duration = 2400) {
   if (bgmFadeTimer) { clearInterval(bgmFadeTimer); bgmFadeTimer = null; }
   const all = ['bgm', 'bgm-bloodmoon', 'bgm-sad', 'bgm-day8'];
@@ -9376,7 +9485,12 @@ const SFX = (() => {
 // 所有按鈕通用點擊音（act-item 行動按鈕本身有 start 音，排除避免重疊）
 document.addEventListener('click', e => {
   const btn = e.target.closest('button');
-  if (btn && !btn.classList.contains('act-item')) SFX.click();
+  if (
+    btn &&
+    !btn.classList.contains('act-item') &&
+    !btn.closest('#cook-select-overlay') &&
+    !btn.closest('#title-screen')
+  ) SFX.click();
 }, true);
 
 // ══════════════════════════════════════
