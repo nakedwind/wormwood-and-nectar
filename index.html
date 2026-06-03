@@ -80,6 +80,10 @@ body {
   box-shadow: 0 0 0 2px #80e080, 0 0 24px rgba(60,200,60,0.8);
   background: linear-gradient(135deg, #2a5a2a, #1a3a1a);
 }
+#title-skip-btn.title-focused {
+  box-shadow: 0 0 0 2px #e0a060, 0 0 24px rgba(200,130,60,0.8);
+  background: linear-gradient(135deg, #5a2a1a, #3a1a0e);
+}
 #title-skip-btn {
   position: absolute; bottom: 166px; left: 50%; transform: translateX(-50%);
   background: linear-gradient(135deg, #3a1a1a, #220e0e);
@@ -95,7 +99,71 @@ body {
 }
 
 /* ══ GAME SCREEN ══ */
-#game-screen { display: none; }
+#game-screen {
+  display: none;
+  position: relative;
+  isolation: isolate;
+  overflow: visible;
+}
+#game-ui-frame {
+  position: absolute;
+  left: -369px;
+  top: -133px;
+  width: 1913px;
+  height: 1076px;
+  object-fit: fill;
+  pointer-events: none;
+  z-index: 0;
+}
+#game-screen > *:not(#game-ui-frame) {
+  position: relative;
+  z-index: 1;
+}
+#game-screen.ui-framed #hud,
+#game-screen.ui-framed #main-area,
+#game-screen.ui-framed #right-panel,
+#game-screen.ui-framed #avaren-block,
+#game-screen.ui-framed #res-block,
+#game-screen.ui-framed #time-block,
+#game-screen.ui-framed #debug-bar {
+  background: transparent;
+  border-color: transparent;
+}
+#game-screen.ui-framed #right-panel {
+  color: #3f2818;
+}
+#game-screen.ui-framed #right-panel .av-name,
+#game-screen.ui-framed #right-panel .res-title,
+#game-screen.ui-framed #right-panel .time-title {
+  color: #5a341c;
+}
+#game-screen.ui-framed #right-panel .stat-lbl,
+#game-screen.ui-framed #right-panel .res-item,
+#game-screen.ui-framed #right-panel #time-remaining {
+  color: #5d4028;
+}
+#game-screen.ui-framed #right-panel .stat-num {
+  color: #3c2618;
+}
+#game-screen.ui-framed #right-panel .res-item b {
+  color: #7a4518;
+}
+#game-screen.ui-framed #right-panel #time-clock {
+  color: #9a5a20;
+}
+#game-screen.ui-framed .hud-day,
+#game-screen.ui-framed .hud-day span,
+#game-screen.ui-framed #time-label {
+  color: #4a2b17 !important;
+}
+#game-screen.ui-framed #period-badge,
+#game-screen.ui-framed #settings-btn {
+  color: #f2cf78 !important;
+}
+#game-screen.ui-framed #time-bar-wrap {
+  background: rgba(74, 43, 23, 0.35);
+  border-color: rgba(74, 43, 23, 0.55);
+}
 
 /* TOP HUD */
 #hud {
@@ -885,14 +953,14 @@ body {
   left: 474px; top: 105px;
   width: 106px; background: rgba(8,5,2,0.90);
   border: 1px solid #205880; padding: 4px 6px;
-  border-radius: 5px; pointer-events: none; z-index: 20;
+  border-radius: 5px; pointer-events: none; z-index: 600;
 }
 #fish-forest-wrap {
   display: none; position: absolute;
   left: 247px; top: 195px;
   width: 93px; background: rgba(8,5,2,0.90);
   border: 1px solid #205880; padding: 4px 6px;
-  border-radius: 5px; pointer-events: none; z-index: 20;
+  border-radius: 5px; pointer-events: none; z-index: 600;
 }
 #outside-fishing-1.fishing-ready img,
 #forest-fishing-1.fishing-ready img {
@@ -1366,6 +1434,45 @@ body {
 <audio id="sfx-gather-wood">
   <source src="music/音效/搜尋樹木.mp3" type="audio/mpeg">
 </audio>
+<audio id="sfx-slime">
+  <source src="music/音效/史萊姆.mp3" type="audio/mpeg">
+</audio>
+<audio id="sfx-bird-flap">
+  <source src="music/音效/拍翅膀.mp3" type="audio/mpeg">
+</audio>
+<audio id="sfx-chicken-1">
+  <source src="music/音效/雞1聲.mp3" type="audio/mpeg">
+</audio>
+<audio id="sfx-chicken-2">
+  <source src="music/音效/雞2聲.mp3" type="audio/mpeg">
+</audio>
+<audio id="sfx-chicken-3">
+  <source src="music/音效/雞3聲.mp3" type="audio/mpeg">
+</audio>
+<audio id="sfx-pickup">
+  <source src="music/音效/拿東西.mp3" type="audio/mpeg">
+</audio>
+<audio id="sfx-fill-water">
+  <source src="music/音效/裝水.mp3" type="audio/mpeg">
+</audio>
+<audio id="sfx-water-plant">
+  <source src="music/音效/澆花.mp3" type="audio/mpeg">
+</audio>
+<audio id="sfx-plant-seed">
+  <source src="music/音效/播種.mp3" type="audio/mpeg">
+</audio>
+<audio id="sfx-plant-grow">
+  <source src="music/音效/植物生長.mp3" type="audio/mpeg">
+</audio>
+<audio id="sfx-plant-pop">
+  <source src="music/音效/pop.mp3" type="audio/mpeg">
+</audio>
+<audio id="sfx-fish-cast">
+  <source src="music/音效/拉魚線.mp3" type="audio/mpeg">
+</audio>
+<audio id="sfx-fish-splash">
+  <source src="music/音效/進水.mp3" type="audio/mpeg">
+</audio>
 <audio id="sfx-curtain">
   <source src="music/音效/素材/布料摩擦.mp3" type="audio/mpeg">
 
@@ -1384,7 +1491,8 @@ body {
 </div>
 
 <!-- ══ GAME ══ -->
-<div id="game-screen">
+<div id="game-screen" class="ui-framed">
+  <img id="game-ui-frame" src="UI/UI.png" alt="" aria-hidden="true">
   <div id="hud">
     <div class="hud-day">第 <span id="hud-day">1</span> 天 <span style="font-size:12px;color:#5a4020">/ 10</span></div>
     <div id="time-bar-wrap">
@@ -2045,6 +2153,7 @@ function triggerBirdFlyAway(scene) {
   el.classList.remove('scene-bird-flyaway');
   void el.offsetWidth;
   el.classList.add('scene-bird-flyaway');
+  playLoopingAudio('sfx-bird-flap', 6.0);
 
   // 動畫結束後隱藏並清除
   setTimeout(() => {
@@ -2203,6 +2312,16 @@ function updateOneSlime(slime, elId, homeX, homeY) {
   const HOP_AIR_END = 68;
   slime.hopTick = ((slime.hopTick || 0) + 1) % HOP_CYCLE;
   const inAir = slime.hopTick < HOP_AIR_END;
+  // 用 CSS 動畫時間偵測落地點（62% = 1.83s * 0.62 ≈ 1135ms）
+  const anim = el.getAnimations ? el.getAnimations()[0] : null;
+  if (anim) {
+    const duration = 1830;
+    const landingMs = duration * 0.62;
+    const prev = slime._lastAnimTime ?? 0;
+    const curr = anim.currentTime % duration;
+    if (prev < landingMs && curr >= landingMs) playLoopingAudio('sfx-slime', 3.0);
+    slime._lastAnimTime = curr;
+  }
 
   if (!G.paused && !isDlgBlocking()) {
     const dx = G.eldrin.x - slime.x;
@@ -3061,12 +3180,14 @@ function pickUpChicken2() {
   G.chicken2.walkDir = {dx:0, dy:0};
   G.chicken2.walkTimer = 0;
   G.chicken2.walkFrame = 0;
+  playLoopingAudio('sfx-chicken-2', 3.0);
   toast('抱起雞');
 }
 
 function dropChicken2(resetPosition = false) {
   if (!G || !G.carryingChicken2) return;
   G.carryingChicken2 = false;
+  playLoopingAudio('sfx-chicken-1', 3.0);
   if (resetPosition) {
     G.chicken2.x = 480;
     G.chicken2.y = 160;
@@ -3086,12 +3207,14 @@ function pickUpChicken() {
   G.chicken.walkDir = {dx:0, dy:0};
   G.chicken.walkTimer = 0;
   G.chicken.walkFrame = 0;
+  playLoopingAudio('sfx-chicken-2', 3.0);
   toast('抱起雞');
 }
 
 function dropChicken(resetPosition = false) {
   if (!G || !G.carryingChicken) return;
   G.carryingChicken = false;
+  playLoopingAudio('sfx-chicken-1', 3.0);
   if (resetPosition) {
     G.chicken.x = 250;
     G.chicken.y = 180;
@@ -4445,7 +4568,7 @@ function renderChars() {
       const farm = document.getElementById(id);
       if (farm) farm.style.zIndex = '2'; // 農田是地板，永遠在角色下方
     });
-    setOutsideFishingVisual(G.fishReady ? 'ready' : G.fishFishing ? 'fishing' : 'idle');
+    if (!G.fishCasting) setOutsideFishingVisual(G.fishReady ? 'ready' : G.fishFishing ? 'fishing' : 'idle');
   }
   if (G.scene === 'forest') {
     setForestFishingVisual(G.forestFishReady ? 'ready' : G.forestFishFishing ? 'fishing' : 'idle');
@@ -4830,7 +4953,7 @@ function gameLoop() {
   const el = G.eldrin;
   let dx = 0, dy = 0;
   const cookPanelOpen = document.getElementById('cook-select-overlay').style.display === 'flex';
-  if (!isDlgBlocking() && !cookPanelOpen && !G.gatherSearchActive) {
+  if (!isDlgBlocking() && !cookPanelOpen && !G.gatherSearchActive && !G.fishCastLock) {
     if (k['ArrowLeft'] ||k['a']||k['A']) dx = -SPEED;
     if (k['ArrowRight']||k['d']||k['D']) dx = +SPEED;
     if (k['ArrowUp']   ||k['w']||k['W']) dy = -SPEED;
@@ -4888,8 +5011,24 @@ function gameLoop() {
     if (G.scene === 'outside' && isReidDay() && G.timePeriod === 'morning')        tryPush(G.red);
     if (G.scene === 'outside' && G.day === 2 && G.timePeriod === 'morning')        tryPush(G.noah);
     if (G.scene === 'forest' && isWinterDay() && G.timePeriod === 'morning')       tryPush(G.winter);
-    if (G.scene === 'forest' && !G.carryingChicken)                               tryPush(G.chicken);
-    if (G.scene === 'forest' && !G.carryingChicken2)                              tryPush(G.chicken2);
+    if (G.scene === 'forest' && !G.carryingChicken) {
+      const distCh = Math.hypot(el.x - G.chicken.x, el.y - G.chicken.y);
+      if (distCh < PUSH_R && !G._chickenBumpCooldown) {
+        playLoopingAudio('sfx-chicken-1', 3.0);
+        G._chickenBumpCooldown = true;
+        setTimeout(() => { G._chickenBumpCooldown = false; }, 1500);
+      }
+      tryPush(G.chicken);
+    }
+    if (G.scene === 'forest' && !G.carryingChicken2) {
+      const distCh2 = Math.hypot(el.x - G.chicken2.x, el.y - G.chicken2.y);
+      if (distCh2 < PUSH_R && !G._chickenBumpCooldown) {
+        playLoopingAudio('sfx-chicken-1', 3.0);
+        G._chickenBumpCooldown = true;
+        setTimeout(() => { G._chickenBumpCooldown = false; }, 1500);
+      }
+      tryPush(G.chicken2);
+    }
   }
 
   // ── 妖精飄動（偶數夜，森林，未抓到）──
@@ -5697,6 +5836,7 @@ function gameLoop() {
       G.farmGrowthTimer = 0;
       G.farmWatered = false;
       if (farmBar) farmBar.style.width = '0%';
+      playLoopingAudio('sfx-plant-grow', 3.0);
       setOutsideFarmVisual(G.farmStage >= 5);
       if (G.farmStage >= 5) {
         G.herbReady = true;
@@ -5736,6 +5876,18 @@ function gameLoop() {
 
   // 場景冷卻倒數（防止切換後立刻又觸發）
   if (G.sceneCooldown > 0) G.sceneCooldown--;
+
+  // 森林隨機雞叫（10~30秒）
+  if (G.scene === 'forest' && G.timePeriod === 'morning') {
+    if (!G._chickenSfxTimer) G._chickenSfxTimer = Math.floor(Math.random() * 1200) + 600;
+    G._chickenSfxTimer--;
+    if (G._chickenSfxTimer <= 0) {
+      playLoopingAudio('sfx-chicken-3', 3.0);
+      G._chickenSfxTimer = Math.floor(Math.random() * 1200) + 600;
+    }
+  } else {
+    G._chickenSfxTimer = 0;
+  }
 
   updateWeatherFx();
   updateOutdoorWalkSfx();
@@ -6195,7 +6347,6 @@ function startGatherSearch(label, cb) {
   gsWrap.style.left = Math.round(G.eldrin.x - 62) + 'px';
   gsWrap.style.top  = Math.round(G.eldrin.y - sceneCharH() - 40) + 'px';
   gsWrap.style.display = 'block';
-  SFX.start();
 }
 
 function doAction_GatherWood() {
@@ -6232,6 +6383,8 @@ function doAction_GatherFlower() {
   if (G.actionSceneActive) { warn('正在進行其他行動。'); return; }
   if (G.gatherSearchActive) return;
   G.flowerCooldown = 360;
+  SFX.start();
+  playLoopingAudio('sfx-gather-bush', 1.5);
   startGatherSearch('🌸 搜索中…', () => {
     const roll = Math.random();
     if (roll < 0.20) {
@@ -6274,6 +6427,9 @@ function doAction_GatherBush() {
 
 function waterFarm() {
   if (!G.carryingKettle || !G.kettleFull) { warn('需要裝滿水的水壺才能澆水。'); return; }
+  G.fishCastLock = true;
+  setTimeout(() => { G.fishCastLock = false; }, 1000);
+  playLoopingAudio('sfx-water-plant', 3.0);
   if (G.farmStage < 2 || G.farmStage >= 5) { warn('現在不需要澆水。'); return; }
   if (G.farmWatered) { warn('農田已經澆過水了。'); return; }
   G.farmWatered = true;
@@ -6290,6 +6446,7 @@ function doAction_Gather() {
   // 第5階段：收成
   if (G.farmStage >= 5 && G.herbReady) {
     SFX.collect();
+    playLoopingAudio('sfx-plant-pop', 3.0);
     G.herbReady = false;
     G.farmStage = 1;
     G.farmGrowthTimer = 0;
@@ -6311,6 +6468,7 @@ function doAction_Gather() {
   if (G.farmStage === 1) {
     G.farmStage = 2;
     G.farmGrowthTimer = 0;
+    playLoopingAudio('sfx-plant-seed', 3.0);
     setOutsideFarmVisual();
     toast('🌱 種下藥草，可以澆水加速生長');
     storyAuto('旁白', '你把藥草種子埋進土裡，拍了拍泥土。現在只需要耐心等待，或是拿水來澆。');
@@ -6364,10 +6522,26 @@ function doAction_Fish() {
   if ((G.eldrinHp ?? 100) <= 20) { warn('艾德林 HP 太低了，需要休息才能工作。'); return; }
   G.fishFishing = true;
   G.fishTimer = FISH_MAX;
-  setOutsideFishingVisual('fishing');
   document.getElementById('fish-scene-wrap').style.display = 'block';
   document.getElementById('fish-scene-bar').style.width = '0%';
   storyAuto('旁白', '你把魚竿輕輕放進池塘裡，靜靜等待。魚兒會在一段時間後上鉤，你可以先去做其他事。');
+  // 鎖住玩家移動2秒，並暫停圖片切換
+  G.fishCastLock = true;
+  G.fishCasting = true;
+  setTimeout(() => { G.fishCastLock = false; }, 2000);
+  // 先播拉魚線，結束後等1秒播進水並切換圖片
+  const castSfx = document.getElementById('sfx-fish-cast');
+  castSfx.volume = Math.max(0, Math.min(1, settingsVolume() * 3.0));
+  castSfx.currentTime = 0;
+  castSfx.play().catch(() => {});
+  castSfx.onended = () => {
+    const splashSfx = document.getElementById('sfx-fish-splash');
+    splashSfx.volume = Math.max(0, Math.min(1, settingsVolume() * 3.0));
+    splashSfx.currentTime = 0;
+    splashSfx.play().catch(() => {});
+    G.fishCasting = false; setOutsideFishingVisual('fishing');
+    castSfx.onended = null;
+  };
 }
 
 function doAction_GatherStone() {
@@ -6540,6 +6714,7 @@ function isNearOutsidePond() {
 function pickUpKettle() {
   if (!isNearKettle()) return;
   G.carryingKettle = true;
+  playLoopingAudio('sfx-pickup', 3.0);
   const obj = document.getElementById('outside-kettle');
   if (obj) obj.style.display = 'none';
   const icon = document.getElementById('kettle-carry-icon');
@@ -6570,6 +6745,9 @@ function putDownKettle() {
 function fillKettle() {
   if (!G.carryingKettle || G.kettleFull) return;
   G.kettleFull = true;
+  G.fishCastLock = true;
+  setTimeout(() => { G.fishCastLock = false; }, 1000);
+  playLoopingAudio('sfx-fill-water', 3.0);
   const img = document.getElementById('kettle-carry-img');
   if (img) img.src = 'bg_outside/kettle_water.png';
   toast('🫧 裝滿水了！');
@@ -8323,7 +8501,7 @@ function endGame(type) {
 // ══════════════════════════════════════
 //  TITLE SCREEN KEYBOARD NAV
 // ══════════════════════════════════════
-let _titleFocus = 0; // 0=開始遊戲, 1=繼續遊戲
+let _titleFocus = 0; // 0=開始遊戲, 1=繼續遊戲, 2=跳到第一天
 
 function titleScreenInitFocus(hasContinue) {
   _titleFocus = hasContinue ? 1 : 0;
@@ -8333,17 +8511,25 @@ function titleScreenInitFocus(hasContinue) {
 function titleScreenUpdateFocus(hasContinue) {
   const startBtn    = document.getElementById('title-start-btn');
   const continueBtn = document.getElementById('title-continue-btn');
-  if (startBtn)    startBtn.classList.toggle('title-focused', _titleFocus === 0);
-  if (hasContinue && continueBtn) continueBtn.classList.toggle('title-focused', _titleFocus === 1);
+  const skipBtn     = document.getElementById('title-skip-btn');
+  if (startBtn)    startBtn.classList.toggle('title-focused',   _titleFocus === 0);
+  if (continueBtn) continueBtn.classList.toggle('title-focused', _titleFocus === 1 && hasContinue);
+  if (skipBtn)     skipBtn.classList.toggle('title-focused',     _titleFocus === 2);
 }
 
 function titleScreenKeyNav(e, hasContinue) {
-  if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
-    if (!hasContinue) return;
-    _titleFocus = _titleFocus === 0 ? 1 : 0;
+  if (e.key === 'ArrowUp') {
+    const max = hasContinue ? 2 : 2;
+    _titleFocus = _titleFocus >= max ? 0 : _titleFocus + 1;
+    if (_titleFocus === 1 && !hasContinue) _titleFocus = 2;
+    titleScreenUpdateFocus(hasContinue);
+  } else if (e.key === 'ArrowDown') {
+    _titleFocus = _titleFocus <= 0 ? (hasContinue ? 2 : 2) : _titleFocus - 1;
+    if (_titleFocus === 1 && !hasContinue) _titleFocus = 0;
     titleScreenUpdateFocus(hasContinue);
   } else if (e.key === 'Enter' || e.key === ' ') {
-    if (_titleFocus === 1 && hasContinue) openSavePanel('load');
+    if (_titleFocus === 2) skipToDay1();
+    else if (_titleFocus === 1 && hasContinue) openSavePanel('load');
     else startGame();
   }
 }
