@@ -1446,6 +1446,9 @@ body {
 <audio id="sfx-bird-flap">
   <source src="music/音效/拍翅膀.mp3" type="audio/mpeg">
 </audio>
+<audio id="sfx-bird-flyaway-call">
+  <source src="music/音效/背景鳥叫/wiki02.mp3" type="audio/mpeg">
+</audio>
 <audio id="sfx-bird-wiki-1">
   <source src="music/音效/wiki01.m4a" type="audio/mp4">
 </audio>
@@ -1460,6 +1463,15 @@ body {
 </audio>
 <audio id="sfx-chicken-3">
   <source src="music/音效/雞3聲.mp3" type="audio/mpeg">
+</audio>
+<audio id="sfx-birdcall-1"><source src="music/音效/背景鳥叫/wiki-sing03.mp3" type="audio/mpeg"></audio>
+<audio id="sfx-birdcall-2"><source src="music/音效/背景鳥叫/wiki02.mp3" type="audio/mpeg"></audio>
+<audio id="sfx-birdcall-3"><source src="music/音效/背景鳥叫/wiki03_Audio Denoise.mp3" type="audio/mpeg"></audio>
+<audio id="sfx-birdcall-4"><source src="music/音效/背景鳥叫/wiki04.mp3" type="audio/mpeg"></audio>
+<audio id="sfx-birdcall-5"><source src="music/音效/背景鳥叫/海苔02.mp3" type="audio/mpeg"></audio>
+<audio id="sfx-birdcall-6"><source src="music/音效/背景鳥叫/海苔03.mp3" type="audio/mpeg"></audio>
+<audio id="sfx-button">
+  <source src="music/音效/按紐.mp3" type="audio/mpeg">
 </audio>
 <audio id="sfx-pickup">
   <source src="music/音效/拿東西.mp3" type="audio/mpeg">
@@ -2186,6 +2198,7 @@ function triggerBirdFlyAway(scene) {
   void el.offsetWidth;
   el.classList.add('scene-bird-flyaway');
   playLoopingAudio('sfx-bird-flap', 3.5);
+  playLoopingAudio('sfx-bird-flyaway-call', 5.0);
   playRandomBirdWiki(8.0);
 
   // 動畫結束後隱藏並清除
@@ -4618,7 +4631,7 @@ function renderChars() {
     if (!G.fishCasting) setOutsideFishingVisual(G.fishReady ? 'ready' : G.fishFishing ? 'fishing' : 'idle');
   }
   if (G.scene === 'forest') {
-    setForestFishingVisual(G.forestFishReady ? 'ready' : G.forestFishFishing ? 'fishing' : 'idle');
+    if (!G.fishCasting) setForestFishingVisual(G.forestFishReady ? 'ready' : G.forestFishFishing ? 'fishing' : 'idle');
     const forestDepthObjs = [
       { id: 'forest-light-1', sortY: 175 + 53 },
       { id: 'forest-fishing-1', sortY: 208 + Math.round(78 * 0.9) },
@@ -5927,6 +5940,19 @@ function gameLoop() {
   // 場景冷卻倒數（防止切換後立刻又觸發）
   if (G.sceneCooldown > 0) G.sceneCooldown--;
 
+  // 隨機背景鳥叫（戶外/森林白天，8~20秒）
+  if ((G.scene === 'outside' || G.scene === 'forest') && G.timePeriod === 'morning') {
+    if (!G._birdCallTimer) G._birdCallTimer = Math.floor(Math.random() * 600) + 300;
+    G._birdCallTimer--;
+    if (G._birdCallTimer <= 0) {
+      const idx = Math.floor(Math.random() * 6) + 1;
+      playLoopingAudio('sfx-birdcall-' + idx, 4.0);
+      G._birdCallTimer = Math.floor(Math.random() * 600) + 300;
+    }
+  } else {
+    G._birdCallTimer = 0;
+  }
+
   // 森林隨機雞叫（10~30秒）
   if (G.scene === 'forest' && G.timePeriod === 'morning') {
     if (!G._chickenSfxTimer) G._chickenSfxTimer = Math.floor(Math.random() * 1200) + 600;
@@ -6550,10 +6576,26 @@ function doAction_ForestFish() {
   if ((G.eldrinHp ?? 100) <= 20) { warn('艾德林 HP 太低了，需要休息才能工作。'); return; }
   G.forestFishFishing = true;
   G.forestFishTimer = FISH_MAX;
-  setForestFishingVisual('fishing');
   document.getElementById('fish-forest-wrap').style.display = 'block';
   document.getElementById('fish-forest-bar').style.width = '0%';
   storyAuto('旁白', '你在湖邊坐下，靜靜地垂釣。魚兒會在一段時間後上鉤，你可以先去做其他事。');
+  // 鎖住玩家移動2秒，並暫停圖片切換
+  G.fishCastLock = true;
+  G.fishCasting = true;
+  setTimeout(() => { G.fishCastLock = false; }, 2000);
+  // 先播拉魚線，結束後播進水並切換圖片
+  const castSfx2 = document.getElementById('sfx-fish-cast');
+  castSfx2.volume = Math.max(0, Math.min(1, settingsVolume() * 3.0));
+  castSfx2.currentTime = 0;
+  castSfx2.play().catch(() => {});
+  castSfx2.onended = () => {
+    const splashSfx2 = document.getElementById('sfx-fish-splash');
+    splashSfx2.volume = Math.max(0, Math.min(1, settingsVolume() * 3.0));
+    splashSfx2.currentTime = 0;
+    splashSfx2.play().catch(() => {});
+    G.fishCasting = false; setForestFishingVisual('fishing');
+    castSfx2.onended = null;
+  };
 }
 
 function doAction_Fish() {
@@ -7379,7 +7421,7 @@ let menuBtns   = [];
 function menuRunSelected() {
   const btn = menuBtns[menuCursor];
   if (!btn || btn.disabled) return;
-  playTitleButtonSfx();
+  playLoopingAudio('sfx-button', 3.0);
   if (btn.classList.contains('act-cancel')) { closeAction(); return; }
   btn.click();
 }
@@ -7410,6 +7452,7 @@ function showActionMenu(heading, items) {
     const fxText = typeof item.fx === 'function' ? item.fx() : item.fx;
     btn.innerHTML = `<span class="a-name">${item.name}</span><span class="a-fx">${fxText}</span>`;
     btn.onclick = () => {
+      playLoopingAudio('sfx-button', 3.0);
       item.run();
       renderHUD();
       document.getElementById('action-overlay').style.display = 'none';
