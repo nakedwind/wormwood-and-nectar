@@ -2661,7 +2661,7 @@ function sceneCharH() {
 // ══════════════════════════════════════
 const ZONES = {
   outside: [
-    { id:'to_lobby',  x1:290, y1:208, x2:356, y2:252, sceneHint:'→ 進入小屋', isScene:true,
+    { id:'to_lobby',  x1:290, y1:218, x2:356, y2:262, sceneHint:'→ 進入小屋', isScene:true,
       fn(){ playLoopingAudio('sfx-door-open', 6.0); changeScene('lobby'); } },
     { id:'farm',      x1:15,  y1:231, x2:181, y2:316, interactHint:'種植',
       fn(){ doAction_Gather(); } },
@@ -2685,7 +2685,7 @@ const ZONES = {
       fn(){ playLoopingAudio('sfx-door-open', 6.0); changeScene('outside', {x:319, y:265}); } },
     { id:'to_kitchen', x1:361, y1:99,  x2:523, y2:161, sceneHint:'→ 前往廚房（布簾）', isScene:true,
       fn(){ playLoopingAudio('sfx-curtain', 6.0); changeScene('kitchen'); } },
-    { id:'lobby_potion', x1:110, y1:165, x2:185, y2:225,
+    { id:'lobby_potion', x1:114, y1:183, x2:189, y2:309,
       fn(){ doAction_PickupPotion(); } },
     { id:'cabinet',    x1:8,   y1:91,  x2:323, y2:211, interactHint:'研究',
       fn(){ doAction_StartResearch(); } },
@@ -2746,7 +2746,7 @@ const OBSTACLES = {
     { x1:84,  y1:391, x2:202, y2:475 },  // 左下物品區
   ],
   outside: [
-    { x1:193, y1:99,  x2:449, y2:233 },
+    { x1:192, y1:106, x2:448, y2:240 },
     { x1:446, y1:1,   x2:600, y2:73  },
     { x1:552, y1:1,   x2:639, y2:57  },
     { x1:6,   y1:208, x2:128, y2:241 },
@@ -2762,6 +2762,7 @@ const OBSTACLES = {
     { x1:595, y1:398, x2:634, y2:441 },
     { x1:52,  y1:63,  x2:83,  y2:103 },
     { x1:149, y1:52,  x2:179, y2:89  },
+    { x1:264, y1:203, x2:377, y2:248 },
   ],
   room: [
     { x1:414, y1:2,   x2:537, y2:191 },   // 書架牆角
@@ -4248,10 +4249,19 @@ function renderScene() {
   const bgUrl = isBloodMoonForest ? 'bg_forest_night_Blood Moon.png' : bgMap[G.scene];
   document.getElementById('scene-bg').style.backgroundImage = `url('${bgUrl}')`;
   document.getElementById('room-label').textContent = labelMap[G.scene];
+  // 農田安全修正：farmStage >= 5 時確保 herbReady = true
+  if (G.farmStage >= 5 && !G.herbReady) G.herbReady = true;
   document.getElementById('farm-growth-wrap').style.display =
     (G.scene === 'outside' && G.farmStage >= 2 && G.farmStage < 5) ? 'block' : 'none';
   document.getElementById('herb-harvest-wrap').style.display =
     (G.scene === 'outside' && G.timePeriod === 'morning' && (G.herbHarvesting || G.herbReady)) ? 'block' : 'none';
+  // 載入存檔後同步 herb bar 狀態
+  if (G.herbReady) {
+    const hBar = document.getElementById('herb-harvest-bar');
+    const hLabel = document.querySelector('#herb-harvest-wrap .herb-harvest-label');
+    if (hBar) { hBar.style.width = '100%'; hBar.style.background = 'linear-gradient(90deg,#a07020,#e0b030)'; }
+    if (hLabel) hLabel.textContent = '🌿 藥草已就緒！';
+  }
   document.getElementById('fish-scene-wrap').style.display =
     (G.scene === 'outside' && (G.fishFishing || G.fishReady)) ? 'block' : 'none';
   document.getElementById('fish-forest-wrap').style.display =
@@ -5008,6 +5018,8 @@ function gameLoop() {
   if (G.paused) {
     if (G.sleepAnimActive) { updateRoomDepth(); renderChars(); }
     updateWeatherFx();
+    updateIndoorWalkSfx();
+    updateOutdoorWalkSfx();
     raf = requestAnimationFrame(gameLoop);
     return;
   }
@@ -5899,7 +5911,7 @@ function gameLoop() {
       G.farmGrowthTimer = 0;
       G.farmWatered = false;
       if (farmBar) farmBar.style.width = '0%';
-      playLoopingAudio('sfx-plant-grow', 3.0);
+      if (G.scene === 'outside') playLoopingAudio('sfx-plant-grow', 3.0);
       setOutsideFarmVisual(G.farmStage >= 5);
       if (G.farmStage >= 5) {
         G.herbReady = true;
@@ -6109,6 +6121,8 @@ document.addEventListener('keydown', e => {
     } else if (zone && zone.isScene) {
       zone.fn();
     } else if (zone && zone.interactHint) {
+      zone.fn();
+    } else if (zone && zone.fn) {
       zone.fn();
     } else if (isNearWinter() && !near) {
       openWinterMenu();
@@ -6521,6 +6535,8 @@ function waterFarm() {
 
 function doAction_Gather() {
   if (G.timePeriod !== 'morning') { timeWarn('農田的作業是白天的行動。'); return; }
+  // 安全修正：farmStage >= 5 時確保 herbReady
+  if (G.farmStage >= 5) G.herbReady = true;
   // 第5階段：收成
   if (G.farmStage >= 5 && G.herbReady) {
     SFX.collect();
@@ -8918,7 +8934,7 @@ function updateOutdoorWalkSfx() {
   const outdoorScenes = ['outside', 'forest'];
   const isOutdoor = outdoorScenes.includes(G.scene);
   const eldrinWalking = isOutdoor && G.eldrin.walkTick > 0;
-  const shouldPlay = !G.manualPaused && eldrinWalking;
+  const shouldPlay = !G.manualPaused && !G.paused && eldrinWalking;
   const sfx = document.getElementById('sfx-outdoor-walk');
   if (!sfx) return;
   if (shouldPlay && !_outdoorWalkPlaying) {
@@ -8936,9 +8952,7 @@ function updateIndoorWalkSfx() {
   const indoorScenes = ['lobby', 'room', 'kitchen'];
   const isIndoor = indoorScenes.includes(G.scene);
   const eldrinWalking  = isIndoor && G.eldrin.walkTick > 0;
-  const avarenWalking  = isIndoor && G.avarenScene === G.scene && G.avaren.walkTick > 0;
-  const noahWalking    = isIndoor && G.noah.walkTick > 0;
-  const shouldPlay = !G.manualPaused && (eldrinWalking || avarenWalking || noahWalking);
+  const shouldPlay = !G.manualPaused && !G.paused && eldrinWalking;
   const sfx = document.getElementById('sfx-indoor-walk');
   if (!sfx) return;
   if (shouldPlay && !_indoorWalkPlaying) {
