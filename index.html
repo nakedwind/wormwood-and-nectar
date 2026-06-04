@@ -1450,6 +1450,9 @@ body {
 <audio id="sfx-gather-wood">
   <source src="music/音效/搜尋樹木.mp3" type="audio/mpeg">
 </audio>
+<audio id="sfx-door-open-outdoor">
+  <source src="music/音效/戶外開門.mp3" type="audio/mpeg">
+</audio>
 <audio id="sfx-slime">
   <source src="music/音效/史萊姆.mp3" type="audio/mpeg">
 </audio>
@@ -3258,6 +3261,7 @@ const NOAH_LAKE_AFTER_DLG = [
 
 function isNearReid() {
   if (G.scene !== 'outside' || !isReidDay() || G.timePeriod !== 'morning') return false;
+  if (G.reidSlayWalkingToGate || G.reidSlayActive) return false;
   return Math.hypot(G.red.x - G.eldrin.x, G.red.y - G.eldrin.y) < 40;
 }
 
@@ -3397,18 +3401,20 @@ function showRedCommissionMenu() {
           chg('money', -c.cost);
           const returnDay = c.returnDays != null ? G.day + c.returnDays : G.day + 2;
           G.redCommissions.push({ key: c.key, returnDay });
-          story('旁白', '你說明了委託的內容。雷德重重點頭。');
-          story('雷德', pick([
+          storyAuto('旁白', '你說明了委託的內容。雷德重重點頭。');
+          storyAuto('雷德', pick([
             '「好！包在我身上！就算迷路也一定找到！……大概。」',
             '「沒問題！這點小事難不倒我！（往反方向走了兩步又折回來）」',
             '「交給我！我去我去！……等等，是往那邊嗎？」',
           ]));
           if (c.key === 'slay') {
-            G.reidSlayWalkingToGate = true;
+            G.reidSlayPendingWalk = true;  // 等對話結束再開始走
+            G.reidSlayWalkPhase = 0;
             G.reidSlayActive = false;
             G.reidSlayInForest = false;
             G.reidSlayDelivered = false;
             G.reidSlaySlimesDead = false;
+            G.reidForestWandering = false;  // 清除上次的漫走狀態
           }
         }
       });
@@ -4170,11 +4176,15 @@ function initState() {
     redCommission: null,
     redDelivered: false,
     redCommissions: [],
+    reidSlayPendingWalk: false,
+    reidSlayFollowDelay: 0,
+    reidSlayWalkPhase: 0,
     reidSlayWalkingToGate: false,
     reidSlayActive: false,
     reidSlayInForest: false,
     reidSlayDelivered: false,
     reidSlaySlimesDead: false,
+    reidForestWandering: false,
     bubbleTimer: 0,
     bubbleText: '',
     eldrinEmoteTimer: 0,
@@ -4524,7 +4534,7 @@ function renderChars() {
   // ── Reid ──
   const rd = G.red;
   const cwRd = document.getElementById('cw-red');
-  const rdVisible = (G.scene === 'outside' && isReidDay() && G.timePeriod === 'morning') || (G.scene === 'outside' && G.reidSlayWalkingToGate) || (G.scene === 'forest' && G.reidSlayInForest && !G.reidSlayDelivered);
+  const rdVisible = ((G.scene === 'outside' && isReidDay() && G.timePeriod === 'morning' && !G.reidSlayActive) || (G.scene === 'outside' && G.reidSlayWalkingToGate) || (G.scene === 'forest' && G.reidSlayInForest && !G.reidSlayDelivered) || (G.scene === 'forest' && G.reidForestWandering));
   if (rdVisible && spriteInfo.red) {
     const rdBlink = rd.blinkPhase >= 0 && rd.pose === 'front';
     const rdPose  = rdBlink ? 'blink' : rd.pose;
@@ -5530,31 +5540,49 @@ function gameLoop() {
     }
   }
 
-  // 雷德走向出口（討伐委託），此時跳過正常隨機走動
+  // 雷德討伐委託走向出口（等對話結束才啟動）
+  if (G.scene === 'outside' && G.reidSlayPendingWalk && storyQueue.length === 0 && !G.actionSceneActive) {
+    G.reidSlayPendingWalk = false;
+    G.reidSlayWalkingToGate = true;
+    G.reidSlayWalkPhase = 1;
+  }
   if (G.scene === 'outside' && G.reidSlayWalkingToGate) {
     const rd = G.red;
-    const gateX = 328, gateY = 438;
-    const dx = gateX - rd.x, dy = gateY - rd.y;
+    const waypoints = [null, { x:327, y:351 }, { x:325, y:436 }];
+    const wp = waypoints[G.reidSlayWalkPhase];
+    if (!wp) return;
+    const dx = wp.x - rd.x, dy = wp.y - rd.y;
     const dist = Math.hypot(dx, dy);
-    if (dist < 25) {
-      G.reidSlayWalkingToGate = false;
-      G.reidSlayActive = true;
-      rd.walkFrame = 0; rd.walkTick = 0;
+    if (dist < 18) {
+      if (G.reidSlayWalkPhase === 1) {
+        G.reidSlayWalkPhase = 2;
+      } else {
+        // 抵達出口，消失
+        G.reidSlayWalkingToGate = false;
+        G.reidSlayActive = true;
+        rd.walkFrame = 0; rd.walkTick = 0;
+        playLoopingAudio('sfx-door-open-outdoor', 6.0);
+      }
     } else {
       const spd = SPEED * 0.5;
       rd.x += (dx / dist) * spd;
       rd.y += (dy / dist) * spd;
-      if      (dx < 0) rd.pose = 'sideL';
-      else if (dx > 0) rd.pose = 'sideR';
-      else if (dy < 0) rd.pose = 'back';
-      else             rd.pose = 'front';
+      // 第2段路徑（中繼點→出口）強制正面朝下
+      if (G.reidSlayWalkPhase === 2) {
+        rd.pose = 'front';
+      } else {
+        if      (dx < 0) rd.pose = 'sideL';
+        else if (dx > 0) rd.pose = 'sideR';
+        else if (dy < 0) rd.pose = 'back';
+        else             rd.pose = 'front';
+      }
       rd.walkTick++;
       if (rd.walkTick % 8 === 0) rd.walkFrame = (rd.walkFrame + 1) % 4;
     }
   }
 
-  // 雷德隨機走動（第3、5、7、9天，戶外，白天）——走向出口時跳過
-  if (G.scene === 'outside' && isReidDay() && G.timePeriod === 'morning' && !G.reidSlayWalkingToGate) {
+  // 雷德隨機走動（第3、5、7、9天，戶外，白天）——走向出口或已出發時跳過
+  if (G.scene === 'outside' && isReidDay() && G.timePeriod === 'morning' && !G.reidSlayWalkingToGate && !G.reidSlayActive && !G.reidSlayPendingWalk) {
     const rd = G.red;
     if (isDlgBlocking()) {
       // 對話中：面向艾德林，不移動
@@ -5732,9 +5760,10 @@ function gameLoop() {
 
   // 討伐委託：雷德在森林的行動
   if (G.scene === 'forest' && G.reidSlayInForest && !G.reidSlayDelivered) {
+    if (G.reidSlayFollowDelay > 0) { G.reidSlayFollowDelay--; }
     const rd = G.red;
     const distToPlayer = Math.hypot(el.x - rd.x, el.y - rd.y);
-    if (distToPlayer < 150) {
+    if (distToPlayer < 150 && G.reidSlayFollowDelay <= 0) {
       // 走向玩家
       const dx = el.x - rd.x, dy = el.y - rd.y;
       const dist = Math.hypot(dx, dy) || 1;
@@ -5753,16 +5782,55 @@ function gameLoop() {
         G.reidSlayDelivered = true;
         G.reidSlayInForest = false;
         G.reidSlayActive = false;
+        G.reidForestWandering = true;  // 交付後留在森林繼續走
+        // 把雷德移回漫走範圍內，清除泡泡和走動狀態
+        rd.x = 320; rd.y = 160;
+        rd.walkTimer = 0; rd.walkDir = {dx:0, dy:0};
+        rd.bubbleTimer = 0; rd.bubbleText = '';
         // 移除委託記錄並交付
         G.redCommissions = G.redCommissions.filter(c => c.key !== 'slay');
         const slayComm = RED_COMMISSIONS.find(c => c.key === 'slay');
         if (slayComm) slayComm.deliver();
         G._reidSlayDialogTriggered = false;
-        // 隔天史萊姆重生
-        setTimeout(() => { G.reidSlaySlimesDead = false; }, 0);
+        // 史萊姆隔天早上才重生（不立即重置）
       }
     } else {
       rd.walkFrame = 0; rd.walkTick = 0;
+    }
+  }
+
+  // 雷德交付後在森林漫走
+  if (G.scene === 'forest' && G.reidForestWandering) {
+    const rd = G.red;
+    // 超出漫走範圍就傳回安全位置
+    if (rd.x < 39 || rd.x > 616 || rd.y < 43 || rd.y > 197) {
+      rd.x = 320; rd.y = 160; rd.walkTimer = 0; rd.walkDir = {dx:0,dy:0};
+    }
+    if (rd.bubbleTimer > 0) rd.bubbleTimer--;
+    rd.walkTimer = (rd.walkTimer || 0) - 1;
+    if (rd.walkTimer <= 0) {
+      const dirs = [{dx:-1,dy:0},{dx:1,dy:0},{dx:0,dy:-1},{dx:0,dy:1},{dx:0,dy:0},{dx:0,dy:0}];
+      rd.walkDir = dirs[Math.floor(Math.random() * dirs.length)];
+      rd.walkTimer = Math.floor(Math.random() * 120) + 60;
+    }
+    const spd = SPEED * 0.22;
+    const nx = rd.x + (rd.walkDir?.dx || 0) * spd;
+    const ny = rd.y + (rd.walkDir?.dy || 0) * spd;
+    const forestObs = OBSTACLES.forest || [];
+    const inBounds = nx >= 39 && nx <= 616 && ny >= 43 && ny <= 197;
+    const inObs = forestObs.some(o => nx >= o.x1 && nx <= o.x2 && ny >= o.y1 && ny <= o.y2);
+    if (inBounds && !inObs) {
+      rd.x = nx; rd.y = ny;
+      const dx = rd.walkDir?.dx || 0, dy = rd.walkDir?.dy || 0;
+      if      (dx < 0) rd.pose = 'sideL';
+      else if (dx > 0) rd.pose = 'sideR';
+      else if (dy < 0) rd.pose = 'back';
+      else if (dy > 0) rd.pose = 'front';
+      if (dx !== 0 || dy !== 0) {
+        rd.walkTick++; if (rd.walkTick % 8 === 0) rd.walkFrame = (rd.walkFrame + 1) % 4;
+      } else { rd.walkFrame = 0; rd.walkTick = 0; }
+    } else {
+      rd.walkDir = {dx:0,dy:0}; rd.walkTimer = 0;
     }
   }
 
@@ -7913,11 +7981,12 @@ function changeScene(to, startOverride) {
     if (to === 'forest' && avarenWouldFollow && !G.bloodMoon7Active) {
       G.avarenWaitedForForest = true;
     }
-    // 討伐委託：進入森林時啟動雷德在森林的行動
-    if (to === 'forest' && G.reidSlayActive && !G.reidSlayInForest && !G.reidSlayDelivered) {
+    // 討伐委託：進入森林時啟動或重置雷德位置
+    if (to === 'forest' && (G.reidSlayActive || G.reidSlayInForest) && !G.reidSlayDelivered) {
       G.reidSlayInForest = true;
       G.reidSlaySlimesDead = true;
-      G.red.x = 340; G.red.y = 170;
+      G.reidSlayFollowDelay = 240; // 4秒後才開始追玩家
+      G.red.x = 202; G.red.y = 155;
       G.red.pose = 'front';
       G.red.walkFrame = 0; G.red.walkTick = 0;
       setTimeout(() => story('旁白', '森林裡多了一個熟悉的身影。雷德正站在史萊姆原本出沒的地方，四處張望。'), 800);
@@ -8672,6 +8741,10 @@ function continueAfterNight(prevText) {
   G.bgmPreEveningFadeStarted = false;
   G.dayEndTriggered = false;
   G.nestEggs = 2; // 每天早晨鳥巢重新出現2顆蛋
+  // 史萊姆隔天早上重生
+  G.reidSlaySlimesDead = false;
+  // 雷德討伐委託重置
+  G.reidForestWandering = false;
   G.forestMushrooms = { 1: false, 2: false, 3: false, 4: false };
   if (G.day === 8) switchBGM('bgm-day8');
   else switchBGM('bgm');
