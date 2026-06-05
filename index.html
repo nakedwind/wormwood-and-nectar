@@ -1414,7 +1414,7 @@ body {
 <audio id="bgm-sad" loop>
   <source src="music/backgroundmusicforvideos-sad-sad-music-467341.mp3" type="audio/mpeg">
 </audio>
-<audio id="bgm-day8" loop>
+<audio id="bgm-day10" loop>
   <source src="music/harumachimusic-a-mysterious-little-box-ancient-like-folk-music-233859.mp3" type="audio/mpeg">
 </audio>
 <audio id="sfx-day0-rain" loop>
@@ -1570,7 +1570,7 @@ body {
           <div class="settings-row">
             <span class="settings-label">🔊 音量</span>
             <input type="range" id="settings-vol" min="0" max="100" value="10"
-              oninput="['bgm','bgm-bloodmoon','bgm-sad','bgm-day8','sfx-day0-rain','sfx-day0-walk','sfx-kitchen-stove','sfx-kitchen-boil'].forEach(id=>{const e=document.getElementById(id);if(!e.paused)e.volume=this.value/100;});">
+              oninput="['bgm','bgm-bloodmoon','bgm-sad','bgm-day10','sfx-day0-rain','sfx-day0-walk','sfx-kitchen-stove','sfx-kitchen-boil'].forEach(id=>{const e=document.getElementById(id);if(!e.paused)e.volume=this.value/100;});">
           </div>
           <button id="pause-btn" onclick="togglePause()">⏸ 暫停遊戲</button>
         </div>
@@ -3459,10 +3459,7 @@ const DAY2_FAIRY_BOUNDS = { x1: 250, y1: 347, x2: 412, y2: 405 };
 
 const NOAH_DAY2_LAKE_STORY = [
   { speaker:'旁白', text:'夜晚的森林很安靜。\n\n滿月落在湖面上，水光像一層薄薄的銀霜。\n你在湖邊看見諾亞。' },
-  { speaker:'旁白', text:'他站在岸邊，沒有回頭。\n只是安靜地望著湖面。' },
-  { speaker:'艾德林', text:'「諾亞。」' },
-  { speaker:'諾亞', text:'「……艾德林。」' },
-  { speaker:'艾德林', text:'「這麼晚了，你在這裡做什麼？」\n「湖邊有妖精...很危險，快點離開這裡吧」' },
+  { speaker:'艾德林', text:'「諾亞。」\n「這麼晚了，你在這裡做什麼？」\n「湖邊有妖精...很危險，快點離開這裡吧」' },
   { speaker:'諾亞', text:'「別擔心，我沒事的，滿月的時候，妖精蠱惑不了人。」' },
   { speaker:'旁白', text:'他沉默了一會兒。' },
   { speaker:'諾亞', text:'「我只是......很想念米蕾兒」' },
@@ -3484,35 +3481,28 @@ const NOAH_DAY2_LAKE_STORY = [
   { speaker:'諾亞', text:'「可是我沒有看見。」\n「我沒有看見她掉下去。」\n「沒有看見她沉下去。」' },
   { speaker:'艾德林', text:'「諾亞……」' },
   { speaker:'諾亞', text:'「所以我一直覺得，她只是迷路了。」\n「她只是被帶去了什麼地方。」\n「只要我一直找，一直喊她，她就會回來。」' },
-  { speaker:'旁白', text:'湖面安靜得像沒有底。' },
-  { speaker:'諾亞', text:'「所有人都說我該接受。」\n「可是他們沒有找到她。」\n「他們只找到一隻鞋子。」' },
-  { speaker:'旁白', text:'他輕輕笑了一下。\n那聲音不像笑。' },
-  { speaker:'諾亞', text:'「可是米蕾兒怎麼可能會只剩下一隻鞋子呢？」' },
-  { speaker:'旁白', text:'長久的沉默落下。' },
+  { speaker:'旁白', text:'湖面安靜得像沒有底。\n\n長久的沉默落下。' },
   { speaker:'諾亞', text:'「有一天晚上，我真的聽見她的聲音。」' },
-  { speaker:'諾亞', text:'「她在叫我哥哥。」\n「她說她不是死了。」\n「她說她只是找不到回家的路。」\n「她說她的腳很冷，因為鞋子掉在岸邊了。」' },
+  { speaker:'諾亞', text:'「她在叫我哥哥。」\n「她說她找不到回家的路。」\n「她說她的腳很冷，因為鞋子掉在岸邊了。」' },
   { speaker:'艾德林', text:'「那不是米蕾兒。」' },
   { speaker:'諾亞', text:'「我知道。」' },
   { speaker:'旁白', text:'他停了一下。' },
   { speaker:'諾亞', text:'「我都知道...」' },
   { speaker:'諾亞', text:'「可是那時候，我真的以為是她。」\n「因為它知道鞋子的事。」\n「它知道我一直想聽的那句話。」' },
   { speaker:'艾德林', text:'「它說了什麼？」' },
-  { speaker:'諾亞', text:'「它說——」\n「哥哥，我沒有死。」' },
+  { speaker:'諾亞', text:'「它說——」\n「哥哥，快點來找我。」' },
   { speaker:'旁白', text:'諾亞抬起手，像是想碰一下湖面的月光。\n但他的手停在半空，沒有再往前。' },
   { speaker:'諾亞', text:'「我走進水裡。」\n「湖水淹到我的膝蓋、腰、胸口。」\n「我聽見她一直哭，一直叫我。」\n「我想，只要我再往前一步就好。」' },
   { speaker:'艾德林', text:'「我把你拉回來了。」' },
   { speaker:'諾亞', text:'「嗯。」' },
   { speaker:'旁白', text:'他終於轉頭看向你。' },
-  { speaker:'諾亞', text:'「艾德林，是你救了我。」\n「你抓住我的手，把我從湖裡拖回來。」\n「我還記得你那時候全身都在發抖，卻一直對我說——」' },
-  { speaker:'艾德林', text:'「『那不是她。』」' },
-  { speaker:'諾亞', text:'「對。」\n「你一直說，那不是她。」\n「你說米蕾兒已經死了。」\n「你說不可以把自己的命交給假裝成她的東西。」' },
+  { speaker:'諾亞', text:'「艾德林，是你救了我。」\n「你抓住我的手，把我從湖裡拖回來。」\n「我還記得你那時候全身都在發抖，卻一直對我說『那不是她。』——」' },
+  { speaker:'諾亞', text:'「你說不可以把自己的命交給假裝成她的東西。」' },
   { speaker:'旁白', text:'諾亞安靜地笑了一下。\n那不是開心的笑，只是很疲憊、很柔軟。' },
   { speaker:'諾亞', text:'「我那時候很恨你。」\n「因為你把我從她身邊拉走了。」' },
   { speaker:'艾德林', text:'「我知道。」' },
   { speaker:'諾亞', text:'「可是後來我也知道。」\n「如果沒有你，我早就死在這裡了。」' },
-  { speaker:'旁白', text:'他看向湖面。\n滿月倒映在水中，安靜得像一隻閉上的眼睛。' },
   { speaker:'諾亞', text:'「所以這一次，我也想幫助你。」\n「你救阿瓦倫的樣子，和那時候的我很像。」' },
-  { speaker:'旁白', text:'諾亞停頓了一會兒。' },
   { speaker:'諾亞', text:'「如果她還活著，現在應該能和阿瓦倫當好朋友吧？」' },
   { speaker:'艾德林', text:'「他們一定能成為很好的朋友」' },
   { speaker:'諾亞', text:'「我真的很想她。」' },
@@ -5058,7 +5048,7 @@ function renderChars() {
   const av = G.avaren;
   const cwAv = document.getElementById('cw-avaren');
   if (isAvarenUnconscious()) placeAvarenUnconscious();
-  else if (isAvarenBedRest()) placeAvarenBedRest();
+  else if (isAvarenBedRest() && !G.sleepAnimActive) placeAvarenBedRest();
   updateAvarenSpriteForState();
   const avVisible = G.avarenScene === G.scene || (G.sleepAnimActive && G.avarenScene !== 'gone' && !G.day4AvarenGone);
   if (avVisible && spriteInfo.avaren) {
@@ -5631,7 +5621,7 @@ function gameLoop() {
             () => { storyAuto('旁白', '夜幕低垂，血月升起，發狂的月亮使所有生物的詛咒加劇'); }, 'red');
         }, 500);
       } else {
-        fadeSwitchBGM('bgm-day8');
+        fadeSwitchBGM('bgm-day10');
         setTimeout(() => {
           storyAuto('旁白', '夜幕低垂。太陽沉入山後，晚上的時間開始了。\n現在可以進屋照顧阿瓦倫了。');
         }, 400);
@@ -5675,7 +5665,21 @@ function gameLoop() {
   }
   if (G.day !== 0 && !G.manualPaused && !G.dayEndTriggered && _elapsed >= DAY_REAL_SECONDS) {
     G.dayEndTriggered = true;
-    endDay();
+    G.paused = true;
+    cancelAnimationFrame(raf);
+    switchBGM('bgm-day10');
+    const fade = document.getElementById('night-fade');
+    fade.style.transition = 'none'; fade.style.display = 'block'; fade.style.opacity = '0';
+    fade.getBoundingClientRect();
+    fade.style.transition = 'opacity 1s ease'; fade.style.opacity = '1';
+    setTimeout(() => {
+      chg('eldrinHp', -5); renderHUD();
+      showEvent('😴', '力竭而眠', '夜已深了。\n\n你沒有意識到時間就這樣流逝，\n直到疲憊將你壓倒，\n就這樣不知不覺地昏睡過去。\n\n體力 -5', () => {
+        fade.style.transition = 'none'; fade.style.opacity = '0'; fade.style.display = 'none';
+        G.paused = false;
+        endDay();
+      }, 'blue');
+    }, 800);
     return;
   }
   if (G.day !== 0) {
@@ -8895,6 +8899,9 @@ function playNightResearchAnimation(onComplete) {
     renderScene();
     renderHUD();
     renderChars();
+    // 椅背層級高於艾德林
+    const chairBack = document.getElementById('room-dhair02');
+    if (chairBack) chairBack.style.zIndex = '220';
     fade.style.transition = 'opacity 0.8s ease';
     fade.style.opacity = '0';
     setTimeout(() => {
@@ -9243,7 +9250,7 @@ function skipToEvening() {
           () => { storyAuto('旁白', '夜幕低垂，血月升起，發狂的月亮使所有生物的詛咒加劇'); }, 'red');
       }, 500);
     } else {
-      fadeSwitchBGM('bgm-day8');
+      fadeSwitchBGM('bgm-day10');
       setTimeout(() => {
         storyAuto('旁白', '夜幕低垂。太陽沉入山後，晚上的時間開始了。\n現在可以進屋照顧阿瓦倫了。');
       }, 400);
@@ -9592,7 +9599,7 @@ function continueAfterNight(prevText) {
     const el = document.getElementById(id);
     if (el) el.style.display = '';
   });
-  if (G.day === 8) switchBGM('bgm-day8');
+  if (G.day === 10) switchBGM('bgm-day10');
   else switchBGM('bgm');
   if (G.day > 2 && G.day !== 10) G.avarenBedRest = false;
   renderHUD();
@@ -10346,7 +10353,7 @@ async function enableDay0FreeControl() {
   G.introDay0HideEldrin = false;
   renderChars();
   await playActionScene(DAY0_NOAH_EXIT_LINES);
-  fadeSwitchBGM('bgm-day8', 4000);
+  fadeSwitchBGM('bgm', 4000);
   G.manualPaused = false;
   G.paused = false;
   G.dayStartMs = performance.now();
@@ -10522,7 +10529,7 @@ async function skipToDay1() {
   document.getElementById('game-screen').style.display  = 'block';
   document.getElementById('blood-moon-badge').style.display = 'none';
   warn('');
-  ['bgm','bgm-bloodmoon','bgm-sad','bgm-day8','sfx-day0-rain','sfx-day0-walk'].forEach(id => {
+  ['bgm','bgm-bloodmoon','bgm-sad','bgm-day10','sfx-day0-rain','sfx-day0-walk'].forEach(id => {
     const el = document.getElementById(id);
     if (el) { el.pause(); el.currentTime = 0; }
   });
@@ -10543,7 +10550,7 @@ async function startGame() {
   warn('');
 
   stopAudio('sfx-day0-walk');
-  ['bgm', 'bgm-bloodmoon', 'bgm-sad', 'bgm-day8'].forEach(id => {
+  ['bgm', 'bgm-bloodmoon', 'bgm-sad', 'bgm-day10'].forEach(id => {
     const el = document.getElementById(id);
     if (el) { el.pause(); el.currentTime = 0; }
   });
@@ -10567,7 +10574,7 @@ async function startGame() {
 
 function switchBGM(id) {
   if (bgmFadeTimer) { clearInterval(bgmFadeTimer); bgmFadeTimer = null; }
-  const all = ['bgm', 'bgm-bloodmoon', 'bgm-sad', 'bgm-day8'];
+  const all = ['bgm', 'bgm-bloodmoon', 'bgm-sad', 'bgm-day10'];
   all.forEach(aid => {
     const el = document.getElementById(aid);
     if (aid === id) {
@@ -10583,7 +10590,7 @@ function switchBGM(id) {
 let bgmFadeTimer = null;
 function fadeOutCurrentBGM(duration = 3000) {
   if (bgmFadeTimer) { clearInterval(bgmFadeTimer); bgmFadeTimer = null; }
-  const active = ['bgm', 'bgm-bloodmoon', 'bgm-sad', 'bgm-day8']
+  const active = ['bgm', 'bgm-bloodmoon', 'bgm-sad', 'bgm-day10']
     .map(id => document.getElementById(id))
     .filter(el => el && !el.paused);
   if (!active.length) return;
@@ -10604,7 +10611,7 @@ function fadeOutCurrentBGM(duration = 3000) {
 
 function fadeSwitchBGM(id, duration = 2400) {
   if (bgmFadeTimer) { clearInterval(bgmFadeTimer); bgmFadeTimer = null; }
-  const all = ['bgm', 'bgm-bloodmoon', 'bgm-sad', 'bgm-day8'];
+  const all = ['bgm', 'bgm-bloodmoon', 'bgm-sad', 'bgm-day10'];
   const target = document.getElementById(id);
   if (!target) return;
   const maxVolume = Number(document.getElementById('settings-vol').value) / 100;
@@ -10638,7 +10645,7 @@ function restartGame() {
   document.getElementById('ending-screen').style.display = 'none';
   document.getElementById('title-screen').style.display  = 'flex';
   stopDay0IntroSfx();
-  ['bgm', 'bgm-bloodmoon', 'bgm-sad', 'bgm-day8'].forEach(id => {
+  ['bgm', 'bgm-bloodmoon', 'bgm-sad', 'bgm-day10'].forEach(id => {
     const el = document.getElementById(id);
     if (el) { el.pause(); el.currentTime = 0; }
   });
