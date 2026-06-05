@@ -1778,6 +1778,10 @@ body {
         style="background:#0a1a06;border:1px solid #3a6a10;color:#80d040;">📦 物品+10</button>
       <button id="btn-toggle-rain" onclick="toggleRainWeather()"
         style="background:#08121a;border:1px solid #304a60;color:#9fc8e8;">☔ 關雨</button>
+      <button onclick="jumpToDay10ForgetTest(true)"
+        style="background:#141022;border:1px solid #5a4a90;color:#b8a8ff;">🌀 第10天(忘卻)</button>
+      <button onclick="jumpToDay10ForgetTest(false)"
+        style="background:#221010;border:1px solid #804040;color:#ffb0b0;">💔 第10天(未忘卻)</button>
       <button id="btn-sleep" onclick="openJumpDayMenu()"
         style="background:#241a0c;border:1px solid #5a3818;color:#c0a060;">🌙 入睡</button>
     </div>
@@ -2922,7 +2926,7 @@ const ZONES = {
     { id:'forest_mushroom_2', x1:67,  y1:170, x2:104, y2:207, interactHint:'蘑菇', condition(){ return isForestMushroomAvailable(2); }, fn(){ doAction_CollectMushroom(2); } },
     { id:'forest_mushroom_3', x1:557, y1:36,  x2:594, y2:73,  interactHint:'蘑菇', condition(){ return isForestMushroomAvailable(3); }, fn(){ doAction_CollectMushroom(3); } },
     { id:'forest_mushroom_4', x1:576, y1:278, x2:606, y2:309, interactHint:'蘑菇', condition(){ return isForestMushroomAvailable(4); }, fn(){ doAction_CollectMushroom(4); } },
-    { id:'forest_tree1',  x1:5,   y1:8,   x2:105, y2:119, interactHint:'樹木', fn(){ doAction_GatherAppleTree('tree1'); } },
+    { id:'forest_tree1',  x1:3,   y1:4,   x2:108, y2:138, interactHint:'樹木', fn(){ doAction_GatherAppleTree('tree1'); } },
     { id:'forest_tree2',  x1:5,   y1:361, x2:69,  y2:477, interactHint:'樹木', fn(){ doAction_GatherWood(); } },
     { id:'forest_tree3',  x1:556, y1:195, x2:637, y2:318, interactHint:'樹木', fn(){ doAction_GatherAppleTree('tree3'); } },
     { id:'forest_tree4',  x1:481, y1:5,   x2:634, y2:102, interactHint:'樹木', fn(){ doAction_GatherWood(); } },
@@ -3318,6 +3322,85 @@ const RED_COMMISSIONS = [
     deliver(){ chg('monsterMaterial', 2); renderHUD(); story('旁白', '雷德拍拍胸脯，把兩塊發光的魔物素材遞給你。'); story('雷德', '「解決了！那兩隻黏糊糊的東西根本不是我的對手！……不過它們顏色真的很奇怪欸。」'); }},
 ];
 
+const RED_WINTER_MEET_STORY = [
+  { speaker: '雷德', text: '艾德林！你來了！\n\n我剛剛遇到一個很神祕的人！' },
+  { speaker: '艾德林', text: '神祕的人？' },
+  { speaker: '雷德', text: '對！黑衣服，講話很冷淡，看起來很厲害！\n他站在森林裡，身邊的魔物都變得很安靜。' },
+  { speaker: '艾德林', text: '他有對你做什麼嗎？' },
+  { speaker: '雷德', text: '沒有！\n我問他是不是住在森林裡。' },
+  { speaker: '艾德林', text: '……然後呢？' },
+  { speaker: '雷德', text: '他說不算。\n所以我又問他住多久才算住在森林裡。' },
+  { speaker: '艾德林', text: '你為什麼要問這個？' },
+  { speaker: '雷德', text: '因為我想知道啊！' },
+  { speaker: '旁白', text: '雷德回答得非常坦蕩。\n你一時間不知道該從哪裡開始說。' },
+  { speaker: '雷德', text: '不過他人應該不壞！\n他還告訴我史萊姆往哪邊去了。' },
+  { speaker: '艾德林', text: '你最好不要太相信陌生人。' },
+  { speaker: '雷德', text: '放心！\n我有勇者的直覺！' },
+  { speaker: '艾德林', text: '你的直覺準嗎？' },
+  { speaker: '雷德', text: '不太準！' },
+];
+
+const RED_WINTER_MEET_DAY7_STORY = [
+  { speaker: '雷德', text: '艾德林！你也來了。\n溫特也在，今天的森林好熱鬧！' },
+  { speaker: '艾德林', text: '你們已經認識了？' },
+  { speaker: '雷德', text: '當然啊！我們現在是好朋友了！\n他人很善良，都會跟我聊天！' },
+  { speaker: '艾德林', text: '那真是太好了。' },
+  { speaker: '雷德', text: '而且他很聰明耶！\n我剛剛問他知不知道地下洞窟在哪，他就指了方向給我。' },
+  { speaker: '艾德林', text: '那裡有很多可怕的魔物耶，你要去那裡嗎？' },
+  { speaker: '雷德', text: '對啊！\n我想這應該是身為勇者的職責吧！' },
+  { speaker: '艾德林', text: '加油！' },
+];
+
+const REID_DEMON_HEART_STORIES = [
+  [
+    { speaker: '艾德林', text: '雷德。\n我想委託你一件事。' },
+    { speaker: '雷德', text: '好啊！只要我做得到！' },
+    { speaker: '艾德林', text: '我需要……魔王的心臟。' },
+    { speaker: '雷德', text: '……魔王的心臟？' },
+    { speaker: '旁白', text: '雷德第一次沒有立刻回答。\n他低頭看向腰間的劍，劍鞘裡傳來很輕的震動聲。' },
+    { speaker: '雷德', text: '這個委託……聽起來不太像平常的委託。' },
+    { speaker: '艾德林', text: '我需要它救阿瓦倫。' },
+    { speaker: '旁白', text: '雷德沉默了很久。\n最後，他慢慢點了點頭。' },
+    { speaker: '雷德', text: '如果是為了救人……\n我會去。' },
+  ],
+  [
+    { speaker: '雷德', text: '艾德林。\n你又要委託那件事嗎？' },
+    { speaker: '艾德林', text: '我需要魔王的心臟。' },
+    { speaker: '雷德', text: '……我想了一整天。' },
+    { speaker: '雷德', text: '魔王好像不是壞人。' },
+    { speaker: '艾德林', text: '雷德……' },
+    { speaker: '雷德', text: '我知道你想救阿瓦倫。\n可是這樣不好。這樣不對。' },
+    { speaker: '旁白', text: '雷德的手按在劍柄上。\n那把劍像是很高興似的，發出細微的嗡鳴。' },
+    { speaker: '雷德', text: '你真的還要我去嗎？' },
+    { speaker: '艾德林', text: '……拜託你。' },
+    { speaker: '旁白', text: '雷德閉上眼。\n再睜開時，他的表情比平常安靜很多。' },
+    { speaker: '雷德', text: '……我知道了。' },
+  ],
+  [
+    { speaker: '雷德', text: '……又是這件事。' },
+    { speaker: '艾德林', text: '雷德。' },
+    { speaker: '雷德', text: '你知道嗎？\n我一直覺得很奇怪。' },
+    { speaker: '雷德', text: '為什麼我明明不想去，最後還是會答應你？' },
+    { speaker: '雷德', text: '為什麼我每次拒絕，世界都會回到今天早上？' },
+    { speaker: '旁白', text: '雷德看著你。\n那不是平常迷路勇者的眼神。' },
+    { speaker: '雷德', text: '艾德林。\n你不是玩家。' },
+    { speaker: '雷德', text: '你只是這段故事裡，被玩家操作過的角色。' },
+    { speaker: '旁白', text: '空氣像是被什麼東西撕開了。\n你聽見很遠的地方，有紙頁翻動的聲音。' },
+    { speaker: '雷德', text: '這次，輪到我存檔了。' },
+  ],
+];
+
+const REID_HEART_LOOP_NARRATION = [
+  [
+    '……？\n\n清晨的光從窗外照進來。\n你站在房間裡，手指還停在半空。',
+    '今天是第 11 天。\n\n可是你覺得，好像哪裡不對勁。',
+  ],
+  [
+    '不對。\n\n你已經見過這個清晨了。',
+    '窗外的光、桌上的書、空氣裡的藥草味。\n全部都和昨天一樣。\n\n可是你想不起來昨天發生了什麼。',
+  ],
+];
+
 const NOAH_DAY2_INTRO = [
   { speaker:'諾亞', text:'「艾德林。」\n\n他站在小屋外，聲音很輕，像是怕驚動屋裡的人。' },
   { speaker:'諾亞', text:'「我早上看見煙囪有煙，就想你們應該還在這裡。」' },
@@ -3445,15 +3528,16 @@ const NOAH_LAKE_AFTER_DLG = [
 ];
 
 function isNearReid() {
+  const hasDelivery = (G.redCommissions || []).some(c => c.returnDay > 0 && c.returnDay <= G.day && c.key !== 'slay');
   const inForest = G.scene === 'forest' && (G.reidSlayInForest || G.reidForestWandering);
-  const inOutside = G.scene === 'outside' && isReidDay() && G.timePeriod === 'morning'
+  const inOutside = G.scene === 'outside' && (isReidDay() || hasDelivery || G.reidVisitDay === G.day) && G.timePeriod === 'morning'
                     && !G.reidSlayWalkingToGate && !G.reidSlayActive;
   if (!inForest && !inOutside) return false;
   return Math.hypot(G.red.x - G.eldrin.x, G.red.y - G.eldrin.y) < 40;
 }
 
 function isNearWinter() {
-  if (G.scene !== 'forest' || !isWinterDay() || G.timePeriod !== 'morning') return false;
+  if (!isWinterPresent()) return false;
   return Math.hypot(G.winter.x - G.eldrin.x, G.winter.y - G.eldrin.y) < 75;
 }
 
@@ -3600,6 +3684,23 @@ function openRedMenu() {
     G.redCommissions = G.redCommissions.filter(c => c.key !== 'slay');
     const slayComm = RED_COMMISSIONS.find(c => c.key === 'slay');
     if (slayComm) slayComm.deliver();
+    if (G.day === 5 && !G.reidWinterMeetSeen) {
+      G.reidWinterMeetSeen = true;
+      storyThen(() => startActionScene(RED_WINTER_MEET_STORY, 400, () => {}));
+    } else if (G.day === 7 && !G.reidWinterMeetDay7Seen) {
+      G.reidWinterMeetDay7Seen = true;
+      storyThen(() => startActionScene(RED_WINTER_MEET_DAY7_STORY, 400, () => {}));
+    }
+    return;
+  }
+  if (G.scene === 'forest' && G.day === 5 && G.reidForestWandering && !G.reidWinterMeetSeen) {
+    G.reidWinterMeetSeen = true;
+    startActionScene(RED_WINTER_MEET_STORY, 400, () => {});
+    return;
+  }
+  if (G.scene === 'forest' && G.day === 7 && G.reidForestWandering && !G.reidWinterMeetDay7Seen) {
+    G.reidWinterMeetDay7Seen = true;
+    startActionScene(RED_WINTER_MEET_DAY7_STORY, 400, () => {});
     return;
   }
   if (G.avarenScene === 'outside') {
@@ -3613,6 +3714,7 @@ function openRedMenu() {
   const toDeliver = G.redCommissions.filter(c => c.returnDay > 0 && c.returnDay <= G.day);
   if (toDeliver.length > 0) {
     G.redCommissions = G.redCommissions.filter(c => !(c.returnDay > 0 && c.returnDay <= G.day));
+    G.reidVisitDay = G.day; // 記錄今天雷德有來，保持整天可見
     story('旁白', '雷德從遠處大步跑來，揮著手。「找到了找到了！你要的東西！」');
     toDeliver.forEach(p => {
       const comm = RED_COMMISSIONS.find(c => c.key === p.key);
@@ -3628,8 +3730,31 @@ function showRedCommissionMenu() {
   if (!G.redCommissions) G.redCommissions = [];
   const pendingKeys = new Set(G.redCommissions.map(c => c.key));
   const items = [];
+  // 非正規出現日（只是來交貨）則只顯示聊聊
+  const chatOnly = !isReidDay() && G.reidVisitDay === G.day;
 
-  RED_COMMISSIONS.forEach(c => {
+  if (!chatOnly && G.day === 11) {
+    const alreadyHeart = !!G.reidDemonHeartCommissionedToday;
+    items.push({
+      name: alreadyHeart ? '今日已委託：魔王的心臟' : '委託：魔王的心臟',
+      fx: alreadyHeart ? '（今天已接過）' : '隱藏委託',
+      req: () => !alreadyHeart,
+      run() {
+        G.reidDemonHeartCommissionedToday = true;
+        G.reidDemonHeartCount = (G.reidDemonHeartCount || 0) + 1;
+        const idx = Math.min(G.reidDemonHeartCount - 1, REID_DEMON_HEART_STORIES.length - 1);
+        if (G.reidDemonHeartCount >= 3) G.reidFakeSaveTaken = true;
+        startActionScene(REID_DEMON_HEART_STORIES[idx], 400, () => {
+          if (G.reidFakeSaveTaken) {
+            showEvent('💾', '存檔已覆蓋',
+              'SAVE 01\n\n第 11 天　早晨\n勇者雷德\n\n這個存檔已被真正的玩家持有。\n艾德林無法覆蓋。', null, 'red');
+          }
+        });
+      }
+    });
+  }
+
+  if (!chatOnly) RED_COMMISSIONS.forEach(c => {
     if (pendingKeys.has(c.key)) {
       const pending = G.redCommissions.find(p => p.key === c.key);
       items.push({
@@ -3639,12 +3764,15 @@ function showRedCommissionMenu() {
         run() {}
       });
     } else {
+      const commissionedToday = (G.reidCommissionedDayKeys || []).includes(c.key);
       items.push({
-        name: '委託：' + c.name,
-        fx: c.fx,
-        req: () => G.money >= c.cost,
+        name: commissionedToday ? `今日已委託：${c.name}` : '委託：' + c.name,
+        fx: commissionedToday ? '（今天已接過）' : c.fx,
+        req: () => !commissionedToday && G.money >= c.cost,
         run() {
           chg('money', -c.cost);
+          if (!G.reidCommissionedDayKeys) G.reidCommissionedDayKeys = [];
+          G.reidCommissionedDayKeys.push(c.key);
           const returnDay = c.returnDays != null ? G.day + c.returnDays : G.day + 2;
           G.redCommissions.push({ key: c.key, returnDay });
           storyAuto('旁白', '你說明了委託的內容。雷德重重點頭。');
@@ -3827,8 +3955,115 @@ const WINTER_TRADE = [
       story('溫特','……點著以後放在窗邊。不只對魔物，對人也有效。'); } },
 ];
 
+const WINTER_INTRO_STORY = [
+  { speaker: '旁白', text: '森林裡比平常更安靜。\n\n你走過樹影時，忽然發現前方站著一個陌生的人影。\n\n他站在林間，像是早就等在那裡。\n黑色的衣擺沒有沾上泥土，連呼吸都安靜得不像人類。' },
+  { speaker: '艾德林', text: '……你是誰？' },
+  { speaker: '神秘旅人', text: '這句話應該由我問你。\n這片森林的魔物在躁動。' },
+  { speaker: '艾德林', text: '躁動？' },
+  { speaker: '神秘旅人', text: '詛咒的味道。\n魔物們被吸引過來了。' },
+  { speaker: '旁白', text: '他的視線越過你，看向森林深處。\n像是在觀察某種失衡的現象。' },
+  { speaker: '神秘旅人', text: '這裡不該有這麼濃的詛咒。\n有人把麻煩帶進了森林。' },
+  { speaker: '旁白', text: '你的手指微微收緊。' },
+  { speaker: '艾德林', text: '詛咒怎麼了嗎...？' },
+  { speaker: '神秘旅人', text: '我是來確認它會不會擴散。' },
+  { speaker: '艾德林', text: '……' },
+  { speaker: '神秘旅人', text: '那孩子......我從來沒見過一個人類能裝下那麼多詛咒還能活著。' },
+  { speaker: '艾德林', text: '……你怎麼知道阿瓦倫的事情？' },
+  { speaker: '神秘旅人', text: '森林們的孩子告訴我的。' },
+  { speaker: '神秘旅人', text: '別露出那種表情。\n我沒有想對你們幹嘛。' },
+  { speaker: '艾德林', text: '那你想做什麼？' },
+  { speaker: '神秘旅人', text: '我只是在保持平衡，避免魔物們不斷的往這裡聚集。' },
+  { speaker: '艾德林', text: '你能控制魔物？' },
+  { speaker: '神秘旅人', text: '有些能。\n有些不能。' },
+  { speaker: '艾德林', text: '你到底是什麼人？' },
+  { speaker: '神秘旅人', text: '溫特。' },
+  { speaker: '艾德林', text: '我問的不是名字。' },
+  { speaker: '旁白', text: '他沒有回答你，只是看著你。\n目光像冬天的湖面深得看不見底，但卻帶有一絲柔和。' },
+  { speaker: '溫特', text: '這幾天最好別讓那孩子靠近森林。\n這裡的東西會喜歡他。' },
+  { speaker: '艾德林', text: '什麼意思？' },
+  { speaker: '溫特', text: '字面意思。' },
+  { speaker: '溫特', text: '如果你還想問問題，就在森林裡找我。\n我會在這附近觀察一陣子。' },
+];
+
+const WINTER_REID_MEET_STORY = [
+  { speaker: '溫特', text: '你認識那個紅頭髮的勇者？' },
+  { speaker: '艾德林', text: '雷德？' },
+  { speaker: '溫特', text: '原來他叫這個名字。' },
+  { speaker: '艾德林', text: '他做了什麼？' },
+  { speaker: '溫特', text: '問我是不是住在森林裡。' },
+  { speaker: '艾德林', text: '……' },
+  { speaker: '溫特', text: '我說不算。\n\n然後他問我，住多久才算住在森林裡。' },
+  { speaker: '旁白', text: '溫特的表情沒有變。\n但你總覺得他的耐心好像少了一點。' },
+  { speaker: '艾德林', text: '……他就是那樣。' },
+  { speaker: '溫特', text: '我看出來了。\n\n他不是裝傻。\n這點比較驚人。' },
+  { speaker: '艾德林', text: '……' },
+  { speaker: '旁白', text: '遠處傳來雷德揮劍時的大喊聲。\n還有一句聽不太清楚的「我找到路了！」。' },
+  { speaker: '溫特', text: '他沒有找到。' },
+  { speaker: '艾德林', text: '你怎麼知道？' },
+  { speaker: '溫特', text: '那個方向是湖。\n如果他再走直一點，會掉進去。' },
+  { speaker: '艾德林', text: '你不提醒他？' },
+  { speaker: '溫特', text: '他剛剛說，這是勇者的直覺。\n我尊重他的直覺。' },
+  { speaker: '艾德林', text: '……' },
+  { speaker: '溫特', text: '他說要去討伐魔王。\n我第一次見到這麼蠢的勇者。' },
+  { speaker: '旁白', text: '你笑了出來，點點頭表示同意。' },
+];
+
+const WINTER_REID_MEET_DAY7_STORY = [
+  { speaker: '溫特', text: '那個紅頭髮今天又來了。' },
+  { speaker: '艾德林', text: '雷德？' },
+  { speaker: '溫特', text: '那傢伙好吵又好蠢，又偏偏喜歡來找我搭話。\n這人是怎樣啊？' },
+  { speaker: '溫特', text: '他還說我們是好朋友。\n我才不跟智商低的人類當朋友。' },
+  { speaker: '艾德林', text: '哈哈...至少雷德沒有惡意。' },
+  { speaker: '溫特', text: '他剛剛問了我地下洞窟在哪，我就指了反方向給他。' },
+  { speaker: '旁白', text: '溫特笑了笑。' },
+  { speaker: '溫特', text: '希望他能迷路久一點。\n這樣我就不會一直看到他了。' },
+];
+
+const WINTER_DAY8_FAIRY_HINT_STORY = [
+  { speaker: '旁白', text: '雨聲落在森林裡。\n枝葉被打得低垂，泥土裡泛著濕冷的氣味。' },
+  { speaker: '溫特', text: '你今天還是來了。' },
+  { speaker: '艾德林', text: '我需要找能幫阿瓦倫的東西。' },
+  { speaker: '溫特', text: '……我知道。' },
+  { speaker: '旁白', text: '溫特看著你，像是想說什麼。\n但他最後只是把視線移向森林更深處。' },
+  { speaker: '溫特', text: '我本來不該干涉。' },
+  { speaker: '艾德林', text: '什麼意思？' },
+  { speaker: '溫特', text: '平衡不是靠偏袒誰維持的。\n不管是人類、魔物，還是被詛咒纏住的人。' },
+  { speaker: '艾德林', text: '……' },
+  { speaker: '溫特', text: '但你看起來已經快把自己也拖垮了。' },
+  { speaker: '旁白', text: '他的聲音仍然很淡。\n不像安慰，卻也不像責備。' },
+  { speaker: '溫特', text: '今晚別離湖太遠。' },
+  { speaker: '艾德林', text: '湖邊？' },
+  { speaker: '溫特', text: '雨後的妖精會被濕氣和詛咒的味道吸引。\n尤其是夜裡。' },
+  { speaker: '艾德林', text: '你是說，今晚會有妖精出現？' },
+  { speaker: '溫特', text: '我什麼都沒說。' },
+  { speaker: '旁白', text: '溫特轉過身，黑色的衣擺被雨霧沾濕了一點。' },
+  { speaker: '溫特', text: '只是如果你需要某種會發光、又很難抓的東西。\n今晚可以去森林湖邊看看。' },
+];
+
+function playWinterIntro() {
+  if (G.winterIntroSeen) { openWinterMenu(); return; }
+  SFX.interact();
+  G.winterIntroSeen = true;
+  startActionScene(WINTER_INTRO_STORY, 400, () => {});
+}
+
 function openWinterMenu() {
   SFX.interact();
+  if (G.day === 8 && G.scene === 'forest' && G.timePeriod === 'morning' && !G.winterDay8FairyHintSeen) {
+    G.winterDay8FairyHintSeen = true;
+    startActionScene(WINTER_DAY8_FAIRY_HINT_STORY, 400, () => {});
+    return;
+  }
+  if (G.day === 5 && G.scene === 'forest' && (G.reidSlayInForest || G.reidForestWandering || G.reidSlayDelivered) && !G.winterReidMeetSeen) {
+    G.winterReidMeetSeen = true;
+    startActionScene(WINTER_REID_MEET_STORY, 400, () => {});
+    return;
+  }
+  if (G.day === 7 && G.scene === 'forest' && (G.reidSlayInForest || G.reidForestWandering || G.reidSlayDelivered) && !G.winterReidMeetDay7Seen) {
+    G.winterReidMeetDay7Seen = true;
+    startActionScene(WINTER_REID_MEET_DAY7_STORY, 400, () => {});
+    return;
+  }
   const avarenInForest = G.avarenScene === 'forest';
   const items = [];
 
@@ -3881,45 +4116,45 @@ function triggerAvarenGather() {
       { name:'道謝收下', fx:'', req:()=>true,
         run(){ story('旁白', '你接過東西，輕聲道謝。阿瓦倫點了點頭，繼續去看地上的東西了。'); }},
     ]);
-  });
+  }, 'blue', 0);
 }
 
 // ── 血月夜（第7天晚上）──
 const BLOOD_MOON_DLG = [
   '……好痛……好痛……！',
-  '……（捂住頭，踉蹌著）……停下來……！',
+  '…………停下來……！',
   '……為什麼……為什麼又來了……！',
   '……讓我解脫……求求你讓我解脫……',
   '……好難受……全身都在燒……',
-  '……我不想了……我不想了……',
-  '……（顫抖著）……不要……不要碰我……',
-  '……好想死……好想死……！',
-  '……（撞上牆壁，滑落在地）……讓我消失吧……',
+  '……我不要……我不要了……',
+  '…………不要……不要碰我……',
+  '……我不要...我不要活著…！',
+  '…………讓我消失吧……',
   '……怎麼辦……怎麼辦……',
   '……詛咒把我吃掉了……',
-  '……（嗚咽）……我受不了了……',
+  '……嗚...嗚嗚…我受不了了……',
 ];
 const AVAREN_DAY7_DLG = [
   '……頭好痛……',
-  '……（捂著頭）……',
-  '……好像有什麼東西在敲……',
-  '……沒事……只是有點……',
+  '……好累……',
+  '……頭...好像有什麼東西在敲……',
+  '……我沒事……只是有點……',
   '……你去做你的事就好……',
-  '……（沉默地縮在床邊）……',
+  '…………',
   '……今天……不太想動……',
   '……有點暈……',
-  '……（閉著眼睛）……別管我……',
+  '…………不用管我……',
 ];
 const BLOOD_MOON_FAIRY_DLG = [
-  '……只要去那裡，就可以解脫了嗎……',
-  '……你說，只有你理解我……',
+  '……只要去那裡，就可以了嗎……',
+  '……只有你理解我……',
   '……我知道了……我知道了……',
-  '……湖裡面……我看見了什麼……',
+  '……湖裡面……好像有什麼東西……',
   '……不痛……去了就不痛了嗎……',
   '……嗯……你說的……是真的嗎……',
   '……走過去……只要走過去……',
   '……除了你……沒有人想要我……',
-  '……詛咒……是因為詛咒才這樣嗎……',
+  '……沒有人喜歡我……',
 ];
 const BLOOD_MOON_CALMED_DLG = [
   '……（喘著氣）……稍微……稍微好一點……',
@@ -3936,6 +4171,48 @@ const BLOOD_MOON_MEMORIES = [
   { icon:'🩸', title:'——記憶的碎片——', text:'阿瓦倫發出一聲嗚咽——\n\n「……不要……不要打我……」\n\n街頭的那段日子，他從未能好好睡著。\n有些人只是因為無聊，就對他出手。\n詛咒讓他無法反抗，無法逃跑。\n他只能捲縮成一團，等它結束。' },
   { icon:'🩸', title:'——記憶的碎片——', text:'阿瓦倫猛地抱住自己，開始顫抖——\n\n「……放開我……放開……！」\n\n冰冷的實驗台。繩子勒進手腕。\n老師說「你是個優秀的容器。」\n每一次實驗，詛咒就會更深一點，更亂一點。\n他已經不記得疼痛開始於哪一天了。' },
   { icon:'🩸', title:'——記憶的碎片——', text:'阿瓦倫猛地轉向你，眼睛裡是恐慌與混亂——\n\n「……你……你那時候在那裡……」\n\n他記得。\n那個實驗室裡，有一個少年站在旁邊。\n沒有阻止。沒有說話。\n只是站著，看著他。\n\n就是你。艾德林。你也在。' },
+];
+
+const AVAREN_DAY10_FORGET_TALK_STORY = [
+  { speaker: '旁白', text: '清晨的光落在床邊。\n\n阿瓦倫躺在床上，眼睛半睜著。\n他的臉色仍然蒼白，但呼吸已經比昨夜平穩許多。\n\n你走近時，他慢慢看向你。' },
+  { speaker: '阿瓦倫', text: '……艾德林？' },
+  { speaker: '艾德林', text: '嗯，我在。' },
+  { speaker: '阿瓦倫', text: '……天亮了？' },
+  { speaker: '艾德林', text: '天亮了。' },
+  { speaker: '旁白', text: '阿瓦倫安靜了一會兒。\n像是在努力回想什麼。' },
+  { speaker: '阿瓦倫', text: '昨天晚上……\n我是不是……又讓你很麻煩？' },
+  { speaker: '艾德林', text: '沒有。' },
+  { speaker: '阿瓦倫', text: '可是我好像……\n做了一個很可怕的夢。' },
+  { speaker: '艾德林', text: '……夢到什麼？' },
+  { speaker: '阿瓦倫', text: '不知道。\n想不起來了。' },
+  { speaker: '艾德林', text: '沒關係...不需要想起來...' },
+  { speaker: '旁白', text: '你把受傷的肩膀藏進衣袖裡。\n阿瓦倫沒有看見。' },
+  { speaker: '阿瓦倫', text: '可是……我好像忘記了很重要的事。' },
+  { speaker: '阿瓦倫', text: '你會在這裡陪我嗎？' },
+  { speaker: '艾德林', text: '會。' },
+  { speaker: '阿瓦倫', text: '……那我可以先睡一下嗎？' },
+  { speaker: '艾德林', text: '嗯，睡吧。' },
+  { speaker: '旁白', text: '阿瓦倫慢慢閉上眼睛。\n過了一會兒，你聽見了睡眠時淺淺的呼吸聲。\n\n你輕輕地撫摸阿瓦倫的額頭，你忍住情緒，很勉強的只能擠出空泛的幾句話。' },
+  { speaker: '艾德林', text: '阿瓦倫...對不起...都是我的錯...全都是我的錯...對不起...' },
+];
+
+const AVAREN_DAY10_NO_FORGET_TALK_STORY = [
+  { speaker: '旁白', text: '清晨的光照進房間。\n\n阿瓦倫躺在床上，緩緩的張開了眼睛。\n你著急地走到床邊，但他沒有立刻看你。' },
+  { speaker: '艾德林', text: '阿瓦倫...！你醒了！你還好嗎...？' },
+  { speaker: '阿瓦倫', text: '......' },
+  { speaker: '旁白', text: '阿瓦倫沒有回應你，房間裡安靜了一會兒。\n你聽見自己的呼吸聲，重得像壓在胸口。' },
+  { speaker: '阿瓦倫', text: '昨天晚上……\n我想起來了。' },
+  { speaker: '艾德林', text: '……' },
+  { speaker: '阿瓦倫', text: '那個地方。\n那張桌子。\n那些繩子。' },
+  { speaker: '旁白', text: '他的手指輕輕抓住被單。\n沒有用力，卻像是已經沒有更多力氣了。' },
+  { speaker: '阿瓦倫', text: '你在那裡...' },
+  { speaker: '艾德林', text: '阿瓦倫……' },
+  { speaker: '旁白', text: '你伸出手，卻停在半空。' },
+  { speaker: '阿瓦倫', text: '不要...不要碰我' },
+  { speaker: '艾德林', text: '阿瓦倫…對不起…' },
+  { speaker: '旁白', text: '道歉落在房間裡而沒有回應。' },
+  { speaker: '旁白', text: '你想說不是。\n想說你是真的想救他。\n想說那時候的自己太弱、太害怕、太無能。' },
+  { speaker: '旁白', text: '可是這些話都像在替自己找理由。\n\n你站在床邊。\n第一次覺得，照顧一個人有時候不是靠近。\n而是忍住不要靠近。' },
 ];
 
 const NARR_GATHER = [
@@ -4184,11 +4461,16 @@ function getAvarenDlg() {
 function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 
 function isReidDay(day = G.day) {
-  return day === 3 || day === 5 || day === 7 || day === 9;
+  return day === 3 || day === 5 || day === 7 || day === 9 || day === 11;
 }
 
 function isWinterDay(day = G.day) {
   return day === 4 || day === 6 || day === 8;
+}
+
+function isWinterPresent() {
+  return G && G.scene === 'forest' && G.timePeriod === 'morning' &&
+    (isWinterDay() || ((G.day === 5 || G.day === 7) && (G.reidSlayInForest || G.reidForestWandering || G.reidSlayDelivered)));
 }
 
 function isAvarenUnconscious() {
@@ -4207,7 +4489,7 @@ function placeAvarenUnconscious() {
 }
 
 function isAvarenBedRest() {
-  return G && G.avarenAwake && G.avarenBedRest && G.day === 2 && !G.day4AvarenGone && !G.bloodMoon7Active;
+  return G && G.avarenAwake && G.avarenBedRest && (G.day === 2 || G.day === 10) && !G.day4AvarenGone && !G.bloodMoon7Active;
 }
 
 function placeAvarenBedRest() {
@@ -4253,7 +4535,7 @@ function enterDay8MorningAfterForget() {
   overlay.classList.remove('black-narration');
   const sceneWrap = document.getElementById('scene-wrap');
   if (sceneWrap && overlay.parentElement !== sceneWrap) sceneWrap.appendChild(overlay);
-  G.day = 8;
+  G.day = 10;
   G.timePeriod = 'morning';
   G.periodTransitioned = false;
   G.dayEndTriggered = false;
@@ -4265,12 +4547,17 @@ function enterDay8MorningAfterForget() {
   G.bloodMoon7PlayerVisited = false;
   G.bloodMoon7MemoryIndex = 0;
   G.bloodMoon7MemoryTimer = 800;
+  G.avarenAwake = true;
+  G.avarenBedRest = true;
+  G.avaren.restBlinkTimer = 120;
+  G.avaren.restBlinkPhase = 0;
   G.nestEggs = 2;
   G.forestMushrooms = { 1: false, 2: false, 3: false, 4: false };
   G.avarenScene = 'room';
-  G.avaren.x = 190; G.avaren.y = 220; G.avaren.pose = 'front'; G.avaren.sleepEye = 0;
+  placeAvarenBedRest();
   G.eldrin.x = 260; G.eldrin.y = 380; G.eldrin.pose = 'front'; G.eldrin.sleepEye = 0;
   G.scene = 'room';
+  G.weather = 'clear';
   G.sceneCooldown = 90;
   G.redDelivered = false;
   G.winter.x = 300; G.winter.y = 120; G.winter.walkDir = {dx:0,dy:0}; G.winter.walkTimer = 60;
@@ -4278,7 +4565,7 @@ function enterDay8MorningAfterForget() {
   G.noah.x = 500; G.noah.y = 360; G.noah.pose = 'front'; G.noah.walkDir = {dx:0,dy:0}; G.noah.walkTimer = 0;
   G.noah.bubbleTimer = 0; G.noah.autoSpeakTimer = 260;
   document.getElementById('blood-moon-7-overlay').style.display = 'none';
-  switchBGM('bgm-day8');
+  switchBGM('bgm');
   renderHUD();
   renderScene();
   renderChars();
@@ -4289,7 +4576,7 @@ function enterDay8MorningAfterForget() {
   fade.style.transition = 'opacity 1.8s ease';
   fade.style.opacity = '0';
   setTimeout(() => { fade.style.display = 'none'; }, 1800);
-  storyAuto('旁白', '第 8 天開始了。清晨七點，新的一天。');
+  storyAuto('旁白', '第 10 天開始了。清晨七點，新的一天。');
   if (raf) cancelAnimationFrame(raf);
   raf = requestAnimationFrame(gameLoop);
 }
@@ -4323,7 +4610,7 @@ function finishBloodMoonNightWithoutForget() {
         () => endGame('avaren_death'), 'red');
       return;
     }
-    showEvent('💔', '第8天清晨',
+    showEvent('💔', '第10天清晨',
       '血月夜終於過去了。\n\n你走進房間，阿瓦倫縮在最遠的角落，背對著你。\n他沒有說話，但你感覺到了。\n\n那一夜他一個人撐過去的，沒有人能替他擋下。\n\n他記得你在那裡。\n他也記得你做了什麼、沒有做什麼。\n\n「……走開。」\n\n他沒有再說別的話。',
       () => {
         G.mood = 5;
@@ -4360,7 +4647,7 @@ let raf = null;
 
 function initState() {
   G = {
-    day: 1, maxDays: 10,
+    day: 1, maxDays: 11,
     scene: 'outside',
     avarenScene: 'room',
     weather: 'rain',
@@ -4397,12 +4684,18 @@ function initState() {
     noahLobbyTalking: false,
     noahLakeMoonSeen: false,
     noahLakeTalking: false,
+    winterIntroSeen: false,
+    winterReidMeetSeen: false,
+    winterReidMeetDay7Seen: false,
+    winterDay8FairyHintSeen: false,
     avarenWaitedForForest: false,
     avarenAwake: false,
     avarenBedRest: false,
     avarenDay1Bandaged: false,
     avarenDay2WakeIntroSeen: false,
     avarenDay2WakeTalkPending: false,
+    avarenDay10ForgetTalkSeen: false,
+    avarenDay10NoForgetTalkSeen: false,
     cookActive: false, cookTimer: 0, cookReady: false, soupReady: false, carryingSoup: false, soupIsSpecial: false, cookSelectedKeys: [],
     actionSceneActive: false, actionSceneTimer: 0, actionSceneMax: 0,
     actionSceneOnDone: null, actionSceneLines: [], actionSceneLineIdx: 0, actionSceneLineTick: 0,
@@ -4423,8 +4716,15 @@ function initState() {
     redCommission: null,
     redDelivered: false,
     redCommissions: [],
+    reidCommissionedDayKeys: [],
+    reidDemonHeartCount: 0,
+    reidDemonHeartCommissionedToday: false,
+    reidFakeSaveTaken: false,
+    reidVisitDay: 0,
     reidIntroSeen: false,
     reidIntroNoticeSeen: false,
+    reidWinterMeetSeen: false,
+    reidWinterMeetDay7Seen: false,
     reidSlayPendingWalk: false,
     reidSlayFollowDelay: 0,
     reidSlayWalkPhase: 0,
@@ -4786,11 +5086,13 @@ function renderChars() {
   // ── Reid ──
   const rd = G.red;
   const cwRd = document.getElementById('cw-red');
+  const hasDeliveryToday = (G.redCommissions || []).some(c => c.returnDay > 0 && c.returnDay <= G.day && c.key !== 'slay');
+  const reidOutsideToday = isReidDay() || hasDeliveryToday || G.reidVisitDay === G.day;
   const rdVisible = (
-    (G.scene === 'outside' && isReidDay() && G.timePeriod === 'morning' && !G.reidSlayActive && !G.reidSlayInForest && !G.reidForestWandering) ||
+    (G.scene === 'outside' && reidOutsideToday && G.timePeriod === 'morning' && !G.reidSlayActive && !G.reidSlayInForest && !G.reidForestWandering) ||
     (G.scene === 'outside' && G.reidSlayWalkingToGate) ||
-    (G.scene === 'forest' && G.reidSlayInForest && !G.reidSlayDelivered) ||
-    (G.scene === 'forest' && G.reidForestWandering)
+    (G.scene === 'forest' && G.timePeriod === 'morning' && G.reidSlayInForest && !G.reidSlayDelivered) ||
+    (G.scene === 'forest' && G.timePeriod === 'morning' && G.reidForestWandering)
   );
   if (rdVisible && spriteInfo.red) {
     const rdBlink = rd.blinkPhase >= 0 && rd.pose === 'front';
@@ -4830,7 +5132,7 @@ function renderChars() {
   // ── Winter ──
   const wt = G.winter;
   const cwWt = document.getElementById('cw-winter');
-  const wtVisible = G.scene === 'forest' && isWinterDay() && G.timePeriod === 'morning';
+  const wtVisible = isWinterPresent();
   if (wtVisible && spriteInfo.winter) {
     const wtBlink = wt.blinkPhase >= 0 && wt.pose === 'front';
     const wtPose  = wtBlink ? 'blink' : wt.pose;
@@ -5266,7 +5568,7 @@ function updateHints() {
     if (zone.id === 'forest_tree1' || zone.id === 'forest_tree3') {
       const key = zone.id === 'forest_tree1' ? 'tree1' : 'tree3';
       const apples = (G.forestApples || {})[key] ?? APPLE_TREE_MAX[key];
-      hi.textContent = apples > 0 ? `🍎 蘋果樹（剩 ${apples} 顆）` : '樹木';
+      hi.textContent = apples > 0 ? '🍎 蘋果樹' : '樹木';
     } else {
       hi.textContent = zone.interactHint;
     }
@@ -5308,7 +5610,7 @@ function gameLoop() {
       document.getElementById('scene-bg').style.backgroundImage = `url('${nightBg}')`;
       document.getElementById('scene-bg-top').style.opacity = '0';
       renderScene();
-      if (G.day === 8 && !G.bloodMoon7Active) {
+      if (G.day === 9 && !G.bloodMoon7Active) {
         G.bloodMoon7Active = true;
         G.bloodMoon7Happened = true;
         G.avarenScene = 'room';
@@ -5325,8 +5627,8 @@ function gameLoop() {
         G.bloodMoon7MemoryIndex = 0;
         setTimeout(() => {
           showEvent('🩸', '血月夜——',
-            '第八天的夜晚，月亮染成了血紅色。\n\n阿瓦倫的詛咒被血月激發，疼痛與黑霧同時暴漲——\n房間裡傳來他壓抑的哀號。',
-            () => { storyAuto('旁白', '夜幕低垂，血月升起。現在可以進入房間照顧阿瓦倫了。'); }, 'red');
+            '第九天的夜晚，月亮染成了血紅色。\n\n阿瓦倫的詛咒被血月激發，疼痛與黑霧同時暴漲——\n房間裡傳來他壓抑的哀號。',
+            () => { storyAuto('旁白', '夜幕低垂，血月升起，發狂的月亮使所有生物的詛咒加劇'); }, 'red');
         }, 500);
       } else {
         fadeSwitchBGM('bgm-day8');
@@ -5334,8 +5636,8 @@ function gameLoop() {
           storyAuto('旁白', '夜幕低垂。太陽沉入山後，晚上的時間開始了。\n現在可以進屋照顧阿瓦倫了。');
         }, 400);
       }
-      // 第5天夜晚：阿瓦倫消失事件（旁白在玩家進房間時才觸發）
-      if (G.day === 5 && !G.day4EventTriggered && G.mood >= 50 && G.curse < 80 && G.pain < 80) {
+      // 第6天夜晚：阿瓦倫消失事件（旁白在玩家進房間時才觸發）
+      if (G.day === 6 && !G.day4EventTriggered && G.mood >= 50 && G.curse < 80 && G.pain < 80) {
         G.day4EventTriggered = true;
         G.day4AvarenGone = true;
         G.day4AvarenNotified = false;
@@ -5456,7 +5758,7 @@ function gameLoop() {
     if (G.scene === 'outside' && isReidDay() && G.timePeriod === 'morning')        tryPush(G.red);
     if (G.scene === 'forest' && (G.reidSlayInForest || G.reidForestWandering))    tryPush(G.red);
     if (G.scene === 'outside' && G.day === 2 && G.timePeriod === 'morning')        tryPush(G.noah);
-    if (G.scene === 'forest' && isWinterDay() && G.timePeriod === 'morning')       tryPush(G.winter);
+    if (isWinterPresent())       tryPush(G.winter);
     if (G.scene === 'forest' && !G.carryingChicken) {
       const distCh = Math.hypot(el.x - G.chicken.x, el.y - G.chicken.y);
       if (distCh < PUSH_R && !G._chickenBumpCooldown) {
@@ -5587,7 +5889,13 @@ function gameLoop() {
     // 記憶閃回（觸發場景轉移）
     if (!G.paused && G.bloodMoon7PlayerVisited) {
       G.bloodMoon7MemoryTimer--;
-      if (G.bloodMoon7MemoryTimer <= 0 && (G.bloodMoon7MemoryIndex < 3 || (G.bloodMoon7MemoryIndex === 3 && G.scene === 'forest' && G.avarenScene === 'forest'))) {
+      const memSceneOk = (
+        (G.bloodMoon7MemoryIndex === 0 && G.scene === 'room') ||
+        (G.bloodMoon7MemoryIndex === 1 && G.scene === 'lobby') ||
+        (G.bloodMoon7MemoryIndex === 2 && G.scene === 'outside') ||
+        (G.bloodMoon7MemoryIndex === 3 && G.scene === 'forest' && G.avarenScene === 'forest')
+      );
+      if (G.bloodMoon7MemoryTimer <= 0 && memSceneOk) {
         const mem = BLOOD_MOON_MEMORIES[G.bloodMoon7MemoryIndex];
         const idx = G.bloodMoon7MemoryIndex;
         G.bloodMoon7MemoryIndex++;
@@ -5621,8 +5929,8 @@ function gameLoop() {
     }
   }
 
-  // Avaren following + wandering（血月期間、第8天白天、對話中跳過移動）
-  const day7Morning = G.day === 8 && G.timePeriod === 'morning';
+  // Avaren following + wandering（血月期間、血月隔天白天、對話中跳過移動）
+  const bloodMoonAfterMorning = G.day === 10 && G.timePeriod === 'morning';
   if (isDlgBlocking() && G.avarenScene === G.scene) {
     // 對話中：阿瓦倫面向艾德林，不移動
     const av = G.avaren;
@@ -5631,7 +5939,7 @@ function gameLoop() {
     else { av.pose = ddy < 0 ? 'back' : 'front'; }
     av.walkFrame = 0; av.walkTick = 0;
   }
-  if (!isAvarenUnconscious() && !isAvarenBedRest() && !isDlgBlocking() && !G.bloodMoon7Active && !day7Morning && G.mood > 50 && G.avarenScene === G.scene) {
+  if (!isAvarenUnconscious() && !isAvarenBedRest() && !isDlgBlocking() && !G.bloodMoon7Active && !bloodMoonAfterMorning && G.mood > 50 && G.avarenScene === G.scene) {
     const av = G.avaren;
     const ddx = el.x - av.x, ddy = el.y - av.y;
     const d = Math.hypot(ddx, ddy);
@@ -5851,8 +6159,8 @@ function gameLoop() {
     }
   }
 
-  // 雷德隨機走動（第3、5、7、9天，戶外，白天）——走向出口或已出發時跳過
-  if (G.scene === 'outside' && isReidDay() && G.timePeriod === 'morning' && !G.reidSlayWalkingToGate && !G.reidSlayActive && !G.reidSlayPendingWalk) {
+  // 雷德隨機走動（第3、5、7、9天或交貨日，戶外，白天）——走向出口或已出發時跳過
+  if (G.scene === 'outside' && (isReidDay() || G.reidVisitDay === G.day) && G.timePeriod === 'morning' && !G.reidSlayWalkingToGate && !G.reidSlayActive && !G.reidSlayPendingWalk) {
     const rd = G.red;
     if (isDlgBlocking()) {
       // 對話中：面向艾德林，不移動
@@ -5973,8 +6281,8 @@ function gameLoop() {
     }
   }
 
-  // 溫特隨機走動（第4、6、8天，森林，白天）
-  if (G.scene === 'forest' && isWinterDay() && G.timePeriod === 'morning') {
+  // 溫特隨機走動（第4、6、8天，森林，白天；第5天雷德討伐委託時也會出現）
+  if (isWinterPresent()) {
     const wt = G.winter;
     if (isDlgBlocking()) {
       // 對話中：面向艾德林，不移動
@@ -6363,7 +6671,9 @@ function gameLoop() {
   const herbWrap = document.getElementById('herb-harvest-wrap');
   if (herbWrap) herbWrap.style.display = (G.scene === 'outside' && G.timePeriod === 'morning' && (G.herbHarvesting || G.herbReady)) ? 'block' : 'none';
   if (G.farmStage >= 2 && G.farmStage < 5) {
-    G.farmGrowthTimer++;
+    // 第8天下雨：雨水自動澆灌農田，生長速度加倍
+    if (G.day === 8 && G.weather === 'rain') G.farmWatered = true;
+    G.farmGrowthTimer += (G.day === 8 && G.weather === 'rain') ? 2 : 1;
     const stageMax = FARM_STAGE_MAX;
     const growPct = Math.min(100, (G.farmGrowthTimer / stageMax) * 100);
     const farmBar = document.getElementById('farm-growth-bar');
@@ -6403,7 +6713,7 @@ function gameLoop() {
     } else if (G.avarenScene === G.scene) {
       G.autoSpeakTimer--;
       if (G.autoSpeakTimer <= 0) {
-        G.bubbleText = (G.day === 8 && G.timePeriod === 'morning')
+        G.bubbleText = (G.day === 10 && G.timePeriod === 'morning')
           ? pick(AVAREN_DAY7_DLG)
           : G.moodLocked ? pick(AVAREN_BETRAYAL_DLG) : getAvarenDlg();
         G.bubbleTimer = 300;
@@ -6597,7 +6907,7 @@ document.addEventListener('keydown', e => {
     } else if (zone && zone.fn) {
       zone.fn();
     } else if (isNearWinter() && !near) {
-      openWinterMenu();
+      playWinterIntro();
     } else if (isNearReid()) {
       playReidIntro();
     } else if (near) {
@@ -6651,6 +6961,19 @@ document.getElementById('cw-noah').addEventListener('click', () => {
 // ══════════════════════════════════════
 //  AVAREN INTERACTION MENU
 // ══════════════════════════════════════
+function rejectDay10AvarenCare(kind) {
+  const lines = {
+    soup: '你把料理端到床邊。\n阿瓦倫看了一眼，慢慢把臉轉開。\n\n「……不要。」',
+    cold: '你拿出治療藥水，想讓阿瓦倫喝下。\n他的手指抓緊被單，聲音很輕。\n\n「……不要靠近我。」',
+    curse: '你拿出解咒藥水，瓶中的光晃了一下。\n阿瓦倫沒有伸手，只是閉上眼。\n\n「……我不要。」',
+    bandage: '你拿起乾淨的藥草敷料，想替他換藥。\n阿瓦倫往被子裡縮了一點。\n\n「……不要碰我。」',
+    ritual: '你低聲念起除咒的咒文。\n還沒碰到他，阿瓦倫就顫了一下。\n\n「……停下來。」',
+    talk: '你想和阿瓦倫說話。\n他沒有看你，只是把自己縮得更小。\n\n房間裡只剩下很輕的呼吸聲。'
+  };
+  story('旁白', lines[kind] || '阿瓦倫拒絕了你。');
+  toast('阿瓦倫拒絕了');
+}
+
 function openAvarenMenu() {
   if (G.day === 0 && G.scene === 'room') {
     playDay0AvarenMonologue();
@@ -6666,7 +6989,6 @@ function openAvarenMenu() {
       req: () => G.coldPotion > 0 && !G.actionSceneActive,
       run() {
         chg('coldPotion', -1); chg('pain', -5); renderHUD();
-        story('阿瓦倫', pick(['……（把藥水一口喝掉，皺了皺眉。）', '……苦。（但還是喝完了。）', '（沒有說話，只是喝完後微微鬆了口氣。）']));
         toast('💊 治療藥水發揮了效果  疼痛 -5');
       }
     },
@@ -6675,7 +6997,6 @@ function openAvarenMenu() {
       req: () => G.cursePotion > 0 && !G.actionSceneActive,
       run() {
         chg('cursePotion', -1); chg('curse', -5); renderHUD();
-        story('阿瓦倫', pick(['……（慢慢喝下，身上的黑霧輕輕顫了一下。）', '……（閉著眼睛喝完，沉默了幾秒。）「……沒那麼痛了。」', '（沒有抗拒，靜靜地把藥水喝完。）']));
         toast('🔮 解咒藥水發揮了效果  詛咒 -5');
       }
     },
@@ -6721,6 +7042,92 @@ function openAvarenMenu() {
   SFX.interact();
   G.avaren.pose = 'front';
   if (playAvarenDay2WakeTalk()) return;
+  if (G.day === 10 && G.usedForgetMagic && isAvarenBedRest() && !G.avarenDay10ForgetTalkSeen) {
+    G.avarenDay10ForgetTalkSeen = true;
+    placeAvarenBedRest();
+    startActionScene(AVAREN_DAY10_FORGET_TALK_STORY, 400, () => {});
+    return;
+  }
+  if (G.day === 10 && !G.usedForgetMagic && G.moodLocked && isAvarenBedRest() && !G.avarenDay10NoForgetTalkSeen) {
+    G.avarenDay10NoForgetTalkSeen = true;
+    placeAvarenBedRest();
+    startActionScene(AVAREN_DAY10_NO_FORGET_TALK_STORY, 400, () => {});
+    return;
+  }
+  if (isAvarenBedRest()) {
+    placeAvarenBedRest();
+    showActionMenu('照顧阿瓦倫', [
+      {
+        name: '確認狀態', fx: '不花時間',
+        req: () => true,
+        run() {
+          const text = G.day === 10
+            ? '阿瓦倫躺在床上，眼睛半睜著。\n血月留下的疲憊還沒有完全退去，他的呼吸很輕，但已經比昨夜平穩。'
+            : '阿瓦倫躺在床上，眼睛半睜著。\n他看起來仍然很虛弱，但已經能聽見你的聲音。';
+          story('旁白', text);
+        }
+      },
+      {
+        name: '遞給他料理', fx: '餵食阿瓦倫',
+        req: () => G.carryingSoup,
+        run() {
+          if (G.day === 10 && !G.usedForgetMagic) { rejectDay10AvarenCare('soup'); return; }
+          giveSoupToAvaren();
+        }
+      },
+      {
+        name: '給治療藥水', fx: () => `疼痛-5  剩餘×${G.coldPotion}`,
+        req: () => G.coldPotion > 0 && !G.actionSceneActive,
+        run() {
+          if (G.day === 10 && !G.usedForgetMagic) { rejectDay10AvarenCare('cold'); return; }
+          chg('coldPotion', -1); chg('pain', -5); renderHUD();
+          story('阿瓦倫', pick(['……（慢慢喝下藥水。）', '……苦。（但他還是把藥喝完了。）', '……好一點了。']));
+          toast('💊 治療藥水發揮了效果  疼痛 -5');
+        }
+      },
+      {
+        name: '給解咒藥水', fx: () => `詛咒-5  剩餘×${G.cursePotion}`,
+        req: () => G.cursePotion > 0 && !G.actionSceneActive,
+        run() {
+          if (G.day === 10 && !G.usedForgetMagic) { rejectDay10AvarenCare('curse'); return; }
+          chg('cursePotion', -1); chg('curse', -5); renderHUD();
+          story('阿瓦倫', pick(['……（身上的黑霧微微淡了一點。）', '……沒那麼冷了。', '……（他閉上眼，安靜地呼吸。）']));
+          toast('🔮 解咒藥水發揮了效果  詛咒 -5');
+        }
+      },
+      {
+        name: '包紮換藥', fx: '藥材-1  疼痛-3',
+        req: () => G.herb > 0 && !G.actionSceneActive,
+        run() {
+          if (G.day === 10 && !G.usedForgetMagic) { rejectDay10AvarenCare('bandage'); return; }
+          chg('herb', -1); chg('pain', -3); renderHUD();
+          story('旁白', '你替阿瓦倫重新換上乾淨的藥草敷料。\n他的眉頭慢慢鬆開了一點。');
+          toast('🌿 包紮換藥  藥材 -1 / 疼痛 -3');
+        }
+      },
+      {
+        name: '除咒儀式', fx: '艾德林HP-5  詛咒-3',
+        req: () => (G.eldrinHp ?? 100) > 5 && !G.actionSceneActive,
+        run() {
+          if (G.day === 10 && !G.usedForgetMagic) { rejectDay10AvarenCare('ritual'); return; }
+          chg('eldrinHp', -5); chg('curse', -3); renderHUD();
+          story('旁白', '你握住阿瓦倫的手，將一小段詛咒引到自己身上。\n刺痛短暫地掠過胸口，床邊的黑霧淡了一些。');
+          toast('🔮 除咒儀式  艾德林HP -5 / 詛咒 -3');
+        }
+      },
+      {
+        name: '和他說說話', fx: '知識+2  不花時間',
+        req: () => true,
+        run() {
+          if (G.day === 10 && !G.usedForgetMagic) { rejectDay10AvarenCare('talk'); return; }
+          chg('trust', 2); renderHUD();
+          showDlg('阿瓦倫', G.day === 10 ? pick(AVAREN_DAY7_DLG) : getAvarenDlg());
+          story('你', pick(NARR_TALK));
+        }
+      },
+    ]);
+    return;
+  }
   if (isAvarenUnconscious()) {
     placeAvarenUnconscious();
     showActionMenu('照顧阿瓦倫', [
@@ -7064,8 +7471,8 @@ function doAction_Gather() {
     const hLabel2 = document.querySelector('#herb-harvest-wrap .herb-harvest-label');
     if (hBar2) { hBar2.style.width = '0%'; hBar2.style.background = 'linear-gradient(90deg,#206020,#60c040)'; }
     if (hLabel2) hLabel2.textContent = '🌿 藥草採收中…';
-    chg('herb', 2); chg('vegetable', 2); renderHUD();
-    toast('🌿 藥材 +2　🥬 蔬菜 +2');
+    chg('herb', 3); chg('vegetable', 3); renderHUD();
+    toast('🌿 藥材 +3　🥬 蔬菜 +3');
     return;
   }
   // 第2-4階段 + 裝滿水的水壺：澆水
@@ -7791,7 +8198,7 @@ function startActionScene(lines, max, onDone) {
   document.getElementById('action-scene-overlay').style.display = 'flex';
 }
 
-const NPC_SPEAKERS = new Set(['旁白', '你', '艾德林', '阿瓦倫', '雷德', '陌生青年', '溫特', '諾亞']);
+const NPC_SPEAKERS = new Set(['旁白', '你', '艾德林', '阿瓦倫', '雷德', '陌生青年', '溫特', '神秘旅人', '諾亞']);
 const SPEAKER_AVATARS = {
   '你': 'eldrin_avatar.png',
   '艾德林': 'eldrin_avatar.png',
@@ -7799,6 +8206,7 @@ const SPEAKER_AVATARS = {
   '雷德': 'red_avatar.png',
   '陌生青年': 'red_avatar.png',
   '溫特': 'winter_avatar.png',
+  '神秘旅人': 'winter_avatar.png',
   '諾亞': 'noah_avatar.png',
 };
 const SPEAKER_TEXT_CLASS = {
@@ -7808,6 +8216,7 @@ const SPEAKER_TEXT_CLASS = {
   '雷德': 'asc-text-red',
   '陌生青年': 'asc-text-red',
   '溫特': 'asc-text-winter',
+  '神秘旅人': 'asc-text-winter',
   '諾亞': 'asc-text-noah',
 };
 const DIALOGUE_TYPE_SPEED = 24;
@@ -7992,7 +8401,7 @@ function showActionMenu(heading, items) {
       // 若 run() 啟動了睡眠動畫，保持暫停狀態；否則正常解除暫停
       if (!G.sleepAnimActive) G.paused = false;
       menuBtns = [];
-      if (!isAvarenUnconscious() && G.mood > 50 && G.avarenScene === G.scene) {
+      if (!isAvarenUnconscious() && !isAvarenBedRest() && G.mood > 50 && G.avarenScene === G.scene) {
         G.bubbleText = pick(AVAREN_DLG.possess.concat(['……（跟著你）']));
         if (G.mood <= 80) G.bubbleText = pick(['……（靠近你）', '……艾德林。', '……（悄悄跟著）']);
         G.bubbleTimer = 300;
@@ -8262,7 +8671,7 @@ function changeScene(to, startOverride) {
   // 全黑後更新場景和座標
   setTimeout(() => {
     const fromScene = G.scene;
-    const avarenWouldFollow = !G.bloodMoon7Active && !isAvarenUnconscious() && G.mood > 50 && G.avarenScene === fromScene && !(G.day === 8 && G.timePeriod === 'morning') && !G.day4AvarenGone && !G.avarenReturnPending;
+    const avarenWouldFollow = !G.bloodMoon7Active && !isAvarenUnconscious() && G.mood > 50 && G.avarenScene === fromScene && !(G.day === 10 && G.timePeriod === 'morning') && !G.day4AvarenGone && !G.avarenReturnPending;
     const startPos = {
       outside: { x:295, y:460 },
       lobby:   { x:240, y:380 },
@@ -8290,7 +8699,7 @@ function changeScene(to, startOverride) {
     const pos = startOverride || startPos[to];
     G.eldrin.x = pos.x;
     G.eldrin.y = pos.y;
-    if (!G.bloodMoon7Active && !isAvarenUnconscious() && G.mood > 50 && to !== 'forest' && !(G.day === 8 && G.timePeriod === 'morning') && !G.day4AvarenGone && !G.avarenReturnPending) {
+    if (!G.bloodMoon7Active && !isAvarenUnconscious() && G.mood > 50 && to !== 'forest' && !(G.day === 10 && G.timePeriod === 'morning') && !G.day4AvarenGone && !G.avarenReturnPending) {
       G.avarenScene = to;
       // 阿瓦倫跟著切換場景時，出現在入口旁（艾德林起始點附近）
       const avStartPos = {
@@ -8318,6 +8727,15 @@ function changeScene(to, startOverride) {
       G.avaren.x = 190;
       G.avaren.y = 220;
     }
+    // 血月第4段：進入森林前先把阿瓦倫放好，避免閃爍
+    if (to === 'forest' && G.bloodMoon7Active && G.bloodMoon7MemoryIndex === 3 && G.avarenScene === 'gone') {
+      G.avarenScene = 'forest';
+      G.avaren.x = 321;
+      G.avaren.y = 255;
+      G.avaren.wanderTimer = 0;
+      G.bloodMoon7MemoryTimer = Math.floor(Math.random() * 500) + 600;
+    }
+
     renderScene();
     renderHUD();
     renderChars();
@@ -8345,16 +8763,7 @@ function changeScene(to, startOverride) {
             storyAuto('旁白', '小屋外站著一個陌生的青年。\n\n他背著行囊，腰間掛著一把劍，正低頭研究一張皺巴巴的地圖。\n\n你停在門口。\n這裡不該有任何人來。');
           }, 400);
         }
-        if (to === 'forest' && G.bloodMoon7Active && G.bloodMoon7MemoryIndex === 3 && G.avarenScene === 'gone') {
-          G.avarenScene = 'forest';
-          G.avaren.x = 321;
-          G.avaren.y = 255;
-          G.avaren.wanderTimer = 0;
-          G.bloodMoon7MemoryTimer = Math.floor(Math.random() * 500) + 600;
-          renderScene();
-          renderHUD();
-          renderChars();
-        }
+        // 血月第4段阿瓦倫已在進入場景前設定好位置
       }, 400);
     }, 200);
   }, 300);
@@ -8368,7 +8777,8 @@ function doAction_Sleep() {
   if (G.timePeriod !== 'evening') { timeWarn('現在還是早上，先去做些事吧。'); return; }
   if (G.bloodMoon7Active) { warn('無法行動。'); return; }
   if (G.carryingSoup) { warn('拿著料理無法入睡'); return; }
-  if (G.day <= 2) {
+  const shouldNightResearchSleep = G.day <= 2 || (!G.usedForgetMagic && (G.day === 10 || G.day === 11));
+  if (shouldNightResearchSleep) {
     showActionMenu('今晚要怎麼做？', [
       {
         name: '入睡', fx: '熬夜研究，結束今天',
@@ -8715,7 +9125,7 @@ function jumpToDay7Morning() {
 function jumpToBloodMoon() {
   if (G.paused) return;
   cancelAnimationFrame(raf);
-  G.day = 8;
+  G.day = 9;
   G.timePeriod = 'morning';
   G.periodTransitioned = false;
   G.dayEndTriggered = false;
@@ -8745,8 +9155,56 @@ function jumpToBloodMoon() {
   G.bloodMoon7MemoryIndex = 0;
   switchBGM('bgm-bloodmoon');
   showEvent('🩸', '血月夜——',
-    '第七天的夜晚，月亮染成了血紅色。\n\n阿瓦倫的詛咒被血月激發，疼痛與黑霧同時暴漲——\n房間裡傳來他壓抑的哀號。',
-    () => { storyAuto('旁白', '夜幕低垂，血月升起。現在可以進入房間照顧阿瓦倫了。'); }, 'red');
+    '第九天的夜晚，月亮染成了血紅色。\n\n阿瓦倫的詛咒被血月激發，疼痛與黑霧同時暴漲——\n房間裡傳來他壓抑的哀號。',
+    () => { storyAuto('旁白', '夜幕低垂，血月升起，發狂的月亮使所有生物的詛咒加劇'); }, 'red');
+  raf = requestAnimationFrame(gameLoop);
+}
+
+function jumpToDay10ForgetTest(usedForget) {
+  if (G.paused) return;
+  cancelAnimationFrame(raf);
+  storyQueue.length = 0;
+  if (_storyAutoTimer) { clearTimeout(_storyAutoTimer); _storyAutoTimer = null; }
+  const actionOverlay = document.getElementById('action-scene-overlay');
+  if (actionOverlay) actionOverlay.style.display = 'none';
+  document.getElementById('event-overlay').style.display = 'none';
+  document.getElementById('blood-moon-7-overlay').style.display = 'none';
+  document.getElementById('blood-moon-badge').style.display = 'none';
+
+  G.day = 10;
+  G.timePeriod = 'morning';
+  G.periodTransitioned = false;
+  G.dayEndTriggered = false;
+  G.bgmPreEveningFadeStarted = false;
+  G.bloodMoon7Active = false;
+  G.bloodMoon7Calmed = false;
+  G.bloodMoon7Failed = false;
+  G.bloodMoon7Happened = false;
+  G.bloodMoon7PlayerVisited = false;
+  G.bloodMoon7MemoryIndex = 0;
+  G.bloodMoon7MemoryTimer = 800;
+  G.usedForgetMagic = usedForget;
+  G.moodLocked = !usedForget;
+  if (!usedForget) G.mood = Math.min(G.mood, 5);
+  else G.mood = Math.max(G.mood, 55);
+  G.avarenAwake = true;
+  G.avarenBedRest = true;
+  G.avarenDay10ForgetTalkSeen = false;
+  G.avarenDay10NoForgetTalkSeen = false;
+  G.avarenReturnPending = false;
+  G.day4AvarenGone = false;
+  G.avaren.restBlinkTimer = 120;
+  G.avaren.restBlinkPhase = 0;
+  G.dayStartMs = performance.now();
+  G.scene = 'room';
+  G.eldrin.x = 260; G.eldrin.y = 380; G.eldrin.pose = 'front'; G.eldrin.sleepEye = 0;
+  placeAvarenBedRest();
+  switchBGM('bgm');
+  renderHUD();
+  renderScene();
+  renderChars();
+  fadeInFromBlack();
+  storyAuto('旁白', usedForget ? '【測試】第10天白天：血月夜使用過忘卻藥水。' : '【測試】第10天白天：血月夜沒有使用忘卻藥水。');
   raf = requestAnimationFrame(gameLoop);
 }
 
@@ -8763,8 +9221,8 @@ function skipToEvening() {
     document.getElementById('scene-bg').style.backgroundImage = `url('${nightBg}')`;
     document.getElementById('scene-bg-top').style.opacity = '0';
     renderScene();
-    // 第8天血月
-    if (G.day === 8 && !G.bloodMoon7Active) {
+    // 第9天血月
+    if (G.day === 9 && !G.bloodMoon7Active) {
       G.bloodMoon7Active = true;
       G.bloodMoon7Happened = true;
       G.avarenScene = 'room';
@@ -8781,8 +9239,8 @@ function skipToEvening() {
       G.bloodMoon7MemoryIndex = 0;
       setTimeout(() => {
         showEvent('🩸', '血月夜——',
-          '第八天的夜晚，月亮染成了血紅色。\n\n阿瓦倫的詛咒被血月激發，疼痛與黑霧同時暴漲——\n房間裡傳來他壓抑的哀號。',
-          () => { storyAuto('旁白', '夜幕低垂，血月升起。現在可以進入房間照顧阿瓦倫了。'); }, 'red');
+          '第九天的夜晚，月亮染成了血紅色。\n\n阿瓦倫的詛咒被血月激發，疼痛與黑霧同時暴漲——\n房間裡傳來他壓抑的哀號。',
+          () => { storyAuto('旁白', '夜幕低垂，血月升起，發狂的月亮使所有生物的詛咒加劇'); }, 'red');
       }, 500);
     } else {
       fadeSwitchBGM('bgm-day8');
@@ -8790,8 +9248,8 @@ function skipToEvening() {
         storyAuto('旁白', '夜幕低垂。太陽沉入山後，晚上的時間開始了。\n現在可以進屋照顧阿瓦倫了。');
       }, 400);
     }
-    // 第5天夜晚：阿瓦倫消失事件（旁白在玩家進房間時才觸發）
-    if (G.day === 5 && !G.day4EventTriggered && G.mood >= 50 && G.curse < 80 && G.pain < 80) {
+    // 第6天夜晚：阿瓦倫消失事件（旁白在玩家進房間時才觸發）
+    if (G.day === 6 && !G.day4EventTriggered && G.mood >= 50 && G.curse < 80 && G.pain < 80) {
       G.day4EventTriggered = true;
       G.day4AvarenGone = true;
       G.day4AvarenNotified = false;
@@ -8831,6 +9289,53 @@ function skipToEvening() {
 function sleepNow() {
   if (G.paused) return;
   endDay();
+}
+
+function resetToDay11MorningAfterReidLoop(loopIndex) {
+  storyQueue.length = 0;
+  if (_storyAutoTimer) { clearTimeout(_storyAutoTimer); _storyAutoTimer = null; }
+  G.day = 11;
+  G.timePeriod = 'morning';
+  G.periodTransitioned = false;
+  G.dayEndTriggered = false;
+  G.bgmPreEveningFadeStarted = false;
+  G.reidDemonHeartCommissionedToday = false;
+  G.reidCommissionedDayKeys = [];
+  G.redCommissions = (G.redCommissions || []).filter(c => c.key !== 'demonHeart');
+  G.paused = false;
+  G.manualPaused = false;
+  G.scene = 'room';
+  G.sceneCooldown = 90;
+  G.dayStartMs = performance.now();
+  G.eldrin.x = 260; G.eldrin.y = 380; G.eldrin.pose = 'front';
+  G.avarenScene = 'room';
+  if (isAvarenBedRest()) placeAvarenBedRest();
+  else { G.avaren.x = 190; G.avaren.y = 220; G.avaren.pose = 'back'; G.avaren.sleepEye = 0; }
+  G.red.x = 150; G.red.y = 360; G.red.pose = 'front';
+  switchBGM('bgm');
+  renderHUD();
+  renderScene();
+  renderChars();
+  fadeInFromBlack();
+  const lines = REID_HEART_LOOP_NARRATION[Math.max(0, Math.min(loopIndex - 1, REID_HEART_LOOP_NARRATION.length - 1))];
+  storyAuto('旁白', lines[0]);
+  if (lines[1]) storyAuto('旁白', lines[1]);
+  raf = requestAnimationFrame(gameLoop);
+}
+
+function finishReidDemonHeartDay() {
+  if (G.reidFakeSaveTaken || (G.reidDemonHeartCount || 0) >= 3) {
+    endGame('true_protagonist');
+    return;
+  }
+  const fade = document.getElementById('night-fade');
+  fade.style.transition = 'none';
+  fade.style.opacity = '0';
+  fade.style.display = 'block';
+  fade.getBoundingClientRect();
+  fade.style.transition = 'opacity 1.4s ease';
+  fade.style.opacity = '1';
+  setTimeout(() => resetToDay11MorningAfterReidLoop(G.reidDemonHeartCount || 1), 1500);
 }
 
 function openJumpDayMenu() {
@@ -8879,6 +9384,11 @@ function endDay() {
   G.paused = true;
   cancelAnimationFrame(raf);
   const avarenWakesOnDay2 = G.day === 1 && G.pain < 95 && G.curse < 95;
+
+  if (G.day === 11 && G.reidDemonHeartCommissionedToday) {
+    finishReidDemonHeartDay();
+    return;
+  }
 
   if (G.bloodMoon7Active && !G.usedForgetMagic) {
     finishBloodMoonNightWithoutForget();
@@ -8943,7 +9453,7 @@ function endDay() {
     G.avaren.restBlinkPhase = 0;
     G.avaren.sleepEye = 1;
   }
-  showEvent('🌙', '一天結束', nightText, () => afterNight(''));
+  showEvent('🌙', '一天結束', nightText, () => afterNight(''), 'blue', 0);
 }
 
 function afterNight(prevText) {
@@ -8955,11 +9465,16 @@ function afterNight(prevText) {
       () => endGame('avaren_death'), 'red');
     return;
   }
-  // 血月夜第8天後果
-  if (G.bloodMoon7Happened && G.day === 8) {
+  // 血月夜第10天後果
+  if (G.bloodMoon7Happened && G.day === 10) {
     G.bloodMoon7Happened = false;
+    G.avarenAwake = true;
+    G.avarenBedRest = true;
+    G.avaren.restBlinkTimer = 120;
+    G.avaren.restBlinkPhase = 0;
+    placeAvarenBedRest();
     if (G.usedForgetMagic) {
-      showEvent('🌿', '第8天清晨', '血月夜終於過去了。\n\n你走進房間，阿瓦倫縮在床角，眼神空洞，但還是抬頭看了你一眼。\n\n那瓶忘卻藥水讓最深的痛苦沉入了黑暗。\n他可能不記得那一夜最壞的部分了。\n\n他還在這裡。', () => {
+      showEvent('🌿', '第10天清晨', '血月夜終於過去了。\n\n你走進房間，阿瓦倫縮在床角，眼神空洞，但還是抬頭看了你一眼。\n\n那瓶忘卻藥水讓最深的痛苦沉入了黑暗。\n他可能不記得那一夜最壞的部分了。\n\n他還在這裡。', () => {
         G.paused = false;
         continueAfterNight(prevText);
       });
@@ -8968,7 +9483,7 @@ function afterNight(prevText) {
       G.mood = 5;
       G.moodLocked = true;
       renderHUD();
-      showEvent('💔', '第8天清晨', '血月夜終於過去了。\n\n你走進房間，阿瓦倫縮在最遠的角落，背對著你。\n他沒有說話，但你感覺到了。\n\n那一夜他一個人撐過去的，沒有人能替他擋下。\n\n他記得你在那裡。\n他也記得你做了什麼、沒有做什麼。\n\n「……走開。」\n\n他沒有再說別的話。', () => {
+      showEvent('💔', '第10天清晨', '血月夜終於過去了。\n\n你走進房間，阿瓦倫縮在最遠的角落，背對著你。\n他沒有說話，但你感覺到了。\n\n那一夜他一個人撐過去的，沒有人能替他擋下。\n\n他記得你在那裡。\n他也記得你做了什麼、沒有做什麼。\n\n「……走開。」\n\n他沒有再說別的話。', () => {
         G.paused = false;
         continueAfterNight(prevText);
       }, 'red');
@@ -9063,7 +9578,14 @@ function continueAfterNight(prevText) {
   G.reidSlaySlimesDead = false;
   // 雷德討伐委託重置
   G.reidForestWandering = false;
+  // 每日委託限制重置
+  G.reidCommissionedDayKeys = [];
+  // 如果今天有待交貨的委託，提前標記雷德今天會出現
+  if ((G.redCommissions || []).some(c => c.returnDay > 0 && c.returnDay <= G.day && c.key !== 'slay')) {
+    G.reidVisitDay = G.day;
+  }
   G.forestMushrooms = { 1: false, 2: false, 3: false, 4: false };
+  if (G.day === 8) { G.weather = 'rain'; G.farmWatered = true; setOutsideFarmVisual(); }
   // 蘋果樹每天早上重置
   G.forestApples = { tree1: APPLE_TREE_MAX.tree1, tree3: APPLE_TREE_MAX.tree3 };
   Object.values(APPLE_TREE_DIVS).flat().forEach(id => {
@@ -9072,14 +9594,14 @@ function continueAfterNight(prevText) {
   });
   if (G.day === 8) switchBGM('bgm-day8');
   else switchBGM('bgm');
-  if (G.day > 2) G.avarenBedRest = false;
+  if (G.day > 2 && G.day !== 10) G.avarenBedRest = false;
   renderHUD();
   G.avarenScene = G.day4AvarenGone ? 'gone' : 'room';
   if (isAvarenUnconscious()) {
     placeAvarenUnconscious();
   } else if (isAvarenBedRest()) {
     placeAvarenBedRest();
-  } else if (G.day === 6 && G.day4AvarenGone) {
+  } else if (G.day === 7 && G.day4AvarenGone) {
     G.day4AvarenGone = false;
     G.avarenReturnPending = true;
     G.avarenScene = 'lobby';
@@ -9109,7 +9631,7 @@ function continueAfterNight(prevText) {
   storyAuto('旁白', `第 ${G.day} 天開始了。清晨七點，新的一天。${redMsg}`);
   triggerAvarenDay2WakeIntro();
   fadeInFromBlack();
-  if (G.day === 10) document.getElementById('blood-moon-badge').style.display = 'block';
+  if (G.day === 9) document.getElementById('blood-moon-badge').style.display = 'block';
   raf = requestAnimationFrame(gameLoop);
 }
 
@@ -9117,10 +9639,12 @@ function continueAfterNight(prevText) {
 //  EVENT OVERLAY
 // ══════════════════════════════════════
 let eventCallback = null;
-function showEvent(icon, title, desc, cb, theme='blue') {
+let _eventLockUntil = 0;
+function showEvent(icon, title, desc, cb, theme='blue', lockMs=3000) {
   SFX.event();
   G.paused = true;
   eventCallback = cb;
+  _eventLockUntil = Date.now() + lockMs;
   document.getElementById('ev-icon').textContent  = icon;
   document.getElementById('ev-title').textContent = title;
   document.getElementById('ev-desc').textContent  = desc;
@@ -9129,6 +9653,7 @@ function showEvent(icon, title, desc, cb, theme='blue') {
   document.getElementById('event-overlay').style.display = 'flex';
 }
 function closeEvent() {
+  if (Date.now() < _eventLockUntil) return;
   playDialogueNextSfx();
   document.getElementById('event-overlay').style.display = 'none';
   G.paused = false;
@@ -9157,6 +9682,8 @@ const ENDINGS = {
     desc:`血月夜的折磨太深重了。\n\n清晨，當你走進房間，阿瓦倫已經沒有了呼吸。\n\n黑色的詛咒紋路蔓延遍了他的全身，靜止了下來。\n他的臉很平靜——比活著的任何時候都還要平靜。\n\n你來得太晚了。\n\n「……對不起。」\n\n這兩個字，你說了太多遍，\n每一遍都沒有用。` },
   eldrin_death: { cls:'end-bad', title:'倒下',
     desc:`你沒能撐住。\n\n地面的泥土變得很近，視野一點一點模糊。\n黑暗裡，你想起的最後一件事——\n是阿瓦倫還在小屋裡等你回去。\n\n但你的身體，再也站不起來了。\n\n沒有人告訴阿瓦倫，那天以後艾德林去了哪裡。\n那扇門，就這樣永遠地關上了。` },
+  true_protagonist: { cls:'end-regret', title:'真正的主角',
+    desc:`第十一天結束了。\n\n不，應該說——第十一天終於結束了。\n\n存檔被覆蓋。\n主角欄位重新寫入。\n\n勇者雷德。\n\n你看著那個名字出現在畫面中央，才終於明白。\n這個世界從來不是為艾德林準備的。\n艾德林只是小屋裡的一個角色，一個被玩家借來使用的名字。\n\n而真正被世界承認的人，從一開始就是勇者。\n\n雷德握著劍，站在新的清晨裡。\n他沒有回頭。\n\nSAVE 01\n第 11 天　早晨\n勇者雷德\n\n無法覆蓋。` },
 };
 
 let _eldrinDeathTriggered = false;
@@ -9208,11 +9735,27 @@ function triggerEldrinDeath() {
 function endGame(type) {
   const vigEl = document.getElementById('hp-vignette');
   if (vigEl) vigEl.style.display = 'none';
+  const nightFade = document.getElementById('night-fade');
+  if (nightFade) {
+    nightFade.style.transition = 'none';
+    nightFade.style.opacity = '0';
+    nightFade.style.display = 'none';
+  }
+  const eventOverlay = document.getElementById('event-overlay');
+  if (eventOverlay) eventOverlay.style.display = 'none';
+  const actionOverlay = document.getElementById('action-scene-overlay');
+  if (actionOverlay) actionOverlay.style.display = 'none';
+  const deathOverlay = document.getElementById('death-overlay');
+  if (deathOverlay) deathOverlay.style.display = 'none';
+  const bloodOverlay = document.getElementById('blood-moon-7-overlay');
+  if (bloodOverlay) bloodOverlay.style.display = 'none';
+  G.paused = true;
   cancelAnimationFrame(raf);
   let ending;
   if (type === 'crisis') ending = ENDINGS.crisis;
   else if (type === 'avaren_death') ending = ENDINGS.avaren_death;
   else if (type === 'eldrin_death') ending = ENDINGS.eldrin_death;
+  else if (type === 'true_protagonist') ending = ENDINGS.true_protagonist;
   else if (G.curse > 75)                          ending = ENDINGS.bad_curse;
   else if (G.curse < 30)                          ending = ENDINGS.best;
   else if (G.mood > 70 && G.trust < 30)           ending = ENDINGS.regret;
@@ -9434,7 +9977,18 @@ function loadFromSlot(n) {
     if (!G.slime2) G.slime2 = { x: SLIME2_HOME.x, y: SLIME2_HOME.y, attackCooldown: 0, hopTick: 35 };
     if (!G.noah) G.noah = { x: 500, y: 360, pose: 'front', walkTick: 0, walkFrame: 0, walkDir:{dx:0,dy:0}, walkTimer:0, bubbleTimer:0, bubbleText:'', autoSpeakTimer:260, blinkTimer: 340, blinkPhase: -1, blinkPhaseTick: 0, pushVx:0, pushVy:0 };
     if (G.reidIntroSeen == null) G.reidIntroSeen = false;
+    if (G.maxDays == null || G.maxDays < 11) G.maxDays = 11;
+    if (G.reidDemonHeartCount == null) G.reidDemonHeartCount = 0;
+    if (G.reidDemonHeartCommissionedToday == null) G.reidDemonHeartCommissionedToday = false;
+    if (G.reidFakeSaveTaken == null) G.reidFakeSaveTaken = false;
     if (G.reidIntroNoticeSeen == null) G.reidIntroNoticeSeen = false;
+    if (G.reidWinterMeetSeen == null) G.reidWinterMeetSeen = false;
+    if (G.reidWinterMeetDay7Seen == null) G.reidWinterMeetDay7Seen = false;
+    if (G.winterIntroSeen == null) G.winterIntroSeen = false;
+    if (G.winterReidMeetSeen == null) G.winterReidMeetSeen = false;
+    if (G.winterReidMeetDay7Seen == null) G.winterReidMeetDay7Seen = false;
+    if (G.winterDay8FairyHintSeen == null) G.winterDay8FairyHintSeen = false;
+    if (G.day === 8) G.weather = 'rain';
     if (G.noahDay2IntroSeen == null) G.noahDay2IntroSeen = false;
     if (G.noahLobbyTalking == null) G.noahLobbyTalking = false;
     if (G.noahLakeMoonSeen == null) G.noahLakeMoonSeen = false;
@@ -9445,6 +9999,8 @@ function loadFromSlot(n) {
     if (G.avarenDay1Bandaged == null) G.avarenDay1Bandaged = false;
     if (G.avarenDay2WakeIntroSeen == null) G.avarenDay2WakeIntroSeen = false;
     if (G.avarenDay2WakeTalkPending == null) G.avarenDay2WakeTalkPending = false;
+    if (G.avarenDay10ForgetTalkSeen == null) G.avarenDay10ForgetTalkSeen = false;
+    if (G.avarenDay10NoForgetTalkSeen == null) G.avarenDay10NoForgetTalkSeen = false;
     if (G.eldrinEmoteTimer == null) G.eldrinEmoteTimer = 0;
     if (G.eldrinEmoteText == null) G.eldrinEmoteText = '！';
     if (G.avarenReturnPending == null) G.avarenReturnPending = false;
@@ -9986,13 +10542,14 @@ async function startGame() {
   document.getElementById('blood-moon-badge').style.display = 'none';
   warn('');
 
-  stopDay0IntroSfx();
+  stopAudio('sfx-day0-walk');
   ['bgm', 'bgm-bloodmoon', 'bgm-sad', 'bgm-day8'].forEach(id => {
     const el = document.getElementById(id);
     if (el) { el.pause(); el.currentTime = 0; }
   });
-
-  playLoopingAudio('sfx-day0-rain', 12.0);
+  // 雨聲繼續播放不中斷，只更新音量
+  { const rain = document.getElementById('sfx-day0-rain');
+    if (rain) rain.volume = Math.max(0, Math.min(1, settingsVolume() * 12.0)); }
 
   initStoveAnimation();
   renderHUD();
@@ -11195,6 +11752,20 @@ if (_hasSaveOnLoad) {
   if (btn) btn.style.display = 'block';
 }
 titleScreenInitFocus(_hasSaveOnLoad);
+
+// 標題頁雨聲
+(function playTitleRain() {
+  const rain = document.getElementById('sfx-day0-rain');
+  if (!rain) return;
+  rain.volume = 1.0;
+  rain.play().catch(() => {
+    // 瀏覽器需要使用者互動才能播放，等第一次點擊後再播
+    document.addEventListener('click', function tryPlay() {
+      rain.play().catch(() => {});
+      document.removeEventListener('click', tryPlay);
+    }, { once: true });
+  });
+})();
 </script>
 </body>
 </html>
