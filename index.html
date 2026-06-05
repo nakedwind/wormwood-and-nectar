@@ -3541,6 +3541,48 @@ function dropChicken(resetPosition = false) {
   toast('放下雞');
 }
 
+const REID_INTRO_STORY = [
+  { speaker: '艾德林', text: '……你是誰？' },
+  { speaker: '陌生青年', text: '啊！太好了，這裡真的有人住！\n不好意思，我想問一下，這裡是村鎮嗎？' },
+  { speaker: '艾德林', text: '不是。' },
+  { speaker: '陌生青年', text: '森林入口？' },
+  { speaker: '艾德林', text: '也不是。' },
+  { speaker: '陌生青年', text: '那……魔王城？' },
+  { speaker: '艾德林', text: '更不是。' },
+  { speaker: '旁白', text: '你看向他腰間的劍，沒有往前走。' },
+  { speaker: '艾德林', text: '誰叫你來的？' },
+  { speaker: '陌生青年', text: '沒有人啊。\n我只是迷路。' },
+  { speaker: '艾德林', text: '迷路到森林深處的小屋？' },
+  { speaker: '陌生青年', text: '……對。' },
+  { speaker: '旁白', text: '他回答得太乾脆，反而不像在撒謊。\n青年低頭看了看地圖。' },
+  { speaker: '艾德林', text: '你的地圖拿反了。' },
+  { speaker: '陌生青年', text: '……\n難怪太陽一直在奇怪的方向。' },
+  { speaker: '艾德林', text: '你到底是誰？' },
+  { speaker: '雷德', text: '我叫雷德！\n大家都說我是勇者。\n雖然我自己還沒有完全接受，但劍一直跟著我，所以大概是真的吧！' },
+  { speaker: '旁白', text: '勇者。\n拿著劍的陌生人。\n出現在這間不該被找到的小屋前。' },
+  { speaker: '艾德林', text: '你來這裡做什麼？' },
+  { speaker: '雷德', text: '問路！\n如果附近有魔物，也可以順便打一下。\n但是主要還是問路！' },
+  { speaker: '旁白', text: '他的表情太坦率。\n坦率得讓你不知道該不該相信。' },
+  { speaker: '雷德', text: '你看起來很緊張。\n我嚇到你了嗎？\n我不是壞人啦！相信我。' },
+  { speaker: '艾德林', text: '壞人通常也這麼說。' },
+  { speaker: '雷德', text: '你說的對耶！' },
+  { speaker: '旁白', text: '雷德認真地點頭。\n你一時間不知道該接什麼話。' },
+  { speaker: '雷德', text: '拜託你跟我說一下這裡的路該怎麼走啦！我已經在這裡徘徊1天了！' },
+  { speaker: '艾德林', text: '……這裡往南看到湖以後再往西走，就可以看到遠處有小村鎮了。' },
+  { speaker: '雷德', text: '謝謝！你真是幫了我大忙！你一定是個大善人！\n請問你叫什麼名字？' },
+  { speaker: '艾德林', text: '……艾德林。' },
+  { speaker: '雷德', text: '艾德林！好，我記住了！' },
+  { speaker: '艾德林', text: '.........嗯。' },
+  { speaker: '旁白', text: '你看著雷德露出爽朗的笑容，自信的再次將地圖拿反，感覺心中對他的猜疑似乎淡了一點。' },
+];
+
+function playReidIntro() {
+  if (G.reidIntroSeen) { openRedMenu(); return; }
+  SFX.interact();
+  G.reidIntroSeen = true;
+  startActionScene(REID_INTRO_STORY, 400, () => {});
+}
+
 function openRedMenu() {
   SFX.interact();
   // 雷德面向玩家
@@ -4381,6 +4423,8 @@ function initState() {
     redCommission: null,
     redDelivered: false,
     redCommissions: [],
+    reidIntroSeen: false,
+    reidIntroNoticeSeen: false,
     reidSlayPendingWalk: false,
     reidSlayFollowDelay: 0,
     reidSlayWalkPhase: 0,
@@ -5210,7 +5254,7 @@ function updateHints() {
     hi.style.display = 'block';
     hs.style.display = 'none';
   } else if (nearRed && !zone && !near) {
-    hi.textContent = '雷德';
+    hi.textContent = G.reidIntroSeen ? '雷德' : '陌生青年';
     hi.style.display = 'block';
     hs.style.display = 'none';
   } else if (isNearWinter() && !zone && !near) {
@@ -6555,7 +6599,7 @@ document.addEventListener('keydown', e => {
     } else if (isNearWinter() && !near) {
       openWinterMenu();
     } else if (isNearReid()) {
-      openRedMenu();
+      playReidIntro();
     } else if (near) {
       openAvarenMenu();
     }
@@ -7747,12 +7791,13 @@ function startActionScene(lines, max, onDone) {
   document.getElementById('action-scene-overlay').style.display = 'flex';
 }
 
-const NPC_SPEAKERS = new Set(['旁白', '你', '艾德林', '阿瓦倫', '雷德', '溫特', '諾亞']);
+const NPC_SPEAKERS = new Set(['旁白', '你', '艾德林', '阿瓦倫', '雷德', '陌生青年', '溫特', '諾亞']);
 const SPEAKER_AVATARS = {
   '你': 'eldrin_avatar.png',
   '艾德林': 'eldrin_avatar.png',
   '阿瓦倫': 'avaren_avatar.png',
   '雷德': 'red_avatar.png',
+  '陌生青年': 'red_avatar.png',
   '溫特': 'winter_avatar.png',
   '諾亞': 'noah_avatar.png',
 };
@@ -7761,6 +7806,7 @@ const SPEAKER_TEXT_CLASS = {
   '艾德林': 'asc-text-eldrin',
   '阿瓦倫': 'asc-text-avaren',
   '雷德': 'asc-text-red',
+  '陌生青年': 'asc-text-red',
   '溫特': 'asc-text-winter',
   '諾亞': 'asc-text-noah',
 };
@@ -8291,6 +8337,12 @@ function changeScene(to, startOverride) {
           G.day4AvarenNotified = true;
           setTimeout(() => {
             storyAuto('旁白', '你四處找了找，都沒有找到阿瓦倫的身影。');
+          }, 400);
+        }
+        if (fromScene === 'lobby' && to === 'outside' && G.day === 3 && G.timePeriod === 'morning' && !G.reidIntroNoticeSeen && !G.reidIntroSeen) {
+          G.reidIntroNoticeSeen = true;
+          setTimeout(() => {
+            storyAuto('旁白', '小屋外站著一個陌生的青年。\n\n他背著行囊，腰間掛著一把劍，正低頭研究一張皺巴巴的地圖。\n\n你停在門口。\n這裡不該有任何人來。');
           }, 400);
         }
         if (to === 'forest' && G.bloodMoon7Active && G.bloodMoon7MemoryIndex === 3 && G.avarenScene === 'gone') {
@@ -9048,6 +9100,8 @@ function continueAfterNight(prevText) {
   if (isReidDay()) {
     if (G.redCommission && G.redCommission.returnDay === G.day) {
       redMsg = '\n雷德出現在戶外，背包鼓鼓的——他把委託的物品帶回來了。';
+    } else if (G.day === 3) {
+      redMsg = '\n小屋外似乎來了一位陌生的青年。';
     } else {
       redMsg = '\n雷德出現在戶外。';
     }
@@ -9379,6 +9433,8 @@ function loadFromSlot(n) {
     if (!G.slime)  G.slime  = { x: SLIME_HOME.x,  y: SLIME_HOME.y,  attackCooldown: 0, hopTick: 0 };
     if (!G.slime2) G.slime2 = { x: SLIME2_HOME.x, y: SLIME2_HOME.y, attackCooldown: 0, hopTick: 35 };
     if (!G.noah) G.noah = { x: 500, y: 360, pose: 'front', walkTick: 0, walkFrame: 0, walkDir:{dx:0,dy:0}, walkTimer:0, bubbleTimer:0, bubbleText:'', autoSpeakTimer:260, blinkTimer: 340, blinkPhase: -1, blinkPhaseTick: 0, pushVx:0, pushVy:0 };
+    if (G.reidIntroSeen == null) G.reidIntroSeen = false;
+    if (G.reidIntroNoticeSeen == null) G.reidIntroNoticeSeen = false;
     if (G.noahDay2IntroSeen == null) G.noahDay2IntroSeen = false;
     if (G.noahLobbyTalking == null) G.noahLobbyTalking = false;
     if (G.noahLakeMoonSeen == null) G.noahLakeMoonSeen = false;
