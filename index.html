@@ -217,6 +217,29 @@ body {
   pointer-events: none; z-index: 589;
 }
 
+/* ── 妖精閃爍疊層 ── */
+#fairy-flicker-overlay {
+  display: none; position: absolute; inset: 0;
+  pointer-events: none; z-index: 650;
+  background: white;
+}
+@keyframes fairyFlicker {
+  0%   { opacity: 0; }
+  5%   { opacity: 0.85; background: white; }
+  10%  { opacity: 0; }
+  18%  { opacity: 0.6; background: #ccf0ff; }
+  22%  { opacity: 0; }
+  30%  { opacity: 0.9; background: white; }
+  32%  { opacity: 0; }
+  45%  { opacity: 0.3; background: #88ddff; }
+  50%  { opacity: 0; }
+  60%  { opacity: 0.7; background: white; }
+  63%  { opacity: 0; }
+  80%  { opacity: 0.2; background: #aaeeff; }
+  90%  { opacity: 0; }
+  100% { opacity: 0; }
+}
+
 /* ── 血月疊層 ── */
 #blood-moon-7-overlay {
   display: none; position: absolute; inset: 0;
@@ -1456,6 +1479,9 @@ body {
 <audio id="sfx-slime">
   <source src="music/音效/史萊姆.mp3" type="audio/mpeg">
 </audio>
+<audio id="sfx-fairy">
+  <source src="music/音效/妖精.mp3" type="audio/mpeg">
+</audio>
 <audio id="sfx-slime-2">
   <source src="music/音效/史萊姆.mp3" type="audio/mpeg">
 </audio>
@@ -1555,7 +1581,7 @@ body {
 <div id="game-screen" class="ui-framed">
   <img id="game-ui-frame" src="UI/UI.png" alt="" aria-hidden="true">
   <div id="hud">
-    <div class="hud-day">第 <span id="hud-day">1</span> 天 <span style="font-size:12px;color:#5a4020">/ 10</span></div>
+    <div class="hud-day">第 <span id="hud-day">1</span> 天 <span style="font-size:12px;color:#5a4020">/ 11</span></div>
     <div id="time-bar-wrap">
       <div id="time-bar" style="width:0%"></div>
       <div id="time-label">07:00</div>
@@ -1754,6 +1780,8 @@ body {
       <div id="day-warm-overlay"></div>
       <!-- ══ 血月疊層 ══ -->
       <div id="blood-moon-7-overlay"></div>
+      <!-- ══ 妖精閃爍疊層 ══ -->
+      <div id="fairy-flicker-overlay"></div>
       <!-- ══ ACTION SCENE OVERLAY (照顧/聊天) ══ -->
       <div id="action-scene-overlay" onclick="onOverlayClick()">
         <img id="asc-portrait" src="avaren_avatar.png" alt="">
@@ -2419,47 +2447,70 @@ function updateOneSlime(slime, elId, homeX, homeY) {
   }
 
   if (!G.paused && !isDlgBlocking()) {
-    const dx = G.eldrin.x - slime.x;
-    const dy = G.eldrin.y - slime.y;
-    const dist = Math.hypot(dx, dy) || 1;
-
-    if (inAir) {
-      const spd = SLIME_SPEED * (HOP_CYCLE / HOP_AIR_END);
-      const nx = slime.x + (dx / dist) * spd;
-      const ny = slime.y + (dy / dist) * spd;
-      if (!isObstacleAt(nx, ny)) {
-        slime.x = nx; slime.y = ny;
-      } else if (!isObstacleAt(nx, slime.y)) {
-        slime.x = nx;
-      } else if (!isObstacleAt(slime.x, ny)) {
-        slime.y = ny;
-      }
-    }
-
-    if (dist < 26 && slime.attackCooldown <= 0) {
-      chg('eldrinHp', -SLIME_DAMAGE);
-      slime.attackCooldown = 90;
-      triggerEldrinDamageFlash();
-      const push = 18;
-      const minY = CHAR_H - 40;
-      let px = Math.max(30, Math.min(SCENE_W - 30, G.eldrin.x + (dx / dist) * push));
-      let py = Math.max(minY, Math.min(SCENE_H - 10, G.eldrin.y + (dy / dist) * push));
-      if (isObstacleAt(px, py)) {
-        let rescued = false;
-        for (let d = 2; d <= 80 && !rescued; d += 2) {
-          for (const [ddx, ddy] of [[0,1],[0,-1],[1,0],[-1,0],[1,1],[-1,1],[1,-1],[-1,-1]]) {
-            const tx = Math.max(30, Math.min(SCENE_W-30, px + ddx*d));
-            const ty = Math.max(minY, Math.min(SCENE_H-10, py + ddy*d));
-            if (!isObstacleAt(tx, ty)) { px = tx; py = ty; rescued = true; break; }
-          }
+    if (G.day === 7 || G.slimeCalmed) {
+      // 第7天溫特安撫魔物，或購買魔物安撫香後，史萊姆只在原地漫走，不追人也不攻擊
+      if (inAir) {
+        if (!slime.wanderDir || slime.wanderTimer <= 0) {
+          const angle = Math.random() * Math.PI * 2;
+          slime.wanderDir = { dx: Math.cos(angle), dy: Math.sin(angle) };
+          slime.wanderTimer = 40 + Math.floor(Math.random() * 60);
+        }
+        slime.wanderTimer--;
+        const spd = SLIME_SPEED * 0.5 * (HOP_CYCLE / HOP_AIR_END);
+        const nx = slime.x + slime.wanderDir.dx * spd;
+        const ny = slime.y + slime.wanderDir.dy * spd;
+        const FOREST_X1 = 40, FOREST_X2 = 600, FOREST_Y1 = 80, FOREST_Y2 = 440;
+        if (nx < FOREST_X1 || nx > FOREST_X2) slime.wanderDir.dx *= -1;
+        if (ny < FOREST_Y1 || ny > FOREST_Y2) slime.wanderDir.dy *= -1;
+        if (!isObstacleAt(nx, ny)) {
+          slime.x = nx; slime.y = ny;
+        } else {
+          slime.wanderDir = null;
         }
       }
-      G.eldrin.x = px; G.eldrin.y = py;
-      renderHUD();
-      playLoopingAudio('sfx-slime-hit', 4.0);
+    } else {
+      const dx = G.eldrin.x - slime.x;
+      const dy = G.eldrin.y - slime.y;
+      const dist = Math.hypot(dx, dy) || 1;
 
-      toast(`史萊姆攻擊！HP -${SLIME_DAMAGE}`);
-      if ((G.eldrinHp ?? 100) <= 0) { triggerEldrinDeath(); return; }
+      if (inAir) {
+        const spd = SLIME_SPEED * (HOP_CYCLE / HOP_AIR_END);
+        const nx = slime.x + (dx / dist) * spd;
+        const ny = slime.y + (dy / dist) * spd;
+        if (!isObstacleAt(nx, ny)) {
+          slime.x = nx; slime.y = ny;
+        } else if (!isObstacleAt(nx, slime.y)) {
+          slime.x = nx;
+        } else if (!isObstacleAt(slime.x, ny)) {
+          slime.y = ny;
+        }
+      }
+
+      if (dist < 26 && slime.attackCooldown <= 0) {
+        chg('eldrinHp', -SLIME_DAMAGE);
+        slime.attackCooldown = 90;
+        triggerEldrinDamageFlash();
+        const push = 18;
+        const minY = CHAR_H - 40;
+        let px = Math.max(30, Math.min(SCENE_W - 30, G.eldrin.x + (dx / dist) * push));
+        let py = Math.max(minY, Math.min(SCENE_H - 10, G.eldrin.y + (dy / dist) * push));
+        if (isObstacleAt(px, py)) {
+          let rescued = false;
+          for (let d = 2; d <= 80 && !rescued; d += 2) {
+            for (const [ddx, ddy] of [[0,1],[0,-1],[1,0],[-1,0],[1,1],[-1,1],[1,-1],[-1,-1]]) {
+              const tx = Math.max(30, Math.min(SCENE_W-30, px + ddx*d));
+              const ty = Math.max(minY, Math.min(SCENE_H-10, py + ddy*d));
+              if (!isObstacleAt(tx, ty)) { px = tx; py = ty; rescued = true; break; }
+            }
+          }
+        }
+        G.eldrin.x = px; G.eldrin.y = py;
+        renderHUD();
+        playLoopingAudio('sfx-slime-hit', 4.0);
+
+        toast(`史萊姆攻擊！HP -${SLIME_DAMAGE}`);
+        if ((G.eldrinHp ?? 100) <= 0) { triggerEldrinDeath(); return; }
+      }
     }
   }
 
@@ -2751,8 +2802,8 @@ function updateRoomDepth() {
   ROOM_DEPTH_OBJECTS.forEach(id => {
     const obj = document.getElementById(id);
     if (!obj) return;
-    // 第1、2天睡覺動畫：椅背要在艾德林（z:400）前面
-    if (id === 'room-dhair02' && G.sleepAnimActive && G.day <= 2) {
+    // 第1、2天以及第10、11天睡覺動畫：椅背要在艾德林（z:400）前面
+    if (id === 'room-dhair02' && G.sleepAnimActive && (G.day <= 2 || G.day === 10 || G.day === 11)) {
       obj.style.zIndex = '401';
       return;
     }
@@ -2906,7 +2957,7 @@ const ZONES = {
       fn(){ playLoopingAudio('sfx-curtain', 6.0); changeScene('kitchen'); } },
     { id:'lobby_potion', x1:114, y1:183, x2:189, y2:309,
       fn(){ doAction_PickupPotion(); } },
-    { id:'save_desk',  x1:222, y1:180, x2:285, y2:225, interactHint:'存檔',
+    { id:'save_desk',  x1:222, y1:185, x2:285, y2:230, interactHint:'存檔',
       fn(){ doAction_Save(); } },
     { id:'cabinet',    x1:8,   y1:91,  x2:323, y2:211, interactHint:'研究',
       fn(){ doAction_StartResearch(); } },
@@ -3518,6 +3569,7 @@ const NOAH_LAKE_AFTER_DLG = [
 ];
 
 function isNearReid() {
+  if (G.bloodMoon7Active) return false;
   const hasDelivery = (G.redCommissions || []).some(c => c.returnDay > 0 && c.returnDay <= G.day && c.key !== 'slay');
   const inForest = G.scene === 'forest' && (G.reidSlayInForest || G.reidForestWandering);
   const inOutside = G.scene === 'outside' && (isReidDay() || hasDelivery || G.reidVisitDay === G.day) && G.timePeriod === 'morning'
@@ -3547,7 +3599,7 @@ function isNearNoah() {
 }
 
 function isNearFairy() {
-  if (G.fairyCaught || G.scene !== 'forest' || G.timePeriod !== 'evening' || G.day % 2 !== 0) return false;
+  if (G.fairyCaught || G.scene !== 'forest' || G.timePeriod !== 'evening' || G.day !== 8) return false;
   return Math.hypot(G.eldrin.x - G.fairy.x, G.eldrin.y - G.fairy.y) < 65;
 }
 
@@ -3630,25 +3682,229 @@ const REID_INTRO_STORY = [
   { speaker: '陌生青年', text: '……對。' },
   { speaker: '旁白', text: '他回答得太乾脆，反而不像在撒謊。\n青年低頭看了看地圖。' },
   { speaker: '艾德林', text: '你的地圖拿反了。' },
-  { speaker: '陌生青年', text: '……\n難怪太陽一直在奇怪的方向。' },
+  { speaker: '陌生青年', text: '……難怪太陽一直在奇怪的方向。' },
   { speaker: '艾德林', text: '你到底是誰？' },
-  { speaker: '雷德', text: '我叫雷德！\n大家都說我是勇者。\n雖然我自己還沒有完全接受，但劍一直跟著我，所以大概是真的吧！' },
-  { speaker: '旁白', text: '勇者。\n拿著劍的陌生人。\n出現在這間不該被找到的小屋前。' },
-  { speaker: '艾德林', text: '你來這裡做什麼？' },
+  { speaker: '雷德', text: '我叫雷德！大家都說我是勇者。' },
+  { speaker: '艾德林', text: '勇者？勇者來這裡做什麼？' },
   { speaker: '雷德', text: '問路！\n如果附近有魔物，也可以順便打一下。\n但是主要還是問路！' },
   { speaker: '旁白', text: '他的表情太坦率。\n坦率得讓你不知道該不該相信。' },
   { speaker: '雷德', text: '你看起來很緊張。\n我嚇到你了嗎？\n我不是壞人啦！相信我。' },
   { speaker: '艾德林', text: '壞人通常也這麼說。' },
   { speaker: '雷德', text: '你說的對耶！' },
   { speaker: '旁白', text: '雷德認真地點頭。\n你一時間不知道該接什麼話。' },
-  { speaker: '雷德', text: '拜託你跟我說一下這裡的路該怎麼走啦！我已經在這裡徘徊1天了！' },
-  { speaker: '艾德林', text: '……這裡往南看到湖以後再往西走，就可以看到遠處有小村鎮了。' },
-  { speaker: '雷德', text: '謝謝！你真是幫了我大忙！你一定是個大善人！\n請問你叫什麼名字？' },
-  { speaker: '艾德林', text: '……艾德林。' },
-  { speaker: '雷德', text: '艾德林！好，我記住了！' },
-  { speaker: '艾德林', text: '.........嗯。' },
-  { speaker: '旁白', text: '你看著雷德露出爽朗的笑容，自信的再次將地圖拿反，感覺心中對他的猜疑似乎淡了一點。' },
 ];
+
+// ══ 雷德五天聊聊劇情 ══
+const REID_CHAT_DAY3_1 = [
+  { speaker:'雷德', text:'拜託你跟我說一下這裡的路該怎麼走啦！我從昨天就一直在這附近徘徊！' },
+  { speaker:'艾德林', text:'……這裡往南看到湖以後再往西走，就可以看到遠處有小村鎮了。' },
+  { speaker:'雷德', text:'謝謝！你真是幫了我大忙！你一定是個大善人！請問你叫什麼名字？' },
+  { speaker:'艾德林', text:'……艾德林。' },
+  { speaker:'雷德', text:'艾德林！好，我記住了！' },
+  { speaker:'艾德林', text:'……嗯。' },
+  { speaker:'旁白', text:'你看著雷德露出爽朗的笑容，自信的再次將地圖拿反，感覺心中對他的猜疑似乎淡了一點。' },
+];
+const REID_CHAT_DAY3_2 = [
+  { speaker:'雷德', text:'其實我也不確定自己是不是真的是勇者，但大家都說我是勇者，那麼我也只好接受了。' },
+  { speaker:'艾德林', text:'為什麼大家會說你是勇者？' },
+  { speaker:'雷德', text:'有一天我在初始之村的森林中醒來……看到被插在石頭裡的勇者之劍就躺在我旁邊。' },
+  { speaker:'雷德', text:'雖然我不記得我把劍拔起來了，但是大家都說那是我拔的。' },
+  { speaker:'雷德', text:'好奇怪啊，莫名其妙的我就變成勇者了，然後大家都叫我去打倒魔王。' },
+  { speaker:'雷德', text:'所以我只好出來旅行尋找魔王了，哈哈哈，好麻煩哦。' },
+  { speaker:'雷德', text:'如果你知道魔王城堡在哪裡的話，記得要跟我說喔！' },
+  { speaker:'艾德林', text:'……好。' },
+  { speaker:'旁白', text:'你發現這個勇者的話非常多，而且看起來似乎不太聰明。' },
+];
+const REID_CHAT_DAY3_COMMISSION = [
+  { speaker:'雷德', text:'你一個人住在這裡很不方便吧？\n有需要的話我可以幫忙狩獵野獸和魔物哦！\n只要說一聲勇者就會使命必達！' },
+  { speaker:'旁白', text:'雷德看起來得意洋洋，似乎很有自信。' },
+];
+const REID_CHAT_DAY3_AVAREN_1 = [
+  { speaker:'雷德', text:'那孩子是你的弟弟嗎？' },
+  { speaker:'艾德林', text:'不是……不算是……但是我把他當成弟弟一樣看待。' },
+  { speaker:'雷德', text:'哦～難怪你們長得一點都不像！' },
+  { speaker:'雷德', text:'我本來想跟他打招呼當好朋友，可是他瞪了我一眼就跑掉了耶。' },
+  { speaker:'艾德林', text:'那孩子……有點怕生。' },
+  { speaker:'雷德', text:'是嗎？哈哈哈，那我會多多跟他聊天，等熟了以後我們就可以當好朋友了！\n他叫什麼名字啊？' },
+  { speaker:'艾德林', text:'他叫阿瓦倫。' },
+  { speaker:'雷德', text:'哦！阿瓦倫你等著，我很快就會跟你變成最好的朋友了！' },
+  { speaker:'旁白', text:'你看著雷德單純爽朗的笑容，感覺緊繃的心情放鬆了一些，你也忍不住露出微笑。' },
+  { speaker:'艾德林', text:'嗯……！你們一定可以變成好朋友的。' },
+];
+const REID_CHAT_DAY3_AVAREN_2 = [
+  { speaker:'雷德', text:'你一個人在照顧阿瓦倫嗎？' },
+  { speaker:'艾德林', text:'嗯……。' },
+  { speaker:'雷德', text:'天啊！你好偉大！一個人照顧孩子真的很辛苦呢！' },
+  { speaker:'雷德', text:'嗯……好奇怪啊……當我靠近阿瓦倫的時候，我的劍好像在躁動……' },
+  { speaker:'旁白', text:'你心裡一沉，覺得還是要和雷德坦白。' },
+  { speaker:'艾德林', text:'其實……阿瓦倫身上也有詛咒……' },
+  { speaker:'雷德', text:'怎麼會這樣！他還這麼小耶！真是太不幸了……' },
+  { speaker:'旁白', text:'你覺得心裡很苦澀，突然間你不知道要開口說些什麼，但雷德突然拍拍了你的肩膀。' },
+  { speaker:'雷德', text:'沒事的！我也算是被詛咒了，還不是活得好好的嗎？阿瓦倫一定也會沒事而且健康長大的！' },
+  { speaker:'雷德', text:'勇者直覺很準的，我感覺他會長命百歲！\n你也別太擔心！有什麼事情，我都會幫助你的。' },
+  { speaker:'雷德', text:'儘管來依靠厲害的勇者吧！你不是一個人！' },
+  { speaker:'旁白', text:'雷德的熱情似乎感染了你，讓你有點感動。' },
+  { speaker:'艾德林', text:'雷德，謝謝你……' },
+];
+
+const REID_CHAT_DAY5_1 = [
+  { speaker:'雷德', text:'艾德林！……欸，你今天臉色很差欸。' },
+  { speaker:'艾德林', text:'沒事，只是沒睡好。' },
+  { speaker:'雷德', text:'你上次也這樣說。上上次也是。' },
+  { speaker:'旁白', text:'你沒有回答。' },
+  { speaker:'雷德', text:'我跟你說！人如果沒有好好吃飯，好好睡覺，就會生病的！' },
+  { speaker:'艾德林', text:'我有……' },
+  { speaker:'雷德', text:'嗯~~~好吧！我相信你！' },
+];
+const REID_CHAT_DAY5_2 = [
+  { speaker:'雷德', text:'其實我的勇者之劍好像被詛咒了。' },
+  { speaker:'艾德林', text:'勇者之劍被詛咒……？' },
+  { speaker:'旁白', text:'你心裡想著，原來靠近雷德時感受到奇怪的氣息並不是錯覺。' },
+  { speaker:'雷德', text:'對阿，來到這裡之後，我發現那把劍變得很奇怪，他好像……變得很興奮？' },
+  { speaker:'旁白', text:'你心裡一沉，你思考著詛咒與阿瓦倫共鳴的可能性。' },
+  { speaker:'艾德林', text:'那你為什麼不把那把劍丟掉？' },
+  { speaker:'雷德', text:'嗯……我有試過把它丟掉，可是隔天他又會自己回到我身上。' },
+  { speaker:'雷德', text:'超級詭異的對吧？這是什麼勇者之劍啊！根本是詛咒之劍！' },
+  { speaker:'雷德', text:'這把劍真的能夠打倒魔王嗎？' },
+  { speaker:'艾德林', text:'……原來你也有這樣的難處啊。' },
+];
+
+const REID_CHAT_DAY7_1 = [
+  { speaker:'雷德', text:'我的劍今天好像特別吵耶……是不是附近的詛咒濃度又升高了呢？' },
+  { speaker:'艾德林', text:'……阿瓦倫今天狀況不太好。' },
+  { speaker:'雷德', text:'……（安靜了難得的幾秒）' },
+  { speaker:'雷德', text:'你知道嗎，我剛拿到這把劍的時候，很想把它丟掉。' },
+  { speaker:'艾德林', text:'後來呢？' },
+  { speaker:'雷德', text:'後來有一次打魔物，它突然自己動了，擋掉了一刀。' },
+  { speaker:'雷德', text:'有時候詛咒也幫助到我了，所以他也不是只有壞處啦～有時候也是滿好用的。' },
+  { speaker:'旁白', text:'你笑了笑，感覺雷德想要安慰你，但是卻非常笨拙。' },
+];
+const REID_CHAT_DAY7_2 = [
+  { speaker:'雷德', text:'這把劍真是太煩了！' },
+  { speaker:'艾德林', text:'怎麼了？' },
+  { speaker:'雷德', text:'這傢伙一直吵著想要吸魔王的血，他沒吸到魔王的血，他就吸我的血欸！' },
+  { speaker:'雷德', text:'這到底是什麼詭異的劍！這種東西怎麼能算是勇者之劍啊！' },
+  { speaker:'艾德林', text:'那把劍是這麼可怕的存在嗎……。' },
+  { speaker:'旁白', text:'你用擔憂的眼神看著雷德。' },
+  { speaker:'雷德', text:'呃……你不用擔心啦！我可是勇者耶，區區一隻劍傷害不了我啦！只是有點痛而已。' },
+  { speaker:'艾德林', text:'……我……抱歉我現在無法幫上忙……。' },
+  { speaker:'雷德', text:'不需要啦！你現在最重要的事情是照顧好阿瓦倫～' },
+  { speaker:'雷德', text:'阿瓦倫健康的長大後，那時候我就打倒魔王了！然後我們從此以後就擺脫詛咒，然後變得快樂又和平了！' },
+  { speaker:'艾德林', text:'嗯……！一定可以的！' },
+];
+
+const REID_CHAT_DAY9_1 = [
+  { speaker:'雷德', text:'魔王長什麼樣子啊？' },
+  { speaker:'艾德林', text:'我也不知道耶。' },
+  { speaker:'雷德', text:'我路過了一些村莊，然後有些村民跟我說，魔王長得很漂亮。' },
+  { speaker:'艾德林', text:'很漂亮嗎？！' },
+  { speaker:'雷德', text:'可是重點是！他是男生耶！' },
+  { speaker:'艾德林', text:'喔……喔……是嗎？' },
+  { speaker:'雷德', text:'我猜那個傢伙一定是用漂亮的外表去迷惑人類！然後把人類當成奴隸使喚！\n真可怕啊！果然魔王必須要打倒！' },
+  { speaker:'艾德林', text:'嗯……加油！' },
+];
+const REID_CHAT_DAY9_2 = [
+  { speaker:'艾德林', text:'你想過打倒魔王之後要做什麼嗎？' },
+  { speaker:'雷德', text:'嗯……不知道耶！' },
+  { speaker:'雷德', text:'我想我應該會想要去環遊世界吧？' },
+  { speaker:'艾德林', text:'環遊世界嗎？感覺真好！' },
+  { speaker:'雷德', text:'對吧？這是很棒的夢想吧？' },
+  { speaker:'雷德', text:'到那時候，阿瓦倫一定也健康長大了，我們可以一起去環遊世界，到處旅行！' },
+  { speaker:'艾德林', text:'聽起來很棒！那一定會很開心！' },
+  { speaker:'雷德', text:'對吧！到時候就讓我來當導遊，帶你們到處去旅行吧～' },
+  { speaker:'艾德林', text:'你確定嗎？那一定會迷路到世界的盡頭的！' },
+  { speaker:'雷德', text:'哈哈哈！我才不是那麼嚴重的路痴！大概吧！' },
+];
+
+const REID_CHAT_DAY11_1 = [
+  { speaker:'雷德', text:'艾德林！你們沒事吧？阿瓦倫還好嗎？' },
+  { speaker:'雷德', text:'前天血月突然升起，嚇死我了，我被勇者之劍吸了超多的血，差點一半的命都沒了！' },
+  { speaker:'雷德', text:'但幸好我身強體壯才熬得過來，但是阿瓦倫呢？他還只是孩子！' },
+  { speaker:'艾德林', text:'雷德……' },
+  { speaker:'旁白', text:'你沉默了一會，艱難的回答。' },
+  { speaker:'艾德林', text:'他……他沒事……他撐過來了……' },
+  { speaker:'雷德', text:'幸好－－！我就知道那孩子很厲害，一定能夠挺過危險的！' },
+  { speaker:'艾德林', text:'嗯……。' },
+];
+const REID_CHAT_DAY11_2 = [
+  { speaker:'雷德', text:'你看起來心情很糟，是發生什麼事了嗎？' },
+  { speaker:'艾德林', text:'我……我只是很害怕……我害怕詛咒會越來越嚴重……' },
+  { speaker:'雷德', text:'不會的！你要相信阿瓦倫啊！' },
+  { speaker:'艾德林', text:'但是……' },
+  { speaker:'旁白', text:'你充滿憂愁的握緊自己的手腕，努力的平復情緒，才能勉強回答。' },
+  { speaker:'艾德林', text:'我害怕……我害怕下一次可能就會失去他……' },
+  { speaker:'雷德', text:'……艾德林……' },
+  { speaker:'雷德', text:'不會的！在那之前我們看看有什麼辦法可以幫助他吧！' },
+  { speaker:'雷德', text:'你不是很會製作藥水嗎？你一定可以研發出最厲害的藥水拯救他的！' },
+  { speaker:'雷德', text:'需要什麼素材都可以跟我說！就算赤龍的角我也可以幫你拿到！' },
+  { speaker:'艾德林', text:'雷德……謝謝你……我真的……真的很謝謝你……' },
+];
+
+function runReidChat() {
+  const avarenHere = G.avarenScene === 'outside' || G.avarenScene === G.scene;
+
+  // 第3天的對話（初次見面後才解鎖）
+  if (G.reidIntroSeen) {
+    if (!G.reidChat3_1Seen) { G.reidChat3_1Seen = true; startActionScene(REID_CHAT_DAY3_1, 400, () => {}); return; }
+    if (!G.reidChat3_2Seen) { G.reidChat3_2Seen = true; startActionScene(REID_CHAT_DAY3_2, 400, () => {}); return; }
+    if (!G.reidChat3CommSeen) { G.reidChat3CommSeen = true; startActionScene(REID_CHAT_DAY3_COMMISSION, 400, () => {}); return; }
+    if (avarenHere && !G.reidChat3Avaren1Seen) { G.reidChat3Avaren1Seen = true; startActionScene(REID_CHAT_DAY3_AVAREN_1, 400, () => {}); return; }
+    if (avarenHere && !G.reidChat3Avaren2Seen) { G.reidChat3Avaren2Seen = true; startActionScene(REID_CHAT_DAY3_AVAREN_2, 400, () => {}); return; }
+  }
+  // 一天只能「開始」一個新階段，但同一階段內可以連著看完
+  const canUnlockNewStage = G.reidNewStageDay !== G.day;
+
+  // 第5天階段
+  if (G.day >= 5) {
+    if (!G.reidChat5_1Seen) {
+      if (!canUnlockNewStage) { story('雷德', pick(RED_DLG)); return; }
+      G.reidNewStageDay = G.day; G.reidChat5_1Seen = true; startActionScene(REID_CHAT_DAY5_1, 400, () => {}); return;
+    }
+    if (!G.reidChat5_2Seen) { G.reidChat5_2Seen = true; startActionScene(REID_CHAT_DAY5_2, 400, () => {}); return; }
+  }
+  // 第7天階段
+  if (G.day >= 7) {
+    if (!G.reidChat7_1Seen) {
+      if (!canUnlockNewStage) { story('雷德', pick(RED_DLG)); return; }
+      G.reidNewStageDay = G.day; G.reidChat7_1Seen = true; startActionScene(REID_CHAT_DAY7_1, 400, () => {}); return;
+    }
+    if (!G.reidChat7_2Seen) { G.reidChat7_2Seen = true; startActionScene(REID_CHAT_DAY7_2, 400, () => {}); return; }
+  }
+  // 第9天階段
+  if (G.day >= 9) {
+    if (!G.reidChat9_1Seen) {
+      if (!canUnlockNewStage) { story('雷德', pick(RED_DLG)); return; }
+      G.reidNewStageDay = G.day; G.reidChat9_1Seen = true; startActionScene(REID_CHAT_DAY9_1, 400, () => {}); return;
+    }
+    if (!G.reidChat9_2Seen) { G.reidChat9_2Seen = true; startActionScene(REID_CHAT_DAY9_2, 400, () => {}); return; }
+  }
+  // 第11天階段
+  if (G.day >= 11) {
+    if (!G.reidChat11_1Seen) {
+      if (!canUnlockNewStage) { story('雷德', pick(RED_DLG)); return; }
+      G.reidNewStageDay = G.day; G.reidChat11_1Seen = true; startActionScene(REID_CHAT_DAY11_1, 400, () => {}); return;
+    }
+    if (!G.reidChat11_2Seen) { G.reidChat11_2Seen = true; startActionScene(REID_CHAT_DAY11_2, 400, () => {}); return; }
+  }
+
+  // 看完後只重播當天（或最近一個有對話的天）的劇情
+  const seenByDay = [
+    { day:3,  stories: [G.reidChat3_1Seen && REID_CHAT_DAY3_1, G.reidChat3_2Seen && REID_CHAT_DAY3_2, G.reidChat3Avaren1Seen && REID_CHAT_DAY3_AVAREN_1, G.reidChat3Avaren2Seen && REID_CHAT_DAY3_AVAREN_2].filter(Boolean) },
+    { day:5,  stories: [G.reidChat5_1Seen && REID_CHAT_DAY5_1, G.reidChat5_2Seen && REID_CHAT_DAY5_2].filter(Boolean) },
+    { day:7,  stories: [G.reidChat7_1Seen && REID_CHAT_DAY7_1, G.reidChat7_2Seen && REID_CHAT_DAY7_2].filter(Boolean) },
+    { day:9,  stories: [G.reidChat9_1Seen && REID_CHAT_DAY9_1, G.reidChat9_2Seen && REID_CHAT_DAY9_2].filter(Boolean) },
+    { day:11, stories: [G.reidChat11_1Seen && REID_CHAT_DAY11_1, G.reidChat11_2Seen && REID_CHAT_DAY11_2].filter(Boolean) },
+  ];
+  // 找到當天或最近一個有看過對話的天
+  const currentPool = seenByDay.filter(e => e.day <= G.day && e.stories.length > 0);
+  if (currentPool.length > 0) {
+    const latest = currentPool[currentPool.length - 1];
+    startActionScene(pick(latest.stories), 400, () => {}); return;
+  }
+
+  // 什麼都沒看過時的備用
+  story('雷德', pick(RED_DLG));
+}
 
 function playReidIntro() {
   if (G.reidIntroSeen) { openRedMenu(); return; }
@@ -3665,32 +3921,40 @@ function openRedMenu() {
   if (Math.abs(ddx) > Math.abs(ddy)) rd.pose = ddx < 0 ? 'sideL' : 'sideR';
   else rd.pose = ddy < 0 ? 'back' : 'front';
   rd.walkFrame = 0; rd.walkTick = 0;
-  // 森林討伐委託：對話時自動交付
-  if (G.scene === 'forest' && G.reidSlayInForest && !G.reidSlayDelivered) {
-    G.reidSlayDelivered = true;
-    G.reidSlayInForest = false;
-    G.reidSlayActive = false;
-    G.reidForestWandering = true;
-    G.redCommissions = G.redCommissions.filter(c => c.key !== 'slay');
-    const slayComm = RED_COMMISSIONS.find(c => c.key === 'slay');
-    if (slayComm) slayComm.deliver();
-    if (G.day === 5 && !G.reidWinterMeetSeen) {
-      G.reidWinterMeetSeen = true;
-      storyThen(() => startActionScene(RED_WINTER_MEET_STORY, 400, () => {}));
-    } else if (G.day === 7 && !G.reidWinterMeetDay7Seen) {
-      G.reidWinterMeetDay7Seen = true;
-      storyThen(() => startActionScene(RED_WINTER_MEET_DAY7_STORY, 400, () => {}));
+  // 森林討伐委託完成 or 漫走中：顯示選單（收取 + 聊聊）
+  const slayJustDone = G.scene === 'forest' && G.reidSlayInForest && !G.reidSlayDelivered;
+  const slayWandering = G.scene === 'forest' && G.reidForestWandering;
+  if (slayJustDone || slayWandering) {
+    const items = [];
+    // 收取獸肉（只有剛完成討伐時才顯示）
+    if (slayJustDone) {
+      items.push({ name:'收取獸肉', fx:'魔物素材+2', req:()=>true,
+        run() {
+          G.reidSlayDelivered = true;
+          G.reidSlayInForest = false;
+          G.reidSlayActive = false;
+          G.reidForestWandering = true;
+          G.redCommissions = G.redCommissions.filter(c => c.key !== 'slay');
+          const slayComm = RED_COMMISSIONS.find(c => c.key === 'slay');
+          if (slayComm) slayComm.deliver();
+        }
+      });
     }
-    return;
-  }
-  if (G.scene === 'forest' && G.day === 5 && G.reidForestWandering && !G.reidWinterMeetSeen) {
-    G.reidWinterMeetSeen = true;
-    startActionScene(RED_WINTER_MEET_STORY, 400, () => {});
-    return;
-  }
-  if (G.scene === 'forest' && G.day === 7 && G.reidForestWandering && !G.reidWinterMeetDay7Seen) {
-    G.reidWinterMeetDay7Seen = true;
-    startActionScene(RED_WINTER_MEET_DAY7_STORY, 400, () => {});
+    // 與雷德聊聊（第5天未看溫特相遇 / 第7天未看）
+    if (G.day === 5 && !G.reidWinterMeetSeen) {
+      items.push({ name:'與雷德聊聊', fx:'（免費）', req:()=>true,
+        run() { G.reidWinterMeetSeen = true; startActionScene(RED_WINTER_MEET_STORY, 400, () => {}); }
+      });
+    } else if (G.day === 7 && !G.reidWinterMeetDay7Seen) {
+      items.push({ name:'與雷德聊聊', fx:'（免費）', req:()=>true,
+        run() { G.reidWinterMeetDay7Seen = true; startActionScene(RED_WINTER_MEET_DAY7_STORY, 400, () => {}); }
+      });
+    } else {
+      items.push({ name:'與雷德聊聊', fx:'（免費）', req:()=>true,
+        run() { runReidChat(); }
+      });
+    }
+    showActionMenu('迷路勇者・雷德', items);
     return;
   }
   if (G.avarenScene === 'outside') {
@@ -3723,7 +3987,7 @@ function showRedCommissionMenu() {
   // 非正規出現日（只是來交貨）則只顯示聊聊
   const chatOnly = !isReidDay() && G.reidVisitDay === G.day;
 
-  if (!chatOnly && G.day === 11) {
+  if (!chatOnly && G.day === 11 && G.reidChat11_1Seen && G.reidChat11_2Seen) {
     const alreadyHeart = !!G.reidDemonHeartCommissionedToday;
     items.push({
       name: alreadyHeart ? '今日已委託：魔王的心臟' : '委託：魔王的心臟',
@@ -3744,7 +4008,7 @@ function showRedCommissionMenu() {
     });
   }
 
-  if (!chatOnly) RED_COMMISSIONS.forEach(c => {
+  if (!chatOnly && G.reidChat3CommSeen) RED_COMMISSIONS.forEach(c => {
     if (pendingKeys.has(c.key)) {
       const pending = G.redCommissions.find(p => p.key === c.key);
       items.push({
@@ -3785,8 +4049,8 @@ function showRedCommissionMenu() {
     }
   });
 
-  items.push({ name:'和雷德聊聊', fx:'（免費）', req:()=>true,
-    run(){ story('雷德', pick(RED_DLG)); }});
+  items.push({ name:'與雷德聊聊', fx:'（免費）', req:()=>true,
+    run(){ runReidChat(); }});
   showActionMenu('迷路勇者・雷德', items);
 }
 
@@ -3945,34 +4209,137 @@ const WINTER_TRADE = [
       story('溫特','……點著以後放在窗邊。不只對魔物，對人也有效。'); } },
 ];
 
+// ══ 溫特五天聊聊劇情 ══
+const WINTER_CHAT_DAY4_1 = [
+  { speaker: '溫特', text: '你還在這裡。' },
+  { speaker: '艾德林', text: '我想多問你幾個問題。' },
+  { speaker: '溫特', text: '……問吧，但我不保證能回答清楚。' },
+  { speaker: '艾德林', text: '你在這片森林裡做什麼？' },
+  { speaker: '溫特', text: '觀察。' },
+  { speaker: '艾德林', text: '觀察什麼？' },
+  { speaker: '溫特', text: '失衡的東西。' },
+  { speaker: '溫特', text: '……你現在也算其中一個。' },
+  { speaker: '艾德林', text: '是我讓這裡失衡了？' },
+  { speaker: '溫特', text: '不是你。\n是你帶來的東西。' },
+];
+const WINTER_CHAT_DAY4_2 = [
+  { speaker: '溫特', text: '那個孩子，今天怎樣了。' },
+  { speaker: '艾德林', text: '……你在觀察我們？' },
+  { speaker: '溫特', text: '我會觀察森林裡的一切。' },
+  { speaker: '艾德林', text: '不太好……他的詛咒被固定得太深了。' },
+  { speaker: '溫特', text: '……你是怎麼讓他穩定下來的？' },
+  { speaker: '艾德林', text: '老師稱讚過我，我天生就有淨化詛咒的天賦……' },
+  { speaker: '旁白', text: '不知道怎麼的，溫特雖然冰冷，但他的聲音卻讓你無意中卸下了防備，你忍不住脫口向他說了更多。' },
+  { speaker: '艾德林', text: '是因為這樣……所以老師才會收留無依無靠的我當作徒弟。' },
+  { speaker: '溫特', text: '……' },
+  { speaker: '溫特', text: '……你也只是個辛苦的孩子而已。' },
+  { speaker: '旁白', text: '溫特沒有再問了。但你覺得，他問這個問題，不是隨口的。' },
+];
+
+const WINTER_CHAT_DAY5_1 = [
+  { speaker: '旁白', text: '溫特看了你一眼，沒有立刻說話。' },
+  { speaker: '溫特', text: '……你多大。' },
+  { speaker: '艾德林', text: '十五。' },
+  { speaker: '溫特', text: '……' },
+  { speaker: '溫特', text: '十五歲。帶一個年幼的孩子逃進森林嗎……？' },
+  { speaker: '艾德林', text: '有什麼問題嗎。' },
+  { speaker: '溫特', text: '沒有。\n這片森林對你們來說很危險。' },
+  { speaker: '艾德林', text: '我知道……但我們無處可去。' },
+  { speaker: '溫特', text: '……' },
+  { speaker: '溫特', text: '不過你撐到現在了。' },
+  { speaker: '旁白', text: '他把視線轉開，不再說話。但那句話說出口的方式，不太像是批評。' },
+];
+const WINTER_CHAT_DAY5_2 = [
+  { speaker: '溫特', text: '我很驚訝，你把那孩子的詛咒濃度降低了。' },
+  { speaker: '艾德林', text: '……嗯……我真的很努力。' },
+  { speaker: '溫特', text: '這不是一件簡單的事。' },
+  { speaker: '旁白', text: '溫特沉默了一陣子，似乎想說什麼又嚥了回去。' },
+  { speaker: '溫特', text: '希望你的努力能動搖規則。' },
+  { speaker: '艾德林', text: '什麼意思？' },
+  { speaker: '旁白', text: '溫特搖了搖頭，然後移開了視線，沒有回答。' },
+];
+
+const WINTER_CHAT_DAY6_1 = [
+  { speaker: '溫特', text: '你看起來變得更瘦了，難道你不知道人類最重要的職責就是吃飯嗎？' },
+  { speaker: '旁白', text: '你有點驚訝溫特主動關心了你。' },
+  { speaker: '艾德林', text: '有的……只是有時候太忙會忘記吃飯。' },
+  { speaker: '艾德林', text: '……你在關心我嗎？' },
+  { speaker: '溫特', text: '不是。' },
+  { speaker: '溫特', text: '我只是在觀察而已，因為這是我的工作。' },
+  { speaker: '旁白', text: '你疑惑地歪了歪頭，但你開始覺得，這好像是溫特關心人的方式。' },
+];
+const WINTER_CHAT_DAY6_2 = [
+  { speaker: '旁白', text: '你忍不住問了溫特。' },
+  { speaker: '艾德林', text: '為什麼你要觀察森林的詛咒？' },
+  { speaker: '旁白', text: '溫特沉默了一會兒，你以為他會再次迴避問題，但他回答了。' },
+  { speaker: '溫特', text: '……那孩子……很不幸，他被這個世界選為犧牲品，為了減輕這個世界混濁的能量……' },
+  { speaker: '溫特', text: '他本來……不該活著的……但你守住了他。\n我不確定能撐多久。' },
+  { speaker: '旁白', text: '溫特看向湖面，若有似無地輕聲說著。你不確定自己有沒有聽錯。' },
+  { speaker: '溫特', text: '那是他被寫好的規則，就如同我一樣……。' },
+];
+
+const WINTER_CHAT_DAY7_1 = [
+  { speaker: '溫特', text: '這個……幫我拿去丟掉吧，我用不到。' },
+  { speaker: '旁白', text: '溫特遞給你了一束藥材。' },
+  { speaker: '艾德林', text: '……謝謝你！' },
+  { speaker: '溫特', text: '你在道謝什麼，我說了那只是垃圾。' },
+  { speaker: '艾德林', text: '啊……是嗎？' },
+  { speaker: '旁白', text: '你忍不住笑了出來。你覺得溫特其實是個很溫柔的人。' },
+];
+const WINTER_CHAT_DAY7_2 = [
+  { speaker: '溫特', text: '這個世界很殘忍。' },
+  { speaker: '艾德林', text: '什麼意思？' },
+  { speaker: '溫特', text: '它為了自己的方便，創造了一些人替它完成工作。' },
+  { speaker: '艾德林', text: '工作……？' },
+  { speaker: '溫特', text: '混沌的犧牲品，執行任務的蠢貨，管理魔物的首領……' },
+  { speaker: '艾德林', text: '你的意思是……？' },
+  { speaker: '溫特', text: '所以我很好奇，破壞規則的人能不能成功。' },
+  { speaker: '旁白', text: '溫特看向了你。' },
+  { speaker: '溫特', text: '其實我希望你能成功。' },
+  { speaker: '旁白', text: '雖然你聽不懂，但是你還是點了點頭。' },
+  { speaker: '艾德林', text: '我會的。' },
+  { speaker: '旁白', text: '溫特的嘴角微微勾起了弧度，很難得地朝你微笑。' },
+];
+
+const WINTER_CHAT_DAY8 = [
+  { speaker: '溫特', text: '即使下雨了，你也還是來森林了嗎？' },
+  { speaker: '艾德林', text: '嗯……！我需要採集藥草。' },
+  { speaker: '溫特', text: '明明你也只是個孩子而已……' },
+  { speaker: '旁白', text: '溫特一直盯著你，像是有話想說，但卻一直猶豫。' },
+  { speaker: '艾德林', text: '？' },
+  { speaker: '溫特', text: '……明天很危險。' },
+  { speaker: '艾德林', text: '明天？' },
+  { speaker: '溫特', text: '今天晚上……去湖邊看看吧，會出現你需要的東西。' },
+  { speaker: '艾德林', text: '什麼？什麼東西？' },
+  { speaker: '溫特', text: '我本來不該干涉的，但是……算了就這樣吧。\n今天晚上去取得你需要的東西。' },
+  { speaker: '艾德林', text: '你知道些什麼？' },
+  { speaker: '旁白', text: '溫特搖搖頭，沉默不語。' },
+];
+
 const WINTER_INTRO_STORY = [
   { speaker: '旁白', text: '森林裡比平常更安靜。\n\n你走過樹影時，忽然發現前方站著一個陌生的人影。\n\n他站在林間，像是早就等在那裡。\n黑色的衣擺沒有沾上泥土，連呼吸都安靜得不像人類。' },
   { speaker: '艾德林', text: '……你是誰？' },
-  { speaker: '神秘旅人', text: '這句話應該由我問你。\n這片森林的魔物在躁動。' },
+  { speaker: '神秘旅人', text: '這句話應該由我問你。\n這片森林的魔物們在躁動。' },
   { speaker: '艾德林', text: '躁動？' },
-  { speaker: '神秘旅人', text: '詛咒的味道。\n魔物們被吸引過來了。' },
-  { speaker: '旁白', text: '他的視線越過你，看向森林深處。\n像是在觀察某種失衡的現象。' },
-  { speaker: '神秘旅人', text: '這裡不該有這麼濃的詛咒。\n有人把麻煩帶進了森林。' },
+  { speaker: '神秘旅人', text: '因為有詛咒的味道。\n魔物們被吸引過來了。' },
+  { speaker: '旁白', text: '他的視線越過你，看向森林深處小屋的方向。' },
+  { speaker: '神秘旅人', text: '這裡本來不該有這麼濃的詛咒……就是你把麻煩帶進了森林嗎？' },
   { speaker: '旁白', text: '你的手指微微收緊。' },
-  { speaker: '艾德林', text: '詛咒怎麼了嗎...？' },
-  { speaker: '神秘旅人', text: '我是來確認它會不會擴散。' },
+  { speaker: '艾德林', text: '什麼意思……？' },
+  { speaker: '神秘旅人', text: '我只是來確保平衡沒有被破壞。' },
   { speaker: '艾德林', text: '……' },
-  { speaker: '神秘旅人', text: '那孩子......我從來沒見過一個人類能裝下那麼多詛咒還能活著。' },
+  { speaker: '神秘旅人', text: '那孩子……我從來沒見過一個人類能裝下那麼多詛咒還能活著。' },
   { speaker: '艾德林', text: '……你怎麼知道阿瓦倫的事情？' },
   { speaker: '神秘旅人', text: '森林們的孩子告訴我的。' },
   { speaker: '神秘旅人', text: '別露出那種表情。\n我沒有想對你們幹嘛。' },
   { speaker: '艾德林', text: '那你想做什麼？' },
   { speaker: '神秘旅人', text: '我只是在保持平衡，避免魔物們不斷的往這裡聚集。' },
-  { speaker: '艾德林', text: '你能控制魔物？' },
-  { speaker: '神秘旅人', text: '有些能。\n有些不能。' },
   { speaker: '艾德林', text: '你到底是什麼人？' },
   { speaker: '神秘旅人', text: '溫特。' },
   { speaker: '艾德林', text: '我問的不是名字。' },
   { speaker: '旁白', text: '他沒有回答你，只是看著你。\n目光像冬天的湖面深得看不見底，但卻帶有一絲柔和。' },
-  { speaker: '溫特', text: '這幾天最好別讓那孩子靠近森林。\n這裡的東西會喜歡他。' },
-  { speaker: '艾德林', text: '什麼意思？' },
-  { speaker: '溫特', text: '字面意思。' },
-  { speaker: '溫特', text: '如果你還想問問題，就在森林裡找我。\n我會在這附近觀察一陣子。' },
+  { speaker: '溫特', text: '最好別讓那孩子靠近森林。\n這裡的東西會喜歡他。' },
+  { speaker: '艾德林', text: '……' },
 ];
 
 const WINTER_REID_MEET_STORY = [
@@ -4009,26 +4376,6 @@ const WINTER_REID_MEET_DAY7_STORY = [
   { speaker: '溫特', text: '希望他能迷路久一點。\n這樣我就不會一直看到他了。' },
 ];
 
-const WINTER_DAY8_FAIRY_HINT_STORY = [
-  { speaker: '旁白', text: '雨聲落在森林裡。\n枝葉被打得低垂，泥土裡泛著濕冷的氣味。' },
-  { speaker: '溫特', text: '你今天還是來了。' },
-  { speaker: '艾德林', text: '我需要找能幫阿瓦倫的東西。' },
-  { speaker: '溫特', text: '……我知道。' },
-  { speaker: '旁白', text: '溫特看著你，像是想說什麼。\n但他最後只是把視線移向森林更深處。' },
-  { speaker: '溫特', text: '我本來不該干涉。' },
-  { speaker: '艾德林', text: '什麼意思？' },
-  { speaker: '溫特', text: '平衡不是靠偏袒誰維持的。\n不管是人類、魔物，還是被詛咒纏住的人。' },
-  { speaker: '艾德林', text: '……' },
-  { speaker: '溫特', text: '但你看起來已經快把自己也拖垮了。' },
-  { speaker: '旁白', text: '他的聲音仍然很淡。\n不像安慰，卻也不像責備。' },
-  { speaker: '溫特', text: '今晚別離湖太遠。' },
-  { speaker: '艾德林', text: '湖邊？' },
-  { speaker: '溫特', text: '雨後的妖精會被濕氣和詛咒的味道吸引。\n尤其是夜裡。' },
-  { speaker: '艾德林', text: '你是說，今晚會有妖精出現？' },
-  { speaker: '溫特', text: '我什麼都沒說。' },
-  { speaker: '旁白', text: '溫特轉過身，黑色的衣擺被雨霧沾濕了一點。' },
-  { speaker: '溫特', text: '只是如果你需要某種會發光、又很難抓的東西。\n今晚可以去森林湖邊看看。' },
-];
 
 function playWinterIntro() {
   if (G.winterIntroSeen) { openWinterMenu(); return; }
@@ -4037,45 +4384,119 @@ function playWinterIntro() {
   startActionScene(WINTER_INTRO_STORY, 400, () => {});
 }
 
+function runWinterChat() {
+  const canUnlockNewStage = G.winterNewStageDay !== G.day;
+
+  // 第4天階段
+  if (G.day >= 4) {
+    if (!G.winterChat4_1Seen) {
+      if (!canUnlockNewStage) { story('溫特', pick(WINTER_DLG_GENERAL)); return; }
+      G.winterNewStageDay = G.day; G.winterChat4_1Seen = true; startActionScene(WINTER_CHAT_DAY4_1, 400, () => {}); return;
+    }
+  }
+
+  // 第5天階段
+  if (G.day >= 5) {
+    if (!G.winterChat4_2Seen) {
+      if (!canUnlockNewStage) { story('溫特', pick(WINTER_DLG_GENERAL)); return; }
+      G.winterNewStageDay = G.day; G.winterChat4_2Seen = true; startActionScene(WINTER_CHAT_DAY4_2, 400, () => {}); return;
+    }
+    if (!G.winterChat5_1Seen) { G.winterChat5_1Seen = true; startActionScene(WINTER_CHAT_DAY5_1, 400, () => {}); return; }
+    if (!G.winterChat5_2Seen) { G.winterChat5_2Seen = true; startActionScene(WINTER_CHAT_DAY5_2, 400, () => {}); return; }
+  }
+
+  // 第6天階段
+  if (G.day >= 6) {
+    if (!G.winterChat6_1Seen) {
+      if (!canUnlockNewStage) { story('溫特', pick(WINTER_DLG_GENERAL)); return; }
+      G.winterNewStageDay = G.day; G.winterChat6_1Seen = true; startActionScene(WINTER_CHAT_DAY6_1, 400, () => {}); return;
+    }
+    if (!G.winterChat6_2Seen) { G.winterChat6_2Seen = true; startActionScene(WINTER_CHAT_DAY6_2, 400, () => {}); return; }
+  }
+
+  // 第7天階段
+  if (G.day >= 7) {
+    if (!G.winterChat7_1Seen) {
+      if (!canUnlockNewStage) { story('溫特', pick(WINTER_DLG_GENERAL)); return; }
+      G.winterNewStageDay = G.day; G.winterChat7_1Seen = true; chg('herb', 2); renderHUD(); startActionScene(WINTER_CHAT_DAY7_1, 400, () => {}); return;
+    }
+    if (!G.winterChat7_2Seen) { G.winterChat7_2Seen = true; startActionScene(WINTER_CHAT_DAY7_2, 400, () => {}); return; }
+  }
+
+  // 第8天階段
+  if (G.day >= 8) {
+    if (!G.winterChat8Seen) {
+      if (!canUnlockNewStage) { story('溫特', pick(WINTER_DLG_GENERAL)); return; }
+      G.winterNewStageDay = G.day; G.winterChat8Seen = true; G.winterDay8FairyHintSeen = true;
+      startActionScene(WINTER_CHAT_DAY8, 400, () => {}); return;
+    }
+  }
+
+  // 所有劇情都看完，重播當前階段
+  const seenByDay = [
+    { day:4, stories: [G.winterChat4_1Seen && WINTER_CHAT_DAY4_1].filter(Boolean) },
+    { day:5, stories: [G.winterChat4_2Seen && WINTER_CHAT_DAY4_2, G.winterChat5_1Seen && WINTER_CHAT_DAY5_1, G.winterChat5_2Seen && WINTER_CHAT_DAY5_2].filter(Boolean) },
+    { day:6, stories: [G.winterChat6_1Seen && WINTER_CHAT_DAY6_1, G.winterChat6_2Seen && WINTER_CHAT_DAY6_2].filter(Boolean) },
+    { day:7, stories: [G.winterChat7_1Seen && WINTER_CHAT_DAY7_1, G.winterChat7_2Seen && WINTER_CHAT_DAY7_2].filter(Boolean) },
+    { day:8, stories: [G.winterChat8Seen && WINTER_CHAT_DAY8].filter(Boolean) },
+  ];
+  const currentPool = seenByDay.filter(e => e.day <= G.day && e.stories.length > 0);
+  if (currentPool.length > 0) {
+    startActionScene(pick(currentPool[currentPool.length - 1].stories), 400, () => {}); return;
+  }
+  story('溫特', pick(WINTER_DLG_GENERAL));
+}
+
 function openWinterMenu() {
   SFX.interact();
-  if (G.day === 8 && G.scene === 'forest' && G.timePeriod === 'morning' && !G.winterDay8FairyHintSeen) {
-    G.winterDay8FairyHintSeen = true;
-    startActionScene(WINTER_DAY8_FAIRY_HINT_STORY, 400, () => {});
-    return;
-  }
-  if (G.day === 5 && G.scene === 'forest' && (G.reidSlayInForest || G.reidForestWandering || G.reidSlayDelivered) && !G.winterReidMeetSeen) {
+
+  // 雷德相遇劇情：靠近時自動觸發（不需點選單）
+  if (G.day === 5 && (G.reidSlayInForest || G.reidForestWandering || G.reidSlayDelivered) && !G.winterReidMeetSeen) {
     G.winterReidMeetSeen = true;
     startActionScene(WINTER_REID_MEET_STORY, 400, () => {});
     return;
   }
-  if (G.day === 7 && G.scene === 'forest' && (G.reidSlayInForest || G.reidForestWandering || G.reidSlayDelivered) && !G.winterReidMeetDay7Seen) {
+  if (G.day === 7 && (G.reidSlayInForest || G.reidForestWandering || G.reidSlayDelivered) && !G.winterReidMeetDay7Seen) {
     G.winterReidMeetDay7Seen = true;
     startActionScene(WINTER_REID_MEET_DAY7_STORY, 400, () => {});
     return;
   }
-  const avarenInForest = G.avarenScene === 'forest';
+
+  // 選單
   const items = [];
 
-  // 聊聊系列
-  if (avarenInForest) {
-    items.push({ name:'聊聊（關於那個人）', fx:'（免費）', req:()=>true,
-      run(){ story('溫特', pick(WINTER_DLG_AVAREN)); } });
-    items.push({ name:'聊聊（關於詛咒）', fx:'（免費）', req:()=>true,
-      run(){ story('溫特', pick(WINTER_DLG_CURSE)); } });
-  } else {
-    items.push({ name:'聊聊（關於森林）', fx:'（免費）', req:()=>true,
-      run(){ story('溫特', pick(WINTER_DLG_GENERAL)); } });
-    items.push({ name:'聊聊（關於魔物）', fx:'（免費）', req:()=>true,
-      run(){ story('溫特', pick(WINTER_DLG_CURSE)); } });
-  }
-  items.push({ name:'聊聊（關於那個勇者）', fx:'（免費）', req:()=>true,
-    run(){ story('溫特', pick(WINTER_DLG_REID)); } });
+  // 1. 與溫特聊聊
+  items.push({ name:'與溫特聊聊', fx:'（免費）', req:()=>true, run(){ runWinterChat(); } });
 
-  // 交易
-  WINTER_TRADE.forEach(t => {
-    items.push({ name:'交易：' + t.name, fx:`金錢-${t.cost}　${t.desc}`, req: t.req, run: t.run });
-  });
+  // 2. 魔物安撫香（第一次是「神秘的香味」觸發對話，之後才變成可購買）
+  if (!G.winterIncenseIntroSeen) {
+    items.push({
+      name:'神秘的香味', fx:'（免費）', req:() => true,
+      run() {
+        G.winterIncenseIntroSeen = true;
+        startActionScene([
+          { speaker:'艾德林', text:'為什麼魔物不會攻擊你呢？' },
+          { speaker:'溫特', text:'因為我是……' },
+          { speaker:'溫特', text:'……' },
+          { speaker:'溫特', text:'那些孩子讓你很困擾嗎？有辦法能讓他們冷靜點。' },
+          { speaker:'艾德林', text:'怎麼做？' },
+          { speaker:'溫特', text:'給我三朵白藥花，我就能幫你製作魔物安撫香。' },
+          { speaker:'艾德林', text:'真的嗎？謝謝你！' },
+        ], 400, () => {});
+      }
+    });
+  } else if (!G.slimeCalmed) {
+    items.push({
+      name:'魔物安撫香', fx:'白藥花-3　讓史萊姆當天無害', req:() => G.whiteFlower >= 3,
+      run() { chg('whiteFlower', -3); G.slimeCalmed = true; renderHUD(); story('溫特', '……點著以後放在窗邊。今天那些東西不會再靠近你了。'); }
+    });
+  }
+
+  // 3. 聊聊（關於那個勇者）——溫特與雷德相遇後才出現
+  if (G.winterReidMeetSeen || G.winterReidMeetDay7Seen) {
+    items.push({ name:'聊聊（關於那個勇者）', fx:'（免費）', req:()=>true,
+      run(){ story('溫特', pick(WINTER_DLG_REID)); } });
+  }
 
   showActionMenu('神秘旅人・溫特', items);
 }
@@ -4678,6 +5099,14 @@ function initState() {
     winterReidMeetSeen: false,
     winterReidMeetDay7Seen: false,
     winterDay8FairyHintSeen: false,
+    winterChat4_1Seen: false, winterChat4_2Seen: false,
+    winterChat5_1Seen: false, winterChat5_2Seen: false,
+    winterChat6_1Seen: false, winterChat6_2Seen: false,
+    winterChat7_1Seen: false, winterChat7_2Seen: false,
+    winterChat8Seen: false,
+    winterNewStageDay: 0,
+    slimeCalmed: false,
+    winterIncenseIntroSeen: false,
     avarenWaitedForForest: false,
     avarenAwake: false,
     avarenBedRest: false,
@@ -4713,6 +5142,13 @@ function initState() {
     reidVisitDay: 0,
     reidIntroSeen: false,
     reidIntroNoticeSeen: false,
+    reidChat3_1Seen: false, reidChat3_2Seen: false, reidChat3CommSeen: false,
+    reidChat3Avaren1Seen: false, reidChat3Avaren2Seen: false,
+    reidChat5_1Seen: false, reidChat5_2Seen: false,
+    reidChat7_1Seen: false, reidChat7_2Seen: false,
+    reidChat9_1Seen: false, reidChat9_2Seen: false,
+    reidChat11_1Seen: false, reidChat11_2Seen: false,
+    reidNewStageDay: 0,
     reidWinterMeetSeen: false,
     reidWinterMeetDay7Seen: false,
     reidSlayPendingWalk: false,
@@ -5110,7 +5546,7 @@ function renderChars() {
 
   // ── Fairy ──
   const cwFairy = document.getElementById('cw-fairy');
-  const fairyVisible = G.scene === 'forest' && G.timePeriod === 'evening' && G.day % 2 === 0 && !G.fairyCaught;
+  const fairyVisible = G.scene === 'forest' && G.timePeriod === 'evening' && G.day === 8 && !G.fairyCaught;
   if (fairyVisible) {
     cwFairy.style.left    = (G.fairy.x - 20) + 'px';
     cwFairy.style.top     = (G.fairy.y - 40) + 'px';
@@ -5642,7 +6078,10 @@ function gameLoop() {
         if (G.scene === 'room') {
           G.day4AvarenNotified = true;
           setTimeout(() => {
-            storyAuto('旁白', '你四處找了找，都沒有找到阿瓦倫的身影。');
+            startActionScene([
+              { speaker: '旁白', text: '你四處找了找，都沒有找到阿瓦倫的身影。' },
+              { speaker: '艾德林', text: '「阿瓦倫……？你在哪裡？」' }
+            ], 400, () => {});
           }, 1200);
         }
       }
@@ -5665,6 +6104,7 @@ function gameLoop() {
   }
   if (G.day !== 0 && !G.manualPaused && !G.dayEndTriggered && _elapsed >= DAY_REAL_SECONDS) {
     G.dayEndTriggered = true;
+    if (G.bloodMoon7Active) return; // 血月特殊天，由血月流程自行結束，不顯示力竭而眠
     G.paused = true;
     cancelAnimationFrame(raf);
     switchBGM('bgm-day10');
@@ -5943,7 +6383,7 @@ function gameLoop() {
     else { av.pose = ddy < 0 ? 'back' : 'front'; }
     av.walkFrame = 0; av.walkTick = 0;
   }
-  if (!isAvarenUnconscious() && !isAvarenBedRest() && !isDlgBlocking() && !G.bloodMoon7Active && !bloodMoonAfterMorning && G.mood > 50 && G.avarenScene === G.scene) {
+  if (!isAvarenUnconscious() && !isAvarenBedRest() && !isDlgBlocking() && !G.bloodMoon7Active && !bloodMoonAfterMorning && G.mood > 50 && G.avarenScene === G.scene && G.day !== 11) {
     const av = G.avaren;
     const ddx = el.x - av.x, ddy = el.y - av.y;
     const d = Math.hypot(ddx, ddy);
@@ -6903,7 +7343,25 @@ document.addEventListener('keydown', e => {
       G.fairyCaught = true;
       G.fairyItem++;
       renderHUD();
+      playLoopingAudio('sfx-fairy', 3.0);
       toast('✨ 妖精 +1');
+      const flickerEl = document.getElementById('fairy-flicker-overlay');
+      if (flickerEl) {
+        flickerEl.style.display = 'block';
+        flickerEl.style.animation = 'none';
+        void flickerEl.offsetWidth;
+        flickerEl.style.animation = 'fairyFlicker 1.4s ease-out forwards';
+        setTimeout(() => { flickerEl.style.display = 'none'; }, 1500);
+      }
+      setTimeout(() => {
+        if (G.winterChat8Seen) {
+          storyAuto('妖精', '那個傢伙……也想要違抗命運嗎？……嘻嘻……真愚蠢。');
+          storyAuto('妖精', '世界的規則沒那麼簡單可以改變……告訴你一個好消息吧？');
+          storyAuto('妖精', '魔王的心臟……可以實現你的願望。');
+        } else {
+          storyAuto('妖精', '嘻嘻……你就算做再多，那孩子也不會原諒你的……');
+        }
+      }, 1000);
     } else if (zone && zone.isScene) {
       zone.fn();
     } else if (zone && zone.interactHint) {
@@ -8202,7 +8660,7 @@ function startActionScene(lines, max, onDone) {
   document.getElementById('action-scene-overlay').style.display = 'flex';
 }
 
-const NPC_SPEAKERS = new Set(['旁白', '你', '艾德林', '阿瓦倫', '雷德', '陌生青年', '溫特', '神秘旅人', '諾亞']);
+const NPC_SPEAKERS = new Set(['旁白', '你', '艾德林', '阿瓦倫', '雷德', '陌生青年', '溫特', '神秘旅人', '諾亞', '妖精']);
 const SPEAKER_AVATARS = {
   '你': 'eldrin_avatar.png',
   '艾德林': 'eldrin_avatar.png',
@@ -8781,7 +9239,7 @@ function doAction_Sleep() {
   if (G.timePeriod !== 'evening') { timeWarn('現在還是早上，先去做些事吧。'); return; }
   if (G.bloodMoon7Active) { warn('無法行動。'); return; }
   if (G.carryingSoup) { warn('拿著料理無法入睡'); return; }
-  const shouldNightResearchSleep = G.day <= 2 || (!G.usedForgetMagic && (G.day === 10 || G.day === 11));
+  const shouldNightResearchSleep = G.day <= 2 || G.day === 11 || (!G.usedForgetMagic && G.day === 10);
   if (shouldNightResearchSleep) {
     showActionMenu('今晚要怎麼做？', [
       {
@@ -9271,7 +9729,10 @@ function skipToEvening() {
       if (G.scene === 'room') {
         G.day4AvarenNotified = true;
         setTimeout(() => {
-          storyAuto('旁白', '你四處找了找，都沒有找到阿瓦倫的身影。');
+          startActionScene([
+            { speaker: '旁白', text: '你四處找了找，都沒有找到阿瓦倫的身影。' },
+            { speaker: '艾德林', text: '「阿瓦倫……？你在哪裡？」' }
+          ], 400, () => {});
         }, 1200);
       }
     }
@@ -9397,6 +9858,13 @@ function endDay() {
     return;
   }
 
+  // 第11天：跳過結算框，直接進結局
+  if (G.day === 11) {
+    G.day++;
+    endGame('time_up');
+    return;
+  }
+
   if (G.bloodMoon7Active && !G.usedForgetMagic) {
     finishBloodMoonNightWithoutForget();
     return;
@@ -9436,6 +9904,18 @@ function endDay() {
   // 每晚睡眠恢復 HP
   chg('eldrinHp', 20);
 
+  // 第10天未使用忘卻藥水：阿瓦倫拒絕照護，詛咒不解除反而增加
+  if (G.day === 10 && !G.usedForgetMagic && !G.bloodMoon7Active) {
+    chg('curse', +6);
+    renderHUD();
+    if (G.pain >= 100 && G.curse >= 80) { showEvent('💀','危機——', `阿瓦倫的疼痛與詛咒同時達到極限……\n黑霧將他吞噬。`, () => endGame('crisis'), 'red'); return; }
+    const nightText = `你走近阿瓦倫的房間，想為他做些什麼。\n他沒有轉過來。\n\n「……別碰我。」\n\n你只能停在房門外，\n什麼也幫不上。\n\n詛咒 +6`;
+    G.day++;
+    G.slimeCalmed = false;
+    showEvent('🌑', '一天結束', nightText, () => afterNight(''), 'red', 0);
+    return;
+  }
+
   // Random curse removal at end of day
   const removed = Math.floor(Math.random() * 6) + 1; // 1-6
   const curseBefore = G.curse;
@@ -9451,6 +9931,7 @@ function endDay() {
       : `夜晚悄然降臨。\n\n你精疲力竭地坐在床邊，\n今夜的解咒似乎沒什麼效果……`;
 
   G.day++;
+  G.slimeCalmed = false;
   if (G.day === 2 && avarenWakesOnDay2) {
     G.avarenAwake = true;
     G.avarenBedRest = true;
@@ -9984,6 +10465,20 @@ function loadFromSlot(n) {
     if (!G.slime2) G.slime2 = { x: SLIME2_HOME.x, y: SLIME2_HOME.y, attackCooldown: 0, hopTick: 35 };
     if (!G.noah) G.noah = { x: 500, y: 360, pose: 'front', walkTick: 0, walkFrame: 0, walkDir:{dx:0,dy:0}, walkTimer:0, bubbleTimer:0, bubbleText:'', autoSpeakTimer:260, blinkTimer: 340, blinkPhase: -1, blinkPhaseTick: 0, pushVx:0, pushVy:0 };
     if (G.reidIntroSeen == null) G.reidIntroSeen = false;
+    if (G.reidChat3_1Seen == null) G.reidChat3_1Seen = false;
+    if (G.reidChat3_2Seen == null) G.reidChat3_2Seen = false;
+    if (G.reidChat3CommSeen == null) G.reidChat3CommSeen = false;
+    if (G.reidChat3Avaren1Seen == null) G.reidChat3Avaren1Seen = false;
+    if (G.reidChat3Avaren2Seen == null) G.reidChat3Avaren2Seen = false;
+    if (G.reidChat5_1Seen == null) G.reidChat5_1Seen = false;
+    if (G.reidChat5_2Seen == null) G.reidChat5_2Seen = false;
+    if (G.reidChat7_1Seen == null) G.reidChat7_1Seen = false;
+    if (G.reidChat7_2Seen == null) G.reidChat7_2Seen = false;
+    if (G.reidChat9_1Seen == null) G.reidChat9_1Seen = false;
+    if (G.reidChat9_2Seen == null) G.reidChat9_2Seen = false;
+    if (G.reidChat11_1Seen == null) G.reidChat11_1Seen = false;
+    if (G.reidChat11_2Seen == null) G.reidChat11_2Seen = false;
+    if (G.reidNewStageDay == null) G.reidNewStageDay = 0;
     if (G.maxDays == null || G.maxDays < 11) G.maxDays = 11;
     if (G.reidDemonHeartCount == null) G.reidDemonHeartCount = 0;
     if (G.reidDemonHeartCommissionedToday == null) G.reidDemonHeartCommissionedToday = false;
@@ -9995,6 +10490,18 @@ function loadFromSlot(n) {
     if (G.winterReidMeetSeen == null) G.winterReidMeetSeen = false;
     if (G.winterReidMeetDay7Seen == null) G.winterReidMeetDay7Seen = false;
     if (G.winterDay8FairyHintSeen == null) G.winterDay8FairyHintSeen = false;
+    if (G.winterChat4_1Seen == null) G.winterChat4_1Seen = false;
+    if (G.winterChat4_2Seen == null) G.winterChat4_2Seen = false;
+    if (G.winterChat5_1Seen == null) G.winterChat5_1Seen = false;
+    if (G.winterChat5_2Seen == null) G.winterChat5_2Seen = false;
+    if (G.winterChat6_1Seen == null) G.winterChat6_1Seen = false;
+    if (G.winterChat6_2Seen == null) G.winterChat6_2Seen = false;
+    if (G.winterChat7_1Seen == null) G.winterChat7_1Seen = false;
+    if (G.winterChat7_2Seen == null) G.winterChat7_2Seen = false;
+    if (G.winterChat8Seen == null) G.winterChat8Seen = false;
+    if (G.winterNewStageDay == null) G.winterNewStageDay = 0;
+    if (G.slimeCalmed == null) G.slimeCalmed = false;
+    if (G.winterIncenseIntroSeen == null) G.winterIncenseIntroSeen = false;
     if (G.day === 8) G.weather = 'rain';
     if (G.noahDay2IntroSeen == null) G.noahDay2IntroSeen = false;
     if (G.noahLobbyTalking == null) G.noahLobbyTalking = false;
