@@ -182,9 +182,7 @@ body {
   font-size: 11px; color: #f0e0a0; letter-spacing: 1px; }
 .hud-right { display: flex; gap: 12px; align-items: center; }
 #blood-moon-badge {
-  display: none; font-size: 12px; color: #e04040; border: 1px solid #8a1010;
-  padding: 2px 8px; letter-spacing: 2px; background: #1a0606;
-  animation: pulse 1.5s infinite;
+  display: none !important;
 }
 @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
 @keyframes day0HintPulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
@@ -461,7 +459,7 @@ body {
 .fill-fatigue { background: linear-gradient(90deg, #304060, #5070a0); }
 .stat-num { font-size: 12px; color: #d0d0c8; font-weight: 600; width: 24px; text-align: right; }
 
-#monster-slime, #monster-slime2 {
+#monster-slime, #monster-slime2, #monster-slime3 {
   display: none; position: absolute;
   width: 28px; height: 22px;
   z-index: 16; pointer-events: none;
@@ -469,7 +467,8 @@ body {
   animation: slimeHop 1.83s ease-in-out infinite;
 }
 #monster-slime2 { animation-delay: -0.9s; }
-#monster-slime img, #monster-slime2 img {
+#monster-slime3 { animation-delay: -0.45s; }
+#monster-slime img, #monster-slime2 img, #monster-slime3 img {
   width: 100%; height: 100%;
   object-fit: contain; image-rendering: pixelated;
 }
@@ -1122,11 +1121,13 @@ body {
 /* ── 小鳥飛走動畫 ── */
 .bird-hop.scene-bird-flyaway,
 #outside-bird.scene-bird-flyaway,
+#outside-bird-2.scene-bird-flyaway,
 #forest-bird.scene-bird-flyaway {
   animation: birdFlyAway 2.1s ease-in forwards;
 }
 /* ── 小鳥降落動畫 ── */
 #outside-bird.scene-bird-land,
+#outside-bird-2.scene-bird-land,
 #forest-bird.scene-bird-land {
   animation: birdLand 1.2s ease-out forwards;
 }
@@ -1737,8 +1738,10 @@ body {
       <div id="cw-chicken2" style="display:none;position:absolute;z-index:12;pointer-events:none;overflow:hidden;"><img id="sp-chicken2" src="chicken.png" style="position:absolute;image-rendering:pixelated;"></div>
       <div id="monster-slime"><img src="Monster_Slime.png" alt="史萊姆"></div>
       <div id="monster-slime2"><img src="Monster_Slime.png" alt="史萊姆2"></div>
+      <div id="monster-slime3"><img src="Monster_Slime.png" alt="史萊姆3"></div>
       <!-- ══ 小鳥（直接放 scene-wrap，不受 outside-objects 疊層影響）══ -->
       <div id="outside-bird" style="display:none;position:absolute;left:300px;top:330px;width:20px;height:20px;z-index:14;pointer-events:none;overflow:hidden;"><div class="bird-hop" style="width:20px;height:20px;position:relative;"><img src="bg_outside/bird.png" style="position:absolute;top:0;left:0;height:20px;width:20px;image-rendering:pixelated;"></div></div>
+      <div id="outside-bird-2" style="display:none;position:absolute;left:300px;top:330px;width:20px;height:20px;z-index:14;pointer-events:none;overflow:hidden;"><div class="bird-hop" style="width:20px;height:20px;position:relative;"><img src="bg_outside/bird.png" style="position:absolute;top:0;left:0;height:20px;width:20px;image-rendering:pixelated;"></div></div>
       <div id="forest-bird" style="display:none;position:absolute;left:200px;top:300px;width:20px;height:20px;z-index:14;pointer-events:none;overflow:hidden;"><div class="bird-hop" style="width:20px;height:20px;position:relative;"><img src="bg_forest/bird.png" style="position:absolute;top:0;left:0;height:20px;width:20px;image-rendering:pixelated;"></div></div>
       <!-- ══ 戶外場景物件層 ══ -->
       <div id="outside-objects" style="display:none;">
@@ -2177,6 +2180,7 @@ const CHAR_H  = 90;
 const SPEED   = 3;
 const SLIME_HOME  = { x: 540, y: 180 };
 const SLIME2_HOME = { x: 130, y: 155 };
+const SLIME3_HOME = { x: 340, y: 200 };
 const SLIME_SPEED = 0.42;
 const SLIME_DAMAGE = 8;
 const DAY_HOURS = 13; // 07:00 ~ 22:00
@@ -2314,8 +2318,9 @@ function setOutsideFishingVisual(state) {
 //  BIRD WANDER AI
 // ══════════════════════════════════════
 const BIRD_SCENES = {
-  outside: { id: 'outside-bird', x1: 0, y1: 0, x2: 639, y2: 477, initX: 558, initY: 156, flyImg: 'bg_outside/bird-fly.png' },
-  forest:  { id: 'forest-bird',  x1: 0, y1: 0, x2: 639, y2: 477, initX: 211, initY: 151, flyImg: 'bg_outside/bird-fly.png' },
+  outside:  { id: 'outside-bird',   gameScene: 'outside', x1: 0, y1: 0, x2: 639, y2: 477, initX: 558, initY: 156, flyImg: 'bg_outside/bird-fly.png', stillImg: 'bg_outside/bird.png' },
+  outside2: { id: 'outside-bird-2', gameScene: 'outside', x1: 105, y1: 402, x2: 124, y2: 423, initX: 114, initY: 412, flyImg: 'bg_outside/bird-fly.png', stillImg: 'bg_outside/bird.png' },
+  forest:   { id: 'forest-bird',    gameScene: 'forest',  x1: 0, y1: 0, x2: 639, y2: 477, initX: 211, initY: 151, flyImg: 'bg_outside/bird-fly.png', stillImg: 'bg_forest/bird.png' },
 };
 const _birdState = {};
 const _birdFlyIntervals = {};
@@ -2406,7 +2411,7 @@ function updateBirds() {
   Object.entries(BIRD_SCENES).forEach(([scene, cfg]) => {
     const el = document.getElementById(cfg.id);
     if (!el) return;
-    if (G.scene !== scene || G.timePeriod !== 'morning') { el.style.display = 'none'; return; }
+    if (G.scene !== (cfg.gameScene || scene) || G.timePeriod !== 'morning') { el.style.display = 'none'; return; }
     const s = _birdState[scene];
     if (s.gone) {
       el.style.display = 'none';
@@ -2442,7 +2447,7 @@ function updateBirds() {
           setTimeout(() => {
             clearInterval(landInterval);
             el.classList.remove('scene-bird-land');
-            if (ri) { ri.src = scene === 'outside' ? 'bg_outside/bird.png' : 'bg_forest/bird.png'; ri.style.width = '20px'; ri.style.left = '0px'; ri.style.transform = ''; }
+            if (ri) { ri.src = cfg.stillImg || 'bg_outside/bird.png'; ri.style.width = '20px'; ri.style.left = '0px'; ri.style.transform = ''; }
           }, 1200);
         }
       }
@@ -2811,9 +2816,15 @@ function updateSlimeMonster() {
   if (G && G.reidSlaySlimesDead) {
     document.getElementById('monster-slime').style.display = 'none';
     document.getElementById('monster-slime2').style.display = 'none';
+    document.getElementById('monster-slime3').style.display = 'none';
   } else {
     updateOneSlime(G.slime,  'monster-slime',  SLIME_HOME.x,  SLIME_HOME.y);
     updateOneSlime(G.slime2, 'monster-slime2', SLIME2_HOME.x, SLIME2_HOME.y);
+    if (G.day >= 3) {
+      updateOneSlime(G.slime3, 'monster-slime3', SLIME3_HOME.x, SLIME3_HOME.y);
+    } else {
+      document.getElementById('monster-slime3').style.display = 'none';
+    }
   }
 }
 
@@ -2869,7 +2880,9 @@ function setOutsideFarmVisual(flash = false) {
   const folder = (typeof G !== 'undefined' && G && G.timePeriod === 'evening')
     ? 'bg_outside_night/' : 'bg_outside/';
   const stage = (typeof G !== 'undefined' && G) ? G.farmStage : 1;
-  const watered = (typeof G !== 'undefined' && G) ? G.farmWatered : false;
+  const watered = (typeof G !== 'undefined' && G)
+    ? (G.farmWatered || (G.day === 8 && G.weather === 'rain'))
+    : false;
   let filename;
   if (stage >= 5)       filename = 'bg_outside_farm05.png';
   else if (stage === 4) filename = watered ? 'bg_outside_farm04_water.png' : 'bg_outside_farm04.png';
@@ -3474,8 +3487,8 @@ const RED_SPEAK_AVAREN_DLG = [
 ];
 
 const RED_COMMISSIONS = [
-  { key:'slay',    name:'討伐森林魔物', fx:'魔物素材+2  金錢-10', cost:10, returnDays:0,
-    deliver(){ chg('monsterMaterial', 2); renderHUD(); story('旁白', '雷德拍拍胸脯，把兩塊發光的魔物素材遞給你。'); story('雷德', '「解決了！那兩隻黏糊糊的東西根本不是我的對手！……不過它們顏色真的很奇怪欸。」'); }},
+  { key:'slay',    name:'討伐森林魔物', fx:'魔物素材+3  金錢-10', cost:10, returnDays:0,
+    deliver(){ chg('monsterMaterial', 3); renderHUD(); story('旁白', '雷德拍拍胸脯，把三塊發光的魔物素材遞給你。'); story('雷德', '「解決了！那些黏糊糊的東西根本不是我的對手！……不過它們顏色真的很奇怪欸。」'); }},
 ];
 
 const RED_WINTER_MEET_STORY = [
@@ -4094,6 +4107,18 @@ function playReidIntro() {
   startActionScene(REID_INTRO_STORY, 400, () => {});
 }
 
+function claimReidSlayReward() {
+  G.reidSlayDelivered = true;
+  G.reidSlayInForest = false;
+  G.reidSlayActive = false;
+  G.reidForestWandering = G.scene === 'forest';
+  G.reidSlayRewardPending = false;
+  G.reidSlayRewardClaimedDay = G.day;
+  G.redCommissions = (G.redCommissions || []).filter(c => c.key !== 'slay');
+  const slayComm = RED_COMMISSIONS.find(c => c.key === 'slay');
+  if (slayComm) slayComm.deliver();
+}
+
 function openRedMenu() {
   SFX.interact();
   // 雷德面向玩家
@@ -4101,23 +4126,19 @@ function openRedMenu() {
   const ddx = G.eldrin.x - rd.x, ddy = G.eldrin.y - rd.y;
   if (Math.abs(ddx) > Math.abs(ddy)) rd.pose = ddx < 0 ? 'sideL' : 'sideR';
   else rd.pose = ddy < 0 ? 'back' : 'front';
+  rd.walkDir = { dx: 0, dy: 0 };
+  rd.walkTimer = 120;
   rd.walkFrame = 0; rd.walkTick = 0;
   // 森林討伐委託完成 or 漫走中：顯示選單（收取 + 聊聊）
   const slayJustDone = G.scene === 'forest' && G.reidSlayInForest && !G.reidSlayDelivered;
   const slayWandering = G.scene === 'forest' && G.reidForestWandering;
   if (slayJustDone || slayWandering) {
     const items = [];
-    // 收取獸肉（只有剛完成討伐時才顯示）
+    // 接收討伐成果（只有剛完成討伐時才顯示）
     if (slayJustDone) {
-      items.push({ name:'收取獸肉', fx:'魔物素材+2', req:()=>true,
+      items.push({ name:'接收討伐成果', fx:'魔物素材+3', req:()=>true,
         run() {
-          G.reidSlayDelivered = true;
-          G.reidSlayInForest = false;
-          G.reidSlayActive = false;
-          G.reidForestWandering = true;
-          G.redCommissions = G.redCommissions.filter(c => c.key !== 'slay');
-          const slayComm = RED_COMMISSIONS.find(c => c.key === 'slay');
-          if (slayComm) slayComm.deliver();
+          claimReidSlayReward();
         }
       });
     }
@@ -4142,6 +4163,26 @@ function openRedMenu() {
     showActionMenu('迷路勇者・雷德', items);
     return;
   }
+  if (G.reidSlayRewardPending && !G.reidSlayDelivered) {
+    showActionMenu('雷德', [
+      {
+        name:'接收討伐成果',
+        fx:'魔物素材+2',
+        req:()=>true,
+        run() {
+          storyAuto('雷德', '「啊，昨天的素材還沒給你！差點忘記了。」');
+          claimReidSlayReward();
+        }
+      },
+      {
+        name:'聊聊',
+        fx:'一般對話',
+        req:()=>true,
+        run(){ runReidChat(); }
+      },
+    ]);
+    return;
+  }
   if (G.avarenScene === 'outside') {
     chg('mood', -3);
     const tier = getAvarenMoodTier();
@@ -4150,9 +4191,10 @@ function openRedMenu() {
   }
   // 有委託且今天是交貨日，先交貨再開菜單
   if (!G.redCommissions) G.redCommissions = [];
-  const toDeliver = G.redCommissions.filter(c => c.returnDay > 0 && c.returnDay <= G.day);
+  G.redCommissions = G.redCommissions.filter(c => !(c.key === 'slay' && G.reidSlayRewardClaimedDay > 0));
+  const toDeliver = G.redCommissions.filter(c => c.key !== 'slay' && c.returnDay > 0 && c.returnDay <= G.day);
   if (toDeliver.length > 0) {
-    G.redCommissions = G.redCommissions.filter(c => !(c.returnDay > 0 && c.returnDay <= G.day));
+    G.redCommissions = G.redCommissions.filter(c => c.key === 'slay' || !(c.returnDay > 0 && c.returnDay <= G.day));
     G.reidVisitDay = G.day; // 記錄今天雷德有來，保持整天可見
     story('旁白', '雷德從遠處大步跑來，揮著手。「找到了找到了！你要的東西！」');
     toDeliver.forEach(p => {
@@ -4227,6 +4269,8 @@ function showRedCommissionMenu() {
             G.reidSlayInForest = false;
             G.reidSlayDelivered = false;
             G.reidSlaySlimesDead = false;
+            G.reidSlayRewardClaimedDay = 0;
+            G.reidSlayRewardPending = false;
             G.reidForestWandering = false;  // 清除上次的漫走狀態
           }
         }
@@ -4769,7 +4813,7 @@ function triggerAvarenGather() {
       { name:'道謝收下', fx:'', req:()=>true,
         run(){ story('旁白', '你接過東西，輕聲道謝。阿瓦倫點了點頭，繼續去看地上的東西了。'); }},
     ]);
-  }, 'blue', 0);
+  }, 'blue', 0, false);
 }
 
 // ── 血月夜（第7天晚上）──
@@ -4970,47 +5014,47 @@ const NARR_READ = [
 ];
 const ELDRIN_BOOK_DAILY = [
   {
-    title: '第 1 夜：藥草誌．夜顏花',
+    title: '藥草誌．夜顏花',
     text: '月眠露的主成分是夜顏花。\n\n它的花瓣能緩慢釋放微量的鎮定元素，因此常被用來治療失眠。\n\n請避免陽光直曬，否則藥效容易流失。\n\n比起一般的安眠藥劑，月眠露較不容易產生倦怠感。'
   },
   {
-    title: '第 2 夜：月亮的慈悲',
+    title: '月亮的慈悲',
     text: '你翻開書櫃深處那本沒有署名的舊書。\n\n慈悲為懷的月亮，會替人們承受苦難。\n\n滿月的時候，是月亮最強壯的時間。\n\n月光灑落大地時，世界上的詛咒也會稍微減弱一些。'
   },
   {
-    title: '第 3 夜：勇者與傳說之劍',
+    title: '勇者與傳說之劍',
     text: '你翻開書櫃深處那本沒有署名的舊書。\n\n傳說中，紅髮金眼的勇者將會拔起沉眠於初始之森的傳說之劍。\n\n那是世上唯一能夠傷害魔王的武器。\n\n人們始終盼望著勇者討伐邪惡的魔王，為世界帶來和平。'
   },
   {
-    title: '第 4 夜：魔王的國度',
+    title: '魔王的國度',
     text: '魔物之王是所有魔物的統治者，人們稱他為魔王。\n\n傳說他率領魔物侵占人類的土地，是邪惡而危險的存在。\n\n他建立起強大的王國，也劃分出魔物與人類的領地。'
   },
   {
-    title: '第 5 夜：黑獵犬',
+    title: '黑獵犬',
     text: '傳說中，黑獵犬會在黃昏的霧裡出現，他會跟在迷路的人的身後。\n\n如果你看到了破碎的黑色的影子和低吼聲，千萬不要回頭。\n\n據說，凡是看見黑獵犬鮮紅雙眼的人，都會在七日之內，迎來死亡。'
   },
   {
-    title: '第 6 夜：妖精的惡作劇',
+    title: '妖精的惡作劇',
     text: '妖精喜歡在湖泊與河流附近生活。\n\n他們偶爾會引誘人類誤入自己的世界。\n\n據說妖精並沒有惡意，只是特別喜歡有趣的事物。\n\n因此他們經常製造各種麻煩來打發時間。\n\n也有書籍記載，妖精的翅膀是極佳的魔藥催化劑。'
   },
   {
-    title: '第 7 夜：被禁止的信仰',
+    title: '被禁止的信仰',
     text: '有少數墮落的異教徒宣稱，詛咒並非邪惡之物。\n\n他們妄言詛咒是源於天地間的純粹力量，甚至將其視為神明的祝福。\n\n這般危險的思想曾使無數人誤入歧途。\n\n所幸，在教會的努力下，這些異端邪說早已被徹底肅清。\n\n慈悲的神明始終憐憫著脆弱的人類，引領世人走向幸福與安寧。'
   },
   {
-    title: '第 8 夜：月亮沉睡之時',
+    title: '月亮沉睡之時',
     text: '朔月的時候，是月亮休息的時間。\n\n當月亮躲藏起來，世界上的詛咒便會變得更加活躍。\n\n而血月的時候，則是月亮發狂的時間。'
   },
   {
-    title: '第 9 夜：缺失的一頁',
+    title: '缺失的一頁',
     text: '今天無法閱讀。'
   },
   {
-    title: '第 10 夜：魔王的心臟',
+    title: '魔王的心臟',
     text: '據說魔王的心臟能夠實現任何願望。\n\n財富、權力、名聲，甚至能治癒世上一切疾病。\n\n有人甚至相信，它能讓死者重新甦醒。\n\n為此，無數人不畏死亡踏上討伐魔王的旅程。\n\n然而直到今日，仍然沒有人成功。'
   },
   {
-    title: '第 11 夜：關於記憶',
+    title: '關於記憶',
     text: '記憶是一種不穩定的東西。\n\n已經遺忘的事情，仍有可能因為相似的人、事、物而再次被想起。\n\n即使利用魔法干涉記憶，那份效果也會隨著時間逐漸變得薄弱。\n\n有些事情或許能被遺忘，卻很難真正消失。'
   },
 ];
@@ -5337,7 +5381,7 @@ function isReidInForestToday() {
 }
 
 function isWinterDay(day = G.day) {
-  return day === 4 || day === 6 || day === 8;
+  return day === 4 || day === 6 || day === 7 || day === 8;
 }
 
 function isWinterPresent() {
@@ -5437,7 +5481,7 @@ function enterDay8MorningAfterForget() {
   G.noah.x = 500; G.noah.y = 360; G.noah.pose = 'front'; G.noah.walkDir = {dx:0,dy:0}; G.noah.walkTimer = 0;
   G.noah.bubbleTimer = 0; G.noah.autoSpeakTimer = 260;
   document.getElementById('blood-moon-7-overlay').style.display = 'none';
-  switchBGM('bgm');
+  applyBGMForState();
   renderHUD();
   renderScene();
   renderChars();
@@ -5473,7 +5517,7 @@ function finishBloodMoonNightWithoutForget() {
   G.paused = true;
   G.bloodMoon7Active = false;
   G.bloodMoon7Calmed = false;
-  switchBGM('bgm');
+  applyBGMForState();
   document.getElementById('blood-moon-7-overlay').style.display = 'none';
   setTimeout(() => {
     if (G.pain >= 70 && G.curse >= 70) {
@@ -5533,6 +5577,7 @@ function initState() {
     redFairy: { x: 332, y: 362, vx: 0.25, vy: 0.15 },
     slime:  { x: SLIME_HOME.x,  y: SLIME_HOME.y,  attackCooldown: 0, hopTick: 0 },
     slime2: { x: SLIME2_HOME.x, y: SLIME2_HOME.y, attackCooldown: 0, hopTick: 35 },
+    slime3: { x: SLIME3_HOME.x, y: SLIME3_HOME.y, attackCooldown: 0, hopTick: 18 },
     forestFrog: { x: 95, y: 300, state: 'sit', timer: 80, hopDx: 0, hopDy: 0, hopProgress: 0, facing: 1, stuckCooldown: 0 },
     chicken: { x: 250, y: 180, walkTimer: 0, walkDir: {dx:0,dy:0}, walkFrame: 0, walkTick: 0, facing: 'right', pushVx:0, pushVy:0 },
     chicken2: { x: 480, y: 160, walkTimer: 40, walkDir: {dx:0,dy:0}, walkFrame: 2, walkTick: 0, facing: 'left', pushVx:0, pushVy:0 },
@@ -5579,6 +5624,7 @@ function initState() {
     avarenDay10ForgetTalkSeen: false,
     avarenDay10NoForgetTalkSeen: false,
     eldrinBookReadDays: [],
+    exhaustedSleepWake: null,
     cookActive: false, cookTimer: 0, cookReady: false, soupReady: false, carryingSoup: false, soupIsSpecial: false, cookSelectedKeys: [],
     actionSceneActive: false, actionSceneTimer: 0, actionSceneMax: 0,
     actionSceneOnDone: null, actionSceneLines: [], actionSceneLineIdx: 0, actionSceneLineTick: 0,
@@ -5625,6 +5671,8 @@ function initState() {
     reidSlayInForest: false,
     reidSlayDelivered: false,
     reidSlaySlimesDead: false,
+    reidSlayRewardClaimedDay: 0,
+    reidSlayRewardPending: false,
     reidForestWandering: false,
     bubbleTimer: 0,
     bubbleText: '',
@@ -6492,7 +6540,7 @@ function gameLoop() {
     if (G.eldrinEmoteTimer > 0) G.eldrinEmoteTimer--;
   } else if (!G.manualPaused && G.timePeriod === 'morning' && !G.periodTransitioned && !G.bgmPreEveningFadeStarted && _elapsed >= MORNING_SECONDS - 10) {
     G.bgmPreEveningFadeStarted = true;
-    fadeOutCurrentBGM(10000);
+    if (shouldFadeBeforeEveningBGM()) fadeOutCurrentBGM(10000);
   } else if (!G.manualPaused && !G.periodTransitioned && _elapsed >= MORNING_SECONDS) {
     G.periodTransitioned = true;
     doNightFade(() => {
@@ -6506,7 +6554,6 @@ function gameLoop() {
         G.bloodMoon7Active = true;
         G.bloodMoon7Happened = true;
         G.avarenScene = 'room';
-        fadeSwitchBGM('bgm-bloodmoon', 2400);
         G.avaren.x = 190; G.avaren.y = 220;
         G.avaren.sleepEye = 0;
         G.avaren.blinkPhase = -1;
@@ -6517,13 +6564,14 @@ function gameLoop() {
         G.bloodMoon7SpeakTimer  = 120;
         G.bloodMoon7MemoryTimer = 900;
         G.bloodMoon7MemoryIndex = 0;
+        applyBGMForState({ fade: true, duration: 2400 });
         setTimeout(() => {
           showEvent('🩸', '血月夜——',
             '第九天的夜晚，月亮染成了血紅色。\n\n阿瓦倫的詛咒被血月激發，疼痛與黑霧同時暴漲——\n房間裡傳來他壓抑的哀號。',
             () => { storyAuto('旁白', '夜幕低垂，血月升起，發狂的月亮使所有生物的詛咒加劇'); }, 'red');
         }, 500);
       } else {
-        fadeSwitchBGM('bgm-day10');
+        applyBGMForState({ fade: true, duration: 2400 });
         setTimeout(() => {
           storyAuto('旁白', '夜幕低垂。太陽沉入山後，晚上的時間開始了。\n現在可以進屋照顧阿瓦倫了。');
         }, 400);
@@ -6573,7 +6621,7 @@ function gameLoop() {
     if (G.bloodMoon7Active) return; // 血月特殊天，由血月流程自行結束，不顯示力竭而眠
     G.paused = true;
     cancelAnimationFrame(raf);
-    switchBGM('bgm-day10');
+    applyBGMForState();
     const fade = document.getElementById('night-fade');
     fade.style.transition = 'none'; fade.style.display = 'block'; fade.style.opacity = '0';
     fade.getBoundingClientRect();
@@ -6583,6 +6631,12 @@ function gameLoop() {
       showEvent('😴', '力竭而眠', '夜已深了。\n\n你沒有意識到時間就這樣流逝，\n直到疲憊將你壓倒，\n就這樣不知不覺地昏睡過去。\n\n體力 -5', () => {
         fade.style.transition = 'none'; fade.style.opacity = '0'; fade.style.display = 'none';
         G.paused = false;
+        G.exhaustedSleepWake = {
+          scene: G.scene,
+          x: G.eldrin.x,
+          y: G.eldrin.y,
+          pose: G.eldrin.pose || 'front',
+        };
         endDay();
       }, 'blue');
     }, 800);
@@ -6669,7 +6723,7 @@ function gameLoop() {
     if (isReidInForestToday())    tryPush(G.red);
     if (G.scene === 'outside' && G.day === 2 && G.timePeriod === 'morning')        tryPush(G.noah);
     if (isWinterPresent())       tryPush(G.winter);
-    if (G.scene === 'forest' && !G.carryingChicken) {
+    if (G.scene === 'forest' && G.timePeriod === 'morning' && !G.carryingChicken) {
       const distCh = Math.hypot(el.x - G.chicken.x, el.y - G.chicken.y);
       if (distCh < PUSH_R && !G._chickenBumpCooldown) {
         playLoopingAudio('sfx-chicken-1', 3.0);
@@ -6678,7 +6732,7 @@ function gameLoop() {
       }
       tryPush(G.chicken);
     }
-    if (G.scene === 'forest' && !G.carryingChicken2) {
+    if (G.scene === 'forest' && G.timePeriod === 'morning' && !G.carryingChicken2) {
       const distCh2 = Math.hypot(el.x - G.chicken2.x, el.y - G.chicken2.y);
       if (distCh2 < PUSH_R && !G._chickenBumpCooldown) {
         playLoopingAudio('sfx-chicken-1', 3.0);
@@ -7686,9 +7740,11 @@ document.addEventListener('keydown', e => {
     return;
   }
 
-  // 結局畫面：空白鍵 / Enter 再玩一次
+  // 結局畫面：空白鍵 / Enter — 打字中則跳過，跑完不做事（需點按鈕）
   if (document.getElementById('ending-screen').style.display === 'flex') {
-    if (e.key === ' ' || e.key === 'Enter') { restartGame(); return; }
+    if ((e.key === ' ' || e.key === 'Enter') && !_typewriterDone) {
+      _skipEndingTypewriter();
+    }
     return;
   }
 
@@ -7953,7 +8009,7 @@ function openAvarenMenu() {
           chg('curse', -(potions * 10 + 15));
           chg('pain',  -(potions * 10 + 15));
           G.bloodMoon7Active = false;
-          switchBGM('bgm');
+          applyBGMForState();
           document.getElementById('blood-moon-7-overlay').style.display = 'none';
           renderHUD();
           finishForgetMagicNight();
@@ -8971,6 +9027,11 @@ function sellSoupToReid() {
 }
 
 function doAction_CollectEggs() {
+  if (G.scene === 'forest' && G.timePeriod === 'evening') {
+    playLoopingAudio('sfx-chicken-1', 3.0);
+    storyAuto('旁白', '你靠近鳥巢時，裡面傳來一聲小小的雞叫。');
+    return;
+  }
   if (G.nestEggs <= 0) {
     storyAuto('旁白', '巢裡空空的，今天已經沒有蛋了。');
     return;
@@ -9073,10 +9134,10 @@ function doAction_BookshelfMenu() {
       name: '艾德林自己讀書',
       fx: () => {
         const todayRead = (G.eldrinBookReadDays || []).includes(G.day);
-        if (todayRead) return '今天已讀過';
+        if (todayRead) return '重讀今天的內容';
         if (G.day < 1 || G.day > 11) return '沒有新的內容';
         if (G.day === 11 && !hasReadAllEldrinBookBeforeFinal()) return '缺少前面的閱讀紀錄';
-        return `第 ${G.day} 夜`;
+        return ELDRIN_BOOK_DAILY[G.day - 1]?.title ?? '';
       },
       run() { doAction_ReadAlone(); }
     },
@@ -9094,13 +9155,12 @@ function doAction_ReadAlone() {
   if ((G.eldrinHp ?? 100) <= 20) { warn('艾德林 HP 太低了，需要休息才能工作。'); return; }
   if (G.day < 1 || G.day > 11) { warn('今天沒有新的內容可以讀。'); return; }
   if (!Array.isArray(G.eldrinBookReadDays)) G.eldrinBookReadDays = [];
-  if (G.eldrinBookReadDays.includes(G.day)) { warn('今天已經讀過這一段了。'); return; }
   if (G.day === 11 && !hasReadAllEldrinBookBeforeFinal()) {
     story('旁白', '你翻到關於記憶的那一頁，卻發現許多前面的註記都還沒有讀完。\n\n缺少那些線索，你無法理解這一頁真正想說的事情。');
     return;
   }
   const book = ELDRIN_BOOK_DAILY[G.day - 1];
-  G.eldrinBookReadDays.push(G.day);
+  if (!G.eldrinBookReadDays.includes(G.day)) G.eldrinBookReadDays.push(G.day);
   startActionScene([
     { speaker: '旁白', text: book.title },
     { speaker: '旁白', text: book.text },
@@ -9141,6 +9201,7 @@ function startActionScene(lines, max, onDone) {
   // 清除任何進行中的旁白定時器（action scene 優先）
   if (_storyAutoTimer) { clearTimeout(_storyAutoTimer); _storyAutoTimer = null; }
   SFX.start();
+  G.paused = true;
   G.actionSceneActive = true;
   G.actionSceneOnDone = onDone;
   G.actionSceneLines = lines;
@@ -9297,6 +9358,7 @@ function ascAdvance() {
     if (G.actionSceneOnDone) { const cb = G.actionSceneOnDone; G.actionSceneOnDone = null; cb(); }
     // action scene 結束後，若旁白佇列有內容則繼續顯示
     if (storyQueue.length > 0) _showStory();
+    if (!G.sleepAnimActive && !isDlgBlocking()) G.paused = false;
     return;
   }
   _ascShowLine(G.actionSceneLineIdx);
@@ -9350,10 +9412,12 @@ function showActionMenu(heading, items) {
     btn.onclick = () => {
       playLoopingAudio('sfx-button', 3.0);
       item.run();
+      // 若 endGame 已被觸發（結局畫面可見），不繼續執行後續邏輯
+      if (document.getElementById('ending-screen').style.display === 'flex') return;
       renderHUD();
       document.getElementById('action-overlay').style.display = 'none';
       // 若 run() 啟動了睡眠動畫，保持暫停狀態；否則正常解除暫停
-      if (!G.sleepAnimActive) G.paused = false;
+      if (!G.sleepAnimActive && !isDlgBlocking()) G.paused = false;
       menuBtns = [];
       if (!isAvarenUnconscious() && !isAvarenBedRest() && G.mood > 50 && G.avarenScene === G.scene) {
         G.bubbleText = pick(AVAREN_DLG.possess.concat(['……（跟著你）']));
@@ -9431,6 +9495,7 @@ function _showStory() {
   if (storyQueue.length === 0) {
     clearDialogueTypewriter();
     overlay.style.display = 'none';
+    if (G && !G.sleepAnimActive && !G.actionSceneActive && !G.manualPaused) G.paused = false;
     return;
   }
 
@@ -9477,6 +9542,7 @@ function advanceStory(manual = false) {
   if (storyQueue.length === 0) {
     clearDialogueTypewriter();
     document.getElementById('action-scene-overlay').style.display = 'none';
+    if (G && !G.sleepAnimActive && !G.actionSceneActive && !G.manualPaused) G.paused = false;
     return false;
   }
   if (manual) playDialogueNextSfx();
@@ -9640,6 +9706,7 @@ function changeScene(to, startOverride) {
     if (to === 'forest' && (G.reidSlayActive || G.reidSlayInForest) && !G.reidSlayDelivered) {
       G.reidSlayInForest = true;
       G.reidSlaySlimesDead = true;
+      G.reidSlayRewardPending = true;
       G.red.x = 250; G.red.y = 150;
       G.red.pose = 'front';
       G.red.walkFrame = 0; G.red.walkTick = 0;
@@ -9676,6 +9743,14 @@ function changeScene(to, startOverride) {
         G.autoSpeakTimer = 260;
         SFX.bubble();
       }
+    } else if (!G.bloodMoon7Active && !isAvarenUnconscious() && !isAvarenBedRest() && G.mood <= 50 && G.avarenScene === fromScene && !G.day4AvarenGone && !G.avarenReturnPending) {
+      G.avarenScene = 'room';
+      G.avaren.x = 190;
+      G.avaren.y = 220;
+      G.avaren.pose = 'back';
+      G.avaren.sleepEye = 0;
+      G.avaren.walkFrame = 0;
+      G.avaren.walkTick = 0;
     } else if (to === 'forest' && G.avarenScene === 'forest' && !G.bloodMoon7Active) {
       G.avarenScene = 'room';
       G.avaren.x = 190;
@@ -9731,6 +9806,7 @@ function doAction_Sleep() {
   if (G.timePeriod !== 'evening') { timeWarn('現在還是早上，先去做些事吧。'); return; }
   if (G.bloodMoon7Active) { warn('無法行動。'); return; }
   if (G.carryingSoup) { warn('拿著料理無法入睡'); return; }
+  G.exhaustedSleepWake = null;
   const shouldNightResearchSleep = G.day <= 2 || G.day === 11 || (!G.usedForgetMagic && G.day === 10);
   if (shouldNightResearchSleep) {
     showActionMenu('今晚要怎麼做？', [
@@ -9775,9 +9851,9 @@ function doAction_Sleep() {
         G.paused = true;
         playSleepAnimation(() => { chg('curse', -val); renderHUD(); endDay(); }, [
           { speaker: '旁白', text: pick([
-            '燭光在搖曳中漸暗。你坐在阿瓦倫床邊，低聲念著解咒的詠語……',
-            '你將調配好的藥水輕輕塗在阿瓦倫手背的紋路上，黑霧微微收縮……',
-            '阿瓦倫已經睡了。你在他身旁靜靜地施著每晚的解咒儀式……',
+            '燭光在搖曳中漸暗。你坐在阿瓦倫床邊，低聲念出解咒的詠語。\n\n「Aetheris puritas, cadens in cordis lumen, exsisto recondito, accepi in sanguine.」',
+            '你將調配好的藥水輕輕塗在阿瓦倫手背的紋路上，壓低聲音念出咒語。\n\n「Aetheris puritas, cadens in cordis lumen, exsisto recondito, accepi in sanguine.」\n\n黑霧微微收縮。',
+            '阿瓦倫已經睡了。你在他身旁靜靜地施著每晚的解咒儀式。\n\n「Aetheris puritas, cadens in cordis lumen, exsisto recondito, accepi in sanguine.」',
           ]) },
           { speaker: '阿瓦倫', text: pick([
             '……（在夢裡輕輕皺了一下眉，然後舒展開來。）',
@@ -9796,16 +9872,16 @@ function doAction_Sleep() {
         G.paused = true;
         playSleepAnimation(() => { chg('mood', val); renderHUD(); endDay(); }, [
           { speaker: '旁白', text: pick([
-            '燈光昏黃，你輕聲給阿瓦倫說起一個小故事……',
-            '你坐在床邊，說著從前從前，有一棵很高很高的樹……',
-            '你想不起有什麼好故事，就說了一個自己小時候聽過的……',
+            '燈光昏黃，你拿著藥用植物圖鑑坐在床邊，輕聲念起夜顏花的介紹。',
+            '你翻開藥用植物圖鑑，把聲音放得很輕，慢慢說著每一種植物的名字和用途。',
+            '你把藥用植物圖鑑攤在膝上，指著書頁上的插圖，低聲告訴阿瓦倫哪些花適合在夜裡採集。',
           ]) },
           { speaker: '阿瓦倫', text: pick([
-            '……後來呢。（很小聲，幾乎聽不見。）',
+            '……夜顏花……是會睡覺的花嗎。',
             '……（安靜地聽著，眼皮漸漸沉了下去。）',
-            '……（沒有說話，但沒有叫你停下來。）',
+            '……這個……味道很奇怪。（聲音越來越小。）',
           ]) },
-          { speaker: '旁白', text: '說著說著，他睡著了。你替他把被角掖好，悄悄吹熄了燭火。' },
+          { speaker: '旁白', text: '你念到藥草的葉脈與花期時，阿瓦倫已經睡著了。\n你替他把被子蓋好，悄悄吹熄了燭火。' },
         ]);
       }
     },
@@ -10110,7 +10186,7 @@ function jumpToBloodMoon() {
   G.bloodMoon7SpeakTimer  = 120;
   G.bloodMoon7MemoryTimer = 900;
   G.bloodMoon7MemoryIndex = 0;
-  switchBGM('bgm-bloodmoon');
+  applyBGMForState();
   showEvent('🩸', '血月夜——',
     '第九天的夜晚，月亮染成了血紅色。\n\n阿瓦倫的詛咒被血月激發，疼痛與黑霧同時暴漲——\n房間裡傳來他壓抑的哀號。',
     () => { storyAuto('旁白', '夜幕低垂，血月升起，發狂的月亮使所有生物的詛咒加劇'); }, 'red');
@@ -10156,7 +10232,7 @@ function jumpToDay10ForgetTest(usedForget) {
   G.scene = 'room';
   G.eldrin.x = 260; G.eldrin.y = 380; G.eldrin.pose = 'front'; G.eldrin.sleepEye = 0;
   placeAvarenBedRest();
-  switchBGM('bgm');
+  applyBGMForState();
   renderHUD();
   renderScene();
   renderChars();
@@ -10169,7 +10245,7 @@ function skipToEvening() {
   if (G.timePeriod !== 'morning' || G.paused) return;
   G.periodTransitioned = true;
   G.bgmPreEveningFadeStarted = true;
-  fadeOutCurrentBGM(1200);
+  if (shouldFadeBeforeEveningBGM()) fadeOutCurrentBGM(1200);
   G.dayStartMs = performance.now() - MORNING_SECONDS * 1000;
   doNightFade(() => {
     G.timePeriod = 'evening';
@@ -10183,7 +10259,6 @@ function skipToEvening() {
       G.bloodMoon7Active = true;
       G.bloodMoon7Happened = true;
       G.avarenScene = 'room';
-      fadeSwitchBGM('bgm-bloodmoon', 2400);
       G.avaren.x = 190; G.avaren.y = 220;
       G.avaren.sleepEye = 0;
       G.avaren.blinkPhase = -1;
@@ -10194,13 +10269,14 @@ function skipToEvening() {
       G.bloodMoon7SpeakTimer  = 120;
       G.bloodMoon7MemoryTimer = 900;
       G.bloodMoon7MemoryIndex = 0;
+      applyBGMForState({ fade: true, duration: 2400 });
       setTimeout(() => {
         showEvent('🩸', '血月夜——',
           '第九天的夜晚，月亮染成了血紅色。\n\n阿瓦倫的詛咒被血月激發，疼痛與黑霧同時暴漲——\n房間裡傳來他壓抑的哀號。',
           () => { storyAuto('旁白', '夜幕低垂，血月升起，發狂的月亮使所有生物的詛咒加劇'); }, 'red');
       }, 500);
     } else {
-      fadeSwitchBGM('bgm-day10');
+      applyBGMForState({ fade: true, duration: 2400 });
       setTimeout(() => {
         storyAuto('旁白', '夜幕低垂。太陽沉入山後，晚上的時間開始了。\n現在可以進屋照顧阿瓦倫了。');
       }, 400);
@@ -10272,7 +10348,7 @@ function resetToDay11MorningAfterReidLoop(loopIndex) {
   if (isAvarenBedRest()) placeAvarenBedRest();
   else { G.avaren.x = 190; G.avaren.y = 220; G.avaren.pose = 'back'; G.avaren.sleepEye = 0; }
   G.red.x = 150; G.red.y = 360; G.red.pose = 'front';
-  switchBGM('bgm');
+  applyBGMForState();
   renderHUD();
   renderScene();
   renderChars();
@@ -10366,7 +10442,7 @@ function endDay() {
   if (G.bloodMoon7Active) {
     G.bloodMoon7Active = false;
     G.bloodMoon7Calmed = false;
-    switchBGM('bgm');
+    applyBGMForState();
     document.getElementById('blood-moon-7-overlay').style.display = 'none';
     if (G.pain >= 70 && G.curse >= 70) {
       G.bloodMoon7Failed = true;
@@ -10563,6 +10639,12 @@ function continueAfterNight(prevText) {
   G.reidSlayWalkingToGate = false;
   G.reidSlayPendingWalk = false;
   G.reidForestWandering = false;
+  if (G.reidSlayRewardPending && !G.reidSlayDelivered) {
+    G.reidVisitDay = G.day;
+  }
+  if (G.reidSlayRewardClaimedDay > 0) {
+    G.redCommissions = (G.redCommissions || []).filter(c => c.key !== 'slay');
+  }
   // 每日委託限制重置
   G.reidCommissionedDayKeys = [];
   // 如果今天有待交貨的委託，提前標記雷德今天會出現
@@ -10571,14 +10653,14 @@ function continueAfterNight(prevText) {
   }
   G.forestMushrooms = { 1: false, 2: false, 3: false, 4: false };
   if (G.day === 8) { G.weather = 'rain'; G.farmWatered = true; setOutsideFarmVisual(); }
+  else if (G.day === 9) { G.weather = 'clear'; }
   // 蘋果樹每天早上重置
   G.forestApples = { tree1: APPLE_TREE_MAX.tree1, tree3: APPLE_TREE_MAX.tree3 };
   Object.values(APPLE_TREE_DIVS).flat().forEach(id => {
     const el = document.getElementById(id);
     if (el) el.style.display = '';
   });
-  if (G.day === 10) switchBGM('bgm-day10');
-  else switchBGM('bgm');
+  applyBGMForState();
   if (G.day > 2 && G.day !== 10) G.avarenBedRest = false;
   renderHUD();
   G.avarenScene = G.day4AvarenGone ? 'gone' : 'room';
@@ -10602,7 +10684,17 @@ function continueAfterNight(prevText) {
   G.winter.bubbleTimer = 0; G.winter.autoSpeakTimer = 320;
   G.noah.x = 500; G.noah.y = 360; G.noah.pose = 'front'; G.noah.walkDir = {dx:0,dy:0}; G.noah.walkTimer = 0;
   G.noah.bubbleTimer = 0; G.noah.autoSpeakTimer = 260;
-  changeScene('room', { x: 260, y: 380 });
+  const exhaustedWake = G.exhaustedSleepWake;
+  G.exhaustedSleepWake = null;
+  if (exhaustedWake && exhaustedWake.scene) {
+    changeScene(exhaustedWake.scene, {
+      x: exhaustedWake.x ?? 260,
+      y: exhaustedWake.y ?? 380,
+    });
+    G.eldrin.pose = exhaustedWake.pose || 'front';
+  } else {
+    changeScene('room', { x: 260, y: 380 });
+  }
   let redMsg = '';
   if (isReidDay()) {
     if (G.redCommission && G.redCommission.returnDay === G.day) {
@@ -10631,20 +10723,107 @@ function continueAfterNight(prevText) {
 // ══════════════════════════════════════
 let eventCallback = null;
 let _eventLockUntil = 0;
-function showEvent(icon, title, desc, cb, theme='blue', lockMs=3000) {
+let _typewriterInterval = null;
+let _typewriterDone = false;
+let _lblTimer = null;
+function _stopLineByLine() {
+  if (_lblTimer) { clearTimeout(_lblTimer); _lblTimer = null; }
+}
+function _startLineByLine(fullText, lineDelay = 700, charSpeed = 40, onDone = null) {
+  _stopTypewriter();
+  _stopLineByLine();
+  _typewriterDone = false;
+  const el = document.getElementById('end-desc');
+  el.textContent = '';
+  const lines = fullText.split('\n');
+  let lineIdx = 0;
+  let charIdx = 0;
+
+  function tick() {
+    _lblTimer = null;
+    if (lineIdx >= lines.length) {
+      _typewriterDone = true;
+      if (onDone) onDone();
+      return;
+    }
+    const line = lines[lineIdx];
+    if (charIdx < line.length) {
+      el.textContent += line[charIdx];
+      charIdx++;
+      _lblTimer = setTimeout(tick, charSpeed);
+    } else {
+      lineIdx++;
+      charIdx = 0;
+      if (lineIdx >= lines.length) {
+        _typewriterDone = true;
+        if (onDone) onDone();
+      } else {
+        el.textContent += '\n';
+        _lblTimer = setTimeout(tick, lineDelay);
+      }
+    }
+  }
+
+  tick();
+}
+function _stopTypewriter() {
+  if (_typewriterInterval) { clearInterval(_typewriterInterval); _typewriterInterval = null; }
+}
+function _startTypewriter(fullText, speed = 28, targetId = 'ev-desc', onDone = null) {
+  _stopTypewriter();
+  _typewriterDone = false;
+  const el = document.getElementById(targetId);
+  el.textContent = '';
+  let i = 0;
+  _typewriterInterval = setInterval(() => {
+    if (i >= fullText.length) {
+      _stopTypewriter();
+      _typewriterDone = true;
+      if (targetId === 'ev-desc') document.getElementById('ev-btn').style.visibility = '';
+      if (onDone) onDone();
+      return;
+    }
+    el.textContent += fullText[i];
+    i++;
+  }, speed);
+}
+function _skipTypewriter(fullText) {
+  _stopTypewriter();
+  document.getElementById('ev-desc').textContent = fullText;
+  _typewriterDone = true;
+  document.getElementById('ev-btn').style.visibility = '';
+}
+
+function showEvent(icon, title, desc, cb, theme='blue', lockMs=0, typewriter=true) {
   SFX.event();
   G.paused = true;
   eventCallback = cb;
-  _eventLockUntil = Date.now() + lockMs;
+  _eventLockUntil = 0;
   document.getElementById('ev-icon').textContent  = icon;
   document.getElementById('ev-title').textContent = title;
-  document.getElementById('ev-desc').textContent  = desc;
   const box = document.querySelector('.ev-box');
   box.classList.toggle('ev-red', theme === 'red');
   document.getElementById('event-overlay').style.display = 'flex';
+  if (typewriter) {
+    document.getElementById('ev-btn').style.visibility = 'hidden';
+    box.onclick = () => {
+      if (!_typewriterDone) { _skipTypewriter(desc); return; }
+      closeEvent();
+    };
+    _startTypewriter(desc, 45);
+  } else {
+    _stopTypewriter();
+    _typewriterDone = true;
+    document.getElementById('ev-desc').textContent = desc;
+    document.getElementById('ev-btn').style.visibility = '';
+    box.onclick = null;
+  }
 }
 function closeEvent() {
-  if (Date.now() < _eventLockUntil) return;
+  if (!_typewriterDone) return;
+  _stopTypewriter();
+  const box = document.querySelector('.ev-box');
+  if (box) box.onclick = null;
   playDialogueNextSfx();
   document.getElementById('event-overlay').style.display = 'none';
   G.paused = false;
@@ -10727,6 +10906,8 @@ function endGame(type) {
   if (eventOverlay) eventOverlay.style.display = 'none';
   const actionOverlay = document.getElementById('action-scene-overlay');
   if (actionOverlay) actionOverlay.style.display = 'none';
+  const actionMenuOverlay = document.getElementById('action-overlay');
+  if (actionMenuOverlay) actionMenuOverlay.style.display = 'none';
   const deathOverlay = document.getElementById('death-overlay');
   if (deathOverlay) deathOverlay.style.display = 'none';
   const bloodOverlay = document.getElementById('blood-moon-7-overlay');
@@ -10750,7 +10931,10 @@ function endGame(type) {
   es.style.display = 'flex';
   document.getElementById('end-title').textContent  = ending.title;
   document.getElementById('end-title').className    = 'end-title ' + ending.cls;
-  document.getElementById('end-desc').textContent   = ending.desc;
+  document.getElementById('end-desc').textContent   = '';
+  document.getElementById('end-desc').dataset.full  = ending.desc;
+  document.getElementById('end-stats').style.display = 'none';
+  document.querySelector('.btn-restart').style.display = 'none';
   document.getElementById('end-stats').innerHTML = `
     <div class="end-stat">最終天數 <span>${Math.min(G.day, G.maxDays)} 天</span></div>
     <div class="end-stat">阿瓦倫疼痛 <span>${G.pain}</span></div>
@@ -10759,6 +10943,10 @@ function endGame(type) {
     <div class="end-stat">心情（好感）<span>${G.mood}</span></div>
     <div class="end-stat">艾德林 HP <span>${G.eldrinHp ?? 100}</span></div>
   `;
+  _startLineByLine(ending.desc, 700, 45, () => {
+    document.getElementById('end-stats').style.display = '';
+    document.querySelector('.btn-restart').style.display = '';
+  });
 }
 
 // ══════════════════════════════════════
@@ -10956,6 +11144,7 @@ function loadFromSlot(n) {
     }
     if (!G.slime)  G.slime  = { x: SLIME_HOME.x,  y: SLIME_HOME.y,  attackCooldown: 0, hopTick: 0 };
     if (!G.slime2) G.slime2 = { x: SLIME2_HOME.x, y: SLIME2_HOME.y, attackCooldown: 0, hopTick: 35 };
+    if (!G.slime3) G.slime3 = { x: SLIME3_HOME.x, y: SLIME3_HOME.y, attackCooldown: 0, hopTick: 18 };
     if (!G.noah) G.noah = { x: 500, y: 360, pose: 'front', walkTick: 0, walkFrame: 0, walkDir:{dx:0,dy:0}, walkTimer:0, bubbleTimer:0, bubbleText:'', autoSpeakTimer:260, blinkTimer: 340, blinkPhase: -1, blinkPhaseTick: 0, pushVx:0, pushVy:0 };
     if (G.reidIntroSeen == null) G.reidIntroSeen = false;
     if (G.reidChat3_1Seen == null) G.reidChat3_1Seen = false;
@@ -10982,6 +11171,8 @@ function loadFromSlot(n) {
     if (G.reidWinterMeetSeen == null) G.reidWinterMeetSeen = false;
     if (G.reidWinterMeetDay6Seen == null) G.reidWinterMeetDay6Seen = false;
     if (G.reidWinterMeetDay7Seen == null) G.reidWinterMeetDay7Seen = false;
+    if (G.reidSlayRewardClaimedDay == null) G.reidSlayRewardClaimedDay = 0;
+    if (G.reidSlayRewardPending == null) G.reidSlayRewardPending = false;
     if (G.winterIntroSeen == null) G.winterIntroSeen = false;
     if (G.winterReidMeetSeen == null) G.winterReidMeetSeen = false;
     if (G.winterReidMeetDay6Seen == null) G.winterReidMeetDay6Seen = false;
@@ -11000,6 +11191,7 @@ function loadFromSlot(n) {
     if (G.slimeCalmed == null) G.slimeCalmed = false;
     if (G.winterIncenseIntroSeen == null) G.winterIncenseIntroSeen = false;
     if (G.day === 8) G.weather = 'rain';
+    else if (G.day === 9) G.weather = 'clear';
     if (G.noahDay2IntroSeen == null) G.noahDay2IntroSeen = false;
     if (G.noahLobbyTalking == null) G.noahLobbyTalking = false;
     if (G.noahLakeMoonSeen == null) G.noahLakeMoonSeen = false;
@@ -11013,6 +11205,7 @@ function loadFromSlot(n) {
     if (G.avarenDay10ForgetTalkSeen == null) G.avarenDay10ForgetTalkSeen = false;
     if (G.avarenDay10NoForgetTalkSeen == null) G.avarenDay10NoForgetTalkSeen = false;
     if (!Array.isArray(G.eldrinBookReadDays)) G.eldrinBookReadDays = [];
+    if (G.exhaustedSleepWake == null) G.exhaustedSleepWake = null;
     if (G.eldrinEmoteTimer == null) G.eldrinEmoteTimer = 0;
     if (G.eldrinEmoteText == null) G.eldrinEmoteText = '！';
     if (G.avarenReturnPending == null) G.avarenReturnPending = false;
@@ -11026,8 +11219,7 @@ function loadFromSlot(n) {
     document.getElementById('game-screen').style.display  = 'block';
     document.getElementById('blood-moon-badge').style.display = 'none';
     warn('');
-    const bgm = document.getElementById('bgm');
-    bgm.volume = 0.1; bgm.play().catch(() => {});
+    applyBGMForState();
     renderHUD(); renderScene();
     if (raf) cancelAnimationFrame(raf);
     raf = requestAnimationFrame(gameLoop);
@@ -11358,7 +11550,7 @@ async function enableDay0FreeControl() {
   G.introDay0HideEldrin = false;
   renderChars();
   await playActionScene(DAY0_NOAH_EXIT_LINES);
-  fadeSwitchBGM('bgm-day10', 4000);
+  applyBGMForState({ fade: true, duration: 4000 });
   G.manualPaused = false;
   G.paused = false;
   G.dayStartMs = performance.now();
@@ -11439,7 +11631,7 @@ async function beginDay1AfterStaticIntro() {
   renderScene();
   renderChars();
   G.weather = 'clear';
-  fadeSwitchBGM('bgm', 5000);
+  applyBGMForState({ fade: true, duration: 5000 });
   await fadeFromBlack(2500);
   story('旁白', '清晨的光透過樹葉縫隙灑落。你和阿瓦倫來到這裡的第一天。前方是那間破舊的小屋。');
 }
@@ -11462,7 +11654,7 @@ async function finishDay0IntroToDay1() {
   renderHUD();
   renderScene();
   renderChars();
-  fadeSwitchBGM('bgm', 2000);
+  applyBGMForState({ fade: true, duration: 2000 });
   await fadeFromBlack(1600);
   story('旁白', '清晨的光透過樹葉縫隙灑落。你和阿瓦倫來到這裡的第一天。前方是那間破舊的小屋。');
 }
@@ -11578,11 +11770,73 @@ async function startGame() {
   }, 120);
 }
 
+const BGM_IDS = ['bgm', 'bgm-bloodmoon', 'bgm-sad', 'bgm-day10'];
+const DAILY_BGM_RULES = {
+  default: {
+    morning: 'bgm',
+    evening: 'bgm-day10',
+  },
+  0: {
+    morning: null,
+    evening: null,
+  },
+  9: {
+    morning: 'bgm',
+    evening: 'bgm-bloodmoon',
+  },
+  10: {
+    morning: 'bgm-day10',
+    evening: 'bgm-day10',
+  },
+};
+
+function getBGMForState() {
+  if (!G) return 'bgm';
+  if (G.forceSadBGM) return 'bgm-sad';
+  if (G.day === 9 && G.timePeriod === 'evening' && G.bloodMoon7Happened) return 'bgm-bloodmoon';
+  if (G.bloodMoon7Active) return 'bgm-bloodmoon';
+  const dayRule = DAILY_BGM_RULES[G.day] || DAILY_BGM_RULES.default;
+  const id = dayRule[G.timePeriod] ?? DAILY_BGM_RULES.default[G.timePeriod] ?? 'bgm';
+  return id;
+}
+
+function getBGMForPeriod(day, period) {
+  const dayRule = DAILY_BGM_RULES[day] || DAILY_BGM_RULES.default;
+  return dayRule[period] ?? DAILY_BGM_RULES.default[period] ?? 'bgm';
+}
+
+function currentPlayingBGMId() {
+  return BGM_IDS.find(id => {
+    const el = document.getElementById(id);
+    return el && !el.paused;
+  }) || null;
+}
+
+function shouldFadeBeforeEveningBGM() {
+  if (!G) return false;
+  const current = currentPlayingBGMId();
+  const next = G.day === 9 ? 'bgm-bloodmoon' : getBGMForPeriod(G.day, 'evening');
+  return !!current && current !== next;
+}
+
+function applyBGMForState(options = {}) {
+  const id = getBGMForState();
+  const duration = options.duration ?? 2400;
+  const fade = options.fade ?? false;
+  if (!id) {
+    fadeOutCurrentBGM(duration);
+    return;
+  }
+  if (fade) fadeSwitchBGM(id, duration);
+  else switchBGM(id);
+}
+
 function switchBGM(id) {
   if (bgmFadeTimer) { clearInterval(bgmFadeTimer); bgmFadeTimer = null; }
-  const all = ['bgm', 'bgm-bloodmoon', 'bgm-sad', 'bgm-day10'];
+  const all = BGM_IDS;
   all.forEach(aid => {
     const el = document.getElementById(aid);
+    if (!el) return;
     if (aid === id) {
       el.volume = Number(document.getElementById('settings-vol').value) / 100;
       if (el.paused) el.play().catch(() => {});
@@ -11596,7 +11850,7 @@ function switchBGM(id) {
 let bgmFadeTimer = null;
 function fadeOutCurrentBGM(duration = 3000) {
   if (bgmFadeTimer) { clearInterval(bgmFadeTimer); bgmFadeTimer = null; }
-  const active = ['bgm', 'bgm-bloodmoon', 'bgm-sad', 'bgm-day10']
+  const active = BGM_IDS
     .map(id => document.getElementById(id))
     .filter(el => el && !el.paused);
   if (!active.length) return;
@@ -11617,7 +11871,7 @@ function fadeOutCurrentBGM(duration = 3000) {
 
 function fadeSwitchBGM(id, duration = 2400) {
   if (bgmFadeTimer) { clearInterval(bgmFadeTimer); bgmFadeTimer = null; }
-  const all = ['bgm', 'bgm-bloodmoon', 'bgm-sad', 'bgm-day10'];
+  const all = BGM_IDS;
   const target = document.getElementById(id);
   if (!target) return;
   const maxVolume = Number(document.getElementById('settings-vol').value) / 100;
@@ -11647,10 +11901,20 @@ function fadeSwitchBGM(id, duration = 2400) {
   }, 80);
 }
 
+function _skipEndingTypewriter() {
+  const fullText = document.getElementById('end-desc').dataset.full || '';
+  _stopTypewriter();
+  _stopLineByLine();
+  document.getElementById('end-desc').textContent = fullText;
+  _typewriterDone = true;
+  document.getElementById('end-stats').style.display = '';
+  document.querySelector('.btn-restart').style.display = '';
+}
+
 function restartGame() {
+  if (!_typewriterDone) { _skipEndingTypewriter(); return; }
   document.getElementById('ending-screen').style.display = 'none';
   document.getElementById('title-screen').style.display  = 'flex';
-  stopDay0IntroSfx();
   ['bgm', 'bgm-bloodmoon', 'bgm-sad', 'bgm-day10'].forEach(id => {
     const el = document.getElementById(id);
     if (el) { el.pause(); el.currentTime = 0; }
@@ -11659,6 +11923,7 @@ function restartGame() {
   const btn = document.getElementById('title-continue-btn');
   if (btn) btn.style.display = _hasSave ? 'block' : 'none';
   titleScreenInitFocus(_hasSave);
+  playTitleRain();
 }
 
 // ══════════════════════════════════════
@@ -12767,18 +13032,18 @@ if (_hasSaveOnLoad) {
 titleScreenInitFocus(_hasSaveOnLoad);
 
 // 標題頁雨聲
-(function playTitleRain() {
+function playTitleRain() {
   const rain = document.getElementById('sfx-day0-rain');
   if (!rain) return;
   rain.volume = 1.0;
   rain.play().catch(() => {
-    // 瀏覽器需要使用者互動才能播放，等第一次點擊後再播
     document.addEventListener('click', function tryPlay() {
       rain.play().catch(() => {});
       document.removeEventListener('click', tryPlay);
     }, { once: true });
   });
-})();
+}
+playTitleRain();
 </script>
 </body>
 </html>
