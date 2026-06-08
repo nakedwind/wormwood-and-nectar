@@ -5000,17 +5000,57 @@ const NARR_CHAT = [
   '他小聲叫了你的名字。你回頭時，他又說沒事。',
   '你發現阿瓦倫在聽你說話時，眼神會比平常安靜一點。',
 ];
-const NARR_READ = [
-  '你從書架取下一本舊圖鑑，翻到植物那一頁，輕聲讀給阿瓦倫聽……',
-  '你念著書上關於星星的文字，一字一字解釋給阿瓦倫聽……',
-  '你拿出一張手繪地圖，告訴阿瓦倫這片森林叫什麼名字……',
-  '你翻到一個關於動物的小故事，開始輕聲念給阿瓦倫聽……',
-  '你找出一本藥草辨識的書，指著圖解釋每一種植物的用途……',
-  '你翻出一本很舊的故事書，封面有點破損。你輕輕撫平折角，從第一頁開始念……',
-  '你找到一段描述遠方城市的文字，讀著讀著，想知道阿瓦倫有沒有去過那些地方……',
-  '你把書放在兩個人中間，一邊念一邊用手指著對應的圖，讓阿瓦倫也能看清楚……',
-  '這本書有點難，你遇到不懂的字就停下來想一下再繼續。阿瓦倫靜靜等著你找到答案……',
-  '你念到書裡一個小孩的故事，頓了一下，繼續念下去，沒有說任何多餘的話……',
+const AVAREN_READ_SCENES = [
+  [
+    { speaker: '旁白', text: '你翻開一本藥草圖鑑，把書頁稍微傾向阿瓦倫，讓他也能看見上面的圖。\n你指著一朵夜裡才會盛開的小花，輕聲念起它的名字。' },
+    { speaker: '阿瓦倫', text: '「……這個，是花嗎？」\n「它晚上才會醒嗎？」' },
+    { speaker: '旁白', text: '阿瓦倫盯著那幅小小的插圖看了很久。\n你把書頁停在那裡，沒有急著翻過去。' },
+  ],
+  [
+    { speaker: '旁白', text: '你找出一本描寫森林動物的書，念起那些小小生物在樹叢間生活的段落。\n書頁上畫著一隻蜷在草窩裡睡覺的兔子。' },
+    { speaker: '阿瓦倫', text: '「……它會害怕人嗎？」\n「如果靠近它，它會逃走嗎？」' },
+    { speaker: '旁白', text: '你說大概會吧，因為小動物都很警覺。\n阿瓦倫沒有回答，只是安靜地看著那隻兔子。' },
+  ],
+  [
+    { speaker: '旁白', text: '你拿下一本關於遠方城鎮的書，慢慢念著街道、鐘樓與市集的段落。\n書裡寫著人們會在早晨買麵包，也會在夜裡點亮窗邊的燈。' },
+    { speaker: '阿瓦倫', text: '「……真的有那麼多人住在一起嗎？」\n「他們不會覺得吵嗎？」' },
+    { speaker: '旁白', text: '你笑了一下，說有時候會很吵，但也很熱鬧。\n阿瓦倫像是不太能想像那樣的地方，卻沒有移開視線。' },
+  ],
+  [
+    { speaker: '旁白', text: '你念著書裡關於星星的文字，聲音很輕，像是不想驚動房間裡的安靜。\n書上說，星星即使在白天看不見，也依然停在天空深處。' },
+    { speaker: '阿瓦倫', text: '「……看不見，也還在嗎？」\n「那要怎麼知道它沒有消失？」' },
+    { speaker: '旁白', text: '你停了一下，告訴他，有些東西不是看不見就不存在。\n阿瓦倫低下眼，像是把這句話記了下來。' },
+  ],
+  [
+    { speaker: '旁白', text: '你找到一本破舊的童話書，封面已經磨損了。\n故事裡的孩子在森林裡迷了路，走了很久，才終於看見一盞燈。' },
+    { speaker: '阿瓦倫', text: '「……他最後有回家嗎？」' },
+    { speaker: '旁白', text: '你點點頭，繼續念下去。\n阿瓦倫聽得很安靜，直到故事結束，都沒有再打斷你。' },
+  ],
+  [
+    { speaker: '旁白', text: '你把一本插圖很多的舊書放在兩人中間，指著一張湖泊的圖慢慢念。\n書裡說，湖水會記住月亮的形狀。' },
+    { speaker: '阿瓦倫', text: '「……水也會記得東西嗎？」\n「那它會忘記嗎？」' },
+    { speaker: '旁白', text: '你說，也許水只是一直流動，所以看起來像忘了。\n阿瓦倫垂下眼，指尖輕輕碰了一下書頁上的湖。' },
+  ],
+  [
+    { speaker: '旁白', text: '你翻到一段關於鳥類遷徙的記載，念給阿瓦倫聽。\n書上說，有些鳥會飛過很遠很遠的地方，最後還是能找到回家的路。' },
+    { speaker: '阿瓦倫', text: '「……牠們不會迷路嗎？」\n「如果找不到家呢？」' },
+    { speaker: '旁白', text: '你想了一會兒，說也許牠們會停下來休息，然後再慢慢找。\n阿瓦倫小聲說了一句「這樣啊」，像是稍微安心了一點。' },
+  ],
+  [
+    { speaker: '旁白', text: '你取下一本很厚的植物書，挑了最簡單的一頁念給阿瓦倫聽。\n那一頁寫著，有些種子要在泥土裡待很久，才會慢慢發芽。' },
+    { speaker: '阿瓦倫', text: '「……一直在土裡，不會害怕嗎？」' },
+    { speaker: '旁白', text: '你說，也許它不是被埋住，而是在準備長出來。\n阿瓦倫沒有說話，只是把那一句看了很久。' },
+  ],
+  [
+    { speaker: '旁白', text: '你翻開一本介紹不同房屋的書，念起木屋、石屋和建在河邊的小房子。\n你指著圖，告訴阿瓦倫每一種屋子適合住在哪裡。' },
+    { speaker: '阿瓦倫', text: '「……那這裡是哪一種？」\n「這裡……可以算家嗎？」' },
+    { speaker: '旁白', text: '你輕聲說，如果有人願意一起回來，那裡就可以慢慢變成家。\n阿瓦倫沒有抬頭，但你看見他的手指悄悄抓住了衣角。' },
+  ],
+  [
+    { speaker: '旁白', text: '你念到一本故事書裡的旅人。他走過很多地方，最後在一間亮著燈的小屋前停下。\n故事沒有寫他是不是永遠留下，只寫他那晚睡得很安穩。' },
+    { speaker: '阿瓦倫', text: '「……只留一晚，也可以嗎？」\n「他明天會不會又被趕走？」' },
+    { speaker: '旁白', text: '你把聲音放得更輕，告訴他，至少在這一頁裡，沒有人趕他走。\n阿瓦倫安靜地聽著，直到你把那一頁念完。' },
+  ],
 ];
 const ELDRIN_BOOK_DAILY = [
   {
@@ -5625,6 +5665,7 @@ function initState() {
     avarenDay10NoForgetTalkSeen: false,
     eldrinBookReadDays: [],
     exhaustedSleepWake: null,
+    exhaustedNight: false,
     cookActive: false, cookTimer: 0, cookReady: false, soupReady: false, carryingSoup: false, soupIsSpecial: false, cookSelectedKeys: [],
     actionSceneActive: false, actionSceneTimer: 0, actionSceneMax: 0,
     actionSceneOnDone: null, actionSceneLines: [], actionSceneLineIdx: 0, actionSceneLineTick: 0,
@@ -6637,6 +6678,7 @@ function gameLoop() {
           y: G.eldrin.y,
           pose: G.eldrin.pose || 'front',
         };
+        G.exhaustedNight = true;
         endDay();
       }, 'blue');
     }, 800);
@@ -9178,22 +9220,38 @@ function hasReadAllEldrinBookBeforeFinal() {
   return true;
 }
 
+function doAction_BookshelfMenu() {
+  if (G.bloodMoon7Active) { warn('血月夜無法閱讀。'); return; }
+  if (G.paused || G.actionSceneActive) return;
+  showActionMenu('書櫃', [
+    {
+      name: '艾德林自己讀書',
+      fx: () => {
+        const todayRead = (G.eldrinBookReadDays || []).includes(G.day);
+        if (todayRead) return '可重讀今天的內容';
+        if (G.day < 1 || G.day > 11) return '沒有可閱讀的內容';
+        if (G.day === 11 && !hasReadAllEldrinBookBeforeFinal()) return '缺少前面的閱讀紀錄';
+        return ELDRIN_BOOK_DAILY[G.day - 1]?.title ?? '';
+      },
+      run() { doAction_ReadAlone(); }
+    },
+    {
+      name: '唸書給阿瓦倫聽',
+      fx: '知識+3～8  心情+1～5',
+      req() { return G.day >= 3; },
+      run() { doAction_ReadBook(); }
+    },
+  ]);
+}
+
 function doAction_ReadBook() {
-  if (G.day4AvarenGone) { warn('阿瓦倫不在。'); return; }
+  if (G.day4AvarenGone) { warn('阿瓦倫不在這裡。'); return; }
   if (G.timePeriod !== 'evening') { timeWarn('讀書是晚上的行動。'); return; }
-  if ((G.eldrinHp ?? 100) <= 20) { warn('艾德林 HP 太低了，需要休息才能工作。'); return; }
-  startActionScene([
-    { speaker: '旁白',   text: pick(NARR_READ) },
-    { speaker: '阿瓦倫', text: pick(AVAREN_READ_DLG) },
-    { speaker: '旁白',   text: pick([
-      '你們就這樣坐在燭光下，一頁一頁翻過去。他比你想像中認真。',
-      '念著念著，阿瓦倫的眼睛漸漸亮了起來。哪怕只有一點點。',
-      '書頁合上的時候，阿瓦倫沒有立刻離開，只是靜靜地坐著。',
-    ]) },
-  ], CARE_MAX, () => {
-    chg('trust', 10); chg('mood', 3);
+  if ((G.eldrinHp ?? 100) <= 20) { warn('艾德林的 HP 太低，無法集中精神讀書。'); return; }
+  startActionScene(pick(AVAREN_READ_SCENES), CARE_MAX, () => {
+    chg('trust', Math.floor(Math.random() * 6) + 3);
+    chg('mood', Math.floor(Math.random() * 5) + 1);
     renderHUD();
-    story('旁白', pick(NARR_READ));
   });
 }
 
@@ -10420,6 +10478,7 @@ function endDay() {
   G.paused = true;
   cancelAnimationFrame(raf);
   const avarenWakesOnDay2 = G.day === 1 && G.pain < 95 && G.curse < 95;
+  const exhaustedNight = !!G.exhaustedNight;
 
   if (G.day === 11 && G.reidDemonHeartCommissionedToday) {
     finishReidDemonHeartDay();
@@ -10485,18 +10544,23 @@ function endDay() {
   }
 
   // Random curse removal at end of day
-  const removed = Math.floor(Math.random() * 6) + 1; // 1-6
+  const removed = exhaustedNight ? 0 : Math.floor(Math.random() * 6) + 1; // 1-6
   const curseBefore = G.curse;
-  chg('curse', -removed);
+  if (removed > 0) chg('curse', -removed);
   const actualRemoved = curseBefore - G.curse;
 
   if (G.pain >= 100 && G.curse >= 80) { showEvent('💀','危機——', `阿瓦倫的疼痛與詛咒同時達到極限……\n黑霧將他吞噬。`, () => endGame('crisis'), 'red'); return; }
 
-  const nightText = G.day4AvarenGone
+  let nightText = G.day4AvarenGone
     ? `夜晚悄然降臨。\n\n小屋裡安靜得讓人不安。\n你躺下，卻一直聽見窗外的風聲。\n\n這一夜很長。`
     : actualRemoved > 0
       ? `夜晚悄然降臨。\n\n你在燭光下為阿瓦倫進行每晚的儀式。\n這一夜，他身上的詛咒散去了一些……\n\n詛咒消除了 ${actualRemoved} 點。`
       : `夜晚悄然降臨。\n\n你精疲力竭地坐在床邊，\n今夜的解咒似乎沒什麼效果……`;
+
+  if (exhaustedNight) {
+    nightText = `夜晚在疲憊中斷裂。\n\n你沒有回到阿瓦倫身邊，\n也沒能完成平時的照護。\n\n等你再次睜開眼時，已經是隔天早晨。`;
+    G.exhaustedNight = false;
+  }
 
   G.day++;
   G.slimeCalmed = false;
@@ -11206,6 +11270,7 @@ function loadFromSlot(n) {
     if (G.avarenDay10NoForgetTalkSeen == null) G.avarenDay10NoForgetTalkSeen = false;
     if (!Array.isArray(G.eldrinBookReadDays)) G.eldrinBookReadDays = [];
     if (G.exhaustedSleepWake == null) G.exhaustedSleepWake = null;
+    if (G.exhaustedNight == null) G.exhaustedNight = false;
     if (G.eldrinEmoteTimer == null) G.eldrinEmoteTimer = 0;
     if (G.eldrinEmoteText == null) G.eldrinEmoteText = '！';
     if (G.avarenReturnPending == null) G.avarenReturnPending = false;
