@@ -1,11 +1,11 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Wormwood & Dew</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&family=Patrick+Hand&family=Gaegu:wght@700&family=Noto+Sans+TC:wght@400;500;700;900&display=swap');
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
   background: #08060302;
@@ -17,86 +17,88 @@ body {
 }
 #app { width: 1180px; max-width: 100%; }
 
-/* ══ TITLE ══ */
+/* ══ TITLE (redesigned · 手繪藥典書頁) ══ */
 #title-screen {
-  display: flex; flex-direction: column; align-items: center;
-  background: #0a0704;
+  display: flex; align-items: center; justify-content: center;
+  width: 1120px; max-width: 100%; height: 630px;
+  margin: 0 auto; position: relative; overflow: hidden;
+  font-family: 'Noto Sans TC', sans-serif;
+  background: radial-gradient(ellipse at 60% 45%, #1a1109 0%, #0c0703 70%, #070502 100%);
+  box-shadow: 0 0 0 2px #271a0c, 0 0 0 5px #0c0804, 0 0 0 6px #3a2811, 0 18px 60px rgba(0,0,0,.6);
 }
-#title-cover-wrap {
-  position: relative;
-  width: 640px; max-width: 100%;
+#title-cover-art { position:absolute; top:0; right:0; width:702px; height:100%; overflow:hidden; }
+#title-cover { width:100%; height:100%; object-fit:cover; object-position:50% 42%; image-rendering:pixelated; display:block; }
+#title-cover-art::after{
+  content:""; position:absolute; inset:0; pointer-events:none;
+  background:
+    linear-gradient(90deg, #160e07 0%, rgba(22,14,7,.55) 13%, rgba(22,14,7,0) 34%),
+    radial-gradient(ellipse at 55% 50%, rgba(0,0,0,0) 42%, rgba(6,4,2,.62) 100%),
+    linear-gradient(0deg, rgba(6,4,2,.55) 0%, rgba(6,4,2,0) 24%, rgba(6,4,2,0) 78%, rgba(6,4,2,.4) 100%);
 }
-#title-cover {
-  width: 100%; display: block; image-rendering: pixelated;
+#title-panel{
+  position:absolute; top:0; left:0; width:446px; height:100%; z-index:2;
+  background:
+    linear-gradient(180deg, rgba(58,40,20,.35), rgba(0,0,0,0) 18%),
+    repeating-linear-gradient(94deg, rgba(0,0,0,.05) 0 2px, transparent 2px 5px),
+    linear-gradient(105deg, #271a0e 0%, #1d130a 48%, #150d06 100%);
+  border-right:1px solid #4a3318;
+  box-shadow:14px 0 34px rgba(0,0,0,.55), inset -10px 0 26px rgba(0,0,0,.35);
+  padding:46px 44px 36px; display:flex; flex-direction:column;
 }
-#title-game-title {
-  position: absolute; top: 42px; left: 0; right: 0;
-  text-align: center;
-  font-size: 33px; font-weight: 900; color: #ddeeff;
-  letter-spacing: 3px;
-  text-shadow: 0 0 12px #aad4ff, 0 0 28px #88bbff, 0 0 55px #5599ee, 0 2px 4px #000;
+#title-panel::before{
+  content:""; position:absolute; inset:15px;
+  border:1.5px dashed rgba(200,144,58,.40);
+  border-radius:20px 7px 18px 9px/9px 18px 8px 20px; pointer-events:none;
 }
-#title-intro {
-  position: absolute; top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  width: 420px; text-align: center;
-  font-size: 14px; line-height: 2.2; color: #c8ddf0;
-  text-shadow: 0 1px 6px #000, 0 0 20px #000;
-  pointer-events: none;
+.t-corner{position:absolute;width:17px;height:17px;border:2.5px solid #c8903a;opacity:.8;border-radius:6px 1px 5px 1px;}
+.t-corner.tl{top:16px;left:16px;border-right:0;border-bottom:0;}
+.t-corner.tr{top:16px;right:16px;border-left:0;border-bottom:0;}
+.t-corner.bl{bottom:16px;left:16px;border-right:0;border-top:0;}
+.t-corner.br{bottom:16px;right:16px;border-left:0;border-top:0;}
+.t-eyebrow{font-family:'Patrick Hand',cursive;font-size:13px;letter-spacing:5px;color:#b7a06e;margin-bottom:16px;display:flex;align-items:center;gap:10px;}
+.t-eyebrow .t-dot{width:5px;height:5px;background:#c8903a;transform:rotate(45deg);box-shadow:0 0 6px #c8903a;}
+.t-title-en{
+  font-family:'Gaegu',cursive;font-weight:700;font-size:58px;line-height:.98;letter-spacing:.5px;
+  background:linear-gradient(176deg,#fbe7b0 0%,#e7bd6a 46%,#b07e2e 100%);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:#e7c98c;
+  text-shadow:0 1px 0 rgba(0,0,0,.4); filter:drop-shadow(0 2px 10px rgba(200,144,58,.28));
 }
-#title-intro em { font-style: normal; color: #f0e0a0; }
-#title-start-btn {
-  position: absolute; bottom: 46px; left: 50%; transform: translateX(-50%);
-  background: linear-gradient(135deg, #1a4a8a, #0e2a5a);
-  border: 1px solid #4a80c0; color: #d0e8ff;
-  padding: 12px 0; width: 200px; font-size: 17px; font-family: inherit;
-  cursor: pointer; letter-spacing: 4px; white-space: nowrap;
-  transition: all 0.2s; border-radius: 24px;
-  box-shadow: 0 0 16px rgba(60,120,220,0.4);
+.t-title-en .amp{font-size:48px;color:#d9ad5e;-webkit-text-fill-color:#d9ad5e;padding:0 4px;}
+.t-title-zh{margin-top:12px;font-size:23px;font-weight:900;letter-spacing:13px;color:#e8d5a3;text-indent:13px;text-shadow:0 1px 8px rgba(0,0,0,.6);}
+.t-tagline{margin-top:15px;font-size:13.5px;line-height:1.9;color:#b7a06e;max-width:300px;}
+.t-divider{display:flex;align-items:center;gap:12px;margin:22px 0 20px;}
+.t-divider .ln{flex:1;height:0;border-top:1.5px dashed rgba(200,144,58,.5);}
+.t-divider .gem{width:8px;height:8px;border:1.5px solid #c8903a;transform:rotate(45deg);border-radius:3px 1px 3px 1px;box-shadow:0 0 8px rgba(200,144,58,.6) inset;}
+.t-menu{display:flex;flex-direction:column;gap:11px;}
+.t-mbtn{
+  position:relative;display:block;width:100%;font-family:inherit;cursor:pointer;text-align:left;
+  background:linear-gradient(180deg,#f1e7ce,#e3d5b2);border:1.5px solid #b69862;color:#3e2c15;
+  padding:12px 16px; box-shadow:inset 0 1px 0 rgba(255,252,242,.7),0 2px 7px rgba(0,0,0,.5);
+  transition:transform .16s ease,border-color .2s,box-shadow .2s,background .2s;
 }
-#title-start-btn:hover {
-  background: linear-gradient(135deg, #2a5aaa, #1a3a7a);
-  box-shadow: 0 0 28px rgba(60,140,255,0.7);
-}
-#title-continue-btn {
-  position: absolute; bottom: 106px; left: 50%; transform: translateX(-50%);
-  background: linear-gradient(135deg, #1a3a1a, #0e220e);
-  border: 1px solid #4a904a; color: #a0e0a0;
-  padding: 12px 0; width: 200px; font-size: 17px; font-family: inherit;
-  cursor: pointer; letter-spacing: 4px; white-space: nowrap;
-  transition: all 0.2s; border-radius: 24px;
-  box-shadow: 0 0 12px rgba(60,180,60,0.3);
-  display: none;
-}
-#title-continue-btn:hover {
-  background: linear-gradient(135deg, #2a5a2a, #1a3a1a);
-  box-shadow: 0 0 24px rgba(60,200,60,0.6);
-}
-#title-start-btn.title-focused {
-  box-shadow: 0 0 0 2px #90c0ff, 0 0 28px rgba(60,140,255,0.8);
-  background: linear-gradient(135deg, #2a5aaa, #1a3a7a);
-}
-#title-continue-btn.title-focused {
-  box-shadow: 0 0 0 2px #80e080, 0 0 24px rgba(60,200,60,0.8);
-  background: linear-gradient(135deg, #2a5a2a, #1a3a1a);
-}
-#title-skip-btn.title-focused {
-  box-shadow: 0 0 0 2px #e0a060, 0 0 24px rgba(200,130,60,0.8);
-  background: linear-gradient(135deg, #5a2a1a, #3a1a0e);
-}
-#title-skip-btn {
-  position: absolute; bottom: 166px; left: 50%; transform: translateX(-50%);
-  background: linear-gradient(135deg, #3a1a1a, #220e0e);
-  border: 1px solid #906040; color: #c8a070;
-  padding: 12px 0; width: 200px; font-size: 17px; font-family: inherit;
-  cursor: pointer; letter-spacing: 4px; white-space: nowrap;
-  transition: all 0.2s; border-radius: 24px;
-  box-shadow: 0 0 12px rgba(180,100,40,0.3);
-}
-#title-skip-btn:hover {
-  background: linear-gradient(135deg, #5a2a1a, #3a1a0e);
-  box-shadow: 0 0 24px rgba(200,130,60,0.6);
-}
+.t-mbtn .t-in{display:flex;align-items:center;gap:13px;}
+.t-mbtn:nth-child(1){border-radius:17px 6px 14px 8px/8px 15px 7px 16px;}
+.t-mbtn:nth-child(2){border-radius:7px 16px 8px 15px/15px 7px 16px 8px;}
+.t-mbtn:nth-child(3){border-radius:14px 8px 17px 6px/7px 16px 8px 15px;}
+.t-mbtn .mark{font-size:14px;color:#c8903a;width:16px;text-align:center;flex-shrink:0;transition:color .2s,transform .2s;}
+.t-mbtn .mtxt{font-family:'Noto Sans TC',sans-serif;font-size:18px;font-weight:900;letter-spacing:3px;flex:1;}
+.t-mbtn:hover,.t-mbtn.title-focused{transform:translateX(5px);border-color:#d8a23f;background:linear-gradient(180deg,#f7efd9,#ecdfc0);box-shadow:0 0 0 1px rgba(216,162,63,.5),0 9px 22px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,252,242,.85);}
+.t-mbtn:hover .mark,.t-mbtn.title-focused .mark{color:#8a5e18;transform:scale(1.15);}
+.t-mbtn.primary{background:linear-gradient(180deg,#eddfbd,#ddcc9f);border:1.5px solid #c8903a;box-shadow:inset 0 0 0 1px rgba(200,144,58,.5),inset 0 1px 0 rgba(255,252,242,.72),0 2px 9px rgba(0,0,0,.55);}
+.t-mbtn.primary .mtxt{color:#6e4a15;}
+.t-mbtn.primary:hover,.t-mbtn.primary.title-focused{background:linear-gradient(180deg,#f5ecce,#e8d8ad);box-shadow:inset 0 0 0 1px rgba(200,144,58,.85),0 9px 24px rgba(120,86,40,.45),inset 0 1px 0 rgba(255,252,242,.85);}
+.t-mbtn.cont .mark{color:#5a7e34;}
+.t-mbtn.cont:hover,.t-mbtn.cont.title-focused{border-color:#6e9440;box-shadow:0 0 0 1px rgba(110,148,64,.45),0 9px 22px rgba(0,0,0,.55);}
+.t-mbtn.cont:hover .mark,.t-mbtn.cont.title-focused .mark{color:#4d7029;}
+.t-mbtn.skip{background:linear-gradient(180deg,rgba(235,224,194,.78),rgba(218,203,166,.78));border-color:#bca878;}
+.t-mbtn.skip .mtxt{color:#7a6238;font-size:16px;}
+.t-mbtn.skip .mark{color:#c08a44;}
+.t-mbtn.skip:hover,.t-mbtn.skip.title-focused{border-color:#c08a44;background:linear-gradient(180deg,#ece1c4,#ddcca0);}
+.t-mbtn.skip:hover .mtxt,.t-mbtn.skip.title-focused .mtxt{color:#3e2c15;}
+#title-continue-btn{display:none;}
+.t-foot{margin-top:auto;padding-top:20px;display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.t-foot .ver{font-family:'Patrick Hand',cursive;font-size:12px;letter-spacing:1px;color:#7a6336;white-space:nowrap;}
+.t-foot .t-hint{font-family:'Patrick Hand',cursive;font-size:11px;color:#9a7c44;letter-spacing:1px;white-space:nowrap;}
 
 /* ══ GAME SCREEN ══ */
 #game-screen {
@@ -554,67 +556,83 @@ body {
 /* ══ SAVE PANEL ══ */
 #save-panel-overlay {
   display: none; position: fixed; inset: 0;
-  background: rgba(4,2,0,0.88); z-index: 100;
+  background: rgba(4,2,0,0.90); z-index: 100;
   justify-content: center; align-items: center;
+  font-family: 'Noto Sans TC', sans-serif;
 }
 #save-panel {
-  background: #120e08; border: 1px solid #6a4820;
-  padding: 26px 30px; width: 500px; max-width: calc(100% - 32px);
-  border-radius: 16px;
+  position: relative;
+  background: linear-gradient(180deg, rgba(58,40,20,.4), rgba(0,0,0,0) 20%),
+              linear-gradient(112deg,#271a0e 0%,#1d130a 52%,#160d06 100%);
+  border: 1.5px solid #c8903a;
+  border-radius: 18px 7px 16px 9px/9px 16px 7px 18px;
+  width: 460px; max-width: calc(100% - 32px); padding: 22px 22px 16px;
+  box-shadow: 0 16px 40px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,220,150,.08);
+}
+#save-panel::after {
+  content:""; position:absolute; inset:5px; pointer-events:none;
+  border:1.5px dashed rgba(200,144,58,.34);
+  border-radius:15px 6px 14px 7px/7px 14px 6px 15px;
 }
 #save-panel-title {
-  font-size: 14px; letter-spacing: 5px; color: #c8903a;
-  text-align: center; margin-bottom: 18px;
-  border-bottom: 1px solid #4a3018; padding-bottom: 14px;
+  font-size: 20px; font-weight: 900; color: #e7c98c;
+  letter-spacing: 4px; text-align: center;
+  margin-bottom: 14px;
 }
 .save-slots-grid {
-  display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px;
+  display: flex; flex-direction: column; gap: 7px; margin-bottom: 10px;
 }
 .save-slot {
-  background: #1c140a; border: 1px solid #4a3418;
-  padding: 12px 16px; border-radius: 10px;
-  display: flex; align-items: center; gap: 14px;
+  background: linear-gradient(180deg,#f1e7ce,#e3d5b2); border: 1.5px solid #b69862;
+  border-radius: 12px 5px 11px 6px/6px 12px 5px 13px;
+  padding: 10px 13px; display: flex; align-items: center; gap: 12px;
+  box-shadow: inset 0 1px 0 rgba(255,252,242,.7), 0 1px 3px rgba(0,0,0,.4);
+  transition: all 0.15s;
 }
-.save-slot.kbd-focus { border-color: #c08030; background: #2a1c0a; }
+.save-slot:nth-child(even) { border-radius: 6px 13px 5px 12px/12px 6px 13px 5px; }
+.save-slot.kbd-focus {
+  transform: translateX(4px); border-color: #d8a23f;
+  background: linear-gradient(180deg,#f7efd9,#ecdfc0);
+  box-shadow: 0 0 0 1px rgba(216,162,63,.55), 0 5px 14px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,252,242,.85);
+}
 .save-slot-num {
-  font-size: 12px; letter-spacing: 2px; color: #a07840;
-  width: 44px; flex-shrink: 0; text-align: center;
+  font-size: 12px; letter-spacing: 2px; color: #7a5820;
+  width: 40px; flex-shrink: 0; font-weight: 700;
 }
 .save-slot-text { flex: 1; display: flex; flex-direction: column; }
 .save-slot-info {
-  font-size: 14px; color: #f0d080; font-weight: 600;
+  font-size: 14px; color: #3e2c15; font-weight: 900; letter-spacing: 1px;
 }
 .save-slot-date {
-  font-size: 11px; color: #907850; letter-spacing: 1px; margin-top: 2px;
+  font-size: 11px; color: #7a6040; letter-spacing: 1px; margin-top: 2px;
 }
 .save-slot-btns {
   display: flex; gap: 6px; flex-shrink: 0;
 }
 .save-slot-btns button {
-  padding: 6px 16px; font-size: 13px; font-family: inherit;
-  letter-spacing: 2px; cursor: pointer; border: 1px solid;
-  transition: all 0.15s; border-radius: 20px;
+  padding: 2px 11px; font-size: 12px; font-family: inherit;
+  letter-spacing: 1px; cursor: pointer; transition: all 0.15s;
+  font-weight: 700; white-space: nowrap;
 }
 .btn-save-slot {
-  background: #2a1c08; border-color: #c08030 !important; color: #f0c060;
+  background: rgba(180,160,110,.16); border: 1.5px solid #bca06a;
+  color: #6e5a2e; border-radius: 10px 4px 9px 4px;
 }
-.btn-save-slot:hover { background: #3a2810; box-shadow: 0 0 10px rgba(200,130,40,0.5); }
-.btn-save-slot.kbd-focus { background: #3a2810; box-shadow: 0 0 10px rgba(200,130,40,0.5); }
+.btn-save-slot:hover, .btn-save-slot.kbd-focus { background: rgba(200,160,80,.3); border-color: #d8a23f; color: #4a3010; }
 .btn-load-slot {
-  background: #0c1a28; border-color: #4090d0 !important; color: #90c8f0;
+  background: rgba(180,160,110,.16); border: 1.5px solid #bca06a;
+  color: #6e5a2e; border-radius: 4px 10px 4px 9px;
 }
-.btn-load-slot:hover { background: #182a3e; box-shadow: 0 0 10px rgba(60,140,220,0.5); }
-.btn-load-slot.kbd-focus { background: #182a3e; box-shadow: 0 0 10px rgba(60,140,220,0.5); }
-.btn-load-slot:disabled { opacity: 0.25; cursor: not-allowed; box-shadow: none; }
+.btn-load-slot:hover, .btn-load-slot.kbd-focus { background: rgba(200,160,80,.3); border-color: #d8a23f; color: #4a3010; }
+.btn-load-slot:disabled { opacity: 0.3; cursor: not-allowed; }
 #save-panel-close {
-  display: block; width: 100%; padding: 10px 0;
-  background: transparent; border: 1px solid #4a3018;
-  color: #907040; font-size: 13px; font-family: inherit;
-  letter-spacing: 4px; cursor: pointer; transition: all 0.2s;
-  border-radius: 20px;
+  display: block; width: 100%; padding: 9px 0; margin-top: 9px;
+  background: rgba(20,13,6,.5); border: 1.5px dashed #6a5028;
+  color: #b7a06e; font-size: 13px; font-family: inherit; font-weight: 700;
+  letter-spacing: 3px; cursor: pointer; transition: all 0.15s;
+  border-radius: 11px 4px 10px 5px/5px 10px 4px 11px;
 }
-#save-panel-close:hover { border-color: #c08030; color: #c8903a; }
-#save-panel-close.kbd-focus { border-color: #c08030; color: #c8903a; }
+#save-panel-close:hover, #save-panel-close.kbd-focus { border-color: #c8903a; color: #f0d898; background: rgba(40,28,14,.6); }
 
 /* ── SETTINGS ── */
 #settings-btn {
@@ -697,82 +715,131 @@ body {
 /* ══ ACTION OVERLAY ══ */
 #action-overlay {
   display: none; position: fixed; inset: 0;
-  background: rgba(4,2,0,0.90); z-index: 100;
+  background: rgba(4,2,0,0.82); z-index: 100;
   justify-content: center; align-items: center;
+  font-family: 'Noto Sans TC', sans-serif;
 }
 .act-box {
-  background: #120e06; border: 1px solid #4a3010;
-  width: 440px; max-width: 95vw; padding: 22px 22px 18px;
+  position: relative;
+  background:
+    linear-gradient(180deg, rgba(58,40,20,.4), rgba(0,0,0,0) 20%),
+    linear-gradient(112deg,#271a0e 0%,#1d130a 52%,#160d06 100%);
+  border: 1.5px solid #c8903a;
+  border-radius: 18px 7px 16px 9px/9px 16px 7px 18px;
+  width: 440px; max-width: 95vw; padding: 20px 20px 16px;
+  box-shadow: 0 16px 40px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,220,150,.08);
 }
-.act-title { font-size: 12px; letter-spacing: 4px; color: #5a4020; margin-bottom: 6px; }
-.act-name  { font-size: 21px; font-weight: 700; color: #f0d060; margin-bottom: 16px; }
+.act-box::after{
+  content:""; position:absolute; inset:5px; pointer-events:none;
+  border:1.5px dashed rgba(200,144,58,.34);
+  border-radius:15px 6px 14px 7px/7px 14px 6px 15px;
+}
+.act-title { display: none; }
+.act-name  { font-size: 20px; font-weight: 900; color: #e7c98c; margin-bottom: 14px; letter-spacing:2px; }
 .act-list  { display: flex; flex-direction: column; gap: 7px; }
 .act-item {
-  background: #1a1208; border: 1px solid #3a2810;
-  padding: 11px 14px; cursor: pointer; font-family: inherit;
-  display: flex; justify-content: space-between; align-items: center;
+  background: linear-gradient(180deg,#f1e7ce,#e3d5b2); border: 1.5px solid #b69862;
+  border-radius: 12px 5px 11px 6px/6px 12px 5px 13px;
+  padding: 10px 13px; cursor: pointer; font-family: inherit; color:#3e2c15;
+  display: flex; justify-content: space-between; align-items: center; gap:10px;
+  box-shadow: inset 0 1px 0 rgba(255,252,242,.7),0 1px 3px rgba(0,0,0,.4);
   transition: all 0.15s;
 }
-.act-item:hover:not(:disabled) { background: #221a0a; border-color: #5a3818; }
-.act-item:disabled { opacity: 0.4; cursor: not-allowed; }
-.act-item.kbd-selected:not(:disabled) { background: #2a1e08; border-color: #c08030; outline: none; }
-.act-item.kbd-selected:not(:disabled) .a-name { color: #ffd060; }
-.act-item .a-name { font-size: 15px; color: #e0e0d8; font-weight: 700; }
-.act-item .a-fx   { font-size: 12px; color: #a0a098; letter-spacing: 1px; }
-.act-cancel {
-  margin-top: 8px; width: 100%; background: transparent; border: 1px solid #2a1e08;
-  color: #6a5028; padding: 8px; font-family: inherit; font-size: 13px;
-  cursor: pointer; letter-spacing: 3px; transition: all 0.15s;
+.act-list .act-item:nth-child(odd){border-radius:13px 5px 11px 6px/6px 12px 5px 13px;}
+.act-list .act-item:nth-child(even){border-radius:6px 13px 5px 12px/12px 6px 13px 5px;}
+.act-item:hover:not(:disabled), .act-item.kbd-selected:not(:disabled) {
+  transform: translateX(4px); border-color: #d8a23f; outline:none;
+  background: linear-gradient(180deg,#f7efd9,#ecdfc0);
+  box-shadow: 0 0 0 1px rgba(216,162,63,.55),0 5px 14px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,252,242,.85);
 }
-.act-cancel:hover { border-color: #4a3010; color: #9a7040; }
-.act-cancel.kbd-selected { border-color: #c08030; color: #9a7040; background: #1a1208; }
+.act-item:disabled { opacity: 0.5; cursor: not-allowed; filter:saturate(.6); }
+.act-item.kbd-selected:not(:disabled) .a-name { color: #6e4a15; }
+.act-item.kbd-selected:not(:disabled) .a-name::before { content: '▶ '; font-size: 14px; color: #c07820; }
+.act-item .a-name { font-size: 15px; color: #3e2c15; font-weight: 900; letter-spacing:1px; }
+.act-item .a-fx   {
+  font-family:'Patrick Hand',cursive; font-size: 12px; color: #6e5a2e; letter-spacing: .5px;
+  border:1.5px solid #bca06a; border-radius:10px 4px 9px 4px; padding:1px 9px; white-space:nowrap; background:rgba(180,160,110,.16);
+}
+.act-cancel {
+  margin-top: 9px; width: 100%; background: rgba(20,13,6,.5); border: 1.5px dashed #6a5028;
+  color: #b7a06e; padding: 9px; font-family: 'Noto Sans TC',sans-serif; font-size: 13px; font-weight:700;
+  cursor: pointer; letter-spacing: 3px; transition: all 0.15s; border-radius:11px 4px 10px 5px/5px 10px 4px 11px;
+}
+.act-cancel:hover, .act-cancel.kbd-selected { border-color: #c8903a; color: #f0d898; background: rgba(40,28,14,.6); }
+.act-cancel.kbd-selected::before { content: '▶ '; font-size: 14px; color: #c07820; }
 
 /* ══ COOK INGREDIENT SELECT ══ */
 #cook-select-overlay {
   display: none; position: fixed; inset: 0;
   background: rgba(4,2,0,0.90); z-index: 100;
   justify-content: center; align-items: center;
+  font-family: 'Noto Sans TC', sans-serif;
 }
 .csi-box {
-  background: #120e06; border: 1px solid #4a3010;
-  width: 440px; max-width: 95vw; padding: 22px 22px 18px;
+  position: relative;
+  background: linear-gradient(180deg, rgba(58,40,20,.4), rgba(0,0,0,0) 20%),
+              linear-gradient(112deg,#271a0e 0%,#1d130a 52%,#160d06 100%);
+  border: 1.5px solid #c8903a;
+  border-radius: 18px 7px 16px 9px/9px 16px 7px 18px;
+  width: 440px; max-width: 95vw; padding: 20px 20px 16px;
+  box-shadow: 0 16px 40px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,220,150,.08);
 }
-.csi-title { font-size: 12px; letter-spacing: 4px; color: #5a4020; margin-bottom: 6px; }
-.csi-name  { font-size: 21px; font-weight: 700; color: #f0d060; margin-bottom: 14px; }
+.csi-box::after {
+  content:""; position:absolute; inset:5px; pointer-events:none;
+  border:1.5px dashed rgba(200,144,58,.34);
+  border-radius:15px 6px 14px 7px/7px 14px 6px 15px;
+}
+.csi-title { display: none; }
+.csi-name  { font-size: 20px; font-weight: 900; color: #e7c98c; margin-bottom: 14px; letter-spacing: 2px; }
 .csi-list  { display: flex; flex-direction: column; gap: 7px; margin-bottom: 10px; }
 .csi-item {
-  background: #1a1208; border: 1px solid #3a2810;
-  padding: 11px 14px; cursor: pointer; font-family: inherit;
-  display: flex; justify-content: space-between; align-items: center;
+  background: linear-gradient(180deg,#f1e7ce,#e3d5b2); border: 1.5px solid #b69862;
+  border-radius: 12px 5px 11px 6px/6px 12px 5px 13px;
+  padding: 10px 13px; cursor: pointer; font-family: inherit;
+  display: flex; justify-content: space-between; align-items: center; gap: 10px;
+  box-shadow: inset 0 1px 0 rgba(255,252,242,.7), 0 1px 3px rgba(0,0,0,.4);
   transition: all 0.15s; text-align: left; width: 100%;
 }
-.csi-item:hover { background: #221a0a; border-color: #5a3818; }
-.csi-item.selected { background: #2a1e08; border-color: #c08030; }
-.csi-item.selected .ci-name { color: #ffd060; }
-.csi-item .ci-name { font-size: 15px; color: #e0e0d8; font-weight: 700; }
-.csi-item .ci-fx   { font-size: 12px; color: #a0a098; letter-spacing: 1px; }
+.csi-list .csi-item:nth-child(even) { border-radius: 6px 13px 5px 12px/12px 6px 13px 5px; }
+.csi-item:hover:not(:disabled), .csi-item.selected {
+  transform: translateX(4px); border-color: #d8a23f;
+  background: linear-gradient(180deg,#f7efd9,#ecdfc0);
+  box-shadow: 0 0 0 1px rgba(216,162,63,.55), 0 5px 14px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,252,242,.85);
+}
+.csi-item.selected .ci-name { color: #6e4a15; }
+.csi-item .ci-name { font-size: 15px; color: #3e2c15; font-weight: 900; letter-spacing: 1px; }
+.csi-item .ci-fx   {
+  font-family:'Patrick Hand',cursive; font-size: 12px; color: #6e5a2e; letter-spacing: .5px;
+  border: 1.5px solid #bca06a; border-radius: 10px 4px 9px 4px; padding: 1px 9px; white-space: nowrap; background: rgba(180,160,110,.16);
+}
 .csi-summary {
-  font-size: 12px; color: #80a060; letter-spacing: 1px;
-  padding: 8px 10px; background: #0e0c04; border: 1px solid #2a2010;
-  margin-bottom: 10px; min-height: 28px; line-height: 1.8;
+  font-size: 12px; color: #7a9060; letter-spacing: 1px;
+  padding: 7px 10px; background: rgba(20,15,5,.5); border: 1px solid rgba(180,144,58,.3);
+  border-radius: 8px 3px 7px 4px; margin-bottom: 10px; min-height: 28px; line-height: 1.8;
 }
 .csi-footer { display: flex; gap: 8px; }
 .csi-start {
-  flex: 1; background: #1a1208; border: 1px solid #5a3010; color: #f0d060;
-  padding: 10px; font-family: inherit; font-size: 14px; cursor: pointer;
-  letter-spacing: 2px; transition: all 0.15s;
-}
-.csi-start:hover { border-color: #8a5020; background: #221a08; }
-.csi-cancel-btn {
-  background: transparent; border: 1px solid #2a1e08; color: #6a5028;
-  padding: 10px 18px; font-family: inherit; font-size: 13px;
+  flex: 1; background: rgba(20,13,6,.5); border: 1.5px solid #c8903a; color: #e7c98c;
+  padding: 9px; font-family: 'Noto Sans TC',sans-serif; font-size: 13px; font-weight: 700;
   cursor: pointer; letter-spacing: 2px; transition: all 0.15s;
+  border-radius: 11px 4px 10px 5px/5px 10px 4px 11px;
 }
-.csi-cancel-btn:hover { border-color: #4a3010; color: #9a7040; }
-.csi-item.csi-kbd-sel { background: #2a1e08; border-color: #c08030; }
-.csi-item.csi-kbd-sel .ci-name { color: #ffd060; }
-.csi-start.csi-kbd-sel { border-color: #8a5020; background: #221a08; }
-.csi-cancel-btn.csi-kbd-sel { border-color: #4a3010; color: #9a7040; }
+.csi-start:hover, .csi-start.csi-kbd-sel { border-color: #e8b050; color: #f7d898; background: rgba(40,28,14,.6); }
+.csi-cancel-btn {
+  background: rgba(20,13,6,.5); border: 1.5px dashed #6a5028; color: #b7a06e;
+  padding: 9px 18px; font-family: 'Noto Sans TC',sans-serif; font-size: 13px; font-weight: 700;
+  cursor: pointer; letter-spacing: 2px; transition: all 0.15s;
+  border-radius: 11px 4px 10px 5px/5px 10px 4px 11px;
+}
+.csi-cancel-btn:hover, .csi-cancel-btn.csi-kbd-sel { border-color: #c8903a; color: #f0d898; background: rgba(40,28,14,.6); }
+.csi-item.csi-kbd-sel {
+  transform: translateX(4px); border-color: #d8a23f;
+  background: linear-gradient(180deg,#f7efd9,#ecdfc0);
+  box-shadow: 0 0 0 1px rgba(216,162,63,.55), 0 5px 14px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,252,242,.85);
+}
+.csi-item.csi-kbd-sel .ci-name { color: #6e4a15; }
+.csi-item.csi-kbd-sel .ci-name::before { content: '▶ '; font-size: 14px; color: #c07820; }
+.csi-cancel-btn.csi-kbd-sel::before { content: '▶ '; font-size: 14px; color: #c07820; }
 
 /* ══ SOUP OBJECT ══ */
 #soup-obj {
@@ -909,6 +976,18 @@ body {
 .asc-text-red { color: #e8aaa0; }
 .asc-text-winter { color: #a8c8e8; }
 .asc-text-noah { color: #d8ead2; }
+.asc-text-fairy { color: #ff4444; }
+@keyframes screenShake {
+  0%   { transform: translate(0,0); }
+  15%  { transform: translate(-5px, 3px); }
+  30%  { transform: translate(5px, -3px); }
+  45%  { transform: translate(-4px, 2px); }
+  60%  { transform: translate(4px, -2px); }
+  75%  { transform: translate(-2px, 1px); }
+  90%  { transform: translate(2px, -1px); }
+  100% { transform: translate(0,0); }
+}
+#app.shake { animation: screenShake 0.45s ease-out; }
 #asc-btn {
   display: block; margin-top: 8px;
   border-radius: 20px; padding: 7px 18px;
@@ -930,41 +1009,61 @@ body {
   display: none; position: fixed; inset: 0;
   background: rgba(4,2,0,0.90); z-index: 100;
   justify-content: center; align-items: center;
+  font-family: 'Noto Sans TC', sans-serif;
 }
 .trade-box {
-  background: #120e06; border: 1px solid #4a3010;
-  width: 460px; max-width: 95vw; padding: 20px 22px 16px;
+  position: relative;
+  background: linear-gradient(180deg, rgba(58,40,20,.4), rgba(0,0,0,0) 20%),
+              linear-gradient(112deg,#271a0e 0%,#1d130a 52%,#160d06 100%);
+  border: 1.5px solid #c8903a;
+  border-radius: 18px 7px 16px 9px/9px 16px 7px 18px;
+  width: 460px; max-width: 95vw; padding: 20px 20px 16px;
+  box-shadow: 0 16px 40px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,220,150,.08);
 }
-.trade-title { font-size: 12px; letter-spacing: 4px; color: #5a4020; margin-bottom: 4px; }
-.trade-name-big { font-size: 19px; font-weight: 700; color: #f0d060; margin-bottom: 10px; }
+.trade-box::after {
+  content:""; position:absolute; inset:5px; pointer-events:none;
+  border:1.5px dashed rgba(200,144,58,.34);
+  border-radius:15px 6px 14px 7px/7px 14px 6px 15px;
+}
+.trade-title { display: none; }
+.trade-name-big { font-size: 20px; font-weight: 900; color: #e7c98c; margin-bottom: 10px; letter-spacing: 2px; }
 .trade-money-bar {
-  font-size: 14px; color: #c0c0b8; margin-bottom: 12px;
-  border-bottom: 1px solid #2a1e08; padding-bottom: 8px;
+  font-size: 13px; color: #c0a870; margin-bottom: 10px;
+  border-bottom: 1px solid rgba(200,144,58,.3); padding-bottom: 8px;
 }
 .trade-money-bar b { color: #f0d060; }
-.trade-section { font-size: 11px; letter-spacing: 3px; color: #5a4020; margin: 8px 0 6px; }
+.trade-section { font-size: 11px; letter-spacing: 3px; color: #a07840; margin: 8px 0 5px; }
 .trade-row {
   display: flex; align-items: center; gap: 6px;
-  background: #1a1208; border: 1px solid #2a1a08;
-  padding: 7px 10px; margin-bottom: 4px;
+  background: linear-gradient(180deg,#f1e7ce,#e3d5b2); border: 1.5px solid #b69862;
+  border-radius: 10px 4px 9px 5px/5px 10px 4px 9px;
+  padding: 7px 11px; margin-bottom: 5px;
+  box-shadow: inset 0 1px 0 rgba(255,252,242,.7), 0 1px 3px rgba(0,0,0,.3);
+  transition: all 0.15s;
 }
-.tr-name  { flex: 1; font-size: 14px; color: #e0e0d8; font-weight: 700; }
-.tr-qty   { font-size: 13px; color: #a0a098; min-width: 28px; }
-.tr-price { font-size: 12px; color: #8a7040; min-width: 52px; text-align: right; }
+.tr-name  { flex: 1; font-size: 14px; color: #3e2c15; font-weight: 900; }
+.tr-qty   { font-size: 13px; color: #7a6040; min-width: 28px; }
+.tr-price {
+  font-family:'Patrick Hand',cursive; font-size: 12px; color: #6e5a2e;
+  border: 1.5px solid #bca06a; border-radius: 9px 3px 8px 3px; padding: 1px 8px;
+  background: rgba(180,160,110,.16); min-width: 52px; text-align: center;
+}
 .tr-btn {
-  background: #241a08; border: 1px solid #3a2810; color: #c0a060;
-  padding: 4px 10px; font-family: inherit; font-size: 12px;
+  background: rgba(20,13,6,.5); border: 1.5px solid #c8903a; color: #e7c98c;
+  padding: 3px 10px; font-family: inherit; font-size: 12px; font-weight: 700;
   cursor: pointer; letter-spacing: 1px; transition: all 0.15s;
+  border-radius: 8px 3px 7px 3px;
 }
-.tr-btn:hover:not(:disabled) { background: #3a2810; border-color: #5a3818; }
+.tr-btn:hover:not(:disabled) { background: rgba(40,28,14,.7); border-color: #e8b050; color: #f7d898; }
 .tr-btn:disabled { opacity: 0.35; cursor: not-allowed; }
 .trade-close-btn {
-  margin-top: 10px; width: 100%; background: transparent;
-  border: 1px solid #2a1e08; color: #6a5028;
-  padding: 8px; font-family: inherit; font-size: 13px;
+  margin-top: 10px; width: 100%; background: rgba(20,13,6,.5);
+  border: 1.5px dashed #6a5028; color: #b7a06e;
+  padding: 9px; font-family: 'Noto Sans TC',sans-serif; font-size: 13px; font-weight: 700;
   cursor: pointer; letter-spacing: 3px; transition: all 0.15s;
+  border-radius: 11px 4px 10px 5px/5px 10px 4px 11px;
 }
-.trade-close-btn:hover { border-color: #4a3010; color: #9a7040; }
+.trade-close-btn:hover { border-color: #c8903a; color: #f0d898; background: rgba(40,28,14,.6); }
 
 /* ══ SCENE PROGRESS BARS (採藥/研究/烹飪) ══ */
 #farm-growth-wrap {
@@ -1567,17 +1666,25 @@ body {
 
 <!-- ══ TITLE ══ -->
 <div id="title-screen">
-  <div id="title-cover-wrap">
-    <img id="title-cover" src="Game cover.png" alt="Wormwood & Dew">
-    <div id="title-game-title">Wormwood & Dew</div>
-    <div id="title-intro"></div>
-    <button id="title-skip-btn" onclick="playTitleButtonSfx(); skipToDay1()">跳到第一天</button>
-    <button id="title-continue-btn" onclick="playTitleButtonSfx(); openSavePanel('load')">繼續遊戲</button>
-    <button id="title-start-btn" onclick="playTitleButtonSfx(); startGame()">開始遊戲</button>
+    <div id="title-cover-art"><img id="title-cover" src="Game cover.png" alt="Wormwood & Dew"></div>
+    <div id="title-panel">
+      <span class="t-corner tl"></span><span class="t-corner tr"></span>
+      <span class="t-corner bl"></span><span class="t-corner br"></span>
+      <div class="t-eyebrow"><span class="t-dot"></span>一則藥草手記</div>
+      <div class="t-title-en">Wormwood<br><span class="amp">&amp;</span> Dew</div>
+      <div class="t-title-zh">艾草與露</div>
+      <p class="t-tagline">煎一鍋藥，煮一碗湯，<br>陪他走過第十一個夜晚。</p>
+      <div class="t-divider"><span class="ln"></span><span class="gem"></span><span class="ln"></span></div>
+      <div class="t-menu">
+        <button id="title-skip-btn" class="t-mbtn skip" onclick="playTitleButtonSfx(); skipToDay1()"><span class="t-in"><span class="mark">»</span><span class="mtxt">跳到第一天</span></span></button>
+        <button id="title-continue-btn" class="t-mbtn cont" onclick="playTitleButtonSfx(); openSavePanel('load')"><span class="t-in"><span class="mark">✦</span><span class="mtxt">繼續遊戲</span></span></button>
+        <button id="title-start-btn" class="t-mbtn primary" onclick="playTitleButtonSfx(); startGame()"><span class="t-in"><span class="mark">❧</span><span class="mtxt">開始遊戲</span></span></button>
+      </div>
+      <div class="t-foot"><span class="ver">v1.0 · 共 11 日</span><span class="t-hint">↑↓ 選擇 · ⏎ 確認</span></div>
+    </div>
   </div>
-</div>
 
-<!-- ══ GAME ══ -->
+  <!-- ══ GAME ══ -->
 <div id="game-screen" class="ui-framed">
   <img id="game-ui-frame" src="UI/UI.png" alt="" aria-hidden="true">
   <div id="hud">
@@ -3367,8 +3474,6 @@ const RED_SPEAK_AVAREN_DLG = [
 ];
 
 const RED_COMMISSIONS = [
-  { key:'hunt',    name:'狩獵野獸', fx:'獸肉+3  金錢-8', cost:8, returnDays:1,
-    deliver(){ chg('beastMeat', 3); renderHUD(); story('旁白', '雷德把三塊野獸肉塞進你手裡，看起來很得意。'); story('雷德', '「打到了！那個東西跑得很快，但跑不過我！……雖然我也差點迷路就是了。」'); }},
   { key:'slay',    name:'討伐森林魔物', fx:'魔物素材+2  金錢-10', cost:10, returnDays:0,
     deliver(){ chg('monsterMaterial', 2); renderHUD(); story('旁白', '雷德拍拍胸脯，把兩塊發光的魔物素材遞給你。'); story('雷德', '「解決了！那兩隻黏糊糊的東西根本不是我的對手！……不過它們顏色真的很奇怪欸。」'); }},
 ];
@@ -3391,7 +3496,22 @@ const RED_WINTER_MEET_STORY = [
   { speaker: '雷德', text: '不太準！' },
 ];
 
-const RED_WINTER_MEET_DAY7_STORY = [
+const RED_WINTER_MEET_DAY6_STORY_OLD = [
+  { speaker:'雷德', text:'艾德林！我今天又遇到溫特了！' },
+  { speaker:'艾德林', text:'你們又見面了？' },
+  { speaker:'雷德', text:'對！我本來追著史萊姆跑，結果跑錯方向。' },
+  { speaker:'雷德', text:'然後溫特站在那裡，說：「你要追的東西在你背後。」' },
+  { speaker:'旁白', text:'雷德摸了摸後腦勺，看起來有點不好意思。' },
+  { speaker:'雷德', text:'他嘴巴很壞，可是他其實有提醒我耶。' },
+  { speaker:'艾德林', text:'他看起來不像會主動幫忙的人。' },
+  { speaker:'雷德', text:'我也這麼覺得！所以他其實是個好人吧？' },
+  { speaker:'雷德', text:'而且森林裡的魔物靠近他的時候，都變得很安靜。' },
+  { speaker:'艾德林', text:'你不覺得那很奇怪嗎？' },
+  { speaker:'雷德', text:'很奇怪啊！可是奇怪不一定是壞事。' },
+  { speaker:'雷德', text:'我覺得他只是很不會交朋友。' },
+];
+
+const RED_WINTER_MEET_DAY7_STORY_OLD = [
   { speaker: '雷德', text: '艾德林！你也來了。\n溫特也在，今天的森林好熱鬧！' },
   { speaker: '艾德林', text: '你們已經認識了？' },
   { speaker: '雷德', text: '當然啊！我們現在是好朋友了！\n他人很善良，都會跟我聊天！' },
@@ -3400,6 +3520,38 @@ const RED_WINTER_MEET_DAY7_STORY = [
   { speaker: '艾德林', text: '那裡有很多可怕的魔物耶，你要去那裡嗎？' },
   { speaker: '雷德', text: '對啊！\n我想這應該是身為勇者的職責吧！' },
   { speaker: '艾德林', text: '加油！' },
+];
+
+const RED_WINTER_MEET_DAY6_STORY = RED_WINTER_MEET_DAY7_STORY_OLD;
+
+const RED_WINTER_MEET_DAY7_STORY = [
+  { speaker:'雷德', text:'艾德林！你來得正好！' },
+  { speaker:'艾德林', text:'怎麼了？' },
+  { speaker:'雷德', text:'我剛剛跟溫特聊天聊了很久！' },
+  { speaker:'艾德林', text:'你們已經熟到會聊天聊很久了嗎？' },
+  { speaker:'雷德', text:'當然啊！我們是很好的朋友嘛！' },
+  { speaker:'艾德林', text:'……溫特也這麼說？' },
+  { speaker:'雷德', text:'他說「不要擅自把我算進你的人際關係裡」。' },
+  { speaker:'艾德林', text:'那應該不是朋友的意思。' },
+  { speaker:'雷德', text:'可是他沒有走掉耶！\n而且我問他森林裡哪裡比較危險，他也有回答我。' },
+  { speaker:'艾德林', text:'他回答什麼？' },
+  { speaker:'雷德', text:'他說：「你在的地方就很危險。」' },
+  { speaker:'艾德林', text:'……' },
+  { speaker:'雷德', text:'他講話真的很有趣吧！' },
+  { speaker:'旁白', text:'你看著雷德燦爛的表情，忽然覺得他好像完全沒有被傷害到。' },
+  { speaker:'雷德', text:'對了，我剛剛還問他，如果有一天我真的遇到魔王，該怎麼辦。' },
+  { speaker:'艾德林', text:'……你問溫特這個？' },
+  { speaker:'雷德', text:'嗯！\n他問我：「如果魔王不是你想像中的樣子呢？」' },
+  { speaker:'艾德林', text:'你怎麼回答？' },
+  { speaker:'雷德', text:'我說，那我就要先確認清楚。\n因為如果對方不是壞人，直接砍下去就很奇怪吧？' },
+  { speaker:'旁白', text:'雷德摸了摸腰間的劍。\n那把劍安靜地垂在他身側。' },
+  { speaker:'雷德', text:'雖然大家都說勇者就是要討伐魔王。\n可是我覺得，至少要先知道對方做了什麼壞事才行。' },
+  { speaker:'艾德林', text:'……雷德。' },
+  { speaker:'雷德', text:'嗯？' },
+  { speaker:'艾德林', text:'你有時候比我想像中還清楚。' },
+  { speaker:'雷德', text:'真的嗎？\n溫特剛剛才說我腦袋裡可能只有麵包屑。' },
+  { speaker:'艾德林', text:'……' },
+  { speaker:'雷德', text:'但他願意跟我說這些，所以我覺得他其實是很溫柔的人。' },
 ];
 
 const REID_DEMON_HEART_STORIES = [
@@ -3571,7 +3723,7 @@ const NOAH_LAKE_AFTER_DLG = [
 function isNearReid() {
   if (G.bloodMoon7Active) return false;
   const hasDelivery = (G.redCommissions || []).some(c => c.returnDay > 0 && c.returnDay <= G.day && c.key !== 'slay');
-  const inForest = G.scene === 'forest' && (G.reidSlayInForest || G.reidForestWandering);
+  const inForest = isReidInForestToday();
   const inOutside = G.scene === 'outside' && (isReidDay() || hasDelivery || G.reidVisitDay === G.day) && G.timePeriod === 'morning'
                     && !G.reidSlayWalkingToGate && !G.reidSlayActive;
   if (!inForest && !inOutside) return false;
@@ -3716,7 +3868,7 @@ const REID_CHAT_DAY3_2 = [
   { speaker:'旁白', text:'你發現這個勇者的話非常多，而且看起來似乎不太聰明。' },
 ];
 const REID_CHAT_DAY3_COMMISSION = [
-  { speaker:'雷德', text:'你一個人住在這裡很不方便吧？\n有需要的話我可以幫忙狩獵野獸和魔物哦！\n只要說一聲勇者就會使命必達！' },
+  { speaker:'雷德', text:'你一個人住在這裡很不方便吧？\n有需要的話我可以幫忙討伐森林裡的魔物哦！\n只要說一聲勇者就會使命必達！' },
   { speaker:'旁白', text:'雷德看起來得意洋洋，似乎很有自信。' },
 ];
 const REID_CHAT_DAY3_AVAREN_1 = [
@@ -3767,6 +3919,26 @@ const REID_CHAT_DAY5_2 = [
   { speaker:'雷德', text:'超級詭異的對吧？這是什麼勇者之劍啊！根本是詛咒之劍！' },
   { speaker:'雷德', text:'這把劍真的能夠打倒魔王嗎？' },
   { speaker:'艾德林', text:'……原來你也有這樣的難處啊。' },
+];
+
+const REID_CHAT_DAY6_1 = [
+  { speaker:'雷德', text:'艾德林，如果有人一直說「我不是你的朋友」，是不是代表他其實很害羞？' },
+  { speaker:'艾德林', text:'不一定。' },
+  { speaker:'雷德', text:'可是他每次都回答我問題耶。\n如果真的討厭我，應該會直接走掉吧？' },
+  { speaker:'艾德林', text:'也可能是他走不掉。' },
+  { speaker:'雷德', text:'那也算陪我聊天吧！' },
+  { speaker:'艾德林', text:'你的標準好低。' },
+  { speaker:'雷德', text:'交朋友本來就要從小地方開始嘛。' },
+];
+
+const REID_CHAT_DAY6_2 = [
+  { speaker:'雷德', text:'艾德林，我覺得交朋友最重要的是不要放棄。' },
+  { speaker:'艾德林', text:'你又想跟誰交朋友了？' },
+  { speaker:'雷德', text:'不是「又」啦！\n只是有些人看起來很難靠近，可是你多跟他說幾次話，他就會慢慢習慣你。' },
+  { speaker:'艾德林', text:'如果對方叫你不要靠近呢？' },
+  { speaker:'雷德', text:'那就站遠一點說話！' },
+  { speaker:'艾德林', text:'……' },
+  { speaker:'雷德', text:'這樣也有尊重他的距離吧？' },
 ];
 
 const REID_CHAT_DAY7_1 = [
@@ -3862,6 +4034,14 @@ function runReidChat() {
     }
     if (!G.reidChat5_2Seen) { G.reidChat5_2Seen = true; startActionScene(REID_CHAT_DAY5_2, 400, () => {}); return; }
   }
+  // 第6天階段
+  if (G.day >= 6) {
+    if (!G.reidChat6_1Seen) {
+      if (!canUnlockNewStage) { story('雷德', pick(RED_DLG)); return; }
+      G.reidNewStageDay = G.day; G.reidChat6_1Seen = true; startActionScene(REID_CHAT_DAY6_1, 400, () => {}); return;
+    }
+    if (!G.reidChat6_2Seen) { G.reidChat6_2Seen = true; startActionScene(REID_CHAT_DAY6_2, 400, () => {}); return; }
+  }
   // 第7天階段
   if (G.day >= 7) {
     if (!G.reidChat7_1Seen) {
@@ -3891,6 +4071,7 @@ function runReidChat() {
   const seenByDay = [
     { day:3,  stories: [G.reidChat3_1Seen && REID_CHAT_DAY3_1, G.reidChat3_2Seen && REID_CHAT_DAY3_2, G.reidChat3Avaren1Seen && REID_CHAT_DAY3_AVAREN_1, G.reidChat3Avaren2Seen && REID_CHAT_DAY3_AVAREN_2].filter(Boolean) },
     { day:5,  stories: [G.reidChat5_1Seen && REID_CHAT_DAY5_1, G.reidChat5_2Seen && REID_CHAT_DAY5_2].filter(Boolean) },
+    { day:6,  stories: [G.reidChat6_1Seen && REID_CHAT_DAY6_1, G.reidChat6_2Seen && REID_CHAT_DAY6_2].filter(Boolean) },
     { day:7,  stories: [G.reidChat7_1Seen && REID_CHAT_DAY7_1, G.reidChat7_2Seen && REID_CHAT_DAY7_2].filter(Boolean) },
     { day:9,  stories: [G.reidChat9_1Seen && REID_CHAT_DAY9_1, G.reidChat9_2Seen && REID_CHAT_DAY9_2].filter(Boolean) },
     { day:11, stories: [G.reidChat11_1Seen && REID_CHAT_DAY11_1, G.reidChat11_2Seen && REID_CHAT_DAY11_2].filter(Boolean) },
@@ -3940,10 +4121,14 @@ function openRedMenu() {
         }
       });
     }
-    // 與雷德聊聊（第5天未看溫特相遇 / 第7天未看）
+    // 與雷德聊聊（第5、6、7天的溫特相遇階段）
     if (G.day === 5 && !G.reidWinterMeetSeen) {
       items.push({ name:'與雷德聊聊', fx:'（免費）', req:()=>true,
         run() { G.reidWinterMeetSeen = true; startActionScene(RED_WINTER_MEET_STORY, 400, () => {}); }
+      });
+    } else if (G.day === 6 && !G.reidWinterMeetDay6Seen) {
+      items.push({ name:'與雷德聊聊', fx:'（免費）', req:()=>true,
+        run() { G.reidWinterMeetDay6Seen = true; startActionScene(RED_WINTER_MEET_DAY6_STORY, 400, () => {}); }
       });
     } else if (G.day === 7 && !G.reidWinterMeetDay7Seen) {
       items.push({ name:'與雷德聊聊', fx:'（免費）', req:()=>true,
@@ -4365,7 +4550,25 @@ const WINTER_REID_MEET_STORY = [
   { speaker: '旁白', text: '你笑了出來，點點頭表示同意。' },
 ];
 
-const WINTER_REID_MEET_DAY7_STORY = [
+const WINTER_REID_MEET_DAY6_STORY_OLD = [
+  { speaker:'溫特', text:'那個紅頭髮的勇者今天又迷路了。' },
+  { speaker:'艾德林', text:'雷德？' },
+  { speaker:'溫特', text:'除了他，還有誰能在同一棵樹旁邊經過三次，還堅信自己正在前進？' },
+  { speaker:'艾德林', text:'……他還好嗎？' },
+  { speaker:'溫特', text:'還活著。這已經很不可思議了。' },
+  { speaker:'旁白', text:'溫特的語氣依然冷淡。\n但你注意到，他沒有真的放著雷德不管。' },
+  { speaker:'溫特', text:'他追著史萊姆往反方向跑。' },
+  { speaker:'艾德林', text:'你提醒他了？' },
+  { speaker:'溫特', text:'我只是覺得他繼續跑下去，會把整片森林吵醒。' },
+  { speaker:'艾德林', text:'所以你幫了他。' },
+  { speaker:'溫特', text:'我阻止噪音。那不是幫忙。' },
+  { speaker:'旁白', text:'遠處傳來雷德爽朗的笑聲。' },
+  { speaker:'溫特', text:'……人類勇者都這麼容易相信別人嗎？' },
+  { speaker:'艾德林', text:'雷德比較特別。' },
+  { speaker:'溫特', text:'是。特別蠢。' },
+];
+
+const WINTER_REID_MEET_DAY7_STORY_OLD = [
   { speaker: '溫特', text: '那個紅頭髮今天又來了。' },
   { speaker: '艾德林', text: '雷德？' },
   { speaker: '溫特', text: '那傢伙好吵又好蠢，又偏偏喜歡來找我搭話。\n這人是怎樣啊？' },
@@ -4376,6 +4579,38 @@ const WINTER_REID_MEET_DAY7_STORY = [
   { speaker: '溫特', text: '希望他能迷路久一點。\n這樣我就不會一直看到他了。' },
 ];
 
+
+const WINTER_REID_MEET_DAY6_STORY = WINTER_REID_MEET_DAY7_STORY_OLD;
+
+const WINTER_REID_MEET_DAY7_STORY = [
+  { speaker:'溫特', text:'那個紅頭髮的勇者又來了。' },
+  { speaker:'艾德林', text:'你看起來已經習慣了。' },
+  { speaker:'溫特', text:'不要把放棄抵抗說成習慣。' },
+  { speaker:'艾德林', text:'他說你們是很好的朋友。' },
+  { speaker:'溫特', text:'他對朋友的標準低得令人害怕。' },
+  { speaker:'艾德林', text:'但你沒有否認。' },
+  { speaker:'溫特', text:'我剛才否認了三次。\n他每一次都說「我懂，你只是不好意思」。' },
+  { speaker:'旁白', text:'溫特的表情很冷。\n但你總覺得他不像真的生氣。' },
+  { speaker:'艾德林', text:'你們聊了什麼？' },
+  { speaker:'溫特', text:'他問我，如果遇到魔王該怎麼辦。' },
+  { speaker:'艾德林', text:'……' },
+  { speaker:'溫特', text:'真是個愚蠢的問題。\n勇者遇到魔王，答案不是早就被世界寫好了嗎？' },
+  { speaker:'艾德林', text:'他怎麼說？' },
+  { speaker:'溫特', text:'他說，如果魔王不是壞人，就不能隨便殺掉。' },
+  { speaker:'旁白', text:'溫特安靜了一下。\n森林裡的風從樹葉間穿過。' },
+  { speaker:'溫特', text:'蠢得讓人頭痛。' },
+  { speaker:'艾德林', text:'你覺得他說錯了？' },
+  { speaker:'溫特', text:'……' },
+  { speaker:'溫特', text:'我只是覺得，他不適合當勇者。' },
+  { speaker:'艾德林', text:'因為他太容易相信別人？' },
+  { speaker:'溫特', text:'因為他到現在還以為，世界會允許他選擇不傷害誰。' },
+  { speaker:'艾德林', text:'那不是壞事。' },
+  { speaker:'溫特', text:'對他來說，可能是。' },
+  { speaker:'旁白', text:'溫特看向森林深處。\n他的眼神很平靜，卻像藏著很遠的疲倦。' },
+  { speaker:'溫特', text:'如果有一天，他真的被要求殺死某個人。' },
+  { speaker:'艾德林', text:'……' },
+  { speaker:'溫特', text:'希望他那顆空得過分的腦袋，至少能讓他猶豫一下。' },
+];
 
 function playWinterIntro() {
   if (G.winterIntroSeen) { openWinterMenu(); return; }
@@ -4450,23 +4685,30 @@ function runWinterChat() {
 function openWinterMenu() {
   SFX.interact();
 
-  // 雷德相遇劇情：靠近時自動觸發（不需點選單）
-  if (G.day === 5 && (G.reidSlayInForest || G.reidForestWandering || G.reidSlayDelivered) && !G.winterReidMeetSeen) {
-    G.winterReidMeetSeen = true;
-    startActionScene(WINTER_REID_MEET_STORY, 400, () => {});
-    return;
-  }
-  if (G.day === 7 && (G.reidSlayInForest || G.reidForestWandering || G.reidSlayDelivered) && !G.winterReidMeetDay7Seen) {
-    G.winterReidMeetDay7Seen = true;
-    startActionScene(WINTER_REID_MEET_DAY7_STORY, 400, () => {});
-    return;
-  }
-
   // 選單
   const items = [];
+  const reidActuallyInForest = isReidInForestToday();
+  const runWinterTalk = () => {
+    if (reidActuallyInForest && G.day === 5 && !G.winterReidMeetSeen) {
+      G.winterReidMeetSeen = true;
+      startActionScene(WINTER_REID_MEET_STORY, 400, () => {});
+      return;
+    }
+    if (reidActuallyInForest && G.day === 6 && !G.winterReidMeetDay6Seen) {
+      G.winterReidMeetDay6Seen = true;
+      startActionScene(WINTER_REID_MEET_DAY6_STORY, 400, () => {});
+      return;
+    }
+    if (reidActuallyInForest && G.day === 7 && !G.winterReidMeetDay7Seen) {
+      G.winterReidMeetDay7Seen = true;
+      startActionScene(WINTER_REID_MEET_DAY7_STORY, 400, () => {});
+      return;
+    }
+    runWinterChat();
+  };
 
   // 1. 與溫特聊聊
-  items.push({ name:'與溫特聊聊', fx:'（免費）', req:()=>true, run(){ runWinterChat(); } });
+  items.push({ name:'與溫特聊聊', fx:'（免費）', req:()=>true, run: runWinterTalk });
 
   // 2. 魔物安撫香（第一次是「神秘的香味」觸發對話，之後才變成可購買）
   if (!G.winterIncenseIntroSeen) {
@@ -4493,7 +4735,7 @@ function openWinterMenu() {
   }
 
   // 3. 聊聊（關於那個勇者）——溫特與雷德相遇後才出現
-  if (G.winterReidMeetSeen || G.winterReidMeetDay7Seen) {
+  if (G.winterReidMeetSeen || G.winterReidMeetDay6Seen || G.winterReidMeetDay7Seen) {
     items.push({ name:'聊聊（關於那個勇者）', fx:'（免費）', req:()=>true,
       run(){ story('溫特', pick(WINTER_DLG_REID)); } });
   }
@@ -4726,6 +4968,53 @@ const NARR_READ = [
   '這本書有點難，你遇到不懂的字就停下來想一下再繼續。阿瓦倫靜靜等著你找到答案……',
   '你念到書裡一個小孩的故事，頓了一下，繼續念下去，沒有說任何多餘的話……',
 ];
+const ELDRIN_BOOK_DAILY = [
+  {
+    title: '第 1 夜：藥草誌．夜顏花',
+    text: '月眠露的主成分是夜顏花。\n\n它的花瓣能緩慢釋放微量的鎮定元素，因此常被用來治療失眠。\n\n請避免陽光直曬，否則藥效容易流失。\n\n比起一般的安眠藥劑，月眠露較不容易產生倦怠感。'
+  },
+  {
+    title: '第 2 夜：月亮的慈悲',
+    text: '你翻開書櫃深處那本沒有署名的舊書。\n\n慈悲為懷的月亮，會替人們承受苦難。\n\n滿月的時候，是月亮最強壯的時間。\n\n月光灑落大地時，世界上的詛咒也會稍微減弱一些。'
+  },
+  {
+    title: '第 3 夜：勇者與傳說之劍',
+    text: '你翻開書櫃深處那本沒有署名的舊書。\n\n傳說中，紅髮金眼的勇者將會拔起沉眠於初始之森的傳說之劍。\n\n那是世上唯一能夠傷害魔王的武器。\n\n人們始終盼望著勇者討伐邪惡的魔王，為世界帶來和平。'
+  },
+  {
+    title: '第 4 夜：魔王的國度',
+    text: '魔物之王是所有魔物的統治者，人們稱他為魔王。\n\n傳說他率領魔物侵占人類的土地，是邪惡而危險的存在。\n\n他建立起強大的王國，也劃分出魔物與人類的領地。'
+  },
+  {
+    title: '第 5 夜：黑獵犬',
+    text: '傳說中，黑獵犬會在黃昏的霧裡出現，他會跟在迷路的人的身後。\n\n如果你看到了破碎的黑色的影子和低吼聲，千萬不要回頭。\n\n據說，凡是看見黑獵犬鮮紅雙眼的人，都會在七日之內，迎來死亡。'
+  },
+  {
+    title: '第 6 夜：妖精的惡作劇',
+    text: '妖精喜歡在湖泊與河流附近生活。\n\n他們偶爾會引誘人類誤入自己的世界。\n\n據說妖精並沒有惡意，只是特別喜歡有趣的事物。\n\n因此他們經常製造各種麻煩來打發時間。\n\n也有書籍記載，妖精的翅膀是極佳的魔藥催化劑。'
+  },
+  {
+    title: '第 7 夜：被禁止的信仰',
+    text: '有少數墮落的異教徒宣稱，詛咒並非邪惡之物。\n\n他們妄言詛咒是源於天地間的純粹力量，甚至將其視為神明的祝福。\n\n這般危險的思想曾使無數人誤入歧途。\n\n所幸，在教會的努力下，這些異端邪說早已被徹底肅清。\n\n慈悲的神明始終憐憫著脆弱的人類，引領世人走向幸福與安寧。'
+  },
+  {
+    title: '第 8 夜：月亮沉睡之時',
+    text: '朔月的時候，是月亮休息的時間。\n\n當月亮躲藏起來，世界上的詛咒便會變得更加活躍。\n\n而血月的時候，則是月亮發狂的時間。'
+  },
+  {
+    title: '第 9 夜：缺失的一頁',
+    text: '今天無法閱讀。'
+  },
+  {
+    title: '第 10 夜：魔王的心臟',
+    text: '據說魔王的心臟能夠實現任何願望。\n\n財富、權力、名聲，甚至能治癒世上一切疾病。\n\n有人甚至相信，它能讓死者重新甦醒。\n\n為此，無數人不畏死亡踏上討伐魔王的旅程。\n\n然而直到今日，仍然沒有人成功。'
+  },
+  {
+    title: '第 11 夜：關於記憶',
+    text: '記憶是一種不穩定的東西。\n\n已經遺忘的事情，仍有可能因為相似的人、事、物而再次被想起。\n\n即使利用魔法干涉記憶，那份效果也會隨著時間逐漸變得薄弱。\n\n有些事情或許能被遺忘，卻很難真正消失。'
+  },
+];
+
 const AVAREN_READ_DLG = [
   '……（靜靜地聽著，偶爾把視線落到書頁上。）',
   '……這個叫什麼。（輕聲指了指書頁上的圖。）',
@@ -4869,10 +5158,182 @@ function getAvarenDlg() {
   return pick(AVAREN_DLG.cold);
 }
 
+function getAvarenChatStage() {
+  const t = G.trust, m = G.mood;
+  if (m >= 80) return 'possess';
+  if (t >= 60 || m >= 60) return 'open';
+  if (t >= 30 || m >= 30) return 'warm';
+  return 'cold';
+}
+
+const AVAREN_CHAT_GROUPS = {
+  cold: [
+    [
+      { speaker:'阿瓦倫', text:'……別靠近我。' },
+      { speaker:'艾德林', text:'好，我不靠近。' },
+      { speaker:'阿瓦倫', text:'……。' },
+      { speaker:'艾德林', text:'有不舒服的時候要跟我說喔。' },
+    ],
+    [
+      { speaker:'阿瓦倫', text:'……你想要什麼？' },
+      { speaker:'艾德林', text:'我只是想確認你還好。' },
+      { speaker:'阿瓦倫', text:'……確認我還活著嗎。' },
+      { speaker:'艾德林', text:'...嗯。' },
+    ],
+    [
+      { speaker:'阿瓦倫', text:'……我身上的詛咒，你不怕嗎。' },
+      { speaker:'艾德林', text:'當然不怕。' },
+      { speaker:'阿瓦倫', text:'……為什麼？' },
+    ],
+    [
+      { speaker:'阿瓦倫', text:'我不喜歡那個藥味。' },
+      { speaker:'艾德林', text:'可是要吃藥才會恢復健康。' },
+      { speaker:'阿瓦倫', text:'......討厭。' },
+    ],
+    [
+      { speaker:'阿瓦倫', text:'……不要一直看我。' },
+      { speaker:'艾德林', text:'抱歉，我只是有點擔心。' },
+      { speaker:'阿瓦倫', text:'為什麼要擔心我？' },
+      { speaker:'艾德林', text:'因為你很重要啊。' },
+      { speaker:'阿瓦倫', text:'......？' },
+    ],
+    [
+      { speaker:'阿瓦倫', text:'……你為什麼還在這裡。' },
+      { speaker:'艾德林', text:'因為你還需要人照顧。' },
+      { speaker:'阿瓦倫', text:'……我沒有拜託你。' },
+      { speaker:'艾德林', text:'我知道，是我自己想這麼做的！' },
+    ],
+  ],
+  warm: [
+    [
+      { speaker:'阿瓦倫', text:'……你今天去哪裡了。' },
+      { speaker:'艾德林', text:'去森林採了一些藥草。' },
+      { speaker:'阿瓦倫', text:'……外面冷嗎？' },
+      { speaker:'艾德林', text:'有一點，不過沒關係！' },
+    ],
+    [
+      { speaker:'阿瓦倫', text:'……那個藥很苦，但是我有吃完。' },
+      { speaker:'艾德林', text:'好棒！你真是個乖孩子！' },
+      { speaker:'阿瓦倫', text:'……下次可以不要放那個奇怪的草嗎？' },
+      { speaker:'艾德林', text:'可是那個對身體很好耶。' },
+      { speaker:'阿瓦倫', text:'……好吧。' },
+    ],
+    [
+      { speaker:'阿瓦倫', text:'……你看起來很累。' },
+      { speaker:'艾德林', text:'我沒事，只是昨晚看書看太晚。' },
+      { speaker:'阿瓦倫', text:'……那些書，可以明天再看嗎。' },
+      { speaker:'艾德林', text:'嗯。今天我會早一點休息。' },
+    ],
+    [
+      { speaker:'阿瓦倫', text:'為什麼你每天都這麼忙？' },
+      { speaker:'艾德林', text:'因為我要努力工作和賺錢啊！' },
+      { speaker:'阿瓦倫', text:'可是你看起來很累......。' },
+      { speaker:'艾德林', text:'沒關係！這都是為了我們一起生活啊。' },
+      { speaker:'阿瓦倫', text:'......' },
+    ],
+    [
+      { speaker:'阿瓦倫', text:'……你手上有傷。' },
+      { speaker:'艾德林', text:'啊，只是不小心被樹枝刮到。' },
+      { speaker:'阿瓦倫', text:'……會痛嗎？' },
+      { speaker:'艾德林', text:'一點點而已，不用擔心。' },
+    ],
+  ],
+  open: [
+    [
+      { speaker:'阿瓦倫', text:'……艾德林。' },
+      { speaker:'艾德林', text:'嗯？' },
+      { speaker:'阿瓦倫', text:'……你明天也會回來嗎。' },
+      { speaker:'艾德林', text:'會。我會回來。' },
+    ],
+    [
+      { speaker:'阿瓦倫', text:'……外面的鳥叫聲，是什麼鳥。' },
+      { speaker:'艾德林', text:'是一種綠色的小鳥，叫做綠繡眼喔。' },
+      { speaker:'阿瓦倫', text:'……他們好聒噪。' },
+      { speaker:'艾德林', text:'但是很可愛對吧？' },
+    ],
+    [
+      { speaker:'阿瓦倫', text:'……在你旁邊，好像沒那麼痛。' },
+      { speaker:'艾德林', text:'那我就在這裡多陪你一會兒。' },
+      { speaker:'阿瓦倫', text:'……嗯。不要太快走。' },
+      { speaker:'艾德林', text:'好。' },
+    ],
+    [
+      { speaker:'阿瓦倫', text:'我喜歡這個地方。' },
+      { speaker:'艾德林', text:'那我們一起住在這裡好久好久怎麼樣？' },
+      { speaker:'阿瓦倫', text:'好！' },
+    ],
+    [
+      { speaker:'阿瓦倫', text:'...照顧我會不會很麻煩？' },
+      { speaker:'艾德林', text:'怎麼會呢？一點都不麻煩！' },
+      { speaker:'阿瓦倫', text:'......真的嗎？' },
+      { speaker:'艾德林', text:'當然啊！' },
+      { speaker:'阿瓦倫', text:'......我長大之後是不是就可以幫你的忙了？' },
+      { speaker:'艾德林', text:'嗯！到時候要換我依靠你囉！' },
+    ],
+    [
+      { speaker:'阿瓦倫', text:'……我剛剛做了一個夢。' },
+      { speaker:'艾德林', text:'夢到什麼？' },
+      { speaker:'阿瓦倫', text:'夢到我在一個很溫暖的地方。' },
+      { speaker:'艾德林', text:'那一定是個好夢。' },
+      { speaker:'阿瓦倫', text:'……嗯，你也在那裡。' },
+    ],
+  ],
+  possess: [
+    [
+      { speaker:'阿瓦倫', text:'為什麼你要一直出門？' },
+      { speaker:'艾德林', text:'因為我有很多工作要做啊～' },
+      { speaker:'阿瓦倫', text:'一定要工作嗎？' },
+      { speaker:'艾德林', text:'對阿，這樣我們才有錢可以一起生活。' },
+    ],
+    [
+      { speaker:'阿瓦倫', text:'……我不喜歡你出門。' },
+      { speaker:'艾德林', text:'但是外面有我們需要的東西。' },
+      { speaker:'阿瓦倫', text:'……可是我不喜歡你離開。' },
+      { speaker:'艾德林', text:'我會回來陪你的，耐心的等我好嗎？' },
+    ],
+    [
+      { speaker:'阿瓦倫', text:'……不要跟奇怪的人說話。' },
+      { speaker:'艾德林', text:'什麼？像是誰？' },
+      { speaker:'阿瓦倫', text:'……像是那個紅色頭髮的...' },
+      { speaker:'艾德林', text:'雷德是個好人喔！試著跟他當朋友怎麼樣？' },
+      { speaker:'阿瓦倫', text:'不要。' },
+    ],
+    [
+      { speaker:'阿瓦倫', text:'如果世界上只有我們兩個人就好了。' },
+      { speaker:'艾德林', text:'為什麼？這世界上有很多好人喔！' },
+      { speaker:'阿瓦倫', text:'......我不需要他們。' },
+      { speaker:'艾德林', text:'你要多多認識別人，當別人當好朋友啊！' },
+      { speaker:'阿瓦倫', text:'我只要有你就夠了。' },
+      { speaker:'艾德林', text:'你太內向了～\n沒關係，我會陪你慢慢去認識更多朋友的。' },
+    ],
+    [
+      { speaker:'阿瓦倫', text:'不要一直跟別人聊天。' },
+      { speaker:'艾德林', text:'但是要在這裡生活就需要人和人之間互相幫助和交流啊。' },
+      { speaker:'阿瓦倫', text:'可是......' },
+      { speaker:'艾德林', text:'你還太小了，長大你就懂了～' },
+      { speaker:'阿瓦倫', text:'不要一直把我當成小孩子......' },
+    ],
+  ],
+};
+function getAvarenChatGroup() {
+  const stage = getAvarenChatStage();
+  return pick(AVAREN_CHAT_GROUPS[stage] || AVAREN_CHAT_GROUPS.cold);
+}
+
+function startAvarenChat(extraLines = []) {
+  const lines = getAvarenChatGroup().concat(extraLines);
+  startActionScene(lines, Math.max(260, CARE_MAX || 400), () => {});
+}
+
 function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 
 function isReidDay(day = G.day) {
-  return day === 3 || day === 5 || day === 7 || day === 9 || day === 11;
+  return day === 3 || day === 5 || day === 6 || day === 7 || day === 9 || day === 11;
+}
+
+function isReidInForestToday() {
+  return G && G.scene === 'forest' && G.timePeriod === 'morning' && isReidDay() &&
+    (G.reidSlayInForest || G.reidForestWandering);
 }
 
 function isWinterDay(day = G.day) {
@@ -4881,7 +5342,7 @@ function isWinterDay(day = G.day) {
 
 function isWinterPresent() {
   return G && G.scene === 'forest' && G.timePeriod === 'morning' &&
-    (isWinterDay() || ((G.day === 5 || G.day === 7) && (G.reidSlayInForest || G.reidForestWandering || G.reidSlayDelivered)));
+    (isWinterDay() || ((G.day === 5 || G.day === 7) && (G.reidSlayInForest || G.reidForestWandering)));
 }
 
 function isAvarenUnconscious() {
@@ -5097,6 +5558,7 @@ function initState() {
     noahLakeTalking: false,
     winterIntroSeen: false,
     winterReidMeetSeen: false,
+    winterReidMeetDay6Seen: false,
     winterReidMeetDay7Seen: false,
     winterDay8FairyHintSeen: false,
     winterChat4_1Seen: false, winterChat4_2Seen: false,
@@ -5111,10 +5573,12 @@ function initState() {
     avarenAwake: false,
     avarenBedRest: false,
     avarenDay1Bandaged: false,
+    avarenDay1FirstLookSeen: false,
     avarenDay2WakeIntroSeen: false,
     avarenDay2WakeTalkPending: false,
     avarenDay10ForgetTalkSeen: false,
     avarenDay10NoForgetTalkSeen: false,
+    eldrinBookReadDays: [],
     cookActive: false, cookTimer: 0, cookReady: false, soupReady: false, carryingSoup: false, soupIsSpecial: false, cookSelectedKeys: [],
     actionSceneActive: false, actionSceneTimer: 0, actionSceneMax: 0,
     actionSceneOnDone: null, actionSceneLines: [], actionSceneLineIdx: 0, actionSceneLineTick: 0,
@@ -5145,11 +5609,13 @@ function initState() {
     reidChat3_1Seen: false, reidChat3_2Seen: false, reidChat3CommSeen: false,
     reidChat3Avaren1Seen: false, reidChat3Avaren2Seen: false,
     reidChat5_1Seen: false, reidChat5_2Seen: false,
+    reidChat6_1Seen: false, reidChat6_2Seen: false,
     reidChat7_1Seen: false, reidChat7_2Seen: false,
     reidChat9_1Seen: false, reidChat9_2Seen: false,
     reidChat11_1Seen: false, reidChat11_2Seen: false,
     reidNewStageDay: 0,
     reidWinterMeetSeen: false,
+    reidWinterMeetDay6Seen: false,
     reidWinterMeetDay7Seen: false,
     reidSlayPendingWalk: false,
     reidSlayFollowDelay: 0,
@@ -5517,8 +5983,8 @@ function renderChars() {
   const rdVisible = (
     (G.scene === 'outside' && reidOutsideToday && G.timePeriod === 'morning' && !G.reidSlayActive && !G.reidSlayInForest && !G.reidForestWandering) ||
     (G.scene === 'outside' && G.reidSlayWalkingToGate) ||
-    (G.scene === 'forest' && G.timePeriod === 'morning' && G.reidSlayInForest && !G.reidSlayDelivered) ||
-    (G.scene === 'forest' && G.timePeriod === 'morning' && G.reidForestWandering)
+    (isReidInForestToday() && G.reidSlayInForest && !G.reidSlayDelivered) ||
+    (isReidInForestToday() && G.reidForestWandering)
   );
   if (rdVisible && spriteInfo.red) {
     const rdBlink = rd.blinkPhase >= 0 && rd.pose === 'front';
@@ -6200,7 +6666,7 @@ function gameLoop() {
     };
     if (!isAvarenUnconscious() && !isAvarenBedRest() && G.avarenScene === G.scene && !G.carryingChicken) tryPush(G.avaren);
     if (G.scene === 'outside' && isReidDay() && G.timePeriod === 'morning')        tryPush(G.red);
-    if (G.scene === 'forest' && (G.reidSlayInForest || G.reidForestWandering))    tryPush(G.red);
+    if (isReidInForestToday())    tryPush(G.red);
     if (G.scene === 'outside' && G.day === 2 && G.timePeriod === 'morning')        tryPush(G.noah);
     if (isWinterPresent())       tryPush(G.winter);
     if (G.scene === 'forest' && !G.carryingChicken) {
@@ -6783,7 +7249,7 @@ function gameLoop() {
   // 討伐委託 / 交付後漫走：雷德在森林上方區域漫步，等玩家對話互動
 
   // 雷德在森林漫走（討伐委託中 或 交付後）
-  if (G.scene === 'forest' && (G.reidSlayInForest || G.reidForestWandering)) {
+  if (isReidInForestToday()) {
     const rd = G.red;
     // 超出漫走範圍就傳回安全位置
     if (rd.x < 39 || rd.x > 616 || rd.y < 43 || rd.y > 197) {
@@ -6964,7 +7430,7 @@ function gameLoop() {
     const winterValidZone = (x, y) => (x >= 39 && x <= 616 && y >= 43 && y <= 197);
 
     applyPushForScene(G.avaren, G.avarenScene);
-    if (G.reidSlayInForest || G.reidForestWandering) {
+    if (isReidInForestToday()) {
       applyPushForScene(G.red, 'forest', winterValidZone);
     } else {
       applyPushForScene(G.red, 'outside', redValidZone);
@@ -7312,7 +7778,14 @@ document.addEventListener('keydown', e => {
     } else if (zone && zone.id === 'bed') {
       openBedMenu();
     } else if (isAvarenUnconscious() && near) {
-      openAvarenMenu();
+      if (G.day === 1 && !G.avarenDay1FirstLookSeen) {
+        G.avarenDay1FirstLookSeen = true;
+        storyAuto('旁白', '你靠近他，蹲下來。\n\n他的臉很蒼白。睫毛輕輕顫著，像是在做夢，又像是在忍著什麼。\n詛咒的紋路從手腕蔓延到頸側，黑色的、細細的，像會動。');
+        storyAuto('旁白', '你伸手，停在半空中。\n\n……先換藥吧。能做的，一件一件來。');
+        storyThen(() => openAvarenMenu());
+      } else {
+        openAvarenMenu();
+      }
     } else if (G.carryingSoup && G.scene === 'kitchen' && isNearSoupSpot()) {
       putBackSoup();
     } else if (G.carryingSoup && isNearReid()) {
@@ -7345,6 +7818,8 @@ document.addEventListener('keydown', e => {
       renderHUD();
       playLoopingAudio('sfx-fairy', 3.0);
       toast('✨ 妖精 +1');
+      const appEl = document.getElementById('app');
+      if (appEl) { appEl.classList.remove('shake'); void appEl.offsetWidth; appEl.classList.add('shake'); setTimeout(() => appEl.classList.remove('shake'), 500); }
       const flickerEl = document.getElementById('fairy-flicker-overlay');
       if (flickerEl) {
         flickerEl.style.display = 'block';
@@ -7583,8 +8058,7 @@ function openAvarenMenu() {
         run() {
           if (G.day === 10 && !G.usedForgetMagic) { rejectDay10AvarenCare('talk'); return; }
           chg('trust', 2); renderHUD();
-          showDlg('阿瓦倫', G.day === 10 ? pick(AVAREN_DAY7_DLG) : getAvarenDlg());
-          story('你', pick(NARR_TALK));
+          startAvarenChat([{ speaker:'旁白', text: pick(NARR_TALK) }]);
         }
       },
     ]);
@@ -7670,22 +8144,20 @@ function openAvarenMenu() {
       req: () => true,
       run() {
         chg('trust', 2);
-        const line = getAvarenDlg();
-        showDlg('阿瓦倫', line);
         // 不呼叫 useTime，不消耗時間
-        story('你', pick(NARR_TALK));
+        startAvarenChat([{ speaker:'旁白', text: pick(NARR_TALK) }]);
       }
     },
     {
       name: '聊天陪伴（深入相處）', fx: '知識+8  心情+10  花費15秒',
       req: () => !G.actionSceneActive && !G.day4AvarenGone && G.timePeriod === 'evening',
       run() {
-        const dlg = getAvarenDlg();
-        startActionScene([
-          { speaker: '旁白',  text: pick(NARR_CHAT) },
-          { speaker: '阿瓦倫', text: dlg },
-          { speaker: '旁白',  text: '你們就這樣坐著，說著有的沒的。窗外的光慢慢暗下去，誰都沒有起身。' },
-        ], CARE_MAX, () => {
+        const lines = [
+          { speaker: '旁白', text: pick(NARR_CHAT) },
+          ...getAvarenChatGroup(),
+          { speaker: '旁白', text: '你們就這樣坐著，說著有的沒的。窗外的光慢慢暗下去，誰都沒有起身。' },
+        ];
+        startActionScene(lines, CARE_MAX, () => {
           chg('trust', 8); chg('mood', 10);
           renderHUD();
           story('旁白', pick(NARR_CHAT));
@@ -8598,8 +9070,14 @@ function doAction_BookshelfMenu() {
   if (G.paused || G.actionSceneActive) return;
   showActionMenu('書櫃', [
     {
-      name: '讀書',
-      fx: '',
+      name: '艾德林自己讀書',
+      fx: () => {
+        const todayRead = (G.eldrinBookReadDays || []).includes(G.day);
+        if (todayRead) return '今天已讀過';
+        if (G.day < 1 || G.day > 11) return '沒有新的內容';
+        if (G.day === 11 && !hasReadAllEldrinBookBeforeFinal()) return '缺少前面的閱讀紀錄';
+        return `第 ${G.day} 夜`;
+      },
       run() { doAction_ReadAlone(); }
     },
     {
@@ -8614,17 +9092,30 @@ function doAction_BookshelfMenu() {
 function doAction_ReadAlone() {
   if (G.timePeriod !== 'evening') { timeWarn('讀書是晚上的行動。'); return; }
   if ((G.eldrinHp ?? 100) <= 20) { warn('艾德林 HP 太低了，需要休息才能工作。'); return; }
+  if (G.day < 1 || G.day > 11) { warn('今天沒有新的內容可以讀。'); return; }
+  if (!Array.isArray(G.eldrinBookReadDays)) G.eldrinBookReadDays = [];
+  if (G.eldrinBookReadDays.includes(G.day)) { warn('今天已經讀過這一段了。'); return; }
+  if (G.day === 11 && !hasReadAllEldrinBookBeforeFinal()) {
+    story('旁白', '你翻到關於記憶的那一頁，卻發現許多前面的註記都還沒有讀完。\n\n缺少那些線索，你無法理解這一頁真正想說的事情。');
+    return;
+  }
+  const book = ELDRIN_BOOK_DAILY[G.day - 1];
+  G.eldrinBookReadDays.push(G.day);
   startActionScene([
-    { speaker: '旁白', text: pick([
-      '你在燭光下翻開一本書，試著讓自己靜下心來。',
-      '書頁的氣味讓這間小屋有了一點不一樣的感覺。',
-      '你讀了幾頁，腦子裡想的卻還是阿瓦倫的事。',
-      '字句在眼前流過，你試著記下幾個有用的段落。',
-      '燭火搖著，你把書翻到做了記號的那一頁，繼續讀。',
-    ]) },
+    { speaker: '旁白', text: book.title },
+    { speaker: '旁白', text: book.text },
   ], 0, () => {
     renderHUD();
   });
+}
+
+function hasReadAllEldrinBookBeforeFinal() {
+  const readDays = Array.isArray(G.eldrinBookReadDays) ? G.eldrinBookReadDays : [];
+  for (let day = 1; day <= 10; day++) {
+    if (day === 9) continue; // 第9夜是血月夜，無法操作書櫃，視為自動完成。
+    if (!readDays.includes(day)) return false;
+  }
+  return true;
 }
 
 function doAction_ReadBook() {
@@ -8680,6 +9171,7 @@ const SPEAKER_TEXT_CLASS = {
   '溫特': 'asc-text-winter',
   '神秘旅人': 'asc-text-winter',
   '諾亞': 'asc-text-noah',
+  '妖精': 'asc-text-fairy',
 };
 const DIALOGUE_TYPE_SPEED = 24;
 let _dialogueTypeTimer = null;
@@ -9793,7 +10285,7 @@ function resetToDay11MorningAfterReidLoop(loopIndex) {
 
 function finishReidDemonHeartDay() {
   if (G.reidFakeSaveTaken || (G.reidDemonHeartCount || 0) >= 3) {
-    endGame('true_protagonist');
+    endGame('wormwood');
     return;
   }
   const fade = document.getElementById('night-fade');
@@ -10065,6 +10557,11 @@ function continueAfterNight(prevText) {
   // 史萊姆隔天早上重生
   G.reidSlaySlimesDead = false;
   // 雷德討伐委託重置
+  G.reidSlayActive = false;
+  G.reidSlayInForest = false;
+  G.reidSlayDelivered = false;
+  G.reidSlayWalkingToGate = false;
+  G.reidSlayPendingWalk = false;
   G.reidForestWandering = false;
   // 每日委託限制重置
   G.reidCommissionedDayKeys = [];
@@ -10116,7 +10613,13 @@ function continueAfterNight(prevText) {
       redMsg = '\n雷德出現在戶外。';
     }
   }
-  storyAuto('旁白', `第 ${G.day} 天開始了。清晨七點，新的一天。${redMsg}`);
+  if (G.day === 1) {
+    storyAuto('旁白', '第 1 天。\n\n小屋很舊，門縫透著風。\n你和阿瓦倫昨晚才到這裡——這是你們能找到的最僻靜的地方。');
+    storyAuto('旁白', '阿瓦倫還昏迷著。\n你蹲在他床邊看了很久，數著他的呼吸，確認他還在。\n\n……他還在。');
+    storyAuto('旁白', '你站起來，環顧四周。\n食物、藥材、水——這些都得想辦法。\n\n先從能做的開始吧。');
+  } else {
+    storyAuto('旁白', `第 ${G.day} 天開始了。清晨七點，新的一天。${redMsg}`);
+  }
   triggerAvarenDay2WakeIntro();
   fadeInFromBlack();
   if (G.day === 9) document.getElementById('blood-moon-badge').style.display = 'block';
@@ -10152,28 +10655,19 @@ function closeEvent() {
 //  ENDINGS
 // ══════════════════════════════════════
 const ENDINGS = {
-  best: { cls:'end-best', title:'甘露',
-    desc:`詛咒，消散了。\n\n那個清晨，阿瓦倫第一次對你微笑。\n不是因為習慣，不是因為依賴——\n而是因為他知道，你從來沒有放棄他。\n\n「……艾德林。你當初找到我，是好事吧。」\n\n你沒有回答，但你哭了。` },
-  good: { cls:'end-good', title:'新的晨光',
-    desc:`詛咒被消除了。\n\n阿瓦倫漸漸長大，學會了說更多的話。\n他有時還是沉默，但沉默裡不再有恐懼。\n\n兩個人住在那間破舊的小屋裡，\n日子平靜，平靜得讓人以為，\n從來就沒有發生過那些事一樣。` },
-  regret: { cls:'end-regret', title:'囚籠',
-    desc:`阿瓦倫長大了。\n\n他對你有著深深的、扭曲的執著——\n那不是信任，而是佔有。\n\n某一天你醒來，發現門被鎖上了。\n「……你不能走。你是我的。永遠都是。」\n\n你才明白，沒有信任的愛，是另一種詛咒。` },
-  bad_curse: { cls:'end-bad', title:'侵蝕',
-    desc:`第十五天。\n\n阿瓦倫身上的詛咒沒有被遏止，\n黑霧漫出了房間，漫過了森林……\n\n世界被詛咒的黑暗一點一點吞噬。\n「……對不起。」你說，但已經沒有人能聽見了。` },
-  bad_lost: { cls:'end-bad', title:'苦艾',
-    desc:`阿瓦倫長大了，但那個孩子已經消失了。\n\n沒有溫暖，沒有連結——\n只剩下滿滿的詛咒與仇恨。\n\n他離開了小屋，踏上了毀滅世界的路。\n你站在空蕩蕩的房間裡，什麼都沒能抓住。` },
-  normal: { cls:'end-normal', title:'繼續走',
-    desc:`十五天過去了。\n\n詛咒沒有完全消除，但阿瓦倫還活著。\n他有時候，還是會悄悄坐到你身旁。\n\n這條路，沒有盡頭，但你決定繼續走下去。` },
-  crisis: { cls:'end-bad', title:'黑霧吞噬',
-    desc:`你沒能撐住。\n\n阿瓦倫的健康在某個夜晚急遽崩潰，\n詛咒趁虛而入，將他完全吞噬。\n那間破舊的小屋，從此空蕩蕩的。` },
+  nectar: { cls:'end-best', title:'甘露',
+    desc:'阿瓦倫的詛咒沒有完全消失。\n\n但是艾德林終於找到了能讓它穩定下來的方法。\n黑霧仍偶爾浮現在阿瓦倫的皮膚下，像一場不肯退去的舊夢。\n\n他們留在森林的小屋裡生活。\n在日復一日的藥草、爐火、雨聲與晨光裡，一點一點長大。\n\n這不是奇蹟。\n只是兩個人都沒有放開彼此。' },
+  wormwood: { cls:'end-regret', title:'苦艾',
+    desc:'阿瓦倫活了下來。\n\n可是有些裂痕沒有被修補。\n他不再相信艾德林，也不再相信這間小屋能保護他。\n\n某一天，阿瓦倫消失了。\n艾德林循著詛咒留下的漆黑痕跡追進森林，卻看見黑霧已經蔓延過樹木、湖水與遠處的村莊。\n\n最後，艾德林和這片森林一起被詛咒吞沒。\n他們都沒有回來。' },
+  bad_curse: { cls:'end-bad', title:'詛咒',
+    desc:'詛咒終究失去了控制。\n\n疼痛與黑霧從阿瓦倫的身體裡溢出，吞掉了呼吸、聲音，以及所有還能被稱為明天的東西。\n\n艾德林伸出手時，已經什麼也抓不住。\n只剩下濃重的黑霧，在小屋裡緩慢擴散。' },
   avaren_death: { cls:'end-bad', title:'血月之後',
-    desc:`血月夜的折磨太深重了。\n\n清晨，當你走進房間，阿瓦倫已經沒有了呼吸。\n\n黑色的詛咒紋路蔓延遍了他的全身，靜止了下來。\n他的臉很平靜——比活著的任何時候都還要平靜。\n\n你來得太晚了。\n\n「……對不起。」\n\n這兩個字，你說了太多遍，\n每一遍都沒有用。` },
+    desc:'血月落下以後，森林恢復了安靜。\n\n可是那份安靜太空了。\n阿瓦倫沒有再醒來。\n\n湖面、月光、黑霧，還有那一夜沒有說完的話，全都沉進了再也抵達不了的地方。' },
   eldrin_death: { cls:'end-bad', title:'倒下',
-    desc:`你沒能撐住。\n\n地面的泥土變得很近，視野一點一點模糊。\n黑暗裡，你想起的最後一件事——\n是阿瓦倫還在小屋裡等你回去。\n\n但你的身體，再也站不起來了。\n\n沒有人告訴阿瓦倫，那天以後艾德林去了哪裡。\n那扇門，就這樣永遠地關上了。` },
-  true_protagonist: { cls:'end-regret', title:'真正的主角',
-    desc:`第十一天結束了。\n\n不，應該說——第十一天終於結束了。\n\n存檔被覆蓋。\n主角欄位重新寫入。\n\n勇者雷德。\n\n你看著那個名字出現在畫面中央，才終於明白。\n這個世界從來不是為艾德林準備的。\n艾德林只是小屋裡的一個角色，一個被玩家借來使用的名字。\n\n而真正被世界承認的人，從一開始就是勇者。\n\n雷德握著劍，站在新的清晨裡。\n他沒有回頭。\n\nSAVE 01\n第 11 天　早晨\n勇者雷德\n\n無法覆蓋。` },
+    desc:'艾德林倒下了。\n\n長久的奔走、研究、戰鬥與自責，終於壓垮了他的身體。\n\n他曾經想要救下那個孩子。\n可是這一次，伸出去的手再也沒有力氣握住任何人。' },
+  captivity: { cls:'end-regret', title:'囚禁',
+    desc:'阿瓦倫活了下來。\n\n他把艾德林看成唯一的光，也看成唯一不能失去的東西。\n溫柔變成依賴，依賴變成恐懼，恐懼又慢慢長成佔有。\n\n小屋沒有被詛咒吞沒。\n但門被關上了。\n\n從此以後，艾德林再也沒有真正離開過。' },
 };
-
 let _eldrinDeathTriggered = false;
 function triggerEldrinDeath() {
   if (_eldrinDeathTriggered) return;
@@ -10240,16 +10734,15 @@ function endGame(type) {
   G.paused = true;
   cancelAnimationFrame(raf);
   let ending;
-  if (type === 'crisis') ending = ENDINGS.crisis;
+  if (type === 'crisis') ending = ENDINGS.bad_curse;
   else if (type === 'avaren_death') ending = ENDINGS.avaren_death;
   else if (type === 'eldrin_death') ending = ENDINGS.eldrin_death;
-  else if (type === 'true_protagonist') ending = ENDINGS.true_protagonist;
-  else if (G.curse > 75)                          ending = ENDINGS.bad_curse;
-  else if (G.curse < 30)                          ending = ENDINGS.best;
-  else if (G.mood > 70 && G.trust < 30)           ending = ENDINGS.regret;
-  else if (G.mood < 30 && G.trust < 30)           ending = ENDINGS.bad_lost;
-  else if (G.curse < 50)                          ending = ENDINGS.good;
-  else                                             ending = ENDINGS.normal;
+  else if (type === 'wormwood') ending = ENDINGS.wormwood;
+  else if (G.mood > 80 && G.trust < 30)           ending = ENDINGS.captivity;
+  else if (G.curse >= 80 || G.pain >= 95)         ending = ENDINGS.bad_curse;
+  else if (G.mood > 60 && G.trust >= 40 && G.curse <= 70 && G.pain < 90)
+                                                       ending = ENDINGS.nectar;
+  else                                             ending = ENDINGS.wormwood;
 
   if (ending.cls === 'end-bad') switchBGM('bgm-sad');
   document.getElementById('game-screen').style.display = 'none';
@@ -10472,6 +10965,8 @@ function loadFromSlot(n) {
     if (G.reidChat3Avaren2Seen == null) G.reidChat3Avaren2Seen = false;
     if (G.reidChat5_1Seen == null) G.reidChat5_1Seen = false;
     if (G.reidChat5_2Seen == null) G.reidChat5_2Seen = false;
+    if (G.reidChat6_1Seen == null) G.reidChat6_1Seen = false;
+    if (G.reidChat6_2Seen == null) G.reidChat6_2Seen = false;
     if (G.reidChat7_1Seen == null) G.reidChat7_1Seen = false;
     if (G.reidChat7_2Seen == null) G.reidChat7_2Seen = false;
     if (G.reidChat9_1Seen == null) G.reidChat9_1Seen = false;
@@ -10485,9 +10980,11 @@ function loadFromSlot(n) {
     if (G.reidFakeSaveTaken == null) G.reidFakeSaveTaken = false;
     if (G.reidIntroNoticeSeen == null) G.reidIntroNoticeSeen = false;
     if (G.reidWinterMeetSeen == null) G.reidWinterMeetSeen = false;
+    if (G.reidWinterMeetDay6Seen == null) G.reidWinterMeetDay6Seen = false;
     if (G.reidWinterMeetDay7Seen == null) G.reidWinterMeetDay7Seen = false;
     if (G.winterIntroSeen == null) G.winterIntroSeen = false;
     if (G.winterReidMeetSeen == null) G.winterReidMeetSeen = false;
+    if (G.winterReidMeetDay6Seen == null) G.winterReidMeetDay6Seen = false;
     if (G.winterReidMeetDay7Seen == null) G.winterReidMeetDay7Seen = false;
     if (G.winterDay8FairyHintSeen == null) G.winterDay8FairyHintSeen = false;
     if (G.winterChat4_1Seen == null) G.winterChat4_1Seen = false;
@@ -10515,6 +11012,7 @@ function loadFromSlot(n) {
     if (G.avarenDay2WakeTalkPending == null) G.avarenDay2WakeTalkPending = false;
     if (G.avarenDay10ForgetTalkSeen == null) G.avarenDay10ForgetTalkSeen = false;
     if (G.avarenDay10NoForgetTalkSeen == null) G.avarenDay10NoForgetTalkSeen = false;
+    if (!Array.isArray(G.eldrinBookReadDays)) G.eldrinBookReadDays = [];
     if (G.eldrinEmoteTimer == null) G.eldrinEmoteTimer = 0;
     if (G.eldrinEmoteText == null) G.eldrinEmoteText = '！';
     if (G.avarenReturnPending == null) G.avarenReturnPending = false;
@@ -10860,7 +11358,7 @@ async function enableDay0FreeControl() {
   G.introDay0HideEldrin = false;
   renderChars();
   await playActionScene(DAY0_NOAH_EXIT_LINES);
-  fadeSwitchBGM('bgm', 4000);
+  fadeSwitchBGM('bgm-day10', 4000);
   G.manualPaused = false;
   G.paused = false;
   G.dayStartMs = performance.now();
@@ -10964,6 +11462,7 @@ async function finishDay0IntroToDay1() {
   renderHUD();
   renderScene();
   renderChars();
+  fadeSwitchBGM('bgm', 2000);
   await fadeFromBlack(1600);
   story('旁白', '清晨的光透過樹葉縫隙灑落。你和阿瓦倫來到這裡的第一天。前方是那間破舊的小屋。');
 }
