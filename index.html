@@ -759,7 +759,7 @@ body {
 }
 .act-item:disabled { opacity: 0.5; cursor: not-allowed; filter:saturate(.6); }
 .act-item.kbd-selected:not(:disabled) .a-name { color: #6e4a15; }
-.act-item.kbd-selected:not(:disabled) .a-name::before { content: '❧ '; font-size: 14px; color: #c07820; }
+.act-item.kbd-selected:not(:disabled) .a-name::before { content: '➥ '; font-size: 14px; color: #c07820; }
 .act-item .a-name { font-size: 15px; color: #3e2c15; font-weight: 900; letter-spacing:1px; }
 .act-item .a-fx   {
   font-family:'Patrick Hand',cursive; font-size: 12px; color: #6e5a2e; letter-spacing: .5px;
@@ -771,7 +771,7 @@ body {
   cursor: pointer; letter-spacing: 3px; transition: all 0.15s; border-radius:11px 4px 10px 5px/5px 10px 4px 11px;
 }
 .act-cancel:hover, .act-cancel.kbd-selected { border-color: #d8a23f; border-style: solid; color: #fff8e0; background: rgba(180,110,20,.55); box-shadow: 0 0 0 2px rgba(216,162,63,.6), 0 4px 12px rgba(0,0,0,.4); }
-.act-cancel.kbd-selected::before { content: '❧ '; font-size: 14px; color: #c07820; }
+.act-cancel.kbd-selected::before { content: '➥ '; font-size: 14px; color: #c07820; }
 
 /* ══ COOK INGREDIENT SELECT ══ */
 #cook-select-overlay {
@@ -846,8 +846,8 @@ body {
   padding-top: 14px !important; padding-bottom: 14px !important;
 }
 .csi-item.csi-kbd-sel .ci-name { color: #6e4a15; }
-.csi-item.csi-kbd-sel .ci-name::before { content: '❧ '; font-size: 14px; color: #c07820; }
-.csi-cancel-btn.csi-kbd-sel::before { content: '❧ '; font-size: 14px; color: #c07820; }
+.csi-item.csi-kbd-sel .ci-name::before { content: '➥ '; font-size: 14px; color: #c07820; }
+.csi-cancel-btn.csi-kbd-sel::before { content: '➥ '; font-size: 14px; color: #c07820; }
 
 /* ══ SOUP OBJECT ══ */
 #soup-obj {
@@ -1126,10 +1126,19 @@ body {
   border-color: #c8903a; color: #6e4a15;
   box-shadow: inset 0 1px 0 rgba(255,252,242,.7), 0 2px 8px rgba(0,0,0,.4);
 }
+.trade-tab.focused {
+  border-color: #e8b050; border-style: solid;
+  box-shadow: 0 0 0 2px rgba(216,162,63,.7);
+}
 .trade-row.focused {
   border-color: #e8b050;
   background: linear-gradient(180deg,#fffdf5,#f7edce);
   box-shadow: 0 0 0 2px rgba(216,162,63,.7), inset 0 1px 0 rgba(255,255,255,.9);
+}
+.trade-row.editing {
+  border-color: #60c870; border-width: 2px;
+  background: linear-gradient(180deg,#f0fbf0,#d8f0d0);
+  box-shadow: 0 0 0 2px rgba(80,180,80,.55), inset 0 1px 0 rgba(255,255,255,.9);
 }
 .trade-confirm-btn.focused, .trade-close-btn.focused {
   border-color: #e8b050; border-style: solid;
@@ -1753,9 +1762,9 @@ body {
       <div class="t-title-en">Wormwood<br><span class="amp">&amp;</span> Dew</div>
       <div class="t-divider"><span class="ln"></span><span class="gem"></span><span class="ln"></span></div>
       <div class="t-menu">
-        <button id="title-skip-btn" class="t-mbtn primary" onclick="playTitleButtonSfx(); skipToDay1()"><span class="t-in"><span class="mark">❧</span><span class="mtxt">跳到第一天</span></span></button>
-        <button id="title-continue-btn" class="t-mbtn primary" onclick="playTitleButtonSfx(); openSavePanel('load')"><span class="t-in"><span class="mark">❧</span><span class="mtxt">繼續遊戲</span></span></button>
-        <button id="title-start-btn" class="t-mbtn primary" onclick="playTitleButtonSfx(); startGame()"><span class="t-in"><span class="mark">❧</span><span class="mtxt">開始遊戲</span></span></button>
+        <button id="title-skip-btn" class="t-mbtn primary" onclick="playTitleButtonSfx(); skipToDay1()"><span class="t-in"><span class="mark">➥</span><span class="mtxt">跳到第一天</span></span></button>
+        <button id="title-continue-btn" class="t-mbtn primary" onclick="playTitleButtonSfx(); openSavePanel('load')"><span class="t-in"><span class="mark">➥</span><span class="mtxt">繼續遊戲</span></span></button>
+        <button id="title-start-btn" class="t-mbtn primary" onclick="playTitleButtonSfx(); startGame()"><span class="t-in"><span class="mark">➥</span><span class="mtxt">開始遊戲</span></span></button>
       </div>
       <div class="t-foot"><span class="ver">v1.0 · 共 11 日</span><span class="t-hint">↑↓ 選擇 · ⏎ 確認</span></div>
     </div>
@@ -8161,13 +8170,14 @@ document.addEventListener('keydown', e => {
     return;
   }
 
-  // 商店開著：↑↓ 移動游標，←→ 調整數量，Tab 切頁籤，Enter/空白 確認
+  // 商店開著：方向鍵移動格子 / 編輯模式左右調數量，Tab 切頁籤，Enter/空白 確認/進編輯模式
   if (document.getElementById('trade-overlay').style.display === 'flex') {
-    if (e.key === 'ArrowUp')    { e.preventDefault(); tradeNavMove(-1); return; }
-    if (e.key === 'ArrowDown')  { e.preventDefault(); tradeNavMove(+1); return; }
-    if (e.key === 'ArrowLeft')  { e.preventDefault(); tradeNavAdj(-1); return; }
-    if (e.key === 'ArrowRight') { e.preventDefault(); tradeNavAdj(+1); return; }
-    if (e.key === 'Tab') { e.preventDefault(); switchTradeTab(_tradeTab === 'sell' ? 'buy' : 'sell'); return; }
+    if (e.key === 'ArrowUp')    { e.preventDefault(); tradeNavDir( 0, -1); return; }
+    if (e.key === 'ArrowDown')  { e.preventDefault(); tradeNavDir( 0, +1); return; }
+    if (e.key === 'ArrowLeft')  { e.preventDefault(); tradeNavDir(-1,  0); return; }
+    if (e.key === 'ArrowRight') { e.preventDefault(); tradeNavDir(+1,  0); return; }
+    if (e.key === 'Tab') { e.preventDefault(); switchTradeTab(_tradeTab === 'sell' ? 'buy' : 'sell'); playLoopingAudio('sfx-dialogue-next', 5.0); return; }
+    if (e.key === 'Escape' && _tradeEditMode) { e.preventDefault(); _tradeEditMode = false; _tradeApplyFocus(); return; }
     if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); tradeNavConfirm(); return; }
     return;
   }
@@ -9133,10 +9143,10 @@ function openGateMenu() {
 function openTrade() {
   if (G.timePeriod !== 'morning') { timeWarn('市集是早上才開門的。'); return; }
   G.paused = true;
-  _tradeTab = 'sell';
-  _tradeCursor = { type: 'sell-row', idx: 0 };
+  _tradeTab = 'buy';
+  _tradeCursor = { type: 'buy-row', idx: 0 };
   renderTradeMenu();
-  switchTradeTab('sell');
+  switchTradeTab('buy');
   document.getElementById('trade-overlay').style.display = 'flex';
 }
 
@@ -9144,9 +9154,12 @@ let _tradeSelSell = {}; // { id: qty }
 let _tradeSelBuy  = {}; // { id: qty }
 
 let _tradeTab = 'sell'; // 'sell' | 'buy'
+let _tradeCursor = { type: 'buy-row', idx: 0 };
+let _tradeEditMode = false; // true = 在某個品項上按確認後進入「調整數量」模式
 
 function switchTradeTab(tab) {
   _tradeTab = tab;
+  _tradeEditMode = false;
   document.getElementById('trade-page-sell').style.display = tab === 'sell' ? '' : 'none';
   document.getElementById('trade-page-buy').style.display  = tab === 'buy'  ? '' : 'none';
   document.getElementById('trade-tab-sell').classList.toggle('active', tab === 'sell');
@@ -9155,34 +9168,24 @@ function switchTradeTab(tab) {
   _tradeApplyFocus();
 }
 
-// 鍵盤游標：type = 'sell-row'|'sell-confirm'|'buy-row'|'buy-confirm'|'close', idx = row index
-let _tradeCursor = { type: 'sell-row', idx: 0 };
-
-function _tradeNavItems() {
-  const items = [];
-  if (_tradeTab === 'sell') {
-    TRADE_SELL.forEach((_, i) => items.push({ type: 'sell-row', idx: i }));
-    items.push({ type: 'sell-confirm', idx: 0 });
-  } else {
-    TRADE_BUY.forEach((_, i) => items.push({ type: 'buy-row', idx: i }));
-    items.push({ type: 'buy-confirm', idx: 0 });
-  }
-  items.push({ type: 'close', idx: 0 });
-  return items;
-}
-
 function _tradeApplyFocus() {
-  // 清除所有 focused class
-  document.querySelectorAll('#trade-overlay .focused').forEach(el => el.classList.remove('focused'));
+  document.querySelectorAll('#trade-overlay .focused, #trade-overlay .editing').forEach(el => {
+    el.classList.remove('focused'); el.classList.remove('editing');
+  });
   const c = _tradeCursor;
-  if (c.type === 'sell-row') {
+  const cls = _tradeEditMode ? 'editing' : 'focused';
+  if (c.type === 'tab-sell') {
+    document.getElementById('trade-tab-sell')?.classList.add('focused');
+  } else if (c.type === 'tab-buy') {
+    document.getElementById('trade-tab-buy')?.classList.add('focused');
+  } else if (c.type === 'sell-row') {
     const rows = document.querySelectorAll('#trade-sell-list .trade-row');
-    if (rows[c.idx]) rows[c.idx].classList.add('focused');
+    if (rows[c.idx]) rows[c.idx].classList.add(cls);
   } else if (c.type === 'sell-confirm') {
     document.getElementById('trade-sell-btn')?.classList.add('focused');
   } else if (c.type === 'buy-row') {
     const rows = document.querySelectorAll('#trade-buy-list .trade-row');
-    if (rows[c.idx]) rows[c.idx].classList.add('focused');
+    if (rows[c.idx]) rows[c.idx].classList.add(cls);
   } else if (c.type === 'buy-confirm') {
     document.getElementById('trade-buy-btn')?.classList.add('focused');
   } else if (c.type === 'close') {
@@ -9190,11 +9193,47 @@ function _tradeApplyFocus() {
   }
 }
 
-function tradeNavMove(dir) {
-  const items = _tradeNavItems();
-  const cur = items.findIndex(it => it.type === _tradeCursor.type && it.idx === _tradeCursor.idx);
-  const next = Math.max(0, Math.min(items.length - 1, cur + dir));
-  _tradeCursor = items[next];
+// 方向鍵移動（dx = ±1 左右欄, dy = ±1 上下列）
+function tradeNavDir(dx, dy) {
+  const tab = _tradeTab;
+  const list = tab === 'sell' ? TRADE_SELL : TRADE_BUY;
+  const rowType = tab + '-row';
+  const confirmType = tab + '-confirm';
+  const c = _tradeCursor;
+
+  if (_tradeEditMode) {
+    // 編輯模式：左右調整數量
+    if (dx !== 0) tradeNavAdj(dx);
+    return;
+  }
+
+  let moved = true;
+  if (c.type === 'tab-sell' || c.type === 'tab-buy') {
+    if (dx < 0) _tradeCursor = { type: 'tab-sell', idx: 0 };
+    else if (dx > 0) _tradeCursor = { type: 'tab-buy',  idx: 0 };
+    else if (dy > 0) _tradeCursor = { type: rowType, idx: 0 };
+    else moved = false;
+  } else if (c.type === rowType) {
+    const col = c.idx % 2;
+    if (dx < 0 && col === 1) _tradeCursor = { type: rowType, idx: c.idx - 1 };
+    else if (dx > 0 && col === 0 && c.idx + 1 < list.length) _tradeCursor = { type: rowType, idx: c.idx + 1 };
+    else if (dy < 0) {
+      if (c.idx - 2 >= 0) _tradeCursor = { type: rowType, idx: c.idx - 2 };
+      else _tradeCursor = { type: 'tab-' + tab, idx: 0 };
+    } else if (dy > 0) {
+      if (c.idx + 2 < list.length) _tradeCursor = { type: rowType, idx: c.idx + 2 };
+      else _tradeCursor = { type: confirmType, idx: 0 };
+    } else moved = false;
+  } else if (c.type === confirmType) {
+    if (dy < 0) _tradeCursor = { type: rowType, idx: list.length - 1 };
+    else if (dy > 0) _tradeCursor = { type: 'close', idx: 0 };
+    else moved = false;
+  } else if (c.type === 'close') {
+    if (dy < 0) _tradeCursor = { type: confirmType, idx: 0 };
+    else moved = false;
+  } else moved = false;
+
+  if (moved) playLoopingAudio('sfx-dialogue-next', 5.0);
   _tradeApplyFocus();
 }
 
@@ -9206,10 +9245,16 @@ function tradeNavAdj(delta) {
 
 function tradeNavConfirm() {
   const c = _tradeCursor;
-  if (c.type === 'sell-confirm') confirmSell();
-  else if (c.type === 'buy-confirm') confirmBuy();
+  if (c.type === 'tab-sell') { switchTradeTab('sell'); playLoopingAudio('sfx-button', 3.0); }
+  else if (c.type === 'tab-buy')  { switchTradeTab('buy');  playLoopingAudio('sfx-button', 3.0); }
+  else if (c.type === 'sell-row' || c.type === 'buy-row') {
+    _tradeEditMode = !_tradeEditMode;
+    playLoopingAudio('sfx-button', 3.0);
+    _tradeApplyFocus();
+  }
+  else if (c.type === 'sell-confirm') { playLoopingAudio('sfx-button', 3.0); confirmSell(); }
+  else if (c.type === 'buy-confirm')  { playLoopingAudio('sfx-button', 3.0); confirmBuy(); }
   else if (c.type === 'close') closeTrade();
-  else if (c.type === 'sell-row' || c.type === 'buy-row') tradeNavAdj(1);
 }
 
 function renderTradeMenu() {
