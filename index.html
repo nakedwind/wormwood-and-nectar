@@ -4492,7 +4492,7 @@ function runReidChat() {
   // 第5天階段
   if (G.day >= 5) {
     if (!G.reidChat5_1Seen) {
-      if (!canUnlockNewStage) { story('雷德', pick(RED_DLG)); return; }
+      if (!canUnlockNewStage) { if (!G.reidChat3_1Seen) return; const _rp = G.reidChat3Avaren1Seen ? [...RED_DLG_GENERAL, ...RED_DLG_AVAREN] : RED_DLG_GENERAL; story('雷德', pick(_rp)); return; }
       G.reidNewStageDay = G.day; G.reidChat5_1Seen = true; startActionScene(REID_CHAT_DAY5_1, 400, () => {}); return;
     }
     if (!G.reidChat5_2Seen) { G.reidChat5_2Seen = true; startActionScene(REID_CHAT_DAY5_2, 400, () => {}); return; }
@@ -4500,7 +4500,7 @@ function runReidChat() {
   // 第6天階段
   if (G.day >= 6) {
     if (!G.reidChat6_1Seen) {
-      if (!canUnlockNewStage) { story('雷德', pick(RED_DLG)); return; }
+      if (!canUnlockNewStage) { if (!G.reidChat3_1Seen) return; const _rp = G.reidChat3Avaren1Seen ? [...RED_DLG_GENERAL, ...RED_DLG_AVAREN] : RED_DLG_GENERAL; story('雷德', pick(_rp)); return; }
       G.reidNewStageDay = G.day; G.reidChat6_1Seen = true; startActionScene(REID_CHAT_DAY6_1, 400, () => {}); return;
     }
     if (!G.reidChat6_2Seen) { G.reidChat6_2Seen = true; startActionScene(REID_CHAT_DAY6_2, 400, () => {}); return; }
@@ -4508,7 +4508,7 @@ function runReidChat() {
   // 第7天階段
   if (G.day >= 7) {
     if (!G.reidChat7_1Seen) {
-      if (!canUnlockNewStage) { story('雷德', pick(RED_DLG)); return; }
+      if (!canUnlockNewStage) { if (!G.reidChat3_1Seen) return; const _rp = G.reidChat3Avaren1Seen ? [...RED_DLG_GENERAL, ...RED_DLG_AVAREN] : RED_DLG_GENERAL; story('雷德', pick(_rp)); return; }
       G.reidNewStageDay = G.day; G.reidChat7_1Seen = true; startActionScene(REID_CHAT_DAY7_1, 400, () => {}); return;
     }
     if (!G.reidChat7_2Seen) { G.reidChat7_2Seen = true; startActionScene(REID_CHAT_DAY7_2, 400, () => {}); return; }
@@ -4516,7 +4516,7 @@ function runReidChat() {
   // 第9天階段
   if (G.day >= 9) {
     if (!G.reidChat9_1Seen) {
-      if (!canUnlockNewStage) { story('雷德', pick(RED_DLG)); return; }
+      if (!canUnlockNewStage) { if (!G.reidChat3_1Seen) return; const _rp = G.reidChat3Avaren1Seen ? [...RED_DLG_GENERAL, ...RED_DLG_AVAREN] : RED_DLG_GENERAL; story('雷德', pick(_rp)); return; }
       G.reidNewStageDay = G.day; G.reidChat9_1Seen = true; startActionScene(REID_CHAT_DAY9_1, 400, () => {}); return;
     }
     if (!G.reidChat9_2Seen) { G.reidChat9_2Seen = true; startActionScene(REID_CHAT_DAY9_2, 400, () => {}); return; }
@@ -4524,7 +4524,7 @@ function runReidChat() {
   // 第11天階段
   if (G.day >= 11) {
     if (!G.reidChat11_1Seen) {
-      if (!canUnlockNewStage) { story('雷德', pick(RED_DLG)); return; }
+      if (!canUnlockNewStage) { if (!G.reidChat3_1Seen) return; const _rp = G.reidChat3Avaren1Seen ? [...RED_DLG_GENERAL, ...RED_DLG_AVAREN] : RED_DLG_GENERAL; story('雷德', pick(_rp)); return; }
       G.reidNewStageDay = G.day; G.reidChat11_1Seen = true; startActionScene(REID_CHAT_DAY11_1, 400, () => {}); return;
     }
     if (!G.reidChat11_2Seen) { G.reidChat11_2Seen = true; startActionScene(REID_CHAT_DAY11_2, 400, () => {}); return; }
@@ -4543,7 +4543,9 @@ function runReidChat() {
   if (todayPool && Math.random() < 0.6) {
     startActionScene(pick(todayPool.stories), 400, () => {}); return;
   }
-  story('雷德', pick(RED_DLG));
+  if (!G.reidChat3_1Seen) return;
+  const reidPool = G.reidChat3Avaren1Seen ? [...RED_DLG_GENERAL, ...RED_DLG_AVAREN] : RED_DLG_GENERAL;
+  story('雷德', pick(reidPool));
 }
 
 function playReidIntro() {
@@ -4832,41 +4834,28 @@ const WINTER_BUBBLE_REID = [
 // ══ 溫特對話 ══
 const WINTER_DLG_GENERAL = [
   '……這片森林，最近魔物躁動得很厲害。',
-  '平衡一旦被打破，就會有很多東西跟著亂。',
-  '你在這裡生活？……有趣。人類居然住在這麼深的地方。',
-  '魔物並不是天生要與人類為敵的，只是很多人不明白這點。',
-  '我只是個路過的旅人。……不必多想。',
-  '森林裡的靈氣流動得很奇怪。有什麼東西改變了。',
-  '……你沒有問我從哪裡來，很好。這樣的人比較好說話。',
+  '平衡一旦被打破，就會有很多東西難以控制。',
+  '你們居然想住在這麼深的地方。',
+  '魔物並不是天生要與人類為敵的，只是很多人不明白規則。',
+  '我只是個路過的旅人……沒什麼特別的。',
+  '那些孩子也不是故意想傷人的，這裡是他們的地盤。',
+  '……你沒有問我從哪裡來，這樣很好，比較好溝通。',
   '我不喜歡干涉太多。事情有它自己會走的方向。',
 ];
-const WINTER_DLG_CURSE = [
-  '……這附近的詛咒濃度，比正常高了許多。你知道原因嗎。',
-  '詛咒這種東西，本質上是一種失控的能量。有時候是憤怒，有時候是痛苦。',
-  '那股氣息……不是惡意，只是太痛了，所以往外溢出來了。',
-  '能察覺到這種濃度的人不多。你陪在他旁邊……不容易的事。',
-  '詛咒不一定能完全消除。但如果能讓它不再擴散，那已經很了不起了。',
-];
+
 const WINTER_DLG_AVAREN = [
   '……那孩子，就是讓這片森林失衡的原因。',
-  '我沒有要對他怎麼樣的意思。他只是個不幸的孩子。',
-  '詛咒會吸引魔物，這不是他的錯。只是他身上背負的東西太重了。',
-  '你在照顧他？……辛苦了。這件事，沒有想象的那麼簡單。',
-  '……他身上那道詛咒，我見過類似的。很古老，很深。',
+  '我沒有要對他怎麼樣。他只是個不幸的孩子。',
+  '詛咒會吸引魔物，這不是他的錯。',
+  '……辛苦了。這件事，沒有想象的那麼簡單。',
 ];
 const WINTER_DLG_REID = [
-  '……有個紅頭髮的傢伙一直在附近轉悠，說要討伐什麼。',
+  '……有個紅頭髮的傢伙一直在附近繞來繞去，好煩。',
   '想找我的人有很多，但還沒有一個讓我覺得危險的。',
-  '那個勇者……（沉默片刻）……算了。讓他繼續找吧。',
-  '他揮著劍到處問人「魔王在哪裡」，我就站在他旁邊，他完全沒發現。',
-  '自稱勇者的人通常都有點……過於直接。這倒是沒什麼壞處。',
-  '他向我問路，問去「魔王巢穴」怎麼走。……我告訴他往南走三天。巢穴在北邊。',
-  '他很努力。只是努力的方向……每一次都差那麼一點點。',
-  '我見過很多想殺我的人。他是第一個讓我覺得有點……好笑的。',
-  '他昨天在樹後面躲了一整個下午，以為我是魔物的使者。……我在等他先離開。',
-  '……他對這片森林有很深的誤解。但我沒有義務糾正他。',
-  '說實話，如果他的方向感再差一點，他可能永遠找不到出口，更別說找到我了。',
-  '他問我：「你有沒有感覺到什麼邪惡的氣息？」……我想了想，說沒有。',
+  '那個自稱勇者的人有點……過於直接。這倒是沒什麼壞處。',
+  '他很努力，只是努力的方向……每次都不對。',
+  '真沒想到他沒發現，這也是一種才能。',
+  '這樣的人居然也能成為勇者……無法理解。',
 ];
 const WINTER_TRADE = [
   { name:'魔物素材包', desc:'蒐集自周邊魔物的材料，藥草+3、石材+2', cost: 40,
@@ -5402,20 +5391,6 @@ const NARR_NIGHT_RESEARCH = [
   '你不知道這些努力能不能來得及。\n但你還不能睡。\n至少今晚，還不能。',
   '燭光在書桌上慢慢縮小。你的眼睛發酸，手指也因為疲憊而發冷。',
   '你把最後一行筆記寫完時，天色仍然很黑。\n黑暗像水一樣漫上來，淹沒了書頁，也淹沒了這一夜。',
-];
-const NARR_TALK = [
-  '你在阿瓦倫身邊坐下，輕聲說了幾句今天發生的事。',
-  '阿瓦倫沒有立刻回答，只是安靜地聽著。',
-  '你說話的聲音放得很輕，像是怕把他嚇跑。',
-  '你問他今天有沒有好一點。他沉默了很久，最後很小地點了一下頭。',
-  '你說了一些不重要的事。阿瓦倫看著別處，但沒有叫你停下。',
-  '你停下來時，房間裡安靜了一會兒。阿瓦倫沒有走開。',
-  '你告訴他外面的天氣。阿瓦倫聽到鳥叫的時候，眼睛輕輕動了一下。',
-  '你說你很快就會回來。阿瓦倫沒有回答，但手指慢慢鬆開了。',
-  '你坐得離他近了一點。他沒有躲開。',
-  '阿瓦倫像是想說什麼，最後只低低叫了一聲你的名字。',
-  '你說著說著，發現他的呼吸比剛才平穩了一些。',
-  '你沒有逼他回答，只是讓話留在房間裡慢慢沉下來。',
 ];
 const AVAREN_DAY2_WAKE_STORY = [
   { speaker: '艾德林', text: '阿瓦倫……？' },
@@ -8973,7 +8948,7 @@ function openAvarenMenu() {
         run() {
           if (G.day === 10 && !G.usedForgetMagic) { rejectDay10AvarenCare('talk'); return; }
           chg('trust', 2); renderHUD();
-          startAvarenChat([{ speaker:'旁白', text: pick(NARR_TALK) }]);
+          startAvarenChat();
         }
       },
     ]);
@@ -9063,7 +9038,7 @@ function openAvarenMenu() {
       req: () => true,
       run() {
         chg('trust', 1); chg('mood', 1);
-        startAvarenChat([{ speaker:'旁白', text: pick(NARR_TALK) }]);
+        startAvarenChat();
       }
     },
     {
@@ -10084,7 +10059,7 @@ function updateCookSelectSummary() {
 }
 
 function confirmCookStart() {
-  if (G.money < 3) { warn('金錢不足（需要3金）！'); closeCookSelect(); return; }
+  if (G.money < 3) { warn('金錢不足（需要3金）！'); return; }
   playLoopingAudio('sfx-cook-lid', 4.0);
   const SPECIAL_KEYS = ['fairyItem', 'bug', 'mushroom', 'frog', 'stone', 'monsterMaterial', 'branch', 'crystal'];
   G.soupIsSpecial = G.cookSelectedKeys.some(k => SPECIAL_KEYS.includes(k));
@@ -10263,7 +10238,6 @@ function doAction_Cook() {
   if (G.cookActive) { warn('已經在烹飪了，請稍候。'); return; }
   if (G.soupReady) { warn('廚房裡已有一碗湯，先取用再烹飪。'); return; }
   if (G.carryingSoup) { warn('你手上還拿著湯，先處理完再說。'); return; }
-  if (G.money < 3) { warn('金錢不足（需要3金）！'); return; }
   if ((G.eldrinHp ?? 100) <= 20) { warn('艾德林 HP 太低了，需要休息才能工作。'); return; }
   openCookSelectPanel();
 }
@@ -14300,7 +14274,8 @@ function initStoveAnimation() {
   container.style.backgroundRepeat   = 'no-repeat';
   container.style.backgroundSize     = `${frameW * FRAMES}px ${frameH}px`;
   container.style.backgroundPosition = '0 0';
-  container.style.backgroundImage    = 'url(bg_kitchen/bg_kitchen_stove.png)';
+  const _stoveFolder = (G && G.timePeriod === 'evening') ? 'bg_kitchen_night/' : 'bg_kitchen/';
+  container.style.backgroundImage    = `url(${_stoveFolder}bg_kitchen_stove.png)`;
   container.style.imageRendering     = 'pixelated';
 
   let frame = 0;
@@ -14315,7 +14290,9 @@ function initStoveAnimation() {
 function setStoveSprite(src) {
   const container = document.getElementById('kitchen-stove');
   if (!container) return;
-  container.style.backgroundImage = `url(${src})`;
+  const isNight = G && G.timePeriod === 'evening';
+  const adjustedSrc = isNight ? src.replace('bg_kitchen/', 'bg_kitchen_night/') : src;
+  container.style.backgroundImage = `url(${adjustedSrc})`;
 }
 
 // ── 烹飪蒸氣 ──
