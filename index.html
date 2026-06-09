@@ -529,6 +529,17 @@ body {
   pointer-events: none;
   transform: scale(0.8); transform-origin: top right;
 }
+@keyframes healSparkle {
+  0%   { opacity: 0; transform: translateY(0) scale(0.5); }
+  20%  { opacity: 1; transform: translateY(-10px) scale(1.1); }
+  70%  { opacity: 1; transform: translateY(-40px) scale(1.0); }
+  100% { opacity: 0; transform: translateY(-70px) scale(0.8); }
+}
+.heal-particle {
+  position: absolute; pointer-events: none; z-index: 600;
+  font-size: 10px; animation: healSparkle 2.25s ease-out forwards;
+  color: #fffde8; text-shadow: 0 0 6px rgba(255,255,220,1), 0 0 12px rgba(255,255,200,.6);
+}
 .toast-msg {
   background: rgba(8,5,2,0.88); border: 1px solid #5a3818;
   color: #f0d080; font-size: 11px; font-weight: 700;
@@ -786,7 +797,7 @@ body {
               linear-gradient(112deg,#271a0e 0%,#1d130a 52%,#160d06 100%);
   border: 1.5px solid #c8903a;
   border-radius: 18px 7px 16px 9px/9px 16px 7px 18px;
-  width: 440px; max-width: 95vw; padding: 20px 20px 16px;
+  width: 580px; max-width: 95vw; padding: 20px 20px 16px;
   box-shadow: 0 16px 40px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,220,150,.08);
 }
 .csi-box::after {
@@ -797,26 +808,26 @@ body {
 .csi-title { display: none; }
 .csi-name  { font-size: 20px; font-weight: 900; color: #e7c98c; margin-bottom: 14px; letter-spacing: 2px; }
 .csi-divider { border: none; border-top: 1.5px dashed rgba(200,144,58,.4); margin: 10px 0; }
-.csi-list  { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; margin-bottom: 10px; }
+.csi-list  { display: grid; grid-template-columns: 1fr 1fr 1fr; grid-auto-rows: 1fr; gap: 7px; margin-bottom: 10px; }
 .csi-item {
   background: linear-gradient(180deg,#d9c99a,#c8b480); border: 1.5px solid #b69862;
   border-radius: 12px 5px 11px 6px/6px 12px 5px 13px;
-  padding: 8px 10px; cursor: pointer; font-family: inherit;
+  padding: 8px 6px; cursor: pointer; font-family: inherit;
   display: flex; flex-direction: column; align-items: flex-start; gap: 4px;
   box-shadow: inset 0 1px 0 rgba(255,252,242,.7), 0 1px 3px rgba(0,0,0,.4);
   transition: all 0.15s; text-align: left; width: 100%;
+  overflow: hidden; min-width: 0;
 }
 .csi-list .csi-item:nth-child(even) { border-radius: 6px 13px 5px 12px/12px 6px 13px 5px; }
 .csi-item:hover:not(:disabled), .csi-item.selected {
-  transform: translateX(2px); border-color: #d8a23f;
+  border-color: #d8a23f;
   background: linear-gradient(180deg,#fffdf5,#f7edce);
   box-shadow: 0 0 0 2px rgba(216,162,63,.7), 0 5px 14px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.95), inset 0 0 20px rgba(255,250,230,.5), 0 0 14px rgba(230,185,80,.3);
-  padding-top: 14px !important; padding-bottom: 14px !important;
 }
 .csi-item.selected .ci-name { color: #6e4a15; }
-.csi-item .ci-name { font-size: 15px; color: #3e2c15; font-weight: 900; letter-spacing: 1px; }
+.csi-item .ci-name { font-size: 14px; color: #3e2c15; font-weight: 900; letter-spacing: 0.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .csi-item .ci-fx   {
-  font-family:'Patrick Hand',cursive; font-size: 12px; color: #6e5a2e; letter-spacing: .5px;
+  font-family:'Noto Sans TC', sans-serif; font-weight: 900; font-size: 12px; color: #6e5a2e; letter-spacing: .5px;
   border: 1.5px solid #bca06a; border-radius: 10px 4px 9px 4px; padding: 1px 9px; white-space: nowrap; background: rgba(180,160,110,.16);
 }
 .csi-summary {
@@ -831,7 +842,8 @@ body {
   cursor: pointer; letter-spacing: 2px; transition: all 0.15s;
   border-radius: 11px 4px 10px 5px/5px 10px 4px 11px;
 }
-.csi-start:hover, .csi-start.csi-kbd-sel { border-color: #d8a23f; border-style: solid; color: #fff8e0; background: rgba(180,110,20,.55); box-shadow: 0 0 0 2px rgba(216,162,63,.6), 0 4px 12px rgba(0,0,0,.4); }
+.csi-start:hover:not(:disabled), .csi-start.csi-kbd-sel:not(:disabled) { border-color: #d8a23f; border-style: solid; color: #fff8e0; background: rgba(180,110,20,.55); box-shadow: 0 0 0 2px rgba(216,162,63,.6), 0 4px 12px rgba(0,0,0,.4); }
+.csi-start:disabled { opacity: 0.35; cursor: not-allowed; }
 .csi-cancel-btn {
   flex: 1; background: rgba(20,13,6,.5); border: 1.5px dashed #6a5028; color: #b7a06e;
   padding: 9px; font-family: 'Noto Sans TC',sans-serif; font-size: 13px; font-weight: 700;
@@ -840,10 +852,9 @@ body {
 }
 .csi-cancel-btn:hover, .csi-cancel-btn.csi-kbd-sel { border-color: #d8a23f; border-style: solid; color: #fff8e0; background: rgba(180,110,20,.55); box-shadow: 0 0 0 2px rgba(216,162,63,.6), 0 4px 12px rgba(0,0,0,.4); }
 .csi-item.csi-kbd-sel {
-  transform: translateX(2px); border-color: #d8a23f;
+  border-color: #d8a23f;
   background: linear-gradient(180deg,#fffdf5,#f7edce);
   box-shadow: 0 0 0 2px rgba(216,162,63,.7), 0 5px 14px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.95), inset 0 0 20px rgba(255,250,230,.5), 0 0 14px rgba(230,185,80,.3);
-  padding-top: 14px !important; padding-bottom: 14px !important;
 }
 .csi-item.csi-kbd-sel .ci-name { color: #6e4a15; }
 .csi-item.csi-kbd-sel .ci-name::before { content: '➥ '; font-size: 14px; color: #c07820; }
@@ -1041,7 +1052,7 @@ body {
               linear-gradient(112deg,#271a0e 0%,#1d130a 52%,#160d06 100%);
   border: 1.5px solid #c8903a;
   border-radius: 18px 7px 16px 9px/9px 16px 7px 18px;
-  width: 860px; max-width: 95vw; padding: 20px 20px 16px;
+  width: 760px; max-width: 95vw; padding: 20px 20px 16px;
   box-shadow: 0 16px 40px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,220,150,.08);
 }
 .trade-box::after {
@@ -1052,28 +1063,96 @@ body {
 .trade-title { display: none; }
 .trade-name-big { font-size: 20px; font-weight: 900; color: #e7c98c; margin-bottom: 10px; letter-spacing: 2px; }
 .trade-money-bar {
-  font-size: 13px; color: #c0a870; margin-bottom: 10px;
+  font-size: 17px; color: #c0a870; margin-bottom: 10px;
   border-bottom: 1px solid rgba(200,144,58,.3); padding-bottom: 8px;
+  text-align: right;
 }
-.trade-money-bar b { color: #f0d060; }
+.trade-money-bar b { color: #f0d060; font-size: 20px; }
 .trade-section { font-size: 11px; letter-spacing: 3px; color: #a07840; margin: 8px 0 5px; }
+.trade-daily-header {
+  display: flex; align-items: center; gap: 10px;
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: 17px; font-weight: 700; letter-spacing: 4px; color: #a07840;
+  margin-bottom: 8px;
+}
+.trade-daily-header::before,
+.trade-daily-header::after {
+  content: ''; flex: 1;
+  border-top: 1px dashed #b09060;
+}
+.trade-daily-divider {
+  border: none; border-top: 1px dashed #b09060;
+  margin: 10px 0 0; opacity: 0.6;
+}
 #trade-sell-list, #trade-buy-list {
   display: grid; grid-template-columns: 1fr 1fr; gap: 5px;
 }
 .trade-row {
   display: flex; align-items: center; gap: 5px;
-  background: linear-gradient(180deg,#f1e7ce,#e3d5b2); border: 1.5px solid #b69862;
+  position: relative;
+  background: linear-gradient(180deg,#e2d4a8,#d0be88); border: 1.5px solid #b69862;
   border-radius: 10px 4px 9px 5px/5px 10px 4px 9px;
-  padding: 5px 9px; margin-bottom: 0;
-  box-shadow: inset 0 1px 0 rgba(255,252,242,.7), 0 1px 3px rgba(0,0,0,.3);
+  padding: 13px 4px; margin-bottom: 0;
+  box-shadow: inset 0 1px 0 rgba(255,252,242,.5), 0 1px 3px rgba(0,0,0,.3);
   transition: all 0.15s;
 }
-.tr-name  { flex: 1; font-size: 13px; color: #3e2c15; font-weight: 900; }
-.tr-qty   { font-size: 11px; color: #7a6040; min-width: 24px; }
+#trade-sell-list .trade-row {
+  background: linear-gradient(180deg,#cdd496,#bac47e); border-color: #8fa058;
+  box-shadow: inset 0 1px 0 rgba(240,248,210,.5), 0 1px 3px rgba(0,0,0,.3);
+}
+.trade-row-sale {
+  background: linear-gradient(180deg,#f0e0b0,#e8c87a); border-color: #d4a030;
+  box-shadow: inset 0 1px 0 rgba(255,248,200,.6), 0 1px 3px rgba(0,0,0,.3);
+}
+.tr-price-sale {
+  color: #c04010 !important; border-color: #d4a030 !important;
+  background: rgba(220,140,40,.2) !important; font-weight: 900; gap: 4px;
+}
+.tr-orig-price {
+  color: #a08060; font-weight: 400; font-size: 12px; text-decoration: line-through;
+  font-family: 'Noto Sans TC', sans-serif;
+}
+.tr-sale-badge {
+  position: absolute; top: 3px; right: 4px;
+  font-size: 9px; font-weight: 900; letter-spacing: 0.5px;
+  color: #fff; background: #c04010;
+  border-radius: 3px 2px 3px 2px; padding: 1px 4px;
+  pointer-events: none;
+}
+.trade-row-sell-bonus {
+  background: linear-gradient(180deg,#edfad0,#d8f0a8) !important; border-color: #7ec838 !important;
+  box-shadow: inset 0 1px 0 rgba(245,255,220,.95), 0 1px 4px rgba(0,0,0,.3);
+}
+.tr-price-bonus {
+  color: #2a5a08 !important; border-color: #7ec838 !important;
+  background: rgba(100,200,30,.2) !important; font-weight: 900;
+}
+.tr-bonus-badge {
+  background: linear-gradient(180deg,#f5a828,#d06808) !important;
+  color: #fff !important;
+}
+#trade-sell-list .trade-row-sell-bonus.focused {
+  background: linear-gradient(180deg,#f5fde0,#e8f8b0) !important;
+  border-color: #a8e040 !important; border-width: 2px;
+  box-shadow: 0 0 0 3px rgba(150,220,40,.7), inset 0 1px 0 rgba(255,255,255,.95);
+}
+#trade-sell-list .trade-row-sell-bonus.editing {
+  background: linear-gradient(180deg,#fefcf4,#f8f0dc) !important;
+  border-color: #d4aa30 !important; border-width: 2px;
+  box-shadow: 0 0 0 3px rgba(200,160,30,.5), inset 0 1px 0 rgba(255,255,255,.95);
+}
+#trade-sell-list .tr-name  { color: #2a3a08; }
+#trade-sell-list .tr-qty   { color: #4a5a28; }
+#trade-sell-list .tr-price { color: #3a4a18; border-color: #8fa058; background: rgba(120,140,60,.18); }
+#trade-sell-list .tr-qty-val { color: #2a3a08; }
+#trade-sell-list .tr-subtotal { color: #3a4a18; }
+.tr-name  { flex: 1; font-size: 17px; color: #3e2c15; font-weight: 900; }
+.tr-qty   { font-size: 13px; color: #a89878; min-width: 24px; }
 .tr-price {
-  font-family:'Patrick Hand',cursive; font-size: 11px; color: #6e5a2e;
+  font-family:'Noto Sans TC', sans-serif; font-size: 16px; font-weight: 900; color: #4a3010;
   border: 1.5px solid #bca06a; border-radius: 9px 3px 8px 3px; padding: 1px 6px;
   background: rgba(180,160,110,.16); min-width: 46px; text-align: center;
+  display: flex; align-items: center; justify-content: center; gap: 4px;
 }
 .tr-btn {
   background: rgba(20,13,6,.5); border: 1.5px solid #c8903a; color: #e7c98c;
@@ -1084,9 +1163,10 @@ body {
 .tr-btn:hover:not(:disabled) { background: rgba(40,28,14,.7); border-color: #e8b050; color: #f7d898; }
 .tr-btn:disabled { opacity: 0.35; cursor: not-allowed; }
 .trade-close-btn {
-  margin-top: 10px; width: 100%; background: rgba(20,13,6,.5);
+  margin-top: 10px; width: 50%; display: block; margin-left: auto; margin-right: auto;
+  background: rgba(20,13,6,.5);
   border: 1.5px dashed #6a5028; color: #b7a06e;
-  padding: 9px; font-family: 'Noto Sans TC',sans-serif; font-size: 13px; font-weight: 700;
+  padding: 9px; font-family: 'Noto Sans TC',sans-serif; font-size: 17px; font-weight: 700;
   cursor: pointer; letter-spacing: 3px; transition: all 0.15s;
   border-radius: 11px 4px 10px 5px/5px 10px 4px 11px;
 }
@@ -1100,12 +1180,12 @@ body {
 }
 .tr-qty-btn:hover:not(:disabled) { background: rgba(40,28,14,.7); }
 .tr-qty-btn:disabled { opacity: 0.3; cursor: not-allowed; }
-.tr-qty-val { font-size: 14px; font-weight: 900; color: #3e2c15; min-width: 24px; text-align: center; }
-.tr-subtotal { font-size: 12px; color: #6e5a2e; min-width: 48px; text-align: right; }
+.tr-qty-val { font-size: 18px; font-weight: 900; color: #3e2c15; min-width: 24px; text-align: center; }
+.tr-subtotal { font-size: 16px; color: #6e5a2e; min-width: 48px; text-align: right; }
 .trade-confirm-btn {
-  margin-top: 8px; width: 100%;
+  margin-top: 14px; width: 50%; display: block; margin-left: auto; margin-right: auto;
   background: linear-gradient(180deg,#eddfbd,#ddcc9f); border: 1.5px solid #c8903a; color: #6e4a15;
-  padding: 8px; font-family: 'Noto Sans TC',sans-serif; font-size: 13px; font-weight: 900;
+  padding: 8px; font-family: 'Noto Sans TC',sans-serif; font-size: 17px; font-weight: 900;
   cursor: pointer; letter-spacing: 2px; transition: all 0.15s;
   border-radius: 11px 4px 10px 5px/5px 10px 4px 11px;
 }
@@ -1115,37 +1195,61 @@ body {
   display: flex; gap: 6px; margin-bottom: 12px;
 }
 .trade-tab {
-  flex: 1; padding: 8px; font-family: 'Noto Sans TC', sans-serif; font-size: 14px; font-weight: 900;
-  letter-spacing: 4px; cursor: pointer; transition: all 0.15s;
-  background: rgba(20,13,6,.5); border: 1.5px solid #6a5028; color: #b7a06e;
+  flex: 0.6; padding: 8px; font-family: 'Noto Sans TC', sans-serif; font-size: 16px; font-weight: 900;
+  letter-spacing: 4px; cursor: pointer; transition: all 0.2s;
+  background: rgba(20,13,6,.5); border: 1.5px solid #6a5028; color: #8a7048;
   border-radius: 11px 4px 10px 5px/5px 10px 4px 11px;
 }
-.trade-tab:hover { border-color: #c8903a; color: #f0d898; }
+.trade-tab:hover { border-color: #a07838; color: #c09a60; }
 .trade-tab.active {
-  background: linear-gradient(180deg,#eddfbd,#ddcc9f);
-  border-color: #c8903a; color: #6e4a15;
-  box-shadow: inset 0 1px 0 rgba(255,252,242,.7), 0 2px 8px rgba(0,0,0,.4);
+  flex: 1.4;
+  background: rgba(60,38,14,.75);
+  border-color: #c8903a; color: #e8c878;
+  box-shadow: inset 0 1px 0 rgba(255,240,180,.15), 0 2px 8px rgba(0,0,0,.4);
 }
 .trade-tab.focused {
   border-color: #e8b050; border-style: solid;
   box-shadow: 0 0 0 2px rgba(216,162,63,.7);
 }
+.trade-tab.focused::before { content: '➥ '; font-size: 13px; color: #c07820; }
 .trade-row.focused {
-  border-color: #e8b050;
-  background: linear-gradient(180deg,#fffdf5,#f7edce);
-  box-shadow: 0 0 0 2px rgba(216,162,63,.7), inset 0 1px 0 rgba(255,255,255,.9);
+  border-color: #f0c040; border-width: 2px;
+  background: linear-gradient(180deg,#fffdf0,#f5e8b0);
+  box-shadow: 0 0 0 3px rgba(230,180,40,.6), inset 0 1px 0 rgba(255,255,255,.9);
+}
+.trade-row.focused .tr-name::before,
+.trade-row.editing .tr-name::before {
+  content: '➥ '; font-size: 13px; color: #c07820;
+}
+#trade-sell-list .trade-row.focused {
+  border-color: #c8e040; border-width: 2px;
+  background: linear-gradient(180deg,#faffc8,#eef888);
+  box-shadow: 0 0 0 3px rgba(180,220,40,.8), inset 0 1px 0 rgba(255,255,255,.95);
+}
+#trade-sell-list .trade-row.editing {
+  border-color: #a8d840; border-width: 2px;
+  background: linear-gradient(180deg,#f0fcc0,#daf070);
+  box-shadow: 0 0 0 3px rgba(150,200,40,.65), inset 0 1px 0 rgba(255,255,255,.9);
 }
 .trade-row.editing {
   border-color: #60c870; border-width: 2px;
   background: linear-gradient(180deg,#f0fbf0,#d8f0d0);
   box-shadow: 0 0 0 2px rgba(80,180,80,.55), inset 0 1px 0 rgba(255,255,255,.9);
 }
-.trade-confirm-btn.focused, .trade-close-btn.focused {
+.trade-confirm-btn.focused {
   border-color: #e8b050; border-style: solid;
   box-shadow: 0 0 0 2px rgba(216,162,63,.7);
   background: linear-gradient(180deg,#f5ecce,#e8d8ad);
   color: #3e2c15;
 }
+.trade-confirm-btn.focused::before { content: '➥ '; font-size: 13px; color: #c07820; }
+.trade-close-btn.focused {
+  border-color: #c8903a; border-style: solid;
+  box-shadow: 0 0 0 2px rgba(150,100,30,.5);
+  background: rgba(50,34,14,.7);
+  color: #e0c080;
+}
+.trade-close-btn.focused::before { content: '➥ '; font-size: 13px; color: #c8903a; }
 
 /* ══ SCENE PROGRESS BARS (採藥/研究/烹飪) ══ */
 #farm-growth-wrap {
@@ -1702,6 +1806,9 @@ body {
 <audio id="sfx-button">
   <source src="music/音效/按紐.mp3" type="audio/mpeg">
 </audio>
+<audio id="sfx-money"><source src="music/音效/金錢.mp3" type="audio/mpeg"></audio>
+<audio id="sfx-eat"><source src="music/音效/吃東西.mp3" type="audio/mpeg"></audio>
+<audio id="sfx-buff"><source src="music/音效/BUFF.mp3" type="audio/mpeg"></audio>
 <audio id="sfx-pickup">
   <source src="music/音效/拿東西.mp3" type="audio/mpeg">
 </audio>
@@ -2198,13 +2305,16 @@ body {
     </div>
     <div id="trade-page-sell">
       <div id="trade-sell-list"></div>
+      <div class="trade-daily-divider"></div>
       <button class="trade-confirm-btn" id="trade-sell-btn" onclick="confirmSell()" disabled>確認賣出</button>
     </div>
     <div id="trade-page-buy" style="display:none">
+      <div class="trade-daily-header"><span>今日商品</span></div>
       <div id="trade-buy-list"></div>
+      <div class="trade-daily-divider"></div>
       <button class="trade-confirm-btn" id="trade-buy-btn" onclick="confirmBuy()" disabled>確認購買</button>
     </div>
-    <button class="trade-close-btn" onclick="closeTrade()">── 離開市集 ──</button>
+    <button class="trade-close-btn" onclick="closeTrade()">離開市集</button>
   </div>
 </div>
 
@@ -2225,6 +2335,7 @@ body {
     <div class="csi-divider"></div>
     <div class="csi-list" id="cook-select-items"></div>
     <div class="csi-divider"></div>
+    <div class="csi-summary" id="cook-select-summary">未選擇食材——基本料理</div>
     <div class="csi-footer">
       <button class="csi-start" onclick="confirmCookStart()">🍳 開始烹飪（-3金）</button>
       <button class="csi-cancel-btn" onclick="closeCookSelect()">取消</button>
@@ -2299,11 +2410,11 @@ const FARM_STAGE_MAX        = 3600; // 每個生長階段 60秒
 const FARM_WATER_BOOST      = 1440; // 澆水立即推進 24秒
 const FISH_MAX         = 1800; // 30秒 × 60fps
 const RESEARCH_MAX     = 600;  // 10秒
-const COOK_MAX         = 1800; // 30秒
+const COOK_MAX         = 900; // 15秒
 const CARE_MAX         = 900;  // 15秒
 const GATHER_SEARCH_MAX = 210; // 採集搜索 3.5秒 × 60fps
-const DAY_REAL_SECONDS = 480;  // 8分鐘真實時間
-const MORNING_SECONDS  = 240;  // 前4分鐘（早上）
+const DAY_REAL_SECONDS = 900;  // 15分鐘真實時間
+const MORNING_SECONDS  = 600;  // 前10分鐘（早上）
 const START_HOUR = 8;
 const RAIN_DROP_COUNT = 75;
 const FOREST_FROG_DEFAULT  = { x: 95,  y: 300, state: 'sit', timer: 80, hopDx: 0, hopDy: 0, hopProgress: 0, facing: 1, stuckCooldown: 0 };
@@ -3482,6 +3593,7 @@ const OBSTACLES = {
     { x1:380, y1:262, x2:538, y2:306 },   // 床上緣
     { x1:380, y1:404, x2:552, y2:474 },   // 床下緣
     { x1:518, y1:2,   x2:622, y2:474 },   // 右牆
+    { x1:199, y1:460, x2:524, y2:504 },   // 下方區域
   ],
   lobby: [
     { x1:4,   y1:2,   x2:359, y2:181 },   // 吧台上方
@@ -3707,26 +3819,32 @@ const AVAREN_DLG = {
   ],
 };
 
-const RED_DLG = [
-  '「你好！我是雷德，職業勇者！這附近有魔王城堡嗎？」',
-  '「我只是暫時性地不知道自己在哪。這不叫迷路，叫做……戰略性探索！」',
-  '「你一個人照顧那孩子？哇，那比打魔王還難啊！加油！我支持你！」',
-  '「我的劍被詛咒了，有時候會自己發出奇怪的聲音……詛咒真的很麻煩，我懂你的感受。」',
-  '「這片森林我繞了三圈了，但沒關係！迷路也是一種冒險！」',
-  '「詛咒啊……其實我也很困擾。我的劍一直嗡嗡叫，晚上很吵睡不著。」',
-  '「那個孩子……眼神很嚇人，但感覺很可憐。你要好好對他！要不然我不賣你東西！」',
-  '「我背包裡有一些多的東西，你要不要看看？反正我拿著也沒用！」',
-  '「說起來我的劍詛咒是打魔王的時候中的……你有辦法解嗎？啊，你現在應該很忙。算了！」',
-  '「你知道嗎，被詛咒的劍其實砍起來還是很利的！只是有時候會自己跑掉……那個，別這樣看我。」',
-  '「你今天看起來很累。要不要我幫你搬什麼？……雖然我也不確定往哪裡走。」',
-  '「那個孩子有沒有開口說話了？感覺他每次都在看我，但就是不說話。」',
-  '「勇者這份工作……說實話，也沒人教我怎麼做。我就這樣上路了。」',
-  '「我的劍今天特別吵。它可能在抗議我又迷路了……我跟它說我沒有，但它不信。」',
-  '「詛咒這東西，解起來比打魔王還難吧？至少魔王你能看到他在哪裡。」',
-  '「你知道嗎，我其實不怕詛咒。我怕的是找不到回去的路。那感覺很可怕。」',
-  '「那孩子的眼睛顏色很特別。（停頓）……對不起，失禮了。」',
-  '「有一次我在森林迷路三天，靠吃草活下來。……那個，你不用學我。」',
+const RED_DLG_GENERAL = [
+  '「我今天又繞了兩圈才找到這裡！這到底是誰畫的地圖啊？」',
+  '「我的劍今天又在吵了。」',
+  '「你知道嗎，我昨天差點走進魔物巢穴。嚇死我了哈哈哈。」',
+  '「艾德林，你最近有好好吃飯嗎？你看起來比上次更瘦了。」',
+  '「勇者之劍真的很麻煩，不過……有時候它會保護我，有時候也挺方便啦。」',
+  '「你今天看起來很累。要不要先去休息，我在這裡幫你看一下附近有沒有魔物。」',
+  '「說實話，勇者這份工作沒人教我要怎麼做。我就這樣上路了，然後就一直迷路到現在。」',
+  '「詛咒這東西，比討伐魔王還難吧？至少魔王你能看到他在哪裡。」',
+  '「你知道嗎，我其實不怕詛咒。我怕的是找不到回去的路。」',
+  '「我遇到一個老婆婆，她說詛咒濃度高的地方，魔物會特別容易出現。你要小心一點！」',
+  '「有一次我在森林迷路三天，靠吃蟲和吃草活下來。厲害吧！」',
+  '「艾德林，你真的很厲害。我說真的，不是隨便說說的那種。」',
 ];
+const RED_DLG_AVAREN = [
+  '「感覺阿瓦倫最近好像有慢慢習慣我的存在了！」',
+  '「你有沒有想過，等阿瓦倫長大以後要做什麼？我覺得他身手應該很好！」',
+  '「阿瓦倫今天有沒有比較好一點？你只要說沒事，我就放心了。」',
+  '「等打倒魔王以後，我一定要帶你跟阿瓦倫去我去過最好吃的地方吃飯！」',
+  '「我每次靠近阿瓦倫，劍就特別吵。我覺得它也想跟阿瓦倫做朋友。」',
+  '「阿瓦倫上次瞪了我一眼，可是我覺得那個眼神比上次溫柔了一點點！」',
+  '「你一個人照顧阿瓦倫，不覺得很辛苦嗎？有需要幫忙的事一定要說！」',
+  '「我昨天做夢，夢到阿瓦倫長大了跟著我一起去打倒魔王。他很厲害！」',
+];
+// 相容舊有引用
+const RED_DLG = RED_DLG_GENERAL;
 
 const RED_SPEAK_DLG = [
   '嗯——這是哪裡？',
@@ -4412,7 +4530,7 @@ function runReidChat() {
     if (!G.reidChat11_2Seen) { G.reidChat11_2Seen = true; startActionScene(REID_CHAT_DAY11_2, 400, () => {}); return; }
   }
 
-  // 看完後只重播當天（或最近一個有對話的天）的劇情
+  // 看完所有劇情後：60% 重播當天劇情，40% 一般閒聊池
   const seenByDay = [
     { day:3,  stories: [G.reidChat3_1Seen && REID_CHAT_DAY3_1, G.reidChat3_2Seen && REID_CHAT_DAY3_2, G.reidChat3Avaren1Seen && REID_CHAT_DAY3_AVAREN_1, G.reidChat3Avaren2Seen && REID_CHAT_DAY3_AVAREN_2].filter(Boolean) },
     { day:5,  stories: [G.reidChat5_1Seen && REID_CHAT_DAY5_1, G.reidChat5_2Seen && REID_CHAT_DAY5_2].filter(Boolean) },
@@ -4421,14 +4539,10 @@ function runReidChat() {
     { day:9,  stories: [G.reidChat9_1Seen && REID_CHAT_DAY9_1, G.reidChat9_2Seen && REID_CHAT_DAY9_2].filter(Boolean) },
     { day:11, stories: [G.reidChat11_1Seen && REID_CHAT_DAY11_1, G.reidChat11_2Seen && REID_CHAT_DAY11_2].filter(Boolean) },
   ];
-  // 找到當天或最近一個有看過對話的天
-  const currentPool = seenByDay.filter(e => e.day <= G.day && e.stories.length > 0);
-  if (currentPool.length > 0) {
-    const latest = currentPool[currentPool.length - 1];
-    startActionScene(pick(latest.stories), 400, () => {}); return;
+  const todayPool = seenByDay.find(e => e.day === G.day && e.stories.length > 0);
+  if (todayPool && Math.random() < 0.6) {
+    startActionScene(pick(todayPool.stories), 400, () => {}); return;
   }
-
-  // 什麼都沒看過時的備用
   story('雷德', pick(RED_DLG));
 }
 
@@ -5042,7 +5156,7 @@ function runWinterChat() {
     }
   }
 
-  // 所有劇情都看完，重播當前階段
+  // 所有劇情都看完：60% 重播當天劇情，40% 一般閒聊池
   const seenByDay = [
     { day:4, stories: [G.winterChat4_1Seen && WINTER_CHAT_DAY4_1].filter(Boolean) },
     { day:5, stories: [G.winterChat4_2Seen && WINTER_CHAT_DAY4_2, G.winterChat5_1Seen && WINTER_CHAT_DAY5_1, G.winterChat5_2Seen && WINTER_CHAT_DAY5_2].filter(Boolean) },
@@ -5050,9 +5164,9 @@ function runWinterChat() {
     { day:7, stories: [G.winterChat7_1Seen && WINTER_CHAT_DAY7_1, G.winterChat7_2Seen && WINTER_CHAT_DAY7_2].filter(Boolean) },
     { day:8, stories: [G.winterChat8Seen && WINTER_CHAT_DAY8].filter(Boolean) },
   ];
-  const currentPool = seenByDay.filter(e => e.day <= G.day && e.stories.length > 0);
-  if (currentPool.length > 0) {
-    startActionScene(pick(currentPool[currentPool.length - 1].stories), 400, () => {}); return;
+  const todayPool = seenByDay.find(e => e.day === G.day && e.stories.length > 0);
+  if (todayPool && Math.random() < 0.6) {
+    startActionScene(pick(todayPool.stories), 400, () => {}); return;
   }
   story('溫特', pick(WINTER_DLG_GENERAL));
 }
@@ -5725,9 +5839,339 @@ const AVAREN_CHAT_GROUPS = {
     ],
   ],
 };
+// 場景專用對話（阿瓦倫跟著玩家時觸發）
+const AVAREN_CHAT_SCENE = {
+  outside: {
+    warm: [
+      [
+        { speaker:'阿瓦倫', text:'……外面比我想的還要亮。' },
+        { speaker:'艾德林', text:'是啊，天氣很好呢。' },
+        { speaker:'阿瓦倫', text:'……風也沒有很冷。' },
+      ],
+      [
+        { speaker:'阿瓦倫', text:'……天空很大。' },
+        { speaker:'艾德林', text:'你喜歡嗎？' },
+        { speaker:'阿瓦倫', text:'……不確定。' },
+      ],
+      [
+        { speaker:'阿瓦倫', text:'那些花是什麼？' },
+        { speaker:'艾德林', text:'是農田旁邊長的野花，我也不太清楚叫什麼名字。' },
+        { speaker:'阿瓦倫', text:'……可以摘嗎？' },
+        { speaker:'艾德林', text:'可以啊！' },
+      ],
+      [
+        { speaker:'阿瓦倫', text:'……你每天都在這裡跑來跑去嗎。' },
+        { speaker:'艾德林', text:'對啊，這裡有很多事要做。' },
+        { speaker:'阿瓦倫', text:'……不會累嗎？' },
+        { speaker:'艾德林', text:'有一點，不過沒關係！' },
+        { speaker:'阿瓦倫', text:'……不要忙過頭。' },
+      ],
+    ],
+    open: [
+      [
+        { speaker:'阿瓦倫', text:'池塘裡面有很多魚。' },
+        { speaker:'艾德林', text:'對啊！你想吃嗎？我釣魚給你吃！' },
+        { speaker:'阿瓦倫', text:'好…！' },
+        { speaker:'艾德林', text:'讓你看看我高超的釣魚技術！' },
+      ],
+      [
+        { speaker:'阿瓦倫', text:'那個柵欄，是你做的嗎？' },
+        { speaker:'艾德林', text:'是原來就有的，我只是修建了一下。' },
+        { speaker:'阿瓦倫', text:'……你會種菜嗎？' },
+        { speaker:'艾德林', text:'學著學著就會了！' },
+        { speaker:'阿瓦倫', text:'……很厲害。' },
+      ],
+      [
+        { speaker:'阿瓦倫', text:'那裡有小鳥。' },
+        { speaker:'艾德林', text:'對啊，他們的聲音很好聽！' },
+        { speaker:'阿瓦倫', text:'他們看起來好胖。' },
+      ],
+      [
+        { speaker:'阿瓦倫', text:'……你都在外面這麼久。' },
+        { speaker:'艾德林', text:'嗯，有很多東西要採集和整理。' },
+        { speaker:'阿瓦倫', text:'……我可以幫你嗎。' },
+        { speaker:'艾德林', text:'等你身體好一點，現在先陪著我就夠了。' },
+        { speaker:'阿瓦倫', text:'……好。' },
+      ],
+    ],
+    possess: [
+      [
+        { speaker:'阿瓦倫', text:'你不要跑太遠好嗎？' },
+        { speaker:'艾德林', text:'放心，我就在這裡啊。' },
+        { speaker:'阿瓦倫', text:'……也不可以跟別人說話太久。' },
+        { speaker:'艾德林', text:'阿瓦倫……' },
+        { speaker:'阿瓦倫', text:'跟我說話就好了。' },
+      ],
+      [
+        { speaker:'阿瓦倫', text:'我希望這裡只有我們兩個。' },
+        { speaker:'艾德林', text:'對呀，然後偶爾有朋友來拜訪我們，感覺很愜意。' },
+        { speaker:'阿瓦倫', text:'……不是，不需要他們也行。' },
+        { speaker:'艾德林', text:'你要多多交朋友才行～' },
+      ],
+      [
+        { speaker:'阿瓦倫', text:'……你出來這裡，是為了找那個紅髮的嗎。' },
+        { speaker:'艾德林', text:'不是！我只是要做一些事情。' },
+        { speaker:'阿瓦倫', text:'……真的嗎。' },
+        { speaker:'艾德林', text:'真的。' },
+        { speaker:'阿瓦倫', text:'……那就好。' },
+      ],
+    ],
+  },
+  lobby: {
+    warm: [
+      [
+        { speaker:'阿瓦倫', text:'……這裡放了好多東西。' },
+        { speaker:'艾德林', text:'對啊，這裡有很多藥水和材料。' },
+        { speaker:'阿瓦倫', text:'……都是你收集的嗎？' },
+        { speaker:'艾德林', text:'有些是，大部分是諾亞給我的。' },
+      ],
+      [
+        { speaker:'阿瓦倫', text:'……那個瓶子是什麼？' },
+        { speaker:'艾德林', text:'是我自己調的藥水，還沒完成。' },
+        { speaker:'阿瓦倫', text:'……我可以看嗎。' },
+        { speaker:'艾德林', text:'現在還有點危險，等做好再讓你試試看。' },
+        { speaker:'阿瓦倫', text:'……好。' },
+      ],
+    ],
+    open: [
+      [
+        { speaker:'阿瓦倫', text:'……你在做什麼。' },
+        { speaker:'艾德林', text:'我在看藥水的筆記，看看還缺什麼材料。' },
+        { speaker:'阿瓦倫', text:'……我可以幫你記嗎。' },
+        { speaker:'艾德林', text:'嗯？可以啊，那你要幫我記住哪些東西不夠喔！' },
+        { speaker:'阿瓦倫', text:'……嗯。我記得住的。' },
+      ],
+      [
+        { speaker:'阿瓦倫', text:'……你一直在工作。' },
+        { speaker:'艾德林', text:'今天事情比較多啦。' },
+        { speaker:'阿瓦倫', text:'……你也要記得休息。' },
+        { speaker:'艾德林', text:'……謝謝你關心我。' },
+      ],
+    ],
+    possess: [
+      [
+        { speaker:'阿瓦倫', text:'……你喜歡待在這裡嗎。' },
+        { speaker:'艾德林', text:'嗯，這裡是我們的家啊。' },
+        { speaker:'阿瓦倫', text:'……「我們的」……嗯。' },
+      ],
+    ],
+  },
+  kitchen: {
+    warm: [
+      [
+        { speaker:'阿瓦倫', text:'……你在煮東西嗎。' },
+        { speaker:'艾德林', text:'對，等一下就好了。' },
+        { speaker:'阿瓦倫', text:'……聞起來……很奇怪。' },
+        { speaker:'艾德林', text:'哈哈，會嗎？可是很營養耶！' },
+        { speaker:'阿瓦倫', text:'…營養不代表好吃…' },
+      ],
+      [
+        { speaker:'阿瓦倫', text:'……你料理做的好快。' },
+        { speaker:'艾德林', text:'做習慣了！其實一開始我很慢。' },
+        { speaker:'阿瓦倫', text:'我也想知道怎麼做。' },
+        { speaker:'艾德林', text:'等你長大後我就教你怎麼做～' },
+        { speaker:'阿瓦倫', text:'……現在不可以嗎？' },
+      ],
+    ],
+    open: [
+      [
+        { speaker:'阿瓦倫', text:'……我可以站在旁邊看嗎。' },
+        { speaker:'艾德林', text:'當然可以，隨時都可以。' },
+        { speaker:'阿瓦倫', text:'……我可以幫忙嗎？' },
+        { speaker:'艾德林', text:'你在旁邊我就覺得開心了。' },
+        { speaker:'阿瓦倫', text:'…可是，鍋子好像發出紫色的煙。' },
+      ],
+      [
+        { speaker:'阿瓦倫', text:'你喜歡吃什麼？' },
+        { speaker:'艾德林', text:'我什麼都喜歡吃啊！營養的東西都喜歡～' },
+        { speaker:'艾德林', text:'你也要多吃一些營養的東西才會健康長大喔！' },
+        { speaker:'阿瓦倫', text:'……好。' },
+      ],
+    ],
+    possess: [
+      [
+        { speaker:'阿瓦倫', text:'長大了以後讓我來幫你煮東西。' },
+        { speaker:'艾德林', text:'真的嗎？阿瓦倫真可靠。' },
+        { speaker:'阿瓦倫', text:'嗯，我可以一直煮給你吃。' },
+        { speaker:'艾德林', text:'好開心～我會期待那天的！' },
+        { speaker:'阿瓦倫', text:'嗯…以後每天每天，我都會煮飯給你吃。' },
+      ],
+      [
+        { speaker:'阿瓦倫', text:'……在這裡有點熱。' },
+        { speaker:'艾德林', text:'火爐旁邊本來就比較熱，要站遠一點嗎？' },
+        { speaker:'阿瓦倫', text:'……不要，我想留在這裡。' },
+        { speaker:'阿瓦倫', text:'……你在這裡，我就要在這裡。' },
+      ],
+    ],
+  },
+};
+
+// 通用對話（大幅擴充）
+const AVAREN_CHAT_EXTRA = {
+  cold: [
+    [
+      { speaker:'艾德林', text:'諾亞很擔心你，所以你要快點好起來哦！' },
+      { speaker:'阿瓦倫', text:'……為什麼他要擔心我？' },
+      { speaker:'艾德林', text:'沒有為什麼啊，擔心你不是很正常的事嗎？' },
+      { speaker:'阿瓦倫', text:'……很奇怪。' },
+      { speaker:'阿瓦倫', text:'……以前沒有人擔心過我。' },
+    ],
+    [
+      { speaker:'阿瓦倫', text:'這裡是哪裡？' },
+      { speaker:'艾德林', text:'這裡是諾亞以前住的地方。' },
+      { speaker:'阿瓦倫', text:'為什麼我們會來這裡？' },
+      { speaker:'艾德林', text:'……嗯，因為這裡比較安全呀。' },
+    ],
+    [
+      { speaker:'阿瓦倫', text:'你以後也會離開的，每個人都是這樣。' },
+      { speaker:'艾德林', text:'不會的，我會一直在你身邊。' },
+      { speaker:'阿瓦倫', text:'你確定嗎？我最討厭別人說謊了。' },
+      { speaker:'艾德林', text:'真的…我會一直陪著你。' },
+    ],
+    [
+      { speaker:'阿瓦倫', text:'……你不怕我嗎。' },
+      { speaker:'艾德林', text:'怕你什麼？' },
+      { speaker:'阿瓦倫', text:'……詛咒。在我身邊的人都會遇到不幸。' },
+      { speaker:'艾德林', text:'不會的，因為我有神奇的力量，可以化解詛咒。' },
+      { speaker:'阿瓦倫', text:'……你沒有騙人嗎？' },
+    ],
+    [
+      { speaker:'阿瓦倫', text:'……外面的聲音很吵。' },
+      { speaker:'艾德林', text:'那是風吹過樹葉的聲音。' },
+      { speaker:'阿瓦倫', text:'……。' },
+      { speaker:'艾德林', text:'不喜歡嗎？' },
+      { speaker:'阿瓦倫', text:'……不知道。' },
+    ],
+  ],
+  warm: [
+    [
+      { speaker:'阿瓦倫', text:'……你今天去了哪裡？' },
+      { speaker:'艾德林', text:'去市集買了一些東西。' },
+      { speaker:'阿瓦倫', text:'……買了什麼？' },
+      { speaker:'艾德林', text:'有藥草，還有幾樣食材，回來做給你吃。' },
+      { speaker:'阿瓦倫', text:'……好。' },
+    ],
+    [
+      { speaker:'阿瓦倫', text:'……你臉上有泥巴。' },
+      { speaker:'艾德林', text:'啊？！在哪裡！' },
+      { speaker:'阿瓦倫', text:'……（輕輕抬起手，在你臉頰上擦了一下）' },
+      { speaker:'艾德林', text:'……謝謝你。' },
+      { speaker:'阿瓦倫', text:'……下次小心一點。' },
+    ],
+    [
+      { speaker:'阿瓦倫', text:'……你今天心情好嗎？' },
+      { speaker:'艾德林', text:'嗯，因為看到你越來越健康了！' },
+      { speaker:'阿瓦倫', text:'……是嗎。' },
+    ],
+    [
+      { speaker:'阿瓦倫', text:'你去森林了嗎？' },
+      { speaker:'艾德林', text:'對呀！那裡有一片湖，很漂亮，但是有點危險。' },
+      { speaker:'阿瓦倫', text:'我也想去...。' },
+      { speaker:'艾德林', text:'抱歉...那邊太危險了，等你長大以後再帶你去好嗎？' },
+      { speaker:'阿瓦倫', text:'……好吧。' },
+    ],
+    [
+      { speaker:'阿瓦倫', text:'好想快點長大。' },
+      { speaker:'艾德林', text:'為什麼呢？' },
+      { speaker:'阿瓦倫', text:'這樣才能賺錢。' },
+      { speaker:'艾德林', text:'不用啦，小孩子就是要盡情的吃喝玩樂呀！' },
+      { speaker:'阿瓦倫', text:'但是…你不是說你很缺錢嗎？我聽到了。' },
+      { speaker:'艾德林', text:'……不用擔心我啦。' },
+    ],
+  ],
+  open: [
+    [
+      { speaker:'阿瓦倫', text:'……艾德林，我有件事想問你。' },
+      { speaker:'艾德林', text:'什麼事？' },
+      { speaker:'阿瓦倫', text:'……你一直照顧我不覺得累嗎？' },
+      { speaker:'艾德林', text:'不會累啊！因為你值得被好好照顧。' },
+      { speaker:'阿瓦倫', text:'……我不覺得我有。' },
+      { speaker:'艾德林', text:'我覺得有就是有～' },
+    ],
+    [
+      { speaker:'阿瓦倫', text:'……你昨晚睡得好嗎？' },
+      { speaker:'艾德林', text:'還不錯，你呢？' },
+      { speaker:'阿瓦倫', text:'……也還好。沒做什麼惡夢。' },
+      { speaker:'艾德林', text:'那就好。' },
+      { speaker:'阿瓦倫', text:'……嗯。' },
+    ],
+    [
+      { speaker:'阿瓦倫', text:'……我好像回想不太起以前的事情。' },
+      { speaker:'艾德林', text:'…有些事情沒有想起來也沒關係。' },
+      { speaker:'阿瓦倫', text:'嗯……好像是這樣。' },
+      { speaker:'阿瓦倫', text:'反正也沒有什麼開心的回憶。' },
+      { speaker:'艾德林', text:'……' },
+    ],
+    [
+      { speaker:'阿瓦倫', text:'……你會不會有一天就走了。' },
+      { speaker:'艾德林', text:'不會的。' },
+      { speaker:'阿瓦倫', text:'……你怎麼能這麼確定。' },
+      { speaker:'艾德林', text:'不然我們來打勾勾！約定好了要一直在一起！' },
+      { speaker:'阿瓦倫', text:'真的嗎？那要蓋章，說謊的人會被黑獵犬吃掉！' },
+    ],
+    [
+      { speaker:'艾德林', text:'……你喜歡這裡嗎？這個小屋。' },
+      { speaker:'阿瓦倫', text:'喜歡……' },
+      { speaker:'艾德林', text:'那麼等你長大後，要幫你準備你專屬的房間才行。' },
+      { speaker:'阿瓦倫', text:'什麼？為什麼？' },
+      { speaker:'艾德林', text:'因為長大了本來就應該要自己一個人一個房間呀！' },
+      { speaker:'阿瓦倫', text:'那我不要長大了……' },
+    ],
+  ],
+  possess: [
+    [
+      { speaker:'阿瓦倫', text:'……你今天可不可以不要出去。' },
+      { speaker:'艾德林', text:'我去去就回，很快的。' },
+      { speaker:'阿瓦倫', text:'……那你要記得我一直在等你。' },
+      { speaker:'艾德林', text:'我會快點回來的，一定。' },
+      { speaker:'阿瓦倫', text:'……說好了。' },
+    ],
+    [
+      { speaker:'阿瓦倫', text:'如果有很多錢的話，你是不是就不用這麼忙了？' },
+      { speaker:'艾德林', text:'嗯…應該是吧？到時候我們就能一整天無所事事的玩樂了～' },
+      { speaker:'阿瓦倫', text:'……是嗎？' },
+      { speaker:'阿瓦倫', text:'（聲音很小聲）那需要多少錢呢……？' },
+      { speaker:'艾德林', text:'？' },
+      { speaker:'阿瓦倫', text:'應該很快就可以賺到錢了。' },
+    ],
+    [
+      { speaker:'阿瓦倫', text:'我也想去森林……' },
+      { speaker:'艾德林', text:'為什麼？那裡很危險喔！' },
+      { speaker:'阿瓦倫', text:'……可是你在那裡好像跟別人聊得很開心…' },
+      { speaker:'艾德林', text:'我跟你聊天也很開心喔！' },
+    ],
+    [
+      { speaker:'阿瓦倫', text:'……我做了一個夢，夢到你走了。' },
+      { speaker:'艾德林', text:'那只是夢，我不會走。' },
+      { speaker:'阿瓦倫', text:'……夢裡你說你有別的事要做了。' },
+      { speaker:'艾德林', text:'別擔心～噩夢都是相反的！' },
+      { speaker:'阿瓦倫', text:'是嗎？那就代表你永遠都不會離開我對吧。' },
+      { speaker:'艾德林', text:'對！' },
+    ],
+    [
+      { speaker:'阿瓦倫', text:'……我可以一直待在你旁邊嗎？' },
+      { speaker:'艾德林', text:'當然，你喜歡待多久就多久。' },
+      { speaker:'阿瓦倫', text:'……那就……永遠。' },
+      { speaker:'艾德林', text:'？好啊。' },
+    ],
+  ],
+};
+
 function getAvarenChatGroup() {
   const stage = getAvarenChatStage();
-  return pick(AVAREN_CHAT_GROUPS[stage] || AVAREN_CHAT_GROUPS.cold);
+  const scene = G.scene;
+  const avarenHere = G.avarenScene === scene;
+  // 阿瓦倫跟著玩家到場景時，有40%機率觸發場景專用對話
+  if (avarenHere && scene !== 'room' && AVAREN_CHAT_SCENE[scene]) {
+    const scenePool = AVAREN_CHAT_SCENE[scene][stage] || AVAREN_CHAT_SCENE[scene].warm;
+    if (scenePool && scenePool.length > 0 && Math.random() < 0.4) {
+      return pick(scenePool);
+    }
+  }
+  // 否則從一般對話（原有+擴充）中隨機選
+  const base  = AVAREN_CHAT_GROUPS[stage] || AVAREN_CHAT_GROUPS.cold;
+  const extra = AVAREN_CHAT_EXTRA[stage]  || [];
+  return pick([...base, ...extra]);
 }
 
 function startAvarenChat(extraLines = []) {
@@ -6063,6 +6507,10 @@ function initState() {
     heartTimer: 0,
     heartIcon: '',
     autoSpeakTimer: 360,
+    dailyBuyList: null,
+    dailySellBonus: {},
+    bandagedToday: false,
+    exorcismToday: false,
   };
 }
 
@@ -6220,7 +6668,7 @@ function renderScene() {
     const hBar = document.getElementById('herb-harvest-bar');
     const hLabel = document.querySelector('#herb-harvest-wrap .herb-harvest-label');
     if (hBar) { hBar.style.width = '100%'; hBar.style.background = 'linear-gradient(90deg,#a07020,#e0b030)'; }
-    if (hLabel) hLabel.textContent = '🌿 藥草已就緒！';
+    if (hLabel) hLabel.textContent = '🌿 可以收穫囉！';
   }
   document.getElementById('fish-scene-wrap').style.display =
     (G.scene === 'outside' && (G.fishFishing || G.fishReady)) ? 'block' : 'none';
@@ -7040,7 +7488,8 @@ function gameLoop() {
   const el = G.eldrin;
   let dx = 0, dy = 0;
   const cookPanelOpen = document.getElementById('cook-select-overlay').style.display === 'flex';
-  if (!isDlgBlocking() && !cookPanelOpen && !G.gatherSearchActive && !G.fishCastLock) {
+  const tradeOpen = document.getElementById('trade-overlay').style.display === 'flex';
+  if (!isDlgBlocking() && !cookPanelOpen && !G.gatherSearchActive && !G.fishCastLock && !tradeOpen) {
     if (k['ArrowLeft'] ||k['a']||k['A']) dx = -SPEED;
     if (k['ArrowRight']||k['d']||k['D']) dx = +SPEED;
     if (k['ArrowUp']   ||k['w']||k['W']) dy = -SPEED;
@@ -7294,10 +7743,12 @@ function gameLoop() {
     const wanderMax  = G.mood >= 80 ? (reidPresent ? 80 : 105) : 130;
     const sceneObs = OBSTACLES[G.scene] || [];
     const avBlocked = (nx, ny) => sceneObs.some(o => nx >= o.x1 && nx <= o.x2 && ny >= o.y1 && ny <= o.y2);
+    const avSceneBounds = { room:{x1:60,x2:540,y1:170,y2:400}, lobby:{x1:80,x2:580,y1:100,y2:430}, outside:{x1:50,x2:580,y1:200,y2:460}, forest:{x1:50,x2:480,y1:100,y2:260} };
+    const avBounds = avSceneBounds[G.scene] || avSceneBounds.room;
+    const avClamp = (nx, ny) => ({ x: Math.max(avBounds.x1, Math.min(avBounds.x2, nx)), y: Math.max(avBounds.y1, Math.min(avBounds.y2, ny)) });
     if (d > followDist) {
       // 追上艾德林
-      const newAvX = av.x + (ddx / d) * followSpd;
-      const newAvY = av.y + (ddy / d) * followSpd;
+      const { x: newAvX, y: newAvY } = avClamp(av.x + (ddx / d) * followSpd, av.y + (ddy / d) * followSpd);
       if (!avBlocked(newAvX, newAvY)) { av.x = newAvX; av.y = newAvY; }
       av.pose = ddx < 0 ? 'sideL' : 'sideR';
       av.walkTick++;
@@ -7312,7 +7763,7 @@ function gameLoop() {
       }
       const wdx = av.wanderDir.dx * wanderSpd;
       const wdy = av.wanderDir.dy * wanderSpd;
-      const nx = av.x + wdx, ny = av.y + wdy;
+      const { x: nx, y: ny } = avClamp(av.x + wdx, av.y + wdy);
       // 不離艾德林太遠，也不進障礙區
       if (Math.hypot(el.x - nx, el.y - ny) < wanderMax && !avBlocked(nx, ny)) { av.x = nx; av.y = ny; }
       if (wdx !== 0 || wdy !== 0) {
@@ -7983,7 +8434,7 @@ function gameLoop() {
     const fpct = ((FOREST_FISH_MAX - G.forestFishTimer) / FOREST_FISH_MAX) * 100;
     document.getElementById('fish-forest-bar').style.width = fpct + '%';
     if (G.forestFishTimer <= 0) {
-      SFX.collect();
+      if (G.scene === 'forest') playLoopingAudio('sfx-fish-splash', 4.0);
       G.forestFishFishing = false;
       G.forestFishReady = true;
       setForestFishingVisual('ready');
@@ -7999,7 +8450,7 @@ function gameLoop() {
     const pct = ((FISH_MAX - G.fishTimer) / FISH_MAX) * 100;
     document.getElementById('fish-scene-bar').style.width = pct + '%';
     if (G.fishTimer <= 0) {
-      playLoopingAudio('sfx-fish-splash', 4.0);
+      if (G.scene === 'outside') playLoopingAudio('sfx-fish-splash', 4.0);
       G.fishFishing = false;
       G.fishReady = true;
       setOutsideFishingVisual('ready');
@@ -8042,7 +8493,7 @@ function gameLoop() {
         const hBar = document.getElementById('herb-harvest-bar');
         const hLabel = document.querySelector('#herb-harvest-wrap .herb-harvest-label');
         if (hBar) { hBar.style.width = '100%'; hBar.style.background = 'linear-gradient(90deg,#a07020,#e0b030)'; }
-        if (hLabel) hLabel.textContent = '🌿 藥草已就緒！';
+        if (hLabel) hLabel.textContent = '🌿 可以收穫囉！';
         if (G.scene === 'outside') toast('🌿 農田收成了！回藥草田收取');
       } else {
         if (farmBar) farmBar.style.background = 'linear-gradient(90deg,#206020,#60c040)';
@@ -8194,8 +8645,8 @@ document.addEventListener('keydown', e => {
 
   // 食材多選面板開著時：方向鍵移動、空白/Enter 切換或確認
   if (document.getElementById('cook-select-overlay').style.display === 'flex') {
-    if (e.key === 'ArrowUp')    { cookSelectMoveCursor(-2); return; }
-    if (e.key === 'ArrowDown')  { cookSelectMoveCursor(+2); return; }
+    if (e.key === 'ArrowUp')    { cookSelectMoveCursor(-3); return; }
+    if (e.key === 'ArrowDown')  { cookSelectMoveCursor(+3); return; }
     if (e.key === 'ArrowLeft')  { cookSelectMoveCursor(-1); return; }
     if (e.key === 'ArrowRight') { cookSelectMoveCursor(+1); return; }
     if (e.key === ' ' || e.key === 'Enter') { cookSelectRunSelected(); return; }
@@ -8477,7 +8928,7 @@ function openAvarenMenu() {
         req: () => G.coldPotion > 0 && !G.actionSceneActive,
         run() {
           if (G.day === 10 && !G.usedForgetMagic) { rejectDay10AvarenCare('cold'); return; }
-          chg('coldPotion', -1); chg('pain', -5); renderHUD();
+          chg('coldPotion', -1); chg('pain', -5); renderHUD(); showHealEffect();
           story('阿瓦倫', pick(['……（慢慢喝下藥水。）', '……苦。（但他還是把藥喝完了。）', '……好一點了。']));
           toast('💊 治療藥水發揮了效果  疼痛 -5');
         }
@@ -8487,27 +8938,31 @@ function openAvarenMenu() {
         req: () => G.cursePotion > 0 && !G.actionSceneActive,
         run() {
           if (G.day === 10 && !G.usedForgetMagic) { rejectDay10AvarenCare('curse'); return; }
-          chg('cursePotion', -1); chg('curse', -5); renderHUD();
+          chg('cursePotion', -1); chg('curse', -5); renderHUD(); showHealEffect();
           story('阿瓦倫', pick(['……（身上的黑霧微微淡了一點。）', '……沒那麼冷了。', '……（他閉上眼，安靜地呼吸。）']));
           toast('🔮 解咒藥水發揮了效果  詛咒 -5');
         }
       },
       {
-        name: '包紮換藥', fx: '藥材-1  疼痛-3',
+        name: '包紮換藥', fx: () => G.bandagedToday ? '今天已使用過' : '藥材-1  疼痛-3',
         req: () => G.herb > 0 && !G.actionSceneActive,
         run() {
           if (G.day === 10 && !G.usedForgetMagic) { rejectDay10AvarenCare('bandage'); return; }
-          chg('herb', -1); chg('pain', -3); renderHUD();
+          if (G.bandagedToday) { warn('今天已經幫阿瓦倫換過藥了。'); return; }
+          G.bandagedToday = true;
+          chg('herb', -1); chg('pain', -3); renderHUD(); showHealEffect();
           story('旁白', '你替阿瓦倫重新換上乾淨的藥草敷料。\n他的眉頭慢慢鬆開了一點。');
           toast('🌿 包紮換藥  藥材 -1 / 疼痛 -3');
         }
       },
       {
-        name: '除咒儀式', fx: '艾德林HP-5  詛咒-3',
+        name: '除咒儀式', fx: () => G.exorcismToday ? '今天已使用過' : '艾德林HP-5  詛咒-3',
         req: () => (G.eldrinHp ?? 100) > 5 && !G.actionSceneActive,
         run() {
           if (G.day === 10 && !G.usedForgetMagic) { rejectDay10AvarenCare('ritual'); return; }
-          chg('eldrinHp', -5); chg('curse', -3); renderHUD();
+          if (G.exorcismToday) { warn('今天已經進行過除咒儀式了。'); return; }
+          G.exorcismToday = true;
+          chg('eldrinHp', -5); chg('curse', -3); renderHUD(); showHealEffect();
           story('旁白', '你握住阿瓦倫的手，將一小段詛咒引到自己身上。\n刺痛短暫地掠過胸口，床邊的黑霧淡了一些。');
           toast('🔮 除咒儀式  艾德林HP -5 / 詛咒 -3');
         }
@@ -8538,7 +8993,7 @@ function openAvarenMenu() {
         name: '給治療藥水', fx: () => `疼痛-5  剩餘×${G.coldPotion}`,
         req: () => G.coldPotion > 0 && !G.actionSceneActive,
         run() {
-          chg('coldPotion', -1); chg('pain', -5); renderHUD();
+          chg('coldPotion', -1); chg('pain', -5); renderHUD(); showHealEffect();
           story('旁白', '你小心地讓阿瓦倫喝下治療藥水。\n他的呼吸稍微平穩了一點。');
           toast('💊 治療藥水發揮了效果  疼痛 -5');
         }
@@ -8547,26 +9002,30 @@ function openAvarenMenu() {
         name: '給解咒藥水', fx: () => `詛咒-5  剩餘×${G.cursePotion}`,
         req: () => G.cursePotion > 0 && !G.actionSceneActive,
         run() {
-          chg('cursePotion', -1); chg('curse', -5); renderHUD();
+          chg('cursePotion', -1); chg('curse', -5); renderHUD(); showHealEffect();
           story('旁白', '你把解咒藥水餵給阿瓦倫。\n纏在他身上的黑霧輕輕顫動，淡去了一些。');
           toast('🔮 解咒藥水發揮了效果  詛咒 -5');
         }
       },
       {
-        name: '包紮換藥', fx: '藥材-1  疼痛-3',
+        name: '包紮換藥', fx: () => G.bandagedToday ? '今天已使用過' : '藥材-1  疼痛-3',
         req: () => G.herb > 0 && !G.actionSceneActive,
         run() {
-          chg('herb', -1); chg('pain', -3); renderHUD();
+          if (G.bandagedToday) { warn('今天已經幫阿瓦倫換過藥了。'); return; }
+          G.bandagedToday = true;
+          chg('herb', -1); chg('pain', -3); renderHUD(); showHealEffect();
           markAvarenDay1Bandaged();
           story('旁白', '你替阿瓦倫重新包紮傷口，換上乾淨的藥草敷料。\n他的眉頭似乎鬆開了一點。');
           toast('🌿 包紮換藥  藥材 -1 / 疼痛 -3');
         }
       },
       {
-        name: '除咒儀式', fx: '艾德林HP-5  詛咒-3',
+        name: '除咒儀式', fx: () => G.exorcismToday ? '今天已使用過' : '艾德林HP-5  詛咒-3',
         req: () => (G.eldrinHp ?? 100) > 5 && !G.actionSceneActive,
         run() {
-          chg('eldrinHp', -5); chg('curse', -3); renderHUD();
+          if (G.exorcismToday) { warn('今天已經進行過除咒儀式了。'); return; }
+          G.exorcismToday = true;
+          chg('eldrinHp', -5); chg('curse', -3); renderHUD(); showHealEffect();
           story('旁白', '你握住阿瓦倫冰冷的手，把一小段詛咒引到自己身上。\n胸口一陣刺痛，但黑霧淡去了一些。');
           toast('🔮 除咒儀式  艾德林HP -5 / 詛咒 -3');
         }
@@ -8600,53 +9059,67 @@ function openAvarenMenu() {
   }
   avarenMenuItems.push(
     {
-      name: '和阿瓦倫說說話', fx: '知識+2  不花時間',
+      name: '和阿瓦倫說說話', fx: '心情+1  知識+1',
       req: () => true,
       run() {
-        chg('trust', 2);
-        // 不呼叫 useTime，不消耗時間
+        chg('trust', 1); chg('mood', 1);
         startAvarenChat([{ speaker:'旁白', text: pick(NARR_TALK) }]);
       }
     },
     {
-      name: '聊天陪伴（深入相處）', fx: '知識+8  心情+10  花費15秒',
-      req: () => !G.actionSceneActive && !G.day4AvarenGone && G.timePeriod === 'evening',
+      name: '給予藥水', fx: '開啟子選單',
+      req: () => !G.actionSceneActive && (G.coldPotion > 0 || G.cursePotion > 0 || G.forgetPotion > 0),
       run() {
-        const lines = [
-          { speaker: '旁白', text: pick(NARR_CHAT) },
-          ...getAvarenChatGroup(),
-          { speaker: '旁白', text: '你們就這樣坐著，說著有的沒的。窗外的光慢慢暗下去，誰都沒有起身。' },
-        ];
-        startActionScene(lines, CARE_MAX, () => {
-          chg('trust', 8); chg('mood', 10);
-          renderHUD();
-          story('旁白', pick(NARR_CHAT));
+        closeAction();
+        const potionItems = [];
+        potionItems.push({
+          name: '治療藥水', fx: () => `疼痛-5  剩餘×${G.coldPotion}`,
+          req: () => G.coldPotion > 0,
+          run() {
+            chg('coldPotion', -1); chg('pain', -5); renderHUD(); showHealEffect();
+            story('阿瓦倫', pick(['……（把藥水一口喝掉，皺了皺眉。）', '……苦。（但還是喝完了。）', '（沒有說話，只是喝完後微微鬆了口氣。）']));
+            toast('💊 治療藥水發揮了效果  疼痛 -5');
+          }
         });
+        potionItems.push({
+          name: '解咒藥水', fx: () => `詛咒-5  剩餘×${G.cursePotion}`,
+          req: () => G.cursePotion > 0,
+          run() {
+            chg('cursePotion', -1); chg('curse', -5); renderHUD(); showHealEffect();
+            story('阿瓦倫', pick(['……（慢慢喝下，身上的黑霧輕輕顫了一下。）', '……（閉著眼睛喝完，沉默了幾秒。）「……沒那麼痛了。」', '（沒有抗拒，靜靜地把藥水喝完。）']));
+            toast('🔮 解咒藥水發揮了效果  詛咒 -5');
+          }
+        });
+        if (G.bloodMoon7Active && G.forgetPotion > 0) {
+          potionItems.push({
+            name: '忘卻藥水', fx: () => `疼痛-25  詛咒-25  剩餘×${G.forgetPotion}`,
+            req: () => G.forgetPotion > 0,
+            run() {
+              chg('forgetPotion', -1); chg('pain', -25); chg('curse', -25);
+              G.usedForgetMagic = true;
+              renderHUD();
+              startActionScene([
+                { speaker: '旁白',   text: '你打開那瓶來之不易的忘卻藥水，輕輕靠近阿瓦倫。' },
+                { speaker: '旁白',   text: '他在顫抖，眼神渙散，幾乎認不出你是誰。' },
+                { speaker: '你',     text: '沒事了，沒事了……讓這些先過去。' },
+                { speaker: '阿瓦倫', text: '……（迷迷糊糊地，身體慢慢放鬆了一些。）' },
+                { speaker: '旁白',   text: '魔法緩緩滲入，那些最深的痛苦記憶暫時沉入了黑暗。\n他的呼吸漸漸平穩下來。' },
+              ], CARE_MAX, () => {
+                story('旁白', '忘卻藥水發揮了效果，阿瓦倫的痛苦稍微緩和了。');
+              });
+            }
+          });
+        }
+        showActionMenu('給予藥水', potionItems);
       }
     },
     {
-      name: '給治療藥水', fx: () => `疼痛-5  剩餘×${G.coldPotion}`,
-      req: () => G.coldPotion > 0 && !G.actionSceneActive,
-      run() {
-        chg('coldPotion', -1); chg('pain', -5); renderHUD();
-        story('阿瓦倫', pick(['……（把藥水一口喝掉，皺了皺眉。）', '……苦。（但還是喝完了。）', '（沒有說話，只是喝完後微微鬆了口氣。）']));
-        toast('💊 治療藥水發揮了效果  疼痛 -5');
-      }
-    },
-    {
-      name: '給解咒藥水', fx: () => `詛咒-5  剩餘×${G.cursePotion}`,
-      req: () => G.cursePotion > 0 && !G.actionSceneActive,
-      run() {
-        chg('cursePotion', -1); chg('curse', -5); renderHUD();
-        story('阿瓦倫', pick(['……（慢慢喝下，身上的黑霧輕輕顫了一下。）', '……（閉著眼睛喝完，沉默了幾秒。）「……沒那麼痛了。」', '（沒有抗拒，靜靜地把藥水喝完。）']));
-        toast('🔮 解咒藥水發揮了效果  詛咒 -5');
-      }
-    },
-    {
-      name: '包紮換藥', fx: '藥材-1  疼痛-3',
+      name: '包紮換藥', fx: () => G.bandagedToday ? '今天已使用過' : '藥材-1  疼痛-3',
       req: () => G.herb > 0 && !G.actionSceneActive,
       run() {
-        chg('herb', -1); chg('pain', -3); renderHUD();
+        if (G.bandagedToday) { warn('今天已經幫阿瓦倫換過藥了。'); return; }
+        G.bandagedToday = true;
+        chg('herb', -1); chg('pain', -3); renderHUD(); showHealEffect();
         markAvarenDay1Bandaged();
         story('旁白', '你替阿瓦倫重新包紮傷口，換上乾淨的藥草敷料。');
         story('阿瓦倫', pick(['……謝謝。', '……好一點了。', '……（安靜地低下頭）']));
@@ -8654,46 +9127,15 @@ function openAvarenMenu() {
       }
     },
     {
-      name: '除咒儀式', fx: '艾德林HP-5  詛咒-3',
+      name: '除咒儀式', fx: () => G.exorcismToday ? '今天已使用過' : '艾德林HP-5  詛咒-3',
       req: () => (G.eldrinHp ?? 100) > 5 && !G.actionSceneActive,
       run() {
-        chg('eldrinHp', -5); chg('curse', -3); renderHUD();
+        if (G.exorcismToday) { warn('今天已經進行過除咒儀式了。'); return; }
+        G.exorcismToday = true;
+        chg('eldrinHp', -5); chg('curse', -3); renderHUD(); showHealEffect();
         story('旁白', '你握住阿瓦倫的手，低聲念出除咒的咒文。\n一點黑霧轉移到你身上，又被你壓了下去。');
         story('阿瓦倫', pick(['……不要太勉強。', '……你也會痛吧。', '……（抿住嘴，沒有把手抽回去）']));
         toast('🔮 除咒儀式  艾德林HP -5 / 詛咒 -3');
-      }
-    },
-    {
-      name: '照顧阿瓦倫（換藥、梳理）', fx: '疼痛-15  心情+8  花費15秒',
-      req: () => !G.actionSceneActive && !G.day4AvarenGone && G.timePeriod === 'evening',
-      run() {
-        startActionScene([
-          { speaker: '旁白',  text: pick(NARR_CARE) },
-          { speaker: '阿瓦倫', text: pick(AVAREN_DLG.warm) },
-          { speaker: '旁白',  text: '換好藥後，你替他輕輕整理了一下頭髮。他沒有拒絕，只是靜靜地坐著。' },
-        ], CARE_MAX, () => {
-          chg('pain', -15); chg('mood', 8);
-          renderHUD();
-          story('旁白', pick(NARR_CARE));
-        });
-      }
-    },
-    {
-      name: '使用忘卻藥水', fx: () => `疼痛-10  詛咒-10  剩餘×${G.forgetPotion}`,
-      req: () => G.bloodMoon7Active && G.forgetPotion > 0 && !G.actionSceneActive,
-      run() {
-        chg('forgetPotion', -1); chg('pain', -10); chg('curse', -10);
-        G.usedForgetMagic = true;
-        renderHUD();
-        startActionScene([
-          { speaker: '旁白',   text: '你打開那瓶來之不易的忘卻藥水，輕輕靠近阿瓦倫。' },
-          { speaker: '旁白',   text: '他在顫抖，眼神渙散，幾乎認不出你是誰。' },
-          { speaker: '你',     text: '沒事了，沒事了……讓這些先過去。' },
-          { speaker: '阿瓦倫', text: '……（迷迷糊糊地，身體慢慢放鬆了一些。）' },
-          { speaker: '旁白',   text: '魔法緩緩滲入，那些最深的痛苦記憶暫時沉入了黑暗。\n他的呼吸漸漸平穩下來。' },
-        ], CARE_MAX, () => {
-          story('旁白', '忘卻藥水發揮了效果，阿瓦倫的痛苦稍微緩和了。');
-        });
       }
     },
   );
@@ -8964,7 +9406,7 @@ function doAction_Gather() {
 
 function doAction_ForestFish() {
   if (G.forestFishReady) {
-    SFX.collect();
+    playLoopingAudio('sfx-fish-catch', 5.0);
     G.forestFishReady = false;
     setForestFishingVisual('idle');
     document.getElementById('fish-forest-wrap').style.display = 'none';
@@ -9121,11 +9563,35 @@ const TRADE_BUY = [
   { id:'egg',         icon:'🥚', name:'鳥蛋',     price:5  },
   { id:'frog',        icon:'🐸', name:'青蛙',     price:5  },
   { id:'whiteFlower', icon:'🌼', name:'白藥花',   price:7  },
-  { id:'fairyItem',   icon:'🧚', name:'妖精',     price:18 },
   { id:'beastMeat',   icon:'🥩', name:'獸肉',     price:8  },
 ];
 
+function generateDailyBuyList() {
+  // 打亂並取前8個
+  const shuffled = [...TRADE_BUY].sort(() => Math.random() - 0.5).slice(0, 8);
+  // 隨機選2個打折
+  const saleIdxs = new Set();
+  while (saleIdxs.size < 2) saleIdxs.add(Math.floor(Math.random() * 8));
+  G.dailyBuyList = shuffled.map((item, i) => {
+    if (saleIdxs.has(i)) {
+      const discount = (Math.floor(Math.random() * 5) + 5) / 10; // 0.5~0.9
+      const salePrice = Math.max(1, Math.round(item.price * discount));
+      return { ...item, salePrice, onSale: true };
+    }
+    return { ...item, salePrice: item.price, onSale: false };
+  });
+
+  // 賣出加價：隨機6項高10~50%
+  const sellShuffled = [...TRADE_SELL].sort(() => Math.random() - 0.5).slice(0, 6);
+  G.dailySellBonus = {};
+  sellShuffled.forEach(item => {
+    const bonus = (Math.floor(Math.random() * 9) + 1) / 10 + 1; // 1.1~1.5 (步距10%)
+    G.dailySellBonus[item.id] = Math.max(item.price + 1, Math.round(item.price * bonus));
+  });
+}
+
 function openGateMenu() {
+  playLoopingAudio('sfx-menu-open', 3.0);
   showActionMenu('柵欄門', [
     {
       name: '前往村鎮市集', fx: '（僅早上開放）',
@@ -9142,6 +9608,7 @@ function openGateMenu() {
 
 function openTrade() {
   if (G.timePeriod !== 'morning') { timeWarn('市集是早上才開門的。'); return; }
+  if (!G.dailyBuyList) generateDailyBuyList();
   G.paused = true;
   _tradeTab = 'buy';
   _tradeCursor = { type: 'buy-row', idx: 0 };
@@ -9164,7 +9631,7 @@ function switchTradeTab(tab) {
   document.getElementById('trade-page-buy').style.display  = tab === 'buy'  ? '' : 'none';
   document.getElementById('trade-tab-sell').classList.toggle('active', tab === 'sell');
   document.getElementById('trade-tab-buy').classList.toggle('active',  tab === 'buy');
-  _tradeCursor = { type: tab + '-row', idx: 0 };
+  _tradeCursor = { type: 'tab-' + tab };
   _tradeApplyFocus();
 }
 
@@ -9196,7 +9663,7 @@ function _tradeApplyFocus() {
 // 方向鍵移動（dx = ±1 左右欄, dy = ±1 上下列）
 function tradeNavDir(dx, dy) {
   const tab = _tradeTab;
-  const list = tab === 'sell' ? TRADE_SELL : TRADE_BUY;
+  const list = tab === 'sell' ? TRADE_SELL.filter(item => (G[item.id] ?? 0) > 0) : (G.dailyBuyList || TRADE_BUY);
   const rowType = tab + '-row';
   const confirmType = tab + '-confirm';
   const c = _tradeCursor;
@@ -9239,8 +9706,13 @@ function tradeNavDir(dx, dy) {
 
 function tradeNavAdj(delta) {
   const c = _tradeCursor;
-  if (c.type === 'sell-row') tradeAdj('sell', TRADE_SELL[c.idx].id, delta);
-  else if (c.type === 'buy-row') tradeAdj('buy', TRADE_BUY[c.idx].id, delta);
+  if (c.type === 'sell-row') {
+    const filteredSell = TRADE_SELL.filter(item => (G[item.id] ?? 0) > 0);
+    if (filteredSell[c.idx]) tradeAdj('sell', filteredSell[c.idx].id, delta);
+  } else if (c.type === 'buy-row') {
+    const item = (G.dailyBuyList || TRADE_BUY)[c.idx];
+    if (item) tradeAdj('buy', item.id, delta);
+  }
 }
 
 function tradeNavConfirm() {
@@ -9252,8 +9724,8 @@ function tradeNavConfirm() {
     playLoopingAudio('sfx-button', 3.0);
     _tradeApplyFocus();
   }
-  else if (c.type === 'sell-confirm') { playLoopingAudio('sfx-button', 3.0); confirmSell(); }
-  else if (c.type === 'buy-confirm')  { playLoopingAudio('sfx-button', 3.0); confirmBuy(); }
+  else if (c.type === 'sell-confirm') { confirmSell(); }
+  else if (c.type === 'buy-confirm')  { confirmBuy(); }
   else if (c.type === 'close') closeTrade();
 }
 
@@ -9263,24 +9735,33 @@ function renderTradeMenu() {
   // ── 賣出 ──
   const sellDiv = document.getElementById('trade-sell-list');
   sellDiv.innerHTML = '';
-  TRADE_SELL.forEach(item => {
+  TRADE_SELL.filter(item => (G[item.id] ?? 0) > 0).forEach(item => {
     const owned = G[item.id] ?? 0;
     const sel = _tradeSelSell[item.id] || 0;
+    const bonus = G.dailySellBonus && G.dailySellBonus[item.id];
+    const sellPrice = bonus || item.price;
+    const isBonus = !!bonus;
     const row = document.createElement('div');
-    row.className = 'trade-row';
+    row.className = 'trade-row' + (isBonus ? ' trade-row-sell-bonus' : '');
     row.innerHTML =
       `<span class="tr-name">${item.icon} ${item.name}</span>` +
       `<span class="tr-qty">持有 ${owned}</span>` +
-      `<span class="tr-price">各 ${item.price} 金</span>` +
+      (isBonus
+        ? `<span class="tr-price tr-price-bonus"><s class="tr-orig-price">$${item.price}</s> $${sellPrice}</span>`
+        : `<span class="tr-price">$${sellPrice}</span>`) +
       `<div class="tr-qty-ctrl">` +
         `<button class="tr-qty-btn" ${sel<=0?'disabled':''} onclick="tradeAdj('sell','${item.id}',-1)">−</button>` +
         `<span class="tr-qty-val">${sel}</span>` +
         `<button class="tr-qty-btn" ${sel>=owned?'disabled':''} onclick="tradeAdj('sell','${item.id}',1)">＋</button>` +
       `</div>` +
-      `<span class="tr-subtotal">${sel > 0 ? '+'+sel*item.price+'金' : ''}</span>`;
+      `<span class="tr-subtotal">${sel > 0 ? '+$'+sel*sellPrice : ''}</span>` +
+      (isBonus ? `<span class="tr-sale-badge tr-bonus-badge">HIGH</span>` : '');
     sellDiv.appendChild(row);
   });
-  const totalSell = TRADE_SELL.reduce((s,i) => s + ((_tradeSelSell[i.id]||0)*i.price), 0);
+  const totalSell = TRADE_SELL.reduce((s,i) => {
+    const p = (G.dailySellBonus && G.dailySellBonus[i.id]) || i.price;
+    return s + ((_tradeSelSell[i.id]||0) * p);
+  }, 0);
   const sellBtn = document.getElementById('trade-sell-btn');
   sellBtn.textContent = totalSell > 0 ? `確認賣出（+${totalSell} 金）` : '確認賣出';
   sellBtn.disabled = totalSell <= 0;
@@ -9288,25 +9769,30 @@ function renderTradeMenu() {
   // ── 買入 ──
   const buyDiv = document.getElementById('trade-buy-list');
   buyDiv.innerHTML = '';
-  TRADE_BUY.forEach(item => {
+  const dailyList = G.dailyBuyList || [];
+  dailyList.forEach(item => {
     const sel = _tradeSelBuy[item.id] || 0;
-    const totalCost = TRADE_BUY.reduce((s,i) => s + ((_tradeSelBuy[i.id]||0)*i.price), 0);
-    const canMore = G.money - totalCost >= item.price;
+    const totalCost = dailyList.reduce((s,i) => s + ((_tradeSelBuy[i.id]||0)*i.salePrice), 0);
+    const canMore = G.money - totalCost >= item.salePrice;
     const row = document.createElement('div');
-    row.className = 'trade-row';
+    row.className = 'trade-row' + (item.onSale ? ' trade-row-sale' : '');
+    const priceHtml = item.onSale
+      ? `<span class="tr-price tr-price-sale"><s class="tr-orig-price">$${item.price}</s> $${item.salePrice}</span>`
+      : `<span class="tr-price">$${item.salePrice}</span>`;
     row.innerHTML =
       `<span class="tr-name">${item.icon} ${item.name}</span>` +
       `<span class="tr-qty">持有 ${G[item.id]??0}</span>` +
-      `<span class="tr-price">${item.price} 金/個</span>` +
+      priceHtml +
       `<div class="tr-qty-ctrl">` +
         `<button class="tr-qty-btn" ${sel<=0?'disabled':''} onclick="tradeAdj('buy','${item.id}',-1)">−</button>` +
         `<span class="tr-qty-val">${sel}</span>` +
         `<button class="tr-qty-btn" ${!canMore?'disabled':''} onclick="tradeAdj('buy','${item.id}',1)">＋</button>` +
       `</div>` +
-      `<span class="tr-subtotal">${sel > 0 ? '-'+sel*item.price+'金' : ''}</span>`;
+      `<span class="tr-subtotal">${sel > 0 ? '-$'+sel*item.salePrice : ''}</span>` +
+      (item.onSale ? `<span class="tr-sale-badge">SALE</span>` : '');
     buyDiv.appendChild(row);
   });
-  const totalBuy = TRADE_BUY.reduce((s,i) => s + ((_tradeSelBuy[i.id]||0)*i.price), 0);
+  const totalBuy = dailyList.reduce((s,i) => s + ((_tradeSelBuy[i.id]||0)*i.salePrice), 0);
   const buyBtn = document.getElementById('trade-buy-btn');
   buyBtn.textContent = totalBuy > 0 ? `確認購買（-${totalBuy} 金）` : '確認購買';
   buyBtn.disabled = totalBuy <= 0 || totalBuy > G.money;
@@ -9325,20 +9811,21 @@ function confirmSell() {
   let total = 0;
   TRADE_SELL.forEach(item => {
     const qty = _tradeSelSell[item.id] || 0;
-    if (qty > 0) { chg(item.id, -qty); total += qty * item.price; }
+    const price = (G.dailySellBonus && G.dailySellBonus[item.id]) || item.price;
+    if (qty > 0) { chg(item.id, -qty); total += qty * price; }
   });
-  if (total > 0) { chg('money', total); renderHUD(); }
+  if (total > 0) { chg('money', total); renderHUD(); playLoopingAudio('sfx-money', 3.0); }
   _tradeSelSell = {};
   renderTradeMenu();
 }
 
 function confirmBuy() {
   let total = 0;
-  TRADE_BUY.forEach(item => {
+  (G.dailyBuyList || []).forEach(item => {
     const qty = _tradeSelBuy[item.id] || 0;
-    if (qty > 0) { chg(item.id, qty); total += qty * item.price; }
+    if (qty > 0) { chg(item.id, qty); total += qty * item.salePrice; }
   });
-  if (total > 0) { chg('money', -total); renderHUD(); }
+  if (total > 0) { chg('money', -total); renderHUD(); playLoopingAudio('sfx-money', 3.0); }
   _tradeSelBuy = {};
   renderTradeMenu();
 }
@@ -9347,10 +9834,13 @@ function doSell(id, qty, price) {} // 保留相容性
 function doBuy(id, price) {}
 
 function closeTrade() {
-  document.getElementById('trade-overlay').style.display = 'none';
-  _tradeSelSell = {};
-  _tradeSelBuy  = {};
-  G.paused = false;
+  playLoopingAudio('sfx-button', 3.0);
+  setTimeout(() => {
+    document.getElementById('trade-overlay').style.display = 'none';
+    _tradeSelSell = {};
+    _tradeSelBuy  = {};
+    G.paused = false;
+  }, 120);
 }
 
 
@@ -9359,19 +9849,21 @@ const SOUP_POS = { x: 306, y: 199 };
 
 // 食材資料表
 const COOK_INGREDIENTS_LIST = [
-  { key: 'herb',        name: '藥材',   icon: '🌿', fx: '疼痛-2  飽食度+1', effects: { pain: -2, avarenHunger: 1 } },
-  { key: 'fish',        name: '魚',     icon: '🐟', fx: '飽食度+3',          effects: { avarenHunger: 3 } },
-  { key: 'bug',         name: '蟲材',   icon: '🐛', fx: '疼痛-2  飽食度+1', effects: { pain: -2, avarenHunger: 1 } },
-  { key: 'whiteFlower', name: '白藥花', icon: '🌸', fx: '詛咒-2  飽食度+1', effects: { curse: -2, avarenHunger: 1 } },
-  { key: 'apple',       name: '蘋果',   icon: '🍎', fx: '心情+1  飽食度+1', effects: { mood: 1, avarenHunger: 1 } },
-  { key: 'fairyItem',   name: '妖精',   icon: '🧚', fx: '詛咒-5  飽食度+1', effects: { curse: -5, avarenHunger: 1 } },
-  { key: 'vegetable',   name: '蔬菜',   icon: '🥬', fx: '飽食度+2',          effects: { avarenHunger: 2 } },
-  { key: 'mushroom',    name: '蘑菇',   icon: '🍄', fx: '飽食度+2  心情+1',   effects: { avarenHunger: 2, mood: 1 } },
-  { key: 'egg',         name: '鳥蛋',   icon: '🥚', fx: '飽食度+2  健康+1',   effects: { avarenHunger: 2, health: 1 } },
-  { key: 'frog',        name: '青蛙',   icon: '🐸', fx: '飽食度+2  詛咒-1',   effects: { avarenHunger: 2, curse: -1 } },
-  { key: 'beastMeat',       name: '獸肉',   icon: '🥩', fx: '飽食度+4  健康+2',   effects: { avarenHunger: 4, health: 2 } },
-  { key: 'stone',           name: '礦石',   icon: '🪨', fx: '詛咒-3',             effects: { curse: -3 } },
-  { key: 'monsterMaterial', name: '魔物素材', icon: '🦴', fx: '詛咒-5  疼痛-2',  effects: { curse: -5, pain: -2 } },
+  { key: 'herb',            name: '藥材',   icon: '🌿', fx: '疼痛-2  飽食度+1',         effects: { pain: -2, avarenHunger: 1 } },
+  { key: 'fish',            name: '魚',     icon: '🐟', fx: '飽食度+3',                  effects: { avarenHunger: 3 } },
+  { key: 'bug',             name: '蟲材',   icon: '🐛', fx: '疼痛-1  飽食度+1  心情-1', effects: { pain: -1, avarenHunger: 1, mood: -1 } },
+  { key: 'whiteFlower',     name: '白藥花', icon: '🌼', fx: '詛咒-1  飽食度+1',         effects: { curse: -1, avarenHunger: 1 } },
+  { key: 'apple',           name: '蘋果',   icon: '🍎', fx: '心情+2  飽食度+2',         effects: { mood: 2, avarenHunger: 2 } },
+  { key: 'fairyItem',       name: '妖精',   icon: '🧚', fx: '詛咒-10  飽食度+1',        effects: { curse: -10, avarenHunger: 1 } },
+  { key: 'vegetable',       name: '蔬菜',   icon: '🥬', fx: '飽食度+3  心情+1',         effects: { avarenHunger: 3, mood: 1 } },
+  { key: 'mushroom',        name: '蘑菇',   icon: '🍄', fx: '飽食度+2  疼痛+2',         effects: { avarenHunger: 2, pain: 2 } },
+  { key: 'egg',             name: '鳥蛋',   icon: '🥚', fx: '飽食度+1  心情+1',         effects: { avarenHunger: 1, mood: 1 } },
+  { key: 'frog',            name: '青蛙',   icon: '🐸', fx: '飽食度+3  心情-2',         effects: { avarenHunger: 3, mood: -2 } },
+  { key: 'beastMeat',       name: '獸肉',   icon: '🥩', fx: '飽食度+6  心情+3',         effects: { avarenHunger: 6, mood: 3 } },
+  { key: 'stone',           name: '礦石',   icon: '🪨', fx: '心情-2',                   effects: { mood: -2 } },
+  { key: 'monsterMaterial', name: '魔物素材', icon: '🦴', fx: '飽食度+2  詛咒-3  心情-2', effects: { avarenHunger: 2, curse: -3, mood: -2 } },
+  { key: 'branch',          name: '樹枝',   icon: '🪵', fx: '飽食度+1  心情-2',         effects: { avarenHunger: 1, mood: -2 } },
+  { key: 'crystal',         name: '水晶碎片', icon: '💎', fx: '心情-2  詛咒-5',         effects: { mood: -2, curse: -5 } },
 ];
 
 let cookSelectCursor = 0;
@@ -9391,15 +9883,39 @@ function cookSelectUpdateFocus() {
 function cookSelectMoveCursor(dir) {
   const items = cookSelectGetItems();
   if (!items.length) return;
-  const ingCount = document.querySelectorAll('#cook-select-items .csi-item').length;
-  const startIdx  = ingCount;      // 開始烹飪按鈕的 index
-  const cancelIdx = ingCount + 1;  // 取消按鈕的 index
+  const ingCount  = document.querySelectorAll('#cook-select-items .csi-item').length;
+  const startIdx  = ingCount;
+  const cancelIdx = ingCount + 1;
   const prev = cookSelectCursor;
-  let next = (cookSelectCursor + dir + items.length) % items.length;
-  // 從食材區往下跳時，確保先經過開始烹飪而不跳過
-  if (dir > 0 && prev < ingCount && next > startIdx) next = startIdx;
-  // 從食材區往上跳時，確保先經過食材最後一格
-  if (dir < 0 && prev === startIdx) next = ingCount - 1;
+  let next = prev;
+
+  if (dir === -1 || dir === +1) {
+    // 左右：在食材區內移動，到底不換行
+    if (prev < ingCount) {
+      next = Math.max(0, Math.min(ingCount - 1, prev + dir));
+    } else {
+      // 在按鈕區左右切換
+      next = prev + dir;
+      if (next < startIdx) next = startIdx;
+      if (next > cancelIdx) next = cancelIdx;
+    }
+  } else if (dir === -3 || dir === +3) {
+    // 上下
+    if (prev < ingCount) {
+      const candidate = prev + dir;
+      if (candidate < 0) {
+        next = prev; // 已在第一排，不動
+      } else if (candidate >= ingCount) {
+        next = startIdx; // 超出食材區，跳到開始烹飪
+      } else {
+        next = candidate;
+      }
+    } else {
+      // 在按鈕區按上：回到食材最後一格
+      if (dir < 0) next = ingCount - 1;
+    }
+  }
+
   cookSelectCursor = next;
   if (cookSelectCursor !== prev) playLoopingAudio('sfx-dialogue-next', 5.0);
   cookSelectUpdateFocus();
@@ -9538,6 +10054,9 @@ function renderCookSelectItems() {
     container.appendChild(p);
     cookSelectCursor = 0; // 沒有食材時游標跳到開始烹飪
   }
+  // 沒有選食材時禁用開始烹飪按鈕
+  const startBtn = document.querySelector('.csi-start');
+  if (startBtn) startBtn.disabled = !G.cookSelectedKeys || G.cookSelectedKeys.length === 0;
   // clamp cursor & 更新焦點樣式
   const total = cookSelectGetItems().length;
   if (cookSelectCursor >= total) cookSelectCursor = Math.max(0, total - 1);
@@ -9557,17 +10076,17 @@ function updateCookSelectSummary() {
     if (ing) for (const [k, v] of Object.entries(ing.effects)) total[k] += v;
   });
   const parts = [];
-  if (total.avarenHunger > 0) parts.push(`飽食度+${total.avarenHunger}`);
-  if (total.pain < 0)         parts.push(`疼痛${total.pain}`);
-  if (total.curse < 0)        parts.push(`詛咒${total.curse}`);
-  if (total.mood > 0)         parts.push(`心情+${total.mood}`);
+  if (total.avarenHunger !== 0) parts.push(`飽食度${total.avarenHunger > 0 ? '+' : ''}${total.avarenHunger}`);
+  if (total.pain !== 0)         parts.push(`疼痛${total.pain > 0 ? '+' : ''}${total.pain}`);
+  if (total.curse !== 0)        parts.push(`詛咒${total.curse > 0 ? '+' : ''}${total.curse}`);
+  if (total.mood !== 0)         parts.push(`心情${total.mood > 0 ? '+' : ''}${total.mood}`);
   summary.textContent = '合計效果：' + parts.join('  ');
 }
 
 function confirmCookStart() {
   if (G.money < 3) { warn('金錢不足（需要3金）！'); closeCookSelect(); return; }
   playLoopingAudio('sfx-cook-lid', 4.0);
-  const SPECIAL_KEYS = ['fairyItem', 'herb', 'bug', 'whiteFlower'];
+  const SPECIAL_KEYS = ['fairyItem', 'bug', 'mushroom', 'frog', 'stone', 'monsterMaterial', 'branch', 'crystal'];
   G.soupIsSpecial = G.cookSelectedKeys.some(k => SPECIAL_KEYS.includes(k));
   const effects = {};
   G.cookSelectedKeys.forEach(key => {
@@ -9602,6 +10121,7 @@ function doSoupInteract() {
         G.cookIngredient = null;
         document.getElementById('soup-obj').style.display = 'none';
         chg('eldrinHunger', 15); chg('mood', 3); renderHUD();
+        playLoopingAudio('sfx-eat', 3.0);
         storyAuto('旁白', pick([
           '你獨自吃完了這碗湯。味道不錯，肚子暖了起來。',
           '你坐下來把湯喝完。一個人吃飯，安靜得有點奇怪。',
@@ -9628,7 +10148,7 @@ function giveSoupToAvaren() {
   G.carryingSoup = false;
   document.getElementById('soup-obj').style.display = 'none';
   document.getElementById('soup-carry-icon').style.display = 'none';
-  SFX.collect();
+  playLoopingAudio('sfx-eat', 3.0);
   if (G.cookIngredient) {
     const fx = G.cookIngredient;
     if (fx.avarenHunger) chg('avarenHunger', fx.avarenHunger);
@@ -9908,7 +10428,6 @@ function doAction_ReadBook() {
 function startActionScene(lines, max, onDone) {
   // 清除任何進行中的旁白定時器（action scene 優先）
   if (_storyAutoTimer) { clearTimeout(_storyAutoTimer); _storyAutoTimer = null; }
-  SFX.start();
   G.paused = true;
   G.actionSceneActive = true;
   G.actionSceneOnDone = onDone;
@@ -10059,7 +10578,6 @@ function ascAdvance() {
   playDialogueNextSfx();
   G.actionSceneLineIdx++;
   if (G.actionSceneLineIdx >= G.actionSceneLines.length) {
-    SFX.complete();
     G.actionSceneActive = false;
     clearDialogueTypewriter();
     document.getElementById('action-scene-overlay').style.display = 'none';
@@ -10104,7 +10622,9 @@ function menuMoveCursor(dir) {
   menuBtns.forEach((b, i) => b.classList.toggle('kbd-selected', i === menuCursor));
 }
 
+let _actionMenuJustOpened = false;
 function showActionMenu(heading, items) {
+  _actionMenuJustOpened = true;
   G.paused = true;
   warn('');
   document.getElementById('act-heading').textContent = heading;
@@ -10119,9 +10639,12 @@ function showActionMenu(heading, items) {
     btn.innerHTML = `<span class="a-name">${item.name}</span><span class="a-fx">${fxText}</span>`;
     btn.onclick = () => {
       playLoopingAudio('sfx-button', 3.0);
+      _actionMenuJustOpened = false;
       item.run();
       // 若 endGame 已被觸發（結局畫面可見），不繼續執行後續邏輯
       if (document.getElementById('ending-screen').style.display === 'flex') return;
+      // 若 run() 開了新選單，不要在這裡關掉
+      if (_actionMenuJustOpened) return;
       renderHUD();
       document.getElementById('action-overlay').style.display = 'none';
       // 若 run() 啟動了睡眠動畫，保持暫停狀態；否則正常解除暫停
@@ -10315,6 +10838,7 @@ function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
 function showHeart(icon) {
   G.heartIcon  = icon;
   G.heartTimer = 90;
+  if (icon === '❤') playLoopingAudio('sfx-dialogue-next', 5.0);
 }
 
 const STAT_EL_MAP = {
@@ -10621,7 +11145,7 @@ function playNightResearchAnimation(onComplete) {
   dim.style.display = 'none';
   G.sleepAnimActive = true;
   el.sleepEye = 0;
-  if (av) av.sleepEye = (G.day === 10 && !G.usedForgetMagic) ? 1 : (G.day === 11 && !G.usedForgetMagic) ? 2 : 0;
+  if (av) av.sleepEye = (G.day === 10 && !G.usedForgetMagic) ? 1 : (G.day === 11 && !G.usedForgetMagic) ? 2 : 2;
   SFX.night();
   fade.style.display = 'block';
   fade.style.opacity = '0';
@@ -10905,6 +11429,8 @@ function debugAddAllItems() {
   chg('egg',              10);
   chg('beastMeat',        10);
   chg('monsterMaterial',  10);
+  chg('branch',  10);
+  chg('crystal', 10);
   renderHUD();
   story('旁白', '【除錯】所有物品 +10。');
 }
@@ -11667,6 +12193,9 @@ function continueAfterNight(prevText) {
   G.bgmPreEveningFadeStarted = false;
   G.dayEndTriggered = false;
   G.nestEggs = 2; // 每天早晨鳥巢重新出現2顆蛋
+  generateDailyBuyList(); // 每天早上刷新市集買入清單
+  G.bandagedToday = false;
+  G.exorcismToday = false;
   // 史萊姆隔天早上重生
   G.reidSlaySlimesDead = false;
   // 雷德討伐委託重置
@@ -12499,6 +13028,30 @@ function updateKitchenLoopSfx() {
       boil.pause();
       _kitchenBoilPlaying = false;
     }
+  }
+}
+
+function showHealEffect() {
+  const cwAv = document.getElementById('cw-avaren');
+  if (!cwAv || cwAv.style.display === 'none') return;
+  playLoopingAudio('sfx-buff', 0.9);
+  const symbols = ['✦','✦','✦','✦','✦'];
+  const count = 5;
+  const container = document.getElementById('scene-wrap') || cwAv.parentElement;
+  const avLeft = parseInt(cwAv.style.left) || 0;
+  const avTop  = parseInt(cwAv.style.top)  || 0;
+  const avW    = cwAv.offsetWidth  || 32;
+  const avH    = cwAv.offsetHeight || 48;
+  for (let i = 0; i < count; i++) {
+    const p = document.createElement('div');
+    p.className = 'heal-particle';
+    p.textContent = symbols[i % symbols.length];
+    p.style.left = (avLeft + avW * 0.1 + Math.random() * avW * 1.0) + 'px';
+    p.style.top  = (avTop  + Math.random() * avH * 0.6) + 'px';
+    p.style.fontSize = Math.floor(Math.random() * 7) + 3 + 'px';
+    p.style.animationDelay = (i * 0.1) + 's';
+    container.appendChild(p);
+    setTimeout(() => p.remove(), 2600);
   }
 }
 
