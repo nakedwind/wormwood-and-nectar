@@ -1623,6 +1623,7 @@ body {
 <audio id="sfx-birdcall-4"><source src="music/音效/背景鳥叫/wiki04.mp3" type="audio/mpeg"></audio>
 <audio id="sfx-birdcall-5"><source src="music/音效/背景鳥叫/海苔02.mp3" type="audio/mpeg"></audio>
 <audio id="sfx-birdcall-6"><source src="music/音效/背景鳥叫/海苔03.mp3" type="audio/mpeg"></audio>
+<audio id="sfx-frog"><source src="music/音效/青蛙.mp3" type="audio/mpeg"></audio>
 <audio id="sfx-button">
   <source src="music/音效/按紐.mp3" type="audio/mpeg">
 </audio>
@@ -1652,6 +1653,9 @@ body {
 </audio>
 <audio id="sfx-fish-splash">
   <source src="music/音效/進水.mp3" type="audio/mpeg">
+</audio>
+<audio id="sfx-fish-catch">
+  <source src="music/音效/釣到魚.mp3" type="audio/mpeg">
 </audio>
 <audio id="sfx-kitchen-stove" loop>
   <source src="music/音效/火爐.mp3" type="audio/mpeg">
@@ -1779,6 +1783,7 @@ body {
         <div id="outside-tree-11" style="position:absolute;left:78px;top:14px;width:99px;height:123px;z-index:8;pointer-events:none;"><img src="bg_outside/bg_outside_tree02.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
         <div id="outside-fishing-1" style="position:absolute;left:494px;top:60px;width:38px;height:51px;z-index:10;pointer-events:none;"><img id="outside-fishing-img" src="bg_outside/bg_outside_fishing02.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
         <div id="outside-kettle" style="position:absolute;left:128px;top:195px;width:44px;height:35px;z-index:10;pointer-events:none;"><img src="bg_outside/kettle.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+        <div style="position:absolute;left:227px;top:-52px;width:91px;height:117px;z-index:50;pointer-events:none;"><img src="bg_outside/bg_outside_tree02.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
       </div>
       <!-- ══ 大廳場景物件層 ══ -->
       <div id="lobby-objects" style="display:none;">
@@ -1803,10 +1808,10 @@ body {
         <div id="forest-lamp-glow"></div>
         <div id="forest-light-1" style="position:absolute;left:360px;top:175px;width:28px;height:53px;z-index:228;pointer-events:none;"><img src="bg_forest/bg_forest_light.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
         <div id="forest-fishing-1" style="position:absolute;left:261px;top:208px;width:38px;height:78px;z-index:278;pointer-events:none;"><img src="bg_forest/bg_forest_fishing02.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
-        <div id="forest-grass-1" style="position:absolute;left:139px;top:26px;width:49px;height:41px;z-index:67;pointer-events:none;"><img src="bg_forest/bg_outside_grass01.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+        <div id="forest-grass-1" style="position:absolute;left:168px;top:36px;width:49px;height:41px;z-index:67;pointer-events:none;"><img src="bg_forest/bg_outside_grass01.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
         <div id="forest-grass-2" style="position:absolute;left:416px;top:107px;width:51px;height:42px;z-index:149;pointer-events:none;"><img src="bg_forest/bg_outside_grass02.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
         <div id="forest-grass-3" style="position:absolute;left:448px;top:129px;width:50px;height:42px;z-index:171;pointer-events:none;"><img src="bg_forest/bg_outside_grass03.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
-        <div id="forest-grass-4" style="position:absolute;left:112px;top:51px;width:52px;height:43px;z-index:94;pointer-events:none;"><img src="bg_forest/bg_outside_grass06.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+        <div id="forest-grass-4" style="position:absolute;left:114px;top:53px;width:52px;height:43px;z-index:94;pointer-events:none;"><img src="bg_forest/bg_outside_grass06.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
         <div id="forest-grass-5" style="position:absolute;left:435px;top:142px;width:52px;height:43px;z-index:185;pointer-events:none;"><img src="bg_forest/bg_outside_grass06.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
         <div id="forest-grass-6" style="position:absolute;left:481px;top:150px;width:52px;height:43px;z-index:193;pointer-events:none;"><img src="bg_forest/bg_outside_grass06.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
         <div id="forest-tree-1" style="position:absolute;left:72px;top:70px;width:73px;height:129px;z-index:184;pointer-events:none;"><img src="bg_forest/bg_outside_tree.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
@@ -1828,6 +1833,18 @@ body {
         <div id="forest-frog" style="display:none;position:absolute;width:40px;height:40px;overflow:hidden;pointer-events:none;z-index:260;">
           <img id="forest-frog-img" src="bg_forest/frog.png" style="position:absolute;top:0;left:0;width:80px;height:80px;image-rendering:pixelated;">
         </div>
+        <div id="forest-frog-2" style="display:none;position:absolute;width:40px;height:40px;overflow:hidden;pointer-events:none;z-index:260;">
+          <img id="forest-frog-2-img" src="bg_forest/frog.png" style="position:absolute;top:0;left:0;width:80px;height:80px;image-rendering:pixelated;">
+        </div>
+        <div style="position:absolute;left:450px;top:-76px;width:73px;height:129px;z-index:38;pointer-events:none;"><img src="bg_forest/bg_outside_tree.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+        <div style="position:absolute;left:531px;top:-64px;width:73px;height:129px;z-index:50;pointer-events:none;"><img src="bg_forest/bg_outside_tree.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+        <div style="position:absolute;left:577px;top:-28px;width:73px;height:129px;z-index:86;pointer-events:none;"><img src="bg_forest/bg_outside_tree.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+        <div style="position:absolute;left:591px;top:34px;width:73px;height:129px;z-index:148;pointer-events:none;"><img src="bg_forest/bg_outside_tree.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+        <div style="position:absolute;left:607px;top:74px;width:72px;height:126px;z-index:185;pointer-events:none;"><img src="bg_forest/bg_outside_tree.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+        <div style="position:absolute;left:37px;top:-21px;width:99px;height:123px;z-index:87;pointer-events:none;"><img src="bg_forest/bg_outside_tree02.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+        <div style="position:absolute;left:-20px;top:-7px;width:99px;height:123px;z-index:101;pointer-events:none;"><img src="bg_forest/bg_outside_tree02.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+        <div style="position:absolute;left:122px;top:-1px;width:53px;height:42px;z-index:41;pointer-events:none;"><img src="bg_forest/bg_outside_grass04.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+        <div style="position:absolute;left:126px;top:29px;width:50px;height:42px;z-index:71;pointer-events:none;"><img src="bg_forest/bg_outside_grass03.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
         <div id="forest-prospect" style="position:absolute;left:-19px;top:305px;width:633px;height:179px;z-index:490;pointer-events:none;"><img src="bg_forest/bg_forest_prospect.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
       </div>
       <!-- ══ 廚房場景物件層 ══ -->
@@ -2203,7 +2220,8 @@ const DAY_REAL_SECONDS = 480;  // 8分鐘真實時間
 const MORNING_SECONDS  = 240;  // 前4分鐘（早上）
 const START_HOUR = 8;
 const RAIN_DROP_COUNT = 75;
-const FOREST_FROG_DEFAULT = { x: 95, y: 300, state: 'sit', timer: 80, hopDx: 0, hopDy: 0, hopProgress: 0, facing: 1, stuckCooldown: 0 };
+const FOREST_FROG_DEFAULT  = { x: 95,  y: 300, state: 'sit', timer: 80, hopDx: 0, hopDy: 0, hopProgress: 0, facing: 1, stuckCooldown: 0 };
+const FOREST_FROG2_DEFAULT = { x: 559, y: 267, state: 'sit', timer: 60, hopDx: 0, hopDy: 0, hopProgress: 0, facing: -1, stuckCooldown: 0 };
 const FOREST_FROG_CATCH_RANGE = 54;
 
 let rainDrops = [];
@@ -2411,6 +2429,31 @@ function updateBirdAmbientSfx() {
   if (_birdAmbientTimer <= 0) {
     playRandomBirdWiki(4.4);
     _birdAmbientTimer = 420 + Math.floor(Math.random() * 480);
+  }
+}
+
+let _frogAmbientTimer = 0;
+let _frogNearCooldown = 0;
+function updateFrogSfx() {
+  if (!G || G.scene !== 'forest' || G.timePeriod !== 'morning' || G.forestFrogCaught) {
+    _frogAmbientTimer = 0;
+    return;
+  }
+  // 靠近青蛙時叫一聲（有冷卻）
+  if (_frogNearCooldown > 0) _frogNearCooldown--;
+  if ((isNearForestFrog() || isNearForestFrog2()) && _frogNearCooldown <= 0) {
+    playLoopingAudio('sfx-frog', 5.0);
+    _frogNearCooldown = 300; // 約5秒冷卻
+  }
+  // 環境隨機青蛙叫
+  if (_frogAmbientTimer <= 0) {
+    _frogAmbientTimer = 480 + Math.floor(Math.random() * 600);
+    return;
+  }
+  _frogAmbientTimer--;
+  if (_frogAmbientTimer <= 0) {
+    playLoopingAudio('sfx-frog', 4.0);
+    _frogAmbientTimer = 480 + Math.floor(Math.random() * 600);
   }
 }
 
@@ -2807,12 +2850,181 @@ function isNearForestFrog() {
 
 function doAction_CatchForestFrog() {
   if (!isNearForestFrog()) return false;
-  SFX.collect();
+  playLoopingAudio('sfx-frog', 5.0);
+  playLoopingAudio('sfx-item-get', 5.0);
   G.forestFrogCaught = true;
   G.forestFrog = { ...FOREST_FROG_DEFAULT };
   chg('frog', 1);
   renderHUD();
   const el = document.getElementById('forest-frog');
+  if (el) el.style.display = 'none';
+  toast('🐸 青蛙 +1');
+  return true;
+}
+
+function updateForestFrog2() {
+  const el  = document.getElementById('forest-frog-2');
+  const img = document.getElementById('forest-frog-2-img');
+  if (!el || !img || !G) return;
+  const active = G.day === 8 && G.scene === 'forest' && G.timePeriod === 'morning' && !G.sleepAnimActive && !G.forestFrog2Caught;
+  if (!active) { el.style.display = 'none'; return; }
+
+  if (!G.forestFrog2) G.forestFrog2 = { ...FOREST_FROG2_DEFAULT };
+  const f = G.forestFrog2;
+  const FROG_AREAS = [
+    { x1:65, y1:215, x2:167, y2:273 },
+    { x1:8,  y1:267, x2:121, y2:402 },
+    { x1:545, y1:255, x2:573, y2:280 },
+  ];
+  const HOP_FRAMES = 20;
+  const FRAME_W = 40;
+  const isInFrogArea = (x, y) => FROG_AREAS.some(a => x >= a.x1 && x <= a.x2 && y >= a.y1 && y <= a.y2);
+  const clampToFrogAreas = (x, y) => {
+    let best = null;
+    FROG_AREAS.forEach(a => {
+      const p = {
+        x: Math.max(a.x1, Math.min(a.x2, x)),
+        y: Math.max(a.y1, Math.min(a.y2, y)),
+      };
+      const d = Math.hypot(p.x - x, p.y - y);
+      if (!best || d < best.d) best = { ...p, d };
+    });
+    return { x: best.x, y: best.y };
+  };
+  const isWalkable = (x, y) => {
+    if (!isInFrogArea(x, y)) return false;
+    return !(OBSTACLES.forest || []).some(o => x >= o.x1 && x <= o.x2 && y >= o.y1 && y <= o.y2);
+  };
+  const findNearestWalkable = (x, y) => {
+    const p = clampToFrogAreas(x, y);
+    if (isWalkable(p.x, p.y)) return p;
+    for (let r = 2; r <= 80; r += 2) {
+      for (let a = 0; a < Math.PI * 2; a += Math.PI / 8) {
+        const q = clampToFrogAreas(p.x + Math.cos(a) * r, p.y + Math.sin(a) * r);
+        if (isWalkable(q.x, q.y)) return q;
+      }
+    }
+    return p;
+  };
+  const hasClearHopPath = (target) => {
+    for (let i = 1; i <= HOP_FRAMES; i++) {
+      const x = f.x + (target.x - f.x) * (i / HOP_FRAMES);
+      const y = f.y + (target.y - f.y) * (i / HOP_FRAMES);
+      if (!isWalkable(x, y)) return false;
+    }
+    return true;
+  };
+  const startHopTo = (tx, ty) => {
+    const target = findNearestWalkable(tx, ty);
+    if (!isWalkable(target.x, target.y) || Math.hypot(target.x - f.x, target.y - f.y) < 1 || !hasClearHopPath(target)) {
+      f.state = 'sit';
+      f.timer = Math.floor(Math.random() * 90) + 45;
+      f.stuckCooldown = Math.floor(Math.random() * 30) + 35;
+      return false;
+    }
+    f.hopDx = target.x - f.x;
+    f.hopDy = target.y - f.y;
+    f.facing = f.hopDx >= 0 ? 1 : -1;
+    f.hopProgress = 0;
+    f.state = 'hop';
+    f.stuckCooldown = 0;
+    return true;
+  };
+  const startFleeHop = () => {
+    const fx = f.x - G.eldrin.x;
+    const fy = f.y - G.eldrin.y;
+    const baseAngle = Math.atan2(fy, fx);
+    const candidates = [];
+    [-0.95, -0.55, -0.25, 0, 0.25, 0.55, 0.95, Math.PI, -Math.PI].forEach(offset => {
+      for (let i = 0; i < 2; i++) {
+        const angle = baseAngle + offset + (Math.random() - 0.5) * 0.18;
+        const dist = 24 + Math.random() * 34;
+        const target = findNearestWalkable(f.x + Math.cos(angle) * dist, f.y + Math.sin(angle) * dist);
+        if (!isWalkable(target.x, target.y) || !hasClearHopPath(target)) continue;
+        candidates.push({
+          target,
+          score: Math.hypot(target.x - G.eldrin.x, target.y - G.eldrin.y) + Math.hypot(target.x - f.x, target.y - f.y) * 0.25,
+        });
+      }
+    });
+    candidates.sort((a, b) => b.score - a.score);
+    if (candidates.length) return startHopTo(candidates[0].target.x, candidates[0].target.y);
+    f.stuckCooldown = Math.floor(Math.random() * 35) + 45;
+    f.timer = Math.floor(Math.random() * 50) + 35;
+    return false;
+  };
+
+  if (!isWalkable(f.x, f.y)) {
+    const rescued = findNearestWalkable(f.x, f.y);
+    f.x = rescued.x;
+    f.y = rescued.y;
+    f.state = 'sit';
+    f.timer = Math.floor(Math.random() * 90) + 45;
+  }
+
+  const playerDist = Math.hypot(G.eldrin.x - f.x, G.eldrin.y - f.y);
+  if (f.stuckCooldown > 0) f.stuckCooldown--;
+
+  if (f.state === 'sit') {
+    if (playerDist < 70 && playerDist > FOREST_FROG_CATCH_RANGE && !(f.stuckCooldown > 0)) {
+      startFleeHop();
+    } else {
+      f.timer--;
+      if (f.timer <= 0) {
+        const angle = Math.random() * Math.PI * 2;
+        const dist  = 15 + Math.random() * 30;
+        if (!startHopTo(f.x + Math.cos(angle) * dist, f.y + Math.sin(angle) * dist)) {
+          f.timer = Math.floor(Math.random() * 90) + 45;
+        }
+      }
+    }
+  } else {
+    f.hopProgress++;
+    const nx = f.x + f.hopDx / HOP_FRAMES;
+    const ny = f.y + f.hopDy / HOP_FRAMES;
+    if (isWalkable(nx, ny)) {
+      f.x = nx;
+      f.y = ny;
+    } else {
+      f.state = 'sit';
+      f.timer = Math.floor(Math.random() * 90) + 45;
+      f.stuckCooldown = Math.floor(Math.random() * 30) + 35;
+    }
+    if (f.hopProgress >= HOP_FRAMES) {
+      f.state = 'sit';
+      f.timer = Math.floor(Math.random() * 150) + 60;
+    }
+  }
+
+  const arcT = f.state === 'hop' ? f.hopProgress / HOP_FRAMES : 0;
+  const arcY = -Math.sin(arcT * Math.PI) * 7;
+
+  el.style.display  = 'block';
+  el.style.left     = Math.round(f.x - FRAME_W / 2) + 'px';
+  el.style.top      = Math.round(f.y - FRAME_W + arcY) + 'px';
+  el.style.zIndex   = String(Math.floor(f.y));
+
+  el.style.transform = '';
+  img.style.left = f.facing > 0 ? '-40px' : '0px';
+  img.style.top  = f.state === 'hop' ? '-40px' : '0px';
+}
+
+function isNearForestFrog2() {
+  if (!G || G.day !== 8 || G.scene !== 'forest' || G.timePeriod !== 'morning' || G.forestFrog2Caught) return false;
+  const f = G.forestFrog2;
+  if (!f || f.x == null) return false;
+  return Math.hypot(G.eldrin.x - f.x, G.eldrin.y - f.y) <= FOREST_FROG_CATCH_RANGE;
+}
+
+function doAction_CatchForestFrog2() {
+  if (!isNearForestFrog2()) return false;
+  playLoopingAudio('sfx-frog', 5.0);
+  playLoopingAudio('sfx-item-get', 5.0);
+  G.forestFrog2Caught = true;
+  G.forestFrog2 = { ...FOREST_FROG2_DEFAULT };
+  chg('frog', 1);
+  renderHUD();
+  const el = document.getElementById('forest-frog-2');
   if (el) el.style.display = 'none';
   toast('🐸 青蛙 +1');
   return true;
@@ -2890,9 +3102,10 @@ function setOutsideFarmVisual(flash = false) {
   const watered = (typeof G !== 'undefined' && G)
     ? (G.farmWatered || (G.day === 8 && G.weather === 'rain'))
     : false;
+  const isHerb = (typeof G !== 'undefined' && G) ? G.farmCropType === 'herb' : false;
   let filename;
-  if (stage >= 5)       filename = 'bg_outside_farm05.png';
-  else if (stage === 4) filename = watered ? 'bg_outside_farm04_water.png' : 'bg_outside_farm04.png';
+  if (stage >= 5)       filename = isHerb ? 'bg_outside_farm05-herb.png' : 'bg_outside_farm05.png';
+  else if (stage === 4) filename = isHerb ? (watered ? 'bg_outside_farm04_water-herb.png' : 'bg_outside_farm04-herb.png') : (watered ? 'bg_outside_farm04_water.png' : 'bg_outside_farm04.png');
   else if (stage === 3) filename = watered ? 'bg_outside_farm03_water.png' : 'bg_outside_farm03.png';
   else if (stage === 2) filename = watered ? 'bg_outside_farm02_water.png' : 'bg_outside_farm02.png';
   else                  filename = 'bg_outside_farm01.png';
@@ -3064,11 +3277,11 @@ const ZONES = {
   outside: [
     { id:'to_lobby',  x1:290, y1:218, x2:356, y2:262, sceneHint:'→ 進入小屋', isScene:true,
       fn(){ playLoopingAudio('sfx-door-open', 6.0); changeScene('lobby'); } },
-    { id:'farm',      x1:15,  y1:231, x2:181, y2:316, interactHint:'種植',
-      fn(){ doAction_Gather(); } },
+    { id:'farm',      x1:15,  y1:231, x2:181, y2:316, interactHint:'農田',
+      fn(){ doAction_FarmMenu(); } },
     { id:'gate',      x1:257, y1:425, x2:400, y2:467, interactHint:'柵欄門',
       fn(){ openGateMenu(); } },
-    { id:'pond',  x1:447, y1:14,  x2:604, y2:122, interactHint:'垂釣', fn(){ doAction_Fish(); } },
+    { id:'pond',  x1:447, y1:14,  x2:604, y2:122, interactHint:'池塘', fn(){ doAction_PondMenu(); } },
     { id:'stone', x1:570, y1:258, x2:639, y2:346, interactHint:'礦石', fn(){ doAction_GatherStone(); } },
     { id:'tree1', x1:6,   y1:7,   x2:186, y2:119, interactHint:'樹木', fn(){ doAction_GatherWood(); } },
     { id:'tree2', x1:8,   y1:406, x2:58,  y2:469, interactHint:'樹木', fn(){ doAction_GatherWood(); } },
@@ -3076,8 +3289,12 @@ const ZONES = {
     { id:'tree4', x1:503, y1:408, x2:554, y2:471, interactHint:'樹木', fn(){ doAction_GatherWood(); } },
     { id:'tree5', x1:582, y1:373, x2:631, y2:429, interactHint:'樹木', fn(){ doAction_GatherWood(); } },
     { id:'tree6', x1:583, y1:105, x2:627, y2:154, interactHint:'樹木', fn(){ doAction_GatherWood(); } },
+    { id:'tree7', x1:259, y1:17,  x2:282, y2:69,  interactHint:'樹木', fn(){ doAction_GatherWood(); } },
     { id:'bush1', x1:20,  y1:137, x2:153, y2:203, interactHint:'草叢', fn(){ doAction_GatherBush(); } },
     { id:'bush2', x1:440, y1:191, x2:528, y2:284, interactHint:'草叢', fn(){ doAction_GatherBush(); } },
+    { id:'stolen_money', x1:291, y1:49, x2:340, y2:82, interactHint:'?',
+      condition(){ return G.avarenStolenMoney && G.stolenMoneyFoundDay !== G.day && (G.day === 8 || G.day === 9) && G.timePeriod === 'morning'; },
+      fn(){ doAction_SearchStolenMoney(); } },
   ],
   lobby: [
     { id:'to_room',    x1:545, y1:0,   x2:637, y2:108, sceneHint:'→ 前往房間（樓梯）', isScene:true,
@@ -3112,6 +3329,8 @@ const ZONES = {
     { id:'forest_tree2',  x1:5,   y1:361, x2:69,  y2:477, interactHint:'樹木', fn(){ doAction_GatherWood(); } },
     { id:'forest_tree3',  x1:556, y1:195, x2:637, y2:318, interactHint:'樹木', fn(){ doAction_GatherAppleTree('tree3'); } },
     { id:'forest_tree4',  x1:481, y1:5,   x2:634, y2:102, interactHint:'樹木', fn(){ doAction_GatherWood(); } },
+    { id:'forest_tree5',  x1:155, y1:439, x2:266, y2:477, interactHint:'樹木', fn(){ doAction_GatherWood(); } },
+    { id:'forest_tree6',  x1:516, y1:435, x2:574, y2:475, interactHint:'樹木', fn(){ doAction_GatherWood(); } },
     { id:'forest_bush1',  x1:113, y1:13,  x2:177, y2:89,  interactHint:'草叢', fn(){ doAction_GatherBush(); } },
     { id:'forest_bush2',  x1:427, y1:117, x2:491, y2:181, interactHint:'草叢', fn(){ doAction_GatherBush(); } },
     { id:'forest_flower3', x1:29,  y1:277, x2:102, y2:329, interactHint:'花叢', fn(){ doAction_GatherFlower(); } },
@@ -5572,7 +5791,7 @@ function finishBloodMoonNightWithoutForget() {
         G.moodLocked = true;
         renderHUD();
         enterDay8MorningAfterForget();
-      }, 'red');
+      }, 'red', 0, true, 80);
   }, 500);
 }
 
@@ -5617,7 +5836,8 @@ function initState() {
     slime:  { x: SLIME_HOME.x,  y: SLIME_HOME.y,  attackCooldown: 0, hopTick: 0 },
     slime2: { x: SLIME2_HOME.x, y: SLIME2_HOME.y, attackCooldown: 0, hopTick: 35 },
     slime3: { x: SLIME3_HOME.x, y: SLIME3_HOME.y, attackCooldown: 0, hopTick: 18 },
-    forestFrog: { x: 95, y: 300, state: 'sit', timer: 80, hopDx: 0, hopDy: 0, hopProgress: 0, facing: 1, stuckCooldown: 0 },
+    forestFrog:  { x: 95,  y: 300, state: 'sit', timer: 80, hopDx: 0, hopDy: 0, hopProgress: 0, facing: 1,  stuckCooldown: 0 },
+    forestFrog2: { ...FOREST_FROG2_DEFAULT },
     chicken: { x: 250, y: 180, walkTimer: 0, walkDir: {dx:0,dy:0}, walkFrame: 0, walkTick: 0, facing: 'right', pushVx:0, pushVy:0 },
     chicken2: { x: 480, y: 160, walkTimer: 40, walkDir: {dx:0,dy:0}, walkFrame: 2, walkTick: 0, facing: 'left', pushVx:0, pushVy:0 },
     carryingChicken2: false,
@@ -5626,12 +5846,13 @@ function initState() {
     woodCooldown: 0, bushCooldown: 0, stoneCooldown: 0, flowerCooldown: 0,
     gatherSearchActive: false, gatherSearchTimer: 0, gatherSearchCb: null,
     herbHarvesting: false, herbHarvestTimer: 0, herbReady: false,
-    farmStage: 1, farmWatered: false, farmGrowthTimer: 0,
+    farmStage: 1, farmWatered: false, farmGrowthTimer: 0, farmCropType: null,
     fishFishing: false, fishTimer: 0, fishReady: false,
     forestFishFishing: false, forestFishTimer: 0, forestFishReady: false,
     researchActive: false, researchTimer: 0, researchReady: false, researchType: null,
     coldPotion: 0, cursePotion: 0, forgetPotion: 0,
     usedForgetMagic: false, moodLocked: false, bloodMoon7Happened: false,
+    avarenStolenMoney: false, stolenMoneyFoundDay: 0,
     day4EventTriggered: false, day4AvarenGone: false, day4AvarenNotified: false, avarenReturnPending: false,
     introDay0Active: false,
     introDay0NoahVisible: false,
@@ -6311,6 +6532,7 @@ function renderChars() {
   updateBirds();
   updateSlimeMonster();
   updateForestFrog();
+  updateForestFrog2();
 
   // ── 低血量邊框光暈 ──
   const vignette = document.getElementById('hp-vignette');
@@ -6471,7 +6693,7 @@ function updateHints() {
     hi.textContent = '🎣 垂釣中，請稍候…';
     hi.style.display = 'block'; hs.style.display = 'none'; return;
   }
-  if (isNearForestFrog()) {
+  if (isNearForestFrog() || isNearForestFrog2()) {
     hi.textContent = '抓住';
     hi.style.display = 'block'; hs.style.display = 'none'; return;
   }
@@ -6905,7 +7127,7 @@ function gameLoop() {
         const mem = BLOOD_MOON_MEMORIES[G.bloodMoon7MemoryIndex];
         const idx = G.bloodMoon7MemoryIndex;
         G.bloodMoon7MemoryIndex++;
-        G.bloodMoon7MemoryTimer = Math.floor(Math.random() * 500) + 600;
+        G.bloodMoon7MemoryTimer = Math.floor(Math.random() * 300) + 900;
         showEvent(mem.icon, mem.title, mem.text, () => {
           if (idx === 0) {
             G.avarenScene = 'lobby';
@@ -6924,7 +7146,7 @@ function gameLoop() {
           } else if (idx === 3) {
             story('旁白', '湖面泛著血色的月光。\n阿瓦倫站在岸邊，像是聽見了什麼不存在的呼喚。');
           }
-        });
+        }, 'red', 0, true, 80);
       }
     }
 
@@ -7660,7 +7882,7 @@ function gameLoop() {
     const pct = ((FISH_MAX - G.fishTimer) / FISH_MAX) * 100;
     document.getElementById('fish-scene-bar').style.width = pct + '%';
     if (G.fishTimer <= 0) {
-      SFX.collect();
+      playLoopingAudio('sfx-fish-splash', 4.0);
       G.fishFishing = false;
       G.fishReady = true;
       setOutsideFishingVisual('ready');
@@ -7760,6 +7982,7 @@ function gameLoop() {
   }
 
   updateBirdAmbientSfx();
+  updateFrogSfx();
   updateWeatherFx();
   updateOutdoorWalkSfx();
   updateIndoorWalkSfx();
@@ -7797,12 +8020,17 @@ document.addEventListener('keydown', e => {
     return;
   }
 
-  // 事件框：空白鍵 / Enter 等同按下繼續
+  // 事件框：空白鍵 / Enter — 打字中先跳到全文，全文出現後才關閉
   const eventOverlay = document.getElementById('event-overlay');
   if (eventOverlay && eventOverlay.style.display === 'flex') {
-    if (e.key === ' ' || e.key === 'Enter') {
+    if ((e.key === ' ' || e.key === 'Enter') && !e.repeat) {
       e.preventDefault();
-      if (!e.repeat) closeEvent();
+      const desc = document.getElementById('ev-desc').dataset.full;
+      if (!_typewriterDone && desc) {
+        _skipTypewriter(desc);
+      } else {
+        closeEvent();
+      }
     }
     return;
   }
@@ -7902,6 +8130,8 @@ document.addEventListener('keydown', e => {
       pickUpKettle();
     } else if (isNearForestFrog()) {
       doAction_CatchForestFrog();
+    } else if (isNearForestFrog2()) {
+      doAction_CatchForestFrog2();
     } else if (G.carryingChicken) {
       dropChicken();
     } else if (G.carryingChicken2) {
@@ -8472,6 +8702,26 @@ function doAction_GatherBush() {
   });
 }
 
+function doAction_SearchStolenMoney() {
+  if (!G.avarenStolenMoney || G.stolenMoneyFoundDay === G.day) return;
+  if (G.day !== 8 && G.day !== 9) return;
+  if (G.timePeriod !== 'morning') { timeWarn('搜尋是白天的行動。'); return; }
+  if (G.bloodMoon7Active) { warn('無法行動。'); return; }
+  if ((G.eldrinHp ?? 100) <= 20) { warn('艾德林 HP 太低了，需要休息才能工作。'); return; }
+  if (G.gatherSearchActive) return;
+  playLoopingAudio('sfx-gather-bush', 2.0);
+  startGatherSearch('搜索中…', () => {
+    G.stolenMoneyFoundDay = G.day;
+    chg('money', 30); renderHUD();
+    playLoopingAudio('sfx-item-get', 3.0);
+    toast('💰 金錢 +30');
+    startActionScene([
+      { speaker: '艾德林', text: '......？' },
+      { speaker: '旁白', text: '你在小屋後方看見了一小塊隆起的不自然的土堆，你翻開了以後，發現了一個有著暗紅色污漬的小布袋，裡面是幾枚散落的金幣，你確定這跟你收到的不是同一個錢袋...。' },
+    ], 0, () => {});
+  });
+}
+
 function waterFarm() {
   if (!G.carryingKettle || !G.kettleFull) { warn('需要裝滿水的水壺才能澆水。'); return; }
   G.fishCastLock = true;
@@ -8488,14 +8738,60 @@ function waterFarm() {
   toast('💧 澆水完成！進度 +24秒');
 }
 
+function doAction_FarmMenu() {
+  if (G.bloodMoon7Active) { warn('無法行動。'); return; }
+  if (G.timePeriod !== 'morning') { timeWarn('農田的作業是白天的行動。'); return; }
+  if (G.actionSceneActive) return;
+  playLoopingAudio('sfx-menu-open', 4.0);
+
+  // 若農田已成熟，優先顯示收成
+  if (G.farmStage >= 5 && G.herbReady) {
+    doAction_Gather(); return;
+  }
+  // 生長中可澆水
+  if (G.carryingKettle && G.kettleFull && G.farmStage >= 2 && G.farmStage < 5 && !G.farmWatered) {
+    waterFarm(); return;
+  }
+
+  showActionMenu('農田', [
+    {
+      name: '種植蔬菜',
+      fx: G.farmStage === 1 ? '開始種植' : '生長中',
+      req: () => G.farmStage === 1,
+      run() {
+        G.farmCropType = 'vegetable';
+        G.farmStage = 2;
+        G.farmGrowthTimer = 0;
+        playLoopingAudio('sfx-plant-seed', 3.0);
+        setOutsideFarmVisual();
+        toast('🥬 種下蔬菜，可以澆水加速生長');
+        storyAuto('旁白', '你在農田邊細心地種下蔬菜種子，拍了拍手上的泥土。');
+      }
+    },
+    {
+      name: '種植藥草',
+      fx: G.farmStage === 1 ? '開始種植' : '生長中',
+      req: () => G.farmStage === 1,
+      run() {
+        G.farmCropType = 'herb';
+        G.farmStage = 2;
+        G.farmGrowthTimer = 0;
+        playLoopingAudio('sfx-plant-seed', 3.0);
+        setOutsideFarmVisual();
+        toast('🌿 種下藥草，可以澆水加速生長');
+        storyAuto('旁白', '你把藥草種子仔細埋進土裡，拍了拍泥土。');
+      }
+    },
+  ]);
+}
+
 function doAction_Gather() {
   if (G.timePeriod !== 'morning') { timeWarn('農田的作業是白天的行動。'); return; }
   // 安全修正：farmStage >= 5 時確保 herbReady
   if (G.farmStage >= 5) G.herbReady = true;
   // 第5階段：收成
   if (G.farmStage >= 5 && G.herbReady) {
-    SFX.collect();
-    playLoopingAudio('sfx-plant-pop', 3.0);
+    playLoopingAudio('sfx-plant-pop', 4.0);
     G.herbReady = false;
     G.farmStage = 1;
     G.farmGrowthTimer = 0;
@@ -8505,8 +8801,14 @@ function doAction_Gather() {
     const hLabel2 = document.querySelector('#herb-harvest-wrap .herb-harvest-label');
     if (hBar2) { hBar2.style.width = '0%'; hBar2.style.background = 'linear-gradient(90deg,#206020,#60c040)'; }
     if (hLabel2) hLabel2.textContent = '🌿 藥草採收中…';
-    chg('herb', 3); chg('vegetable', 3); renderHUD();
-    toast('🌿 藥材 +3　🥬 蔬菜 +3');
+    if (G.farmCropType === 'vegetable') {
+      chg('vegetable', 5); renderHUD();
+      toast('🥬 蔬菜 +5');
+    } else {
+      chg('herb', 5); renderHUD();
+      toast('🌿 藥材 +5');
+    }
+    G.farmCropType = null;
     return;
   }
   // 第2-4階段 + 裝滿水的水壺：澆水
@@ -8569,9 +8871,29 @@ function doAction_ForestFish() {
   };
 }
 
+function doAction_PondMenu() {
+  if (G.bloodMoon7Active) { warn('無法行動。'); return; }
+  if (G.actionSceneActive) return;
+  playLoopingAudio('sfx-menu-open', 4.0);
+  showActionMenu('池塘', [
+    {
+      name: G.fishReady ? '收取漁獲' : '釣魚',
+      fx: '魚+1',
+      req: () => true,
+      run() { setTimeout(() => doAction_Fish(), 0); }
+    },
+    {
+      name: '消磨時間',
+      fx: '順便釣魚',
+      req: () => G.timePeriod === 'morning' && !G.fishFishing && !G.fishReady,
+      run() { setTimeout(() => doAction_KillTime(), 0); }
+    },
+  ]);
+}
+
 function doAction_Fish() {
   if (G.fishReady) {
-    SFX.collect();
+    playLoopingAudio('sfx-fish-catch', 5.0);
     G.fishReady = false;
     setOutsideFishingVisual('idle');
     document.getElementById('fish-scene-wrap').style.display = 'none';
@@ -10356,6 +10678,110 @@ function jumpToDay10ForgetTest(usedForget) {
   raf = requestAnimationFrame(gameLoop);
 }
 
+function startFishingCast() {
+  if (G.fishFishing || G.fishReady) return;
+  G.fishFishing = true;
+  G.fishTimer = FISH_MAX;
+  document.getElementById('fish-scene-wrap').style.display = 'block';
+  document.getElementById('fish-scene-bar').style.width = '0%';
+  G.fishCastLock = true;
+  G.fishCasting = true;
+  setTimeout(() => { G.fishCastLock = false; }, 2000);
+  const castSfx = document.getElementById('sfx-fish-cast');
+  castSfx.volume = Math.max(0, Math.min(1, settingsVolume() * 3.0));
+  castSfx.currentTime = 0;
+  castSfx.play().catch(() => {});
+  castSfx.onended = () => {
+    const splashSfx = document.getElementById('sfx-fish-splash');
+    splashSfx.volume = Math.max(0, Math.min(1, settingsVolume() * 3.0));
+    splashSfx.currentTime = 0;
+    splashSfx.play().catch(() => {});
+    G.fishCasting = false;
+    setOutsideFishingVisual('fishing');
+    castSfx.onended = null;
+  };
+}
+
+function doSlowNightFade(cb) {
+  const el = document.getElementById('night-fade');
+  el.style.transition = 'none';
+  el.style.opacity = '0';
+  el.style.display = 'block';
+  el.getBoundingClientRect();
+  el.style.transition = 'opacity 3.5s ease';
+  el.style.opacity = '1';
+  setTimeout(() => {
+    cb();
+    setTimeout(() => {
+      el.style.transition = 'opacity 3.5s ease';
+      el.style.opacity = '0';
+      setTimeout(() => { el.style.display = 'none'; }, 3500);
+    }, 200);
+  }, 3500);
+}
+
+function showFadeNarration(text, holdMs, fadeDurationMs, cb) {
+  const overlay = document.getElementById('action-scene-overlay');
+  const textEl   = document.getElementById('asc-text');
+  const speakerEl = document.getElementById('asc-speaker');
+  const arrow    = document.getElementById('asc-arrow');
+  const btn      = document.getElementById('asc-btn');
+  speakerEl.textContent = '— 旁白 —';
+  textEl.textContent = '';
+  textEl.className = 'asc-text narr-text';
+  btn.textContent = '';
+  arrow.style.display = 'none';
+  overlay.style.pointerEvents = 'none';
+  overlay.style.opacity = '1';
+  overlay.style.transition = 'none';
+  overlay.style.display = 'flex';
+  let i = 0;
+  const typeInterval = setInterval(() => {
+    if (i < text.length) { textEl.textContent += text[i]; i++; }
+    else {
+      clearInterval(typeInterval);
+      setTimeout(() => {
+        overlay.style.transition = `opacity ${fadeDurationMs}ms ease`;
+        overlay.style.opacity = '0';
+        setTimeout(() => {
+          overlay.style.display = 'none';
+          overlay.style.opacity = '1';
+          overlay.style.transition = 'none';
+          if (cb) cb();
+        }, fadeDurationMs);
+      }, holdMs);
+    }
+  }, 45);
+}
+
+function doAction_KillTime() {
+  if (G.timePeriod !== 'morning') return;
+  G.paused = true;
+  G.periodTransitioned = true;
+  G.bgmPreEveningFadeStarted = true;
+  if (shouldFadeBeforeEveningBGM()) fadeOutCurrentBGM(2000);
+  G.dayStartMs = performance.now() - MORNING_SECONDS * 1000;
+  showFadeNarration(
+    '你握著釣竿坐在池塘邊，盯著水裡的魚游來游去。不知不覺時間就這樣悄悄溜走了。',
+    1200, 900,
+    () => {
+    startFishingCast();
+    setTimeout(() => {
+      doSlowNightFade(() => {
+        G.timePeriod = 'evening';
+        resetForestMushrooms();
+        const nightBg = BG_NIGHT[G.scene];
+        document.getElementById('scene-bg').style.backgroundImage = `url('${nightBg}')`;
+        document.getElementById('scene-bg-top').style.opacity = '0';
+        renderScene();
+        applyBGMForState();
+        // 淡入結束後才解除暫停
+        setTimeout(() => { G.paused = false; }, 3700);
+      });
+    }, 2500);
+  });
+}
+
 function skipToEvening() {
   if (G.timePeriod !== 'morning' || G.paused) return;
   G.periodTransitioned = true;
@@ -10654,7 +11080,7 @@ function afterNight(prevText) {
       showEvent('🌿', '第10天清晨', '血月夜終於過去了。\n\n你走進房間，阿瓦倫縮在床角，眼神空洞，但還是抬頭看了你一眼。\n\n那瓶忘卻藥水讓最深的痛苦沉入了黑暗。\n他可能不記得那一夜最壞的部分了。\n\n他還在這裡。', () => {
         G.paused = false;
         continueAfterNight(prevText);
-      });
+      }, 'blue', 0, true, 80);
       return;
     } else {
       G.mood = 5;
@@ -10663,7 +11089,7 @@ function afterNight(prevText) {
       showEvent('💔', '第10天清晨', '血月夜終於過去了。\n\n你走進房間，阿瓦倫縮在最遠的角落，背對著你。\n他沒有說話，但你感覺到了。\n\n那一夜他一個人撐過去的，沒有人能替他擋下。\n\n他記得你在那裡。\n他也記得你做了什麼、沒有做什麼。\n\n「……走開。」\n\n他沒有再說別的話。', () => {
         G.paused = false;
         continueAfterNight(prevText);
-      }, 'red');
+      }, 'red', 0, true, 80);
       return;
     }
   }
@@ -10712,6 +11138,7 @@ function triggerAvarenReturnEvent() {
       });
   } else {
     chg('money', 50); renderHUD();
+    G.avarenStolenMoney = true;
     showEvent('', '——清晨，他回來了——',
       '阿瓦倫站在門邊，衣角沾著泥土。\n他的呼吸很輕，像是已經在那裡站了很久。\n\n你一看見他，胸口緊繃了一整夜的東西終於斷開。',
       () => {
@@ -10740,6 +11167,110 @@ function triggerAvarenReturnEvent() {
         ], 400, () => {});
       });
   }
+  return true;
+}
+
+function showDayStartOpening(redMsg = '') {
+  const openings = {
+    1: [
+      '第 1 天\n\n小屋很舊，門縫透著風。\n你和阿瓦倫昨晚才逃到這裡，身後的一切都還像夢一樣追著你。',
+      '阿瓦倫還昏迷著。\n你數著他的呼吸，確認他還在。\n\n……他還在。',
+      '食物、藥材、物資。\n你得讓這間小屋撐過今天，也得讓他撐過今天。',
+    ],
+    2: [
+      '第 2 天\n\n清晨的光落在窗邊。\n屋子裡仍然很安靜，但阿瓦倫的呼吸似乎比昨天平穩了一點。',
+      '你不知道這算不算好轉。\n可只要還有一點變好的可能，你就不能停下來。',
+    ],
+    3: [
+      '第 3 天\n\n清晨的光落在窗邊。你突然聽見小屋外的森林傳來陌生的腳步聲。\n你站在門邊，握緊了手。',
+    ],
+    4: [
+      '第 4 天\n\n清晨的光落在窗邊。森林比平常更安靜，但你卻覺得氛圍變得不太一樣。',
+    ],
+    5: [
+      '第 5 天\n\n清晨的光落在窗邊。\n阿瓦倫的狀態看起來比前幾天穩定，這讓你感覺放鬆了一點。',
+    ],
+    6: [
+      '第 6 天\n\n清晨的光落在窗邊。新的一天開始了。',
+    ],
+    7: G.avarenReturnPending ? [
+      '第 7 天\n\n清晨來得很慢。\n你不知道自己究竟睡著了多久。',
+      '阿瓦倫不在床上。\n昨夜留下的不安還壓在胸口，沒有散去。',
+      '你站起來，手指有些發冷，無論如何，得先找到他。',
+    ] : [
+      '第 7 天\n\n清晨的光落在窗邊，新的一天開始了。',
+    ],
+    8: [
+      '第 8 天\n\n雨從清晨開始落下。\n屋簷滴著水，森林的顏色被洗得更深。',
+      '濕冷的空氣裡，有一種說不出的預感。',
+    ],
+    9: [
+      '第 9 天\n\n早晨明明和平常一樣亮，卻讓人覺得冷。\n你看向窗外，心裡有一種沉下去的感覺。',
+    ],
+    11: [
+      '第 11 天\n\n安靜的清晨到了，陽光再次照進房間。',
+      '你做過的每一件事，都像細小的線，慢慢牽到了今天。',
+      '今天結束後，你將會知道自己與阿瓦倫以後會走向何處。',
+    ],
+  };
+  const lines = openings[G.day];
+  if (!lines) return false;
+  lines.forEach(line => storyAuto('旁白', line));
+  if (redMsg) storyAuto('旁白', redMsg.trim());
+  return true;
+}
+
+function showDayStartOpening(redMsg = '') {
+  const openings = {
+    1: [
+      '第 1 天\n小屋很舊，門縫透著風。\n你和阿瓦倫昨晚才逃到這裡，身後的一切都還像夢一樣追著你。',
+      '阿瓦倫還昏迷著。\n你數著他的呼吸，確認他還在。\n\n……他還在。',
+      '食物、藥材、物資。\n你得讓這間小屋撐過今天，也得讓他撐過今天。',
+    ],
+    2: [
+      '第 2 天\n清晨的光落在窗邊。\n屋子裡仍然很安靜，但阿瓦倫的呼吸似乎比昨天平穩了一點。',
+      '你不知道這算不算好轉。\n可只要還有一點變好的可能，你就不能停下來。',
+    ],
+    3: [
+      '第 3 天\n清晨的光落在窗邊。你突然聽見小屋外的森林傳來陌生的腳步聲。\n你站在門邊，握緊了手。',
+    ],
+    4: [
+      '第 4 天\n清晨的光落在窗邊。森林比平常更安靜，但你卻覺得氛圍變得不太一樣。',
+    ],
+    5: [
+      '第 5 天\n清晨的光落在窗邊。\n阿瓦倫的狀態看起來比前幾天穩定，這讓你感覺放鬆了一點。',
+    ],
+    6: [
+      '第 6 天\n清晨的光落在窗邊。新的一天開始了。',
+    ],
+    7: G.avarenReturnPending ? [
+      '第 7 天\n清晨來得很慢。\n你不知道自己究竟睡著了多久。',
+      '阿瓦倫不在床上。\n昨夜留下的不安還壓在胸口，沒有散去。',
+      '你站起來，手指有些發冷，無論如何，得先找到他。',
+    ] : [
+      '第 7 天\n清晨的光落在窗邊，新的一天開始了。',
+    ],
+    8: [
+      '第 8 天\n雨從清晨開始落下。\n屋簷滴著水，森林的顏色被洗得更深。',
+      '濕冷的空氣裡，有一種說不出的預感。',
+    ],
+    9: [
+      '第 9 天\n早晨明明和平常一樣亮，卻讓人覺得冷。\n你看向窗外，心裡有一種沉下去的感覺。',
+    ],
+    10: [
+      '第 10 天\n血月已經落下。\n清晨的光照進房間，卻沒有立刻帶來溫暖。',
+      '有些東西活了下來。\n有些東西被留在昨夜。',
+      '你看著阿瓦倫，不確定自己是否成功的守護了他。',
+    ],
+    11: [
+      '第 11 天\n安靜的清晨到了，陽光再次照進房間。',
+      '你做過的每一件事，都像細小的線，慢慢牽到了今天。',
+      '今天結束後，你將會知道自己與阿瓦倫以後會走向何處。',
+    ],
+  };
+  const lines = openings[G.day];
+  if (!lines) return false;
+  lines.forEach(line => storyAuto('旁白', line));
   return true;
 }
 
@@ -10825,6 +11356,14 @@ function continueAfterNight(prevText) {
     } else {
       redMsg = '\n雷德出現在戶外。';
     }
+  }
+  redMsg = '';
+  if (showDayStartOpening(redMsg)) {
+    triggerAvarenDay2WakeIntro();
+    fadeInFromBlack();
+    if (G.day === 9) document.getElementById('blood-moon-badge').style.display = 'block';
+    raf = requestAnimationFrame(gameLoop);
+    return;
   }
   if (G.day === 1) {
     storyAuto('旁白', '第 1 天。\n\n小屋很舊，門縫透著風。\n你和阿瓦倫昨晚才到這裡——這是你們能找到的最僻靜的地方。');
@@ -10915,7 +11454,7 @@ function _skipTypewriter(fullText) {
   document.getElementById('ev-btn').style.visibility = '';
 }
 
-function showEvent(icon, title, desc, cb, theme='blue', lockMs=0, typewriter=true) {
+function showEvent(icon, title, desc, cb, theme='blue', lockMs=0, typewriter=true, typewriterSpeed=45) {
   SFX.event();
   G.paused = true;
   eventCallback = cb;
@@ -10924,6 +11463,7 @@ function showEvent(icon, title, desc, cb, theme='blue', lockMs=0, typewriter=tru
   document.getElementById('ev-title').textContent = title;
   const box = document.querySelector('.ev-box');
   box.classList.toggle('ev-red', theme === 'red');
+  document.getElementById('ev-desc').dataset.full = desc;
   document.getElementById('event-overlay').style.display = 'flex';
   if (typewriter) {
     document.getElementById('ev-btn').style.visibility = 'hidden';
@@ -10931,7 +11471,7 @@ function showEvent(icon, title, desc, cb, theme='blue', lockMs=0, typewriter=tru
       if (!_typewriterDone) { _skipTypewriter(desc); return; }
       closeEvent();
     };
-    _startTypewriter(desc, 45);
+    _startTypewriter(desc, typewriterSpeed);
   } else {
     _stopTypewriter();
     _typewriterDone = true;
@@ -11324,6 +11864,7 @@ function loadFromSlot(n) {
     if (G.frog == null) G.frog = 0;
     if (!G.forestFrog) G.forestFrog = { x: 95, y: 300, state: 'sit', timer: 80, hopDx: 0, hopDy: 0, hopProgress: 0, facing: 1, stuckCooldown: 0 };
     if (G.forestFrog.stuckCooldown == null) G.forestFrog.stuckCooldown = 0;
+    if (!G.forestFrog2) G.forestFrog2 = { ...FOREST_FROG2_DEFAULT };
     if (!G.forestMushrooms) {
       G.forestMushrooms = G.timePeriod === 'evening'
         ? { 1: true, 2: true, 3: true, 4: true }
@@ -12029,7 +12570,8 @@ function switchBGM(id) {
     const el = document.getElementById(aid);
     if (!el) return;
     if (aid === id) {
-      el.volume = Number(document.getElementById('settings-vol').value) / 100;
+      const baseVol = Number(document.getElementById('settings-vol').value) / 100;
+      el.volume = aid === 'bgm' ? baseVol * 0.8 : baseVol;
       if (el.paused) el.play().catch(() => {});
     } else {
       el.pause();
@@ -12065,7 +12607,8 @@ function fadeSwitchBGM(id, duration = 2400) {
   const all = BGM_IDS;
   const target = document.getElementById(id);
   if (!target) return;
-  const maxVolume = Number(document.getElementById('settings-vol').value) / 100;
+  const baseVolume = Number(document.getElementById('settings-vol').value) / 100;
+  const maxVolume = id === 'bgm' ? baseVolume * 0.8 : baseVolume;
   if (!target.paused && all.every(aid => aid === id || document.getElementById(aid).paused)) {
     target.volume = maxVolume;
     return;
@@ -12081,7 +12624,7 @@ function fadeSwitchBGM(id, duration = 2400) {
   bgmFadeTimer = setInterval(() => {
     step++;
     const t = Math.min(1, step / steps);
-    from.forEach(el => { el.volume = maxVolume * (1 - t); });
+    from.forEach(el => { el.volume = baseVolume * (1 - t); });
     target.volume = maxVolume * t;
     if (t >= 1) {
       from.forEach(el => { el.pause(); el.currentTime = 0; });
@@ -12241,6 +12784,7 @@ function zeLoadGame() {
   });
   zeGameSel = -1;
   zeRenderGame();
+  zeUpdateGamePanel();
 }
 
 // 渲染遊戲區域層
