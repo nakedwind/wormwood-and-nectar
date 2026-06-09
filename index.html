@@ -912,6 +912,7 @@ body {
   background: #0a1428; border: 1px solid #2a4a8a; color: #80b8e8;
   padding: 10px 36px; font-family: inherit; font-size: 15px;
   cursor: pointer; letter-spacing: 3px; transition: all 0.2s;
+  border-radius: 20px;
 }
 .ev-btn:hover { background: #101e38; }
 .ev-box.ev-red { background: #160606; border-color: #7a1010; }
@@ -919,6 +920,21 @@ body {
 .ev-box.ev-red .ev-desc  { color: #c07060; }
 .ev-box.ev-red .ev-btn   { background: #2a0808; border-color: #6a1010; color: #e08060; }
 .ev-box.ev-red .ev-btn:hover { background: #3a1010; }
+.ev-box.ev-forget {
+  background: url('UI_Forget.png') center/contain no-repeat transparent;
+  border: none;
+  min-height: 600px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.ev-box.ev-forget .ev-title { color: #a0b8e8; text-shadow: 0 0 20px #2040a0; }
+.ev-box.ev-forget .ev-desc  { color: #c0cce8; }
+.ev-box.ev-forget .ev-btn   {
+  background: rgba(10,20,50,0.7); border-color: #3a5a9a; color: #a0c0f0;
+  width: 50%; margin: 0 auto; border-radius: 20px;
+}
+.ev-box.ev-forget .ev-btn:hover { background: rgba(20,35,70,0.85); }
 
 /* ══ RESEARCH PROGRESS (右側面板) ══ */
 #research-progress {
@@ -1071,6 +1087,26 @@ body {
   border-radius: 11px 4px 10px 5px/5px 10px 4px 11px;
 }
 .trade-close-btn:hover { border-color: #c8903a; color: #f0d898; background: rgba(40,28,14,.6); }
+.tr-qty-ctrl { display:flex; align-items:center; gap:4px; }
+.tr-qty-btn {
+  background: rgba(20,13,6,.5); border: 1.5px solid #c8903a; color: #e7c98c;
+  width: 22px; height: 22px; font-size: 14px; font-weight: 900;
+  cursor: pointer; border-radius: 6px; line-height: 1; padding: 0;
+  transition: all 0.15s;
+}
+.tr-qty-btn:hover:not(:disabled) { background: rgba(40,28,14,.7); }
+.tr-qty-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+.tr-qty-val { font-size: 14px; font-weight: 900; color: #3e2c15; min-width: 24px; text-align: center; }
+.tr-subtotal { font-size: 12px; color: #6e5a2e; min-width: 48px; text-align: right; }
+.trade-confirm-btn {
+  margin-top: 8px; width: 100%;
+  background: linear-gradient(180deg,#eddfbd,#ddcc9f); border: 1.5px solid #c8903a; color: #6e4a15;
+  padding: 8px; font-family: 'Noto Sans TC',sans-serif; font-size: 13px; font-weight: 900;
+  cursor: pointer; letter-spacing: 2px; transition: all 0.15s;
+  border-radius: 11px 4px 10px 5px/5px 10px 4px 11px;
+}
+.trade-confirm-btn:hover:not(:disabled) { background: linear-gradient(180deg,#f5ecce,#e8d8ad); }
+.trade-confirm-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
 /* ══ SCENE PROGRESS BARS (採藥/研究/烹飪) ══ */
 #farm-growth-wrap {
@@ -1945,6 +1981,8 @@ body {
         style="background:#221010;border:1px solid #804040;color:#ffb0b0;">💔 第10天(未忘卻)</button>
       <button id="btn-sleep" onclick="openJumpDayMenu()"
         style="background:#241a0c;border:1px solid #5a3818;color:#c0a060;">🌙 入睡</button>
+      <button onclick="jumpToBloodMoonLake()"
+        style="background:#1a0808;border:1px solid #8a1010;color:#ff6060;">🩸 血月湖邊</button>
     </div>
 
       <!-- Zone Editor Panel -->
@@ -2064,6 +2102,8 @@ body {
           <div class="res-item">💰 金錢 <b id="r-money">12</b></div>
           <div class="res-item">🌿 藥材 <b id="r-herb">2</b></div>
           <div class="res-item">🪵 木材 <b id="r-wood">0</b></div>
+          <div class="res-item">🌿 樹枝 <b id="r-branch">0</b></div>
+          <div class="res-item">💎 水晶碎片 <b id="r-crystal">0</b></div>
           <div class="res-item">🐛 蟲材 <b id="r-bug">0</b></div>
           <div class="res-item">🐟 魚   <b id="r-fish">0</b></div>
           <div class="res-item">🪨 礦石 <b id="r-stone">0</b></div>
@@ -2116,8 +2156,10 @@ body {
     <div class="trade-money-bar">💰 持有金錢：<b id="trade-money-val">0</b> 金</div>
     <div class="trade-section">— 賣 出 —</div>
     <div id="trade-sell-list"></div>
-    <div class="trade-section">— 買 入 —</div>
+    <button class="trade-confirm-btn" id="trade-sell-btn" onclick="confirmSell()" disabled>確認賣出</button>
+    <div class="trade-section" style="margin-top:10px;">— 買 入 —</div>
     <div id="trade-buy-list"></div>
+    <button class="trade-confirm-btn" id="trade-buy-btn" onclick="confirmBuy()" disabled>確認購買</button>
     <button class="trade-close-btn" onclick="closeTrade()">── 離開市集 ──</button>
   </div>
 </div>
@@ -2215,7 +2257,7 @@ const FISH_MAX         = 1800; // 30秒 × 60fps
 const RESEARCH_MAX     = 600;  // 10秒
 const COOK_MAX         = 1800; // 30秒
 const CARE_MAX         = 900;  // 15秒
-const GATHER_SEARCH_MAX = 120; // 採集搜索 2秒 × 60fps
+const GATHER_SEARCH_MAX = 210; // 採集搜索 3.5秒 × 60fps
 const DAY_REAL_SECONDS = 480;  // 8分鐘真實時間
 const MORNING_SECONDS  = 240;  // 前4分鐘（早上）
 const START_HOUR = 8;
@@ -3675,6 +3717,24 @@ const RED_SPEAK_DLG = [
   '村民們說魔王長得很美麗，但他好像是男的欸？',
 ];
 
+const RED_SPEAK_WINTER_DLG = [
+  '溫特感覺很聰明！',
+  '他剛剛跟我打招呼了！他叫我笨蛋耶！',
+  '溫特好像很怕生，他一直叫我離遠一點。',
+  '我問溫特要不要一起吃飯，他說不要。',
+  '他看起來冷冰冰的，但其實人不壞啦。',
+  '溫特知道好多森林裡的事情，好厲害！',
+  '溫特好像是很容易害羞的人對吧？',
+  '他剛剛又嘆氣了。是不是我講話太快了？',
+  '他說我很吵。可是他沒有走掉！',
+  '溫特好像不太喜歡那把劍。',
+  '我的劍每次靠近溫特都會變得很奇怪……',
+  '溫特是不是身體不舒服啊？他的氣息好冷。',
+  '溫特真的很會指路！雖然我每次還是會迷路。',
+  '如果溫特遇到麻煩，我也會幫他的！勇者就是要幫助朋友嘛。',
+  '我現在和溫特是好朋友了！',
+];
+
 const AVAREN_BETRAYAL_DLG = [
   '……（縮在角落，不看你。）',
   '……不要靠近我。',
@@ -4570,41 +4630,40 @@ function openNoahMenu() {
 
 // ══ 溫特泡泡台詞 ══
 const WINTER_BUBBLE_GENERAL = [
-  '……氣息，亂了。',
-  '……有什麼東西在這裡。',
-  '……嗯。',
-  '魔物躁動，必有原因。',
-  '……這片林子，變了。',
-  '……有趣。',
+  '氣息亂了。',
+  '有什麼東西在這裡。',
+  '......嗯。',
+  '魔物躁動的原因。',
+  '這片森林變得不太安分。',
+  '有點麻煩...',
   '平衡，是最難維持的東西。',
-  '……我只是路過。',
-  '……這種濃度，不太對。',
-  '……再觀察一下。',
-];
-const WINTER_BUBBLE_AVAREN = [
-  '……詛咒。很深。',
-  '……那股氣息，是他。',
-  '……這孩子。',
-  '……不是惡意，只是太痛了。',
+  '我只是個旅人。',
+  '那些孩子在妨礙你嗎？可以找我幫忙。',
+  '需要再觀察一下。',
+  '不詳的氣息...',
+  '詛咒...不只有一種...。',
+  '那孩子...很可憐。',
+  '用了什麼方法...才能融合那麼多種詛咒？',
   '……有人在陪他。……還好。',
 ];
+const WINTER_BUBBLE_AVAREN = [];
 const WINTER_BUBBLE_REID = [
-  '……那個紅毛，又在附近晃了。',
-  '……他找了好幾天了，還沒找到。',
-  '……（沉默）……真的很蠢。',
-  '……他昨天問路問到我了。我指了個反方向。',
-  '……他今天又路過了。擦肩而過。完全沒發現。',
-  '……他大聲喊著「魔王出來決戰」。……我就站在他後面三步。',
-  '……他問我有沒有看到「可疑的人」。……我說沒有。',
-  '……他的劍每走一步都在響。想不被發現都難，但他找不到我。',
-  '……他今天朝東走了兩個時辰，又繞回來了。',
-  '……他向我打聽魔王的情報。我給了他一些假消息。他道謝了。',
-  '……紅頭髮在森林裡其實很顯眼。他找不到我，但我隨時知道他在哪。',
-  '……他跌進旁邊那條溪裡了。……爬出來了。繼續找。',
-  '……這個勇者很執著。如果他的方向感能有執著度的一半就好了。',
-  '……他昨晚在森林裡露宿。差點被普通的野兔嚇到。',
+  '那個紅毛，又在附近晃了。',
+  '他找了好幾天了，還沒找到。',
+  '……真的很蠢。',
+  '他向我問路，我指了個反方向。',
+  '他非常遲鈍。',
+  '我不喜歡笨蛋。',
+  '那把劍...一直盯著我。',
+  '我知道那把劍想要什麼東西。',
+  '我懷疑他在跟蹤我。',
+  '那傢伙實在太吵了。',
+  '紅頭髮在森林裡其實很顯眼。他找不到我，但我隨時知道他在哪。',
+  '他乾脆跌進湖裡算了。',
+  '為什麼那把劍會選擇這種笨蛋？',
+  '我不想順應規則。',
   '……有時候我會有一點……不，沒有。完全沒有。',
-  '……他在石頭後面埋伏了大半天，等一隻松鼠。以為是我的斥候。',
+  '我根本不想理他...唉，算了。',
 ];
 
 // ══ 溫特對話 ══
@@ -5087,10 +5146,10 @@ const BLOOD_MOON_CALMED_DLG = [
   '……沒事了……（但聲音還在顫抖）……沒事了……',
 ];
 const BLOOD_MOON_MEMORIES = [
-  { icon:'🩸', title:'——記憶的碎片——', text:'阿瓦倫痛苦地踉蹌著，突然停下來——\n\n「……爸爸……媽媽……為什麼……」\n\n他蜷縮在牆角，頭抵著膝蓋。\n那些記憶從來沒有離開過。\n在他還很小、還不懂「詛咒」是什麼的時候，\n父母說他帶來了不幸，把他扔在了街上。' },
-  { icon:'🩸', title:'——記憶的碎片——', text:'阿瓦倫發出一聲嗚咽——\n\n「……不要……不要打我……」\n\n街頭的那段日子，他從未能好好睡著。\n有些人只是因為無聊，就對他出手。\n詛咒讓他無法反抗，無法逃跑。\n他只能捲縮成一團，等它結束。' },
-  { icon:'🩸', title:'——記憶的碎片——', text:'阿瓦倫猛地抱住自己，開始顫抖——\n\n「……放開我……放開……！」\n\n冰冷的實驗台。繩子勒進手腕。\n老師說「你是個優秀的容器。」\n每一次實驗，詛咒就會更深一點，更亂一點。\n他已經不記得疼痛開始於哪一天了。' },
-  { icon:'🩸', title:'——記憶的碎片——', text:'阿瓦倫猛地轉向你，眼睛裡是恐慌與混亂——\n\n「……你……你那時候在那裡……」\n\n他記得。\n那個實驗室裡，有一個少年站在旁邊。\n沒有阻止。沒有說話。\n只是站著，看著他。\n\n就是你。艾德林。你也在。' },
+  { icon:'UI_Blood Moon.png', title:'——記憶的碎片——', text:'阿瓦倫痛苦地踉蹌著，突然停下來——\n\n「……爸爸……媽媽……為什麼……」\n\n他蜷縮在牆角，頭抵著膝蓋。\n那些記憶從來沒有離開過。\n在他還很小、還不懂「詛咒」是什麼的時候，\n父母說他帶來了不幸，把他扔在了街上。' },
+  { icon:'UI_Blood Moon.png', title:'——記憶的碎片——', text:'阿瓦倫發出一聲嗚咽——\n\n「……不要……不要打我……」\n\n街頭的那段日子，他從未能好好睡著。\n有些人只是因為無聊，就對他出手。\n詛咒讓他無法反抗，無法逃跑。\n他只能捲縮成一團，等它結束。' },
+  { icon:'UI_Blood Moon.png', title:'——記憶的碎片——', text:'阿瓦倫猛地抱住自己，開始顫抖——\n\n「……放開我……放開……！」\n\n冰冷的實驗台貼著他的背。\n繩子勒進手腕，皮膚被磨破，又被新的繃帶蓋住。\n\n老師站在實驗台的旁邊，聲音平靜得近乎殘忍。\n「你是很優秀的容器。」\n\n每一次實驗，詛咒就會更深一點，更亂一點。\n他已經不記得疼痛開始於哪一天了。' },
+  { icon:'UI_Blood Moon.png', title:'——記憶的碎片——', text:'阿瓦倫猛地轉向你，眼睛裡是恐慌與混亂——\n\n「……你……你那時候在那裡……」\n\n他記得。\n那個實驗室裡，有一個少年站在旁邊。\n沒有阻止。沒有說話。\n只是站著，看著他。\n\n就是你。艾德林。你也在。' },
 ];
 
 const AVAREN_DAY10_FORGET_TALK_STORY = [
@@ -5739,20 +5798,26 @@ function enterDay8MorningAfterForget() {
   G.noah.x = 500; G.noah.y = 360; G.noah.pose = 'front'; G.noah.walkDir = {dx:0,dy:0}; G.noah.walkTimer = 0;
   G.noah.bubbleTimer = 0; G.noah.autoSpeakTimer = 260;
   document.getElementById('blood-moon-7-overlay').style.display = 'none';
-  applyBGMForState();
-  renderHUD();
-  renderScene();
-  renderChars();
-  G.paused = false;
-  fade.style.display = 'block';
+  // 立刻壓黑畫面
+  fade.style.transition = 'none';
   fade.style.opacity = '1';
-  fade.getBoundingClientRect();
-  fade.style.transition = 'opacity 1.8s ease';
-  fade.style.opacity = '0';
-  setTimeout(() => { fade.style.display = 'none'; }, 1800);
-  storyAuto('旁白', '第 10 天開始了。清晨七點，新的一天。');
-  if (raf) cancelAnimationFrame(raf);
-  raf = requestAnimationFrame(gameLoop);
+  fade.style.display = 'block';
+  // 血月音樂 4 秒淡出
+  fadeOutCurrentBGM(4000);
+  // 4 秒後切換場景並緩慢淡入
+  setTimeout(() => {
+    renderHUD();
+    renderScene();
+    renderChars();
+    G.paused = false;
+    storyAuto('旁白', '第 10 天\n血月已經落下。\n清晨的光照進房間，卻沒有立刻帶來溫暖。');
+    storyAuto('旁白', '有些東西活了下來。\n有些東西被留在昨夜。');
+    storyAuto('旁白', '你看著阿瓦倫，不確定自己是否成功的守護了他。');
+    if (raf) cancelAnimationFrame(raf);
+    raf = requestAnimationFrame(gameLoop);
+    applyBGMForState();
+    slowFadeInFromBlack(5000);
+  }, 4000);
 }
 
 function finishForgetMagicNight() {
@@ -5827,7 +5892,7 @@ function initState() {
     weather: 'rain',
     pain: 100, curse: 100, mood: 10, trust: 10,
     avarenHunger: 70, eldrinHunger: 80, eldrinHp: 100, fatigue: 0,
-    money: 15, food: 4, herb: 2, wood: 0, bug: 0, fish: 0, stone: 0, fairyItem: 0, whiteFlower: 0, apple: 0, vegetable: 0, mushroom: 0, frog: 0, egg: 0, beastMeat: 0, monsterMaterial: 0,
+    money: 15, food: 4, herb: 2, wood: 0, branch: 0, bug: 0, fish: 0, stone: 0, crystal: 0, fairyItem: 0, whiteFlower: 0, apple: 0, vegetable: 0, mushroom: 0, frog: 0, egg: 0, beastMeat: 0, monsterMaterial: 0,
     nestEggs: 0,
     forestMushrooms: { 1: false, 2: false, 3: false, 4: false },
     cookIngredient: null,
@@ -6026,7 +6091,9 @@ function renderHUD() {
   document.getElementById('r-forgetPotion').textContent = G.forgetPotion;
   document.getElementById('r-money').textContent = G.money;
   document.getElementById('r-herb').textContent  = G.herb;
-  document.getElementById('r-wood').textContent  = G.wood;
+  document.getElementById('r-wood').textContent   = G.wood;
+  document.getElementById('r-branch').textContent  = G.branch ?? 0;
+  document.getElementById('r-crystal').textContent = G.crystal ?? 0;
   document.getElementById('r-bug').textContent   = G.bug;
   document.getElementById('r-fish').textContent  = G.fish;
   document.getElementById('r-stone').textContent = G.stone;
@@ -6829,7 +6896,7 @@ function gameLoop() {
         G.bloodMoon7MemoryIndex = 0;
         applyBGMForState({ fade: true, duration: 2400 });
         setTimeout(() => {
-          showEvent('🩸', '血月夜——',
+          showEvent('UI_Blood Moon.png', '血月夜——',
             '第九天的夜晚，月亮染成了血紅色。\n\n阿瓦倫的詛咒被血月激發，疼痛與黑霧同時暴漲——\n房間裡傳來他壓抑的哀號。',
             () => { storyAuto('旁白', '夜幕低垂，血月升起，發狂的月亮使所有生物的詛咒加劇'); }, 'red');
         }, 500);
@@ -7549,12 +7616,11 @@ function gameLoop() {
     if (wt.bubbleTimer > 0) {
       wt.bubbleTimer--;
     } else {
-      wt.autoSpeakTimer--;
-      if (wt.autoSpeakTimer <= 0) {
-        const avarenHere = G.avarenScene === 'forest';
+        wt.autoSpeakTimer--;
+        if (wt.autoSpeakTimer <= 0) {
+        const reidHere = isReidInForestToday();
         let pool;
-        if (avarenHere && Math.random() < 0.45) pool = WINTER_BUBBLE_AVAREN;
-        else if (Math.random() < 0.3) pool = WINTER_BUBBLE_REID;
+        if (reidHere && Math.random() < 0.3) pool = WINTER_BUBBLE_REID;
         else pool = WINTER_BUBBLE_GENERAL;
         wt.bubbleText = pick(pool);
         wt.bubbleTimer = 260;
@@ -7578,7 +7644,9 @@ function gameLoop() {
     } else {
       rd.autoSpeakTimer = (rd.autoSpeakTimer || 0) - 1;
       if (rd.autoSpeakTimer <= 0) {
-        rd.bubbleText = pick(RED_SPEAK_DLG);
+        rd.bubbleText = (isWinterPresent() && Math.random() < 0.45)
+          ? pick(RED_SPEAK_WINTER_DLG)
+          : pick(RED_SPEAK_DLG);
         rd.bubbleTimer = 240;
         rd.autoSpeakTimer = Math.floor(Math.random() * 250) + 150;
       }
@@ -8044,6 +8112,7 @@ document.addEventListener('keydown', e => {
   // ESC：取消對話框選擇（優先處理，不受 paused 影響）
   if (e.key === 'Escape') {
     e.preventDefault();
+    if (document.getElementById('trade-overlay').style.display === 'flex') { closeTrade(); return; }
     if (document.getElementById('save-panel-overlay').style.display === 'flex') { closeSavePanel(); return; }
     if (document.getElementById('cook-select-overlay').style.display === 'flex') { closeCookSelect(); return; }
     if (document.getElementById('action-overlay').style.display === 'flex') { closeAction(); return; }
@@ -8288,18 +8357,18 @@ function openAvarenMenu() {
           renderHUD();
           finishForgetMagicNight();
         };
-        showEvent('🌀', '——遺忘——',
-          '你拿出魔法走近他——\n\n「……別……別靠近我！」\n\n阿瓦倫猛地轉身，雙手用力推開你。\n你踉蹌著往後退了幾步。',
-          () => showEvent('🌀', '——遺忘——',
-            '「……走開！走開！我不需要你！」\n\n但你沒有停下。\n你再次走近，從背後緊緊將他抱住。\n\n「……放開我！放開！你跟他們一樣……你也是一樣的人……！」',
-            () => showEvent('🌀', '——遺忘——',
-              '阿瓦倫低吼一聲，牙齒狠狠刺進你的右肩。\n詛咒的黑霧開始侵蝕你的身體。\n\n「……（沒有鬆手。）」\n\n四周的草木開始枯萎，葉片捲縮發黑，詛咒的氣息向四面蔓延。\n但你只是把他抱得更緊。\n\n「沒關係。沒關係。」',
-              () => showEvent('🌀', '——遺忘——',
-                '你一次又一次地注入魔法，一次又一次地輕聲重複那句話。\n\n直到阿瓦倫的掙扎慢慢變輕……\n直到他的呼吸漸漸平穩……\n直到他的身體沉沉靠向你——失去了意識。\n\n……夜就這樣過去了。',
-                afterForget, 'red'
-              ), 'red'
-            ), 'red'
-          ), 'red'
+        showEvent('', '——遺忘——',
+          '你一邊走近他一邊使用魔法——\n\n「……別……別靠近我！」\n\n阿瓦倫猛地轉身，雙手用力推開你。\n你踉蹌著往後退了幾步。',
+          () => showEvent('', '——遺忘——',
+            '「……走開！走開！我不需要你！」\n\n但你沒有停下。\n你再次走近，緊緊的將他抱住。\n\n「……放開我！放開！你跟他們一樣……你也是一樣的人……！」',
+            () => showEvent('', '——遺忘——',
+              '阿瓦倫低吼一聲，他狠狠咬住你的右肩，牙齒刺進你的皮膚裡\n詛咒的黑霧開始侵蝕你的身體。\n\n「……」\n\n四周的草木開始枯萎，葉片捲縮發黑，詛咒的氣息向四面蔓延。\n但你只是忍住疼痛，把他抱得更緊。\n\n「對不起...對不起。」',
+              () => showEvent('', '——遺忘——',
+                '你一次又一次的施展忘卻魔法，一次又一次的輕聲重複那句話。\n\n直到阿瓦倫的掙扎慢慢變輕……\n直到他的呼吸漸漸平穩……\n直到他的身體沉沉靠向你——失去了意識。\n\n……夜就這樣過去了。',
+                afterForget, 'forget'
+              ), 'forget'
+            ), 'forget'
+          ), 'forget'
         );
       }
     }]);
@@ -8597,12 +8666,10 @@ const APPLE_TREE_MAX = { tree1: 3, tree3: 2 };
 function doAction_GatherAppleTree(treeKey) {
   if (G.bloodMoon7Active) { warn('無法行動。'); return; }
   if (G.timePeriod !== 'morning') { timeWarn('採集是早上的行動。'); return; }
-  if (G.woodCooldown > 0) { warn('樹木還需要一點時間恢復，稍後再來。'); return; }
   if (G.actionSceneActive) { warn('正在進行其他行動。'); return; }
   if (G.gatherSearchActive) return;
   if ((G.eldrinHp ?? 100) <= 20) { warn('艾德林 HP 太低了，需要休息才能工作。'); return; }
   if (!G.forestApples) G.forestApples = { tree1: APPLE_TREE_MAX.tree1, tree3: APPLE_TREE_MAX.tree3 };
-  G.woodCooldown = 360;
   playLoopingAudio('sfx-gather-wood', 4.0);
   startGatherSearch('🌲 搜索中…', () => {
     const remaining = G.forestApples[treeKey] ?? APPLE_TREE_MAX[treeKey];
@@ -8620,7 +8687,10 @@ function doAction_GatherAppleTree(treeKey) {
       if (roll < 0.40) {
         chg('wood', 1); renderHUD();
         playLoopingAudio('sfx-item-get', 3.0); toast('🪵 木材 +1');
-      } else if (roll < 0.65) {
+      } else if (roll < 0.70) {
+        chg('branch', 1); renderHUD();
+        playLoopingAudio('sfx-item-get', 3.0); toast('🌿 樹枝 +1');
+      } else if (roll < 0.95) {
         chg('bug', 1); renderHUD();
         playLoopingAudio('sfx-item-get', 3.0); toast('🐛 蟲材 +1');
       } else {
@@ -8633,18 +8703,19 @@ function doAction_GatherAppleTree(treeKey) {
 function doAction_GatherWood() {
   if (G.bloodMoon7Active) { warn('無法行動。'); return; }
   if (G.timePeriod !== 'morning') { timeWarn('採集木材是早上的行動。'); return; }
-  if (G.woodCooldown > 0) { warn('樹木還需要一點時間恢復，稍後再來。'); return; }
   if (G.actionSceneActive) { warn('正在進行其他行動。'); return; }
   if (G.gatherSearchActive) return;
   if ((G.eldrinHp ?? 100) <= 20) { warn('艾德林 HP 太低了，需要休息才能工作。'); return; }
-  G.woodCooldown = 360;
   playLoopingAudio('sfx-gather-wood', 4.0);
   startGatherSearch('🌲 搜索中…', () => {
     const roll = Math.random();
     if (roll < 0.40) {
       chg('wood', 1); renderHUD();
       playLoopingAudio('sfx-item-get', 3.0); toast('🪵 木材 +1');
-    } else if (roll < 0.65) {
+    } else if (roll < 0.70) {
+      chg('branch', 1); renderHUD();
+      playLoopingAudio('sfx-item-get', 3.0); toast('🌿 樹枝 +1');
+    } else if (roll < 0.95) {
       chg('bug', 1); renderHUD();
       playLoopingAudio('sfx-item-get', 3.0); toast('🐛 蟲材 +1');
     } else {
@@ -8656,21 +8727,19 @@ function doAction_GatherWood() {
 function doAction_GatherFlower() {
   if (G.bloodMoon7Active) { warn('無法行動。'); return; }
   if (G.timePeriod !== 'morning') { timeWarn('搜尋花叢是白天的行動。'); return; }
-  if (G.flowerCooldown > 0) { warn('花叢已經找過了，等一下再來。'); return; }
   if ((G.eldrinHp ?? 100) <= 20) { warn('艾德林 HP 太低了，需要休息才能工作。'); return; }
   if (G.actionSceneActive) { warn('正在進行其他行動。'); return; }
   if (G.gatherSearchActive) return;
-  G.flowerCooldown = 360;
   playLoopingAudio('sfx-gather-bush', 1.5);
   startGatherSearch('🌸 搜索中…', () => {
     const roll = Math.random();
-    if (roll < 0.20) {
+    if (roll < 0.10) {
       chg('herb', 1); renderHUD();
       playLoopingAudio('sfx-item-get', 3.0); toast('🌿 藥材 +1');
-    } else if (roll < 0.50) {
+    } else if (roll < 0.60) {
       chg('whiteFlower', 1); renderHUD();
       playLoopingAudio('sfx-item-get', 3.0); toast('🌸 白藥花 +1');
-    } else if (roll < 0.75) {
+    } else if (roll < 0.95) {
       chg('bug', 1); renderHUD();
       playLoopingAudio('sfx-item-get', 3.0); toast('🐛 蟲材 +1');
     } else {
@@ -8682,18 +8751,19 @@ function doAction_GatherFlower() {
 function doAction_GatherBush() {
   if (G.bloodMoon7Active) { warn('無法行動。'); return; }
   if (G.timePeriod !== 'morning') { timeWarn('搜尋草叢是早上的行動。'); return; }
-  if (G.bushCooldown > 0) { warn('草叢已經翻找過了，等一下再來。'); return; }
   if ((G.eldrinHp ?? 100) <= 20) { warn('艾德林 HP 太低了，需要休息才能工作。'); return; }
   if (G.actionSceneActive) { warn('正在進行其他行動。'); return; }
   if (G.gatherSearchActive) return;
-  G.bushCooldown = 360;
   playLoopingAudio('sfx-gather-bush', 2.0);
   startGatherSearch('🌿 搜索中…', () => {
     const roll = Math.random();
-    if (roll < 0.38) {
+    if (roll < 0.50) {
+      chg('branch', 1); renderHUD();
+      playLoopingAudio('sfx-item-get', 3.0); toast('🌿 樹枝 +1');
+    } else if (roll < 0.60) {
       chg('herb', 1); renderHUD();
       playLoopingAudio('sfx-item-get', 3.0); toast('🌿 藥材 +1');
-    } else if (roll < 0.70) {
+    } else if (roll < 0.95) {
       chg('bug', 1); renderHUD();
       playLoopingAudio('sfx-item-get', 3.0); toast('🐛 蟲材 +1');
     } else {
@@ -8934,16 +9004,18 @@ function doAction_Fish() {
 function doAction_GatherStone() {
   if (G.bloodMoon7Active) { warn('無法行動。'); return; }
   if (G.timePeriod !== 'morning') { timeWarn('採集礦石是白天的行動。'); return; }
-  if (G.stoneCooldown > 0) { warn('這裡剛翻找過了，等一下再來。'); return; }
   if (G.actionSceneActive) { warn('正在進行其他行動。'); return; }
   if (G.gatherSearchActive) return;
   if ((G.eldrinHp ?? 100) <= 20) { warn('艾德林 HP 太低了，需要休息才能工作。'); return; }
-  G.stoneCooldown = 360;
   playLoopingAudio('sfx-gather-stone', 4.0);
   startGatherSearch('🪨 搜索中…', () => {
-    if (Math.random() < 0.60) {
+    const roll = Math.random();
+    if (roll < 0.60) {
       chg('stone', 1); renderHUD();
       playLoopingAudio('sfx-item-get', 3.0); toast('🪨 礦石 +1');
+    } else if (roll < 0.95) {
+      chg('crystal', 1); renderHUD();
+      playLoopingAudio('sfx-item-get', 3.0); toast('💎 水晶碎片 +1');
     } else {
       SFX.deny(); toast('🪨 這裡找不到可用的礦石');
     }
@@ -8988,57 +9060,101 @@ function openTrade() {
   document.getElementById('trade-overlay').style.display = 'flex';
 }
 
+let _tradeSelSell = {}; // { id: qty }
+let _tradeSelBuy  = {}; // { id: qty }
+
 function renderTradeMenu() {
   document.getElementById('trade-money-val').textContent = G.money;
 
+  // ── 賣出 ──
   const sellDiv = document.getElementById('trade-sell-list');
   sellDiv.innerHTML = '';
   TRADE_SELL.forEach(item => {
-    const qty = G[item.id];
+    const owned = G[item.id] ?? 0;
+    const sel = _tradeSelSell[item.id] || 0;
     const row = document.createElement('div');
     row.className = 'trade-row';
     row.innerHTML =
       `<span class="tr-name">${item.icon} ${item.name}</span>` +
-      `<span class="tr-qty">×${qty}</span>` +
+      `<span class="tr-qty">持有 ${owned}</span>` +
       `<span class="tr-price">各 ${item.price} 金</span>` +
-      `<button class="tr-btn" ${qty<=0?'disabled':''} onclick="doSell('${item.id}',1,${item.price})">賣 1</button>` +
-      `<button class="tr-btn" ${qty<=0?'disabled':''} onclick="doSell('${item.id}',${qty},${item.price})">全賣</button>`;
+      `<div class="tr-qty-ctrl">` +
+        `<button class="tr-qty-btn" ${sel<=0?'disabled':''} onclick="tradeAdj('sell','${item.id}',-1)">−</button>` +
+        `<span class="tr-qty-val">${sel}</span>` +
+        `<button class="tr-qty-btn" ${sel>=owned?'disabled':''} onclick="tradeAdj('sell','${item.id}',1)">＋</button>` +
+      `</div>` +
+      `<span class="tr-subtotal">${sel > 0 ? '+'+sel*item.price+'金' : ''}</span>`;
     sellDiv.appendChild(row);
   });
+  const totalSell = TRADE_SELL.reduce((s,i) => s + ((_tradeSelSell[i.id]||0)*i.price), 0);
+  const sellBtn = document.getElementById('trade-sell-btn');
+  sellBtn.textContent = totalSell > 0 ? `確認賣出（+${totalSell} 金）` : '確認賣出';
+  sellBtn.disabled = totalSell <= 0;
 
+  // ── 買入 ──
   const buyDiv = document.getElementById('trade-buy-list');
   buyDiv.innerHTML = '';
   TRADE_BUY.forEach(item => {
-    const canAfford = G.money >= item.price;
+    const sel = _tradeSelBuy[item.id] || 0;
+    const totalCost = TRADE_BUY.reduce((s,i) => s + ((_tradeSelBuy[i.id]||0)*i.price), 0);
+    const canMore = G.money - totalCost >= item.price;
     const row = document.createElement('div');
     row.className = 'trade-row';
     row.innerHTML =
       `<span class="tr-name">${item.icon} ${item.name}</span>` +
-      `<span class="tr-qty">×${G[item.id]}</span>` +
+      `<span class="tr-qty">持有 ${G[item.id]??0}</span>` +
       `<span class="tr-price">${item.price} 金/個</span>` +
-      `<button class="tr-btn" ${!canAfford?'disabled':''} onclick="doBuy('${item.id}',${item.price})">買 1</button>`;
+      `<div class="tr-qty-ctrl">` +
+        `<button class="tr-qty-btn" ${sel<=0?'disabled':''} onclick="tradeAdj('buy','${item.id}',-1)">−</button>` +
+        `<span class="tr-qty-val">${sel}</span>` +
+        `<button class="tr-qty-btn" ${!canMore?'disabled':''} onclick="tradeAdj('buy','${item.id}',1)">＋</button>` +
+      `</div>` +
+      `<span class="tr-subtotal">${sel > 0 ? '-'+sel*item.price+'金' : ''}</span>`;
     buyDiv.appendChild(row);
   });
+  const totalBuy = TRADE_BUY.reduce((s,i) => s + ((_tradeSelBuy[i.id]||0)*i.price), 0);
+  const buyBtn = document.getElementById('trade-buy-btn');
+  buyBtn.textContent = totalBuy > 0 ? `確認購買（-${totalBuy} 金）` : '確認購買';
+  buyBtn.disabled = totalBuy <= 0 || totalBuy > G.money;
 }
 
-function doSell(id, qty, price) {
-  if (G[id] < qty || qty <= 0) return;
-  chg(id, -qty);
-  chg('money', qty * price);
-  renderHUD();
+function tradeAdj(type, id, delta) {
+  const sel = type === 'sell' ? _tradeSelSell : _tradeSelBuy;
+  sel[id] = (sel[id] || 0) + delta;
+  if (type === 'sell') sel[id] = Math.max(0, Math.min(sel[id], G[id] ?? 0));
+  if (type === 'buy')  sel[id] = Math.max(0, sel[id]);
   renderTradeMenu();
 }
 
-function doBuy(id, price) {
-  if (G.money < price) return;
-  chg(id, 1);
-  chg('money', -price);
-  renderHUD();
+function confirmSell() {
+  let total = 0;
+  TRADE_SELL.forEach(item => {
+    const qty = _tradeSelSell[item.id] || 0;
+    if (qty > 0) { chg(item.id, -qty); total += qty * item.price; }
+  });
+  if (total > 0) { chg('money', total); renderHUD(); }
+  _tradeSelSell = {};
   renderTradeMenu();
 }
+
+function confirmBuy() {
+  let total = 0;
+  TRADE_BUY.forEach(item => {
+    const qty = _tradeSelBuy[item.id] || 0;
+    if (qty > 0) { chg(item.id, qty); total += qty * item.price; }
+  });
+  if (total > 0) { chg('money', -total); renderHUD(); }
+  _tradeSelBuy = {};
+  renderTradeMenu();
+}
+
+function doSell(id, qty, price) {} // 保留相容性
+function doBuy(id, price) {}
 
 function closeTrade() {
   document.getElementById('trade-overlay').style.display = 'none';
+  _tradeSelSell = {};
+  _tradeSelBuy  = {};
   G.paused = false;
 }
 
@@ -10007,7 +10123,7 @@ function showHeart(icon) {
 }
 
 const STAT_EL_MAP = {
-  money:'r-money', herb:'r-herb', wood:'r-wood', bug:'r-bug',
+  money:'r-money', herb:'r-herb', wood:'r-wood', branch:'r-branch', bug:'r-bug', crystal:'r-crystal',
   fish:'r-fish', stone:'r-stone', fairyItem:'r-fairy', whiteFlower:'r-white-flower',
   apple:'r-apple', vegetable:'r-vegetable', mushroom:'r-mushroom', frog:'r-frog', egg:'r-egg',
   coldPotion:'r-coldPotion', cursePotion:'r-cursePotion', forgetPotion:'r-forgetPotion',
@@ -10038,6 +10154,8 @@ function chg(stat, d) {
   else if (stat==='food')        G.food        = Math.max(0,G.food+d);
   else if (stat==='herb')        G.herb        = Math.max(0,G.herb+d);
   else if (stat==='wood')        G.wood        = Math.max(0,G.wood+d);
+  else if (stat==='branch')      G.branch      = Math.max(0,(G.branch??0)+d);
+  else if (stat==='crystal')     G.crystal     = Math.max(0,(G.crystal??0)+d);
   else if (stat==='bug')         G.bug         = Math.max(0,G.bug+d);
   else if (stat==='fish')        G.fish        = Math.max(0,G.fish+d);
   else if (stat==='stone')       G.stone       = Math.max(0,G.stone+d);
@@ -10498,6 +10616,33 @@ function fadeInFromBlack() {
   setTimeout(() => { fade.style.display = 'none'; }, 2000);
 }
 
+function slowFadeInFromBlack(duration = 5000) {
+  const fade = document.getElementById('night-fade');
+  fade.style.transition = 'none';
+  fade.style.opacity = '1';
+  fade.style.display = 'block';
+  fade.getBoundingClientRect();
+  // 畫面慢慢淡入
+  fade.style.transition = `opacity ${duration / 1000}s ease`;
+  fade.style.opacity = '0';
+  setTimeout(() => { fade.style.display = 'none'; }, duration);
+  // 音樂從 0 慢慢淡入
+  const vol = settingsVolume();
+  BGM_IDS.forEach(id => {
+    const el = document.getElementById(id);
+    if (el && !el.paused) {
+      el.volume = 0;
+      let steps = 0;
+      const total = Math.floor(duration / 80);
+      const timer = setInterval(() => {
+        steps++;
+        el.volume = Math.min(vol, (steps / total) * vol);
+        if (steps >= total) clearInterval(timer);
+      }, 80);
+    }
+  });
+}
+
 function toggleSettings() {
   document.getElementById('settings-panel').classList.toggle('open');
 }
@@ -10624,10 +10769,48 @@ function jumpToBloodMoon() {
   G.bloodMoon7MemoryTimer = 900;
   G.bloodMoon7MemoryIndex = 0;
   applyBGMForState();
-  showEvent('🩸', '血月夜——',
+  showEvent('UI_Blood Moon.png', '血月夜——',
     '第九天的夜晚，月亮染成了血紅色。\n\n阿瓦倫的詛咒被血月激發，疼痛與黑霧同時暴漲——\n房間裡傳來他壓抑的哀號。',
     () => { storyAuto('旁白', '夜幕低垂，血月升起，發狂的月亮使所有生物的詛咒加劇'); }, 'red');
   raf = requestAnimationFrame(gameLoop);
+}
+
+function jumpToBloodMoonLake() {
+  cancelAnimationFrame(raf);
+  storyQueue.length = 0;
+  if (_storyAutoTimer) { clearTimeout(_storyAutoTimer); _storyAutoTimer = null; }
+  document.getElementById('action-scene-overlay').style.display = 'none';
+  document.getElementById('event-overlay').style.display = 'none';
+
+  G.day = 9;
+  G.timePeriod = 'evening';
+  G.scene = 'forest';
+  G.sceneTransitioning = false;
+  G.bloodMoon7Active = true;
+  G.bloodMoon7Happened = true;
+  G.bloodMoon7MemoryIndex = BLOOD_MOON_MEMORIES.length;
+  G.bloodMoon7MemoryTimer = 9999;
+  G.bloodMoon7Calmed = false;
+  G.bloodMoon7Failed = false;
+  G.bloodMoon7SpeakTimer = 9999;
+  G.avarenScene = 'forest';
+  G.avaren.x = 321; G.avaren.y = 220;
+  G.avaren.pose = 'front';
+  G.eldrin.x = 370; G.eldrin.y = 200;
+  G.eldrin.pose = 'front';
+  G.curse = 70; G.pain = 70;
+  G.forgetPotion = Math.max(G.forgetPotion, 1);
+  G.usedForgetMagic = false;
+  G.paused = false;
+  G.manualPaused = false;
+
+  document.getElementById('blood-moon-7-overlay').style.display = 'block';
+  applyBGMForState();
+  renderHUD();
+  renderScene();
+  renderChars();
+  raf = requestAnimationFrame(gameLoop);
+  storyAuto('旁白', '【測試】血月夜：阿瓦倫已在湖邊，可使用忘卻藥水。');
 }
 
 function jumpToDay10ForgetTest(usedForget) {
@@ -10812,7 +10995,7 @@ function skipToEvening() {
       G.bloodMoon7MemoryIndex = 0;
       applyBGMForState({ fade: true, duration: 2400 });
       setTimeout(() => {
-        showEvent('🩸', '血月夜——',
+        showEvent('UI_Blood Moon.png', '血月夜——',
           '第九天的夜晚，月亮染成了血紅色。\n\n阿瓦倫的詛咒被血月激發，疼痛與黑霧同時暴漲——\n房間裡傳來他壓抑的哀號。',
           () => { storyAuto('旁白', '夜幕低垂，血月升起，發狂的月亮使所有生物的詛咒加劇'); }, 'red');
       }, 500);
@@ -11076,20 +11259,28 @@ function afterNight(prevText) {
     G.avaren.restBlinkTimer = 120;
     G.avaren.restBlinkPhase = 0;
     placeAvarenBedRest();
+    const goToDay10 = () => {
+      G.paused = false;
+      fadeOutCurrentBGM(2500);
+      const fade = document.getElementById('night-fade');
+      fade.style.transition = 'none';
+      fade.style.opacity = '0';
+      fade.style.display = 'block';
+      fade.getBoundingClientRect();
+      fade.style.transition = 'opacity 2s ease';
+      fade.style.opacity = '1';
+      setTimeout(() => { continueAfterNight(prevText); }, 2500);
+    };
     if (G.usedForgetMagic) {
-      showEvent('🌿', '第10天清晨', '血月夜終於過去了。\n\n你走進房間，阿瓦倫縮在床角，眼神空洞，但還是抬頭看了你一眼。\n\n那瓶忘卻藥水讓最深的痛苦沉入了黑暗。\n他可能不記得那一夜最壞的部分了。\n\n他還在這裡。', () => {
-        G.paused = false;
-        continueAfterNight(prevText);
-      }, 'blue', 0, true, 80);
+      showEvent('🌿', '第10天清晨', '血月夜終於過去了。\n\n你走進房間，阿瓦倫縮在床角，眼神空洞，但還是抬頭看了你一眼。\n\n那瓶忘卻藥水讓最深的痛苦沉入了黑暗。\n他可能不記得那一夜最壞的部分了。\n\n他還在這裡。',
+        goToDay10, 'blue', 0, true, 80);
       return;
     } else {
       G.mood = 5;
       G.moodLocked = true;
       renderHUD();
-      showEvent('💔', '第10天清晨', '血月夜終於過去了。\n\n你走進房間，阿瓦倫縮在最遠的角落，背對著你。\n他沒有說話，但你感覺到了。\n\n那一夜他一個人撐過去的，沒有人能替他擋下。\n\n他記得你在那裡。\n他也記得你做了什麼、沒有做什麼。\n\n「……走開。」\n\n他沒有再說別的話。', () => {
-        G.paused = false;
-        continueAfterNight(prevText);
-      }, 'red', 0, true, 80);
+      showEvent('💔', '第10天清晨', '血月夜終於過去了。\n\n你走進房間，阿瓦倫縮在最遠的角落，背對著你。\n他沒有說話，但你感覺到了。\n\n那一夜他一個人撐過去的，沒有人能替他擋下。\n\n他記得你在那裡。\n他也記得你做了什麼、沒有做什麼。\n\n「……走開。」\n\n他沒有再說別的話。',
+        goToDay10, 'red', 0, true, 80);
       return;
     }
   }
@@ -11360,7 +11551,11 @@ function continueAfterNight(prevText) {
   redMsg = '';
   if (showDayStartOpening(redMsg)) {
     triggerAvarenDay2WakeIntro();
-    fadeInFromBlack();
+    if (G.day === 10) {
+      slowFadeInFromBlack(5000);
+    } else {
+      fadeInFromBlack();
+    }
     if (G.day === 9) document.getElementById('blood-moon-badge').style.display = 'block';
     raf = requestAnimationFrame(gameLoop);
     return;
@@ -11373,7 +11568,11 @@ function continueAfterNight(prevText) {
     storyAuto('旁白', `第 ${G.day} 天開始了。清晨七點，新的一天。${redMsg}`);
   }
   triggerAvarenDay2WakeIntro();
-  fadeInFromBlack();
+  if (G.day === 10) {
+    slowFadeInFromBlack(5000);
+  } else {
+    fadeInFromBlack();
+  }
   if (G.day === 9) document.getElementById('blood-moon-badge').style.display = 'block';
   raf = requestAnimationFrame(gameLoop);
 }
@@ -11459,10 +11658,16 @@ function showEvent(icon, title, desc, cb, theme='blue', lockMs=0, typewriter=tru
   G.paused = true;
   eventCallback = cb;
   _eventLockUntil = 0;
-  document.getElementById('ev-icon').textContent  = icon;
+  const evIconEl = document.getElementById('ev-icon');
+  if (icon && /\.(png|jpg|gif|webp|svg)$/i.test(icon)) {
+    evIconEl.innerHTML = `<img src="${icon}" style="width:64px;height:64px;object-fit:contain;image-rendering:pixelated;">`;
+  } else {
+    evIconEl.textContent = icon;
+  }
   document.getElementById('ev-title').textContent = title;
   const box = document.querySelector('.ev-box');
-  box.classList.toggle('ev-red', theme === 'red');
+  box.classList.toggle('ev-red',    theme === 'red');
+  box.classList.toggle('ev-forget', theme === 'forget');
   document.getElementById('ev-desc').dataset.full = desc;
   document.getElementById('event-overlay').style.display = 'flex';
   if (typewriter) {
