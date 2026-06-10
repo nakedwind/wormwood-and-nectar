@@ -655,10 +655,11 @@ body {
 }
 #settings-btn:hover { color: #f0c060; }
 #settings-panel {
-  display: none; position: absolute; top: 38px; right: 0;
+  display: none; position: fixed;
   background: #110d06; border: 1px solid #3a2810;
-  padding: 14px 16px; min-width: 180px; z-index: 200;
+  padding: 14px 16px; min-width: 180px; z-index: 9999;
   flex-direction: column; gap: 12px;
+  pointer-events: auto;
 }
 #settings-panel.open { display: flex; }
 .settings-row { display: flex; align-items: center; gap: 8px; }
@@ -1713,7 +1714,7 @@ body {
 /* ══ ENDING ══ */
 #ending-screen {
   display: none; position: fixed; inset: 0;
-  flex-direction: column; align-items: center;
+  flex-direction: column; align-items: center; justify-content: flex-start;
   text-align: center; padding: 40px 20px; gap: 16px;
   overflow-y: auto;
   background: #0a0703;
@@ -1967,14 +1968,6 @@ body {
       <div id="blood-moon-badge">🌕 血月之夜</div>
       <div style="position:relative;">
         <button id="settings-btn" onclick="toggleSettings()">⚙</button>
-        <div id="settings-panel">
-          <div class="settings-row">
-            <span class="settings-label">🔊 音量</span>
-            <input type="range" id="settings-vol" min="0" max="100" value="10"
-              oninput="['bgm','bgm-bloodmoon','bgm-sad','bgm-day10','bgm-good-ending','bgm-captivity-ending','bgm-mist-ending','bgm-reid-ending','sfx-day0-rain','sfx-day0-walk','sfx-kitchen-stove','sfx-kitchen-boil'].forEach(id=>{const e=document.getElementById(id);if(!e.paused)e.volume=this.value/100;});">
-          </div>
-          <button id="pause-btn" onclick="togglePause()">⏸ 暫停遊戲</button>
-        </div>
       </div>
     </div>
   </div>
@@ -4746,7 +4739,7 @@ function showRedCommissionMenu() {
   const chatOnly = !isReidDay() && G.reidVisitDay === G.day;
   console.log('[ReidMenu] day=', G.day, 'chatOnly=', chatOnly, 'chat11_1=', G.reidChat11_1Seen, 'chat11_2=', G.reidChat11_2Seen, 'heartToday=', G.reidDemonHeartCommissionedToday, 'count=', G.reidDemonHeartCount, 'snapshot=', !!G.day11Snapshot);
 
-  if (!chatOnly && G.day === 11 && G.reidChat11_1Seen && G.reidChat11_2Seen) {
+  if (!chatOnly && G.day === 11 && G.reidChat11_1Seen && G.reidChat11_2Seen && G.winterDay8FairyHintSeen) {
     const alreadyHeart = !!G.reidDemonHeartCommissionedToday;
     items.push({
       name: alreadyHeart ? '今日已委託：魔王的心臟' : '委託：魔王的心臟',
@@ -4756,7 +4749,10 @@ function showRedCommissionMenu() {
         G.reidDemonHeartCommissionedToday = true;
         G.reidDemonHeartCount = (G.reidDemonHeartCount || 0) + 1;
         const idx = Math.min(G.reidDemonHeartCount - 1, REID_DEMON_HEART_STORIES.length - 1);
-        if (G.reidDemonHeartCount >= 3) G.reidFakeSaveTaken = true;
+        if (G.reidDemonHeartCount >= 3) {
+          G.reidFakeSaveTaken = true;
+          G.periodTransitioned = true;
+        }
         startActionScene(REID_DEMON_HEART_STORIES[idx], 400, () => {
           if (G.reidFakeSaveTaken) {
             showEvent('💾', '存檔已覆蓋',
@@ -7454,10 +7450,10 @@ function gameLoop() {
   if (G.day === 0) {
     renderTime(0);
     if (G.eldrinEmoteTimer > 0) G.eldrinEmoteTimer--;
-  } else if (!G.manualPaused && G.timePeriod === 'morning' && !G.periodTransitioned && !G.bgmPreEveningFadeStarted && _elapsed >= MORNING_SECONDS - 10) {
+  } else if (!G.manualPaused && G.timePeriod === 'morning' && !G.periodTransitioned && !G.bgmPreEveningFadeStarted && !G.actionSceneActive && _elapsed >= MORNING_SECONDS - 10) {
     G.bgmPreEveningFadeStarted = true;
     if (shouldFadeBeforeEveningBGM()) fadeOutCurrentBGM(10000);
-  } else if (!G.manualPaused && !G.periodTransitioned && _elapsed >= MORNING_SECONDS) {
+  } else if (!G.manualPaused && !G.periodTransitioned && !G.actionSceneActive && _elapsed >= MORNING_SECONDS) {
     G.periodTransitioned = true;
     doNightFade(() => {
       G.timePeriod = 'evening';
@@ -10647,7 +10643,12 @@ function isDlgBlocking() {
 }
 function _ascShowLine(idx) {
   const line     = G.actionSceneLines[idx];
-  if (line.glitch) startGlitchEffect();
+  if (line.glitch) {
+    startGlitchEffect();
+    fadeOutCurrentBGM(4000);
+    setTimeout(() => fadeSwitchBGM('bgm-reid-ending', 2000), 4000);
+    G.periodTransitioned = true;
+  }
   const isChar   = !NPC_SPEAKERS.has(line.speaker);
   const textEl    = document.getElementById('asc-text');
   const btn       = document.getElementById('asc-btn');
@@ -11463,7 +11464,16 @@ function slowFadeInFromBlack(duration = 5000) {
 }
 
 function toggleSettings() {
-  document.getElementById('settings-panel').classList.toggle('open');
+  const panel = document.getElementById('settings-panel');
+  const btn   = document.getElementById('settings-btn');
+  panel.classList.toggle('open');
+  if (panel.classList.contains('open')) {
+    const r = btn.getBoundingClientRect();
+    panel.style.top   = (r.bottom + 4) + 'px';
+    panel.style.right = (window.innerWidth - r.right) + 'px';
+    panel.style.left  = 'auto';
+    panel.style.minWidth = '160px';
+  }
 }
 document.addEventListener('click', e => {
   const panel = document.getElementById('settings-panel');
@@ -11831,6 +11841,7 @@ function showFadeNarration(text, holdMs, fadeDurationMs, cb) {
   const arrow    = document.getElementById('asc-arrow');
   const btn      = document.getElementById('asc-btn');
   speakerEl.textContent = '— 旁白 —';
+  applySpeakerPortrait('旁白', document.getElementById('asc-portrait'));
   textEl.textContent = '';
   textEl.className = 'asc-text narr-text';
   btn.textContent = '';
@@ -12838,10 +12849,6 @@ function startReidEndingSequence() {
   fade.style.transition = 'opacity 30s linear';
   fade.style.opacity = '1';
 
-  // ── BGM：4s 淡出現有音樂，接著 4s 淡入雷德結局曲 ──
-  fadeOutCurrentBGM(4000);
-  setTimeout(() => fadeSwitchBGM('bgm-reid-ending', 2000), 4000);
-
   // ── 故障序列 ──
   // t=0   2s 故障 + 晃動 1 下
   startGlitchEffect(); reidShakeScreen(1);
@@ -13056,14 +13063,13 @@ function endGame(type) {
   else if (type === 'eldrin_death') ending = ENDINGS.eldrin_death;
   else if (type === 'wormwood') ending = ENDINGS.wormwood;
   else if (type === 'reid') ending = ENDINGS.reid;
-  else if (G.mood > 80 && G.trust < 30 && G.pain < 50 && G.curse < 50)
-                                                       ending = ENDINGS.captivity;
   else if (G.curse >= 80 || G.pain >= 80)         ending = ENDINGS.bad_curse;
-  else if (G.mood > 60 && G.trust >= 60 && G.curse < 30 && G.pain < 30)
+  else if (G.mood < 50 && G.curse >= 50)          ending = ENDINGS.wormwood;
+  else if (G.mood >= 70 && G.trust >= 60 && G.curse < 40 && G.pain < 40)
                                                        ending = ENDINGS.nectar;
-  else if (G.mood < 40 && G.trust < 40 && G.pain < 30 && G.curse < 30)
-                                                       ending = ENDINGS.mist;
-  else                                             ending = ENDINGS.wormwood;
+  else if (G.mood >= 80 && G.trust < 50 && G.pain < 60 && G.curse < 60)
+                                                       ending = ENDINGS.captivity;
+  else                                             ending = ENDINGS.mist;
 
   // 找出結局對應的旁白（倒下無前置旁白）
   const endingKey = type === 'eldrin_death' ? null
@@ -14091,7 +14097,8 @@ function switchBGM(id) {
     if (!el) return;
     if (aid === id) {
       const baseVol = Number(document.getElementById('settings-vol').value) / 100;
-      el.volume = aid === 'bgm' ? baseVol * 0.8 : baseVol;
+      const endMult = (aid === 'bgm-good-ending' || aid === 'bgm-reid-ending') ? 2.0 : 1.0;
+      el.volume = Math.min(1, (aid === 'bgm' ? baseVol * 0.6 : baseVol) * endMult);
       if (el.paused) el.play().catch(() => {});
     } else {
       el.pause();
@@ -14128,7 +14135,8 @@ function fadeSwitchBGM(id, duration = 2400) {
   const target = document.getElementById(id);
   if (!target) return;
   const baseVolume = Number(document.getElementById('settings-vol').value) / 100;
-  const maxVolume = id === 'bgm' ? baseVolume * 0.8 : baseVolume;
+  const endingVolMult = (id === 'bgm-good-ending' || id === 'bgm-reid-ending') ? 2.0 : 1.0;
+  const maxVolume = Math.min(1, (id === 'bgm' ? baseVolume * 0.6 : baseVolume) * endingVolMult);
   if (!target.paused && all.every(aid => aid === id || document.getElementById(aid).paused)) {
     target.volume = maxVolume;
     return;
@@ -15303,5 +15311,15 @@ function playTitleRain() {
 }
 playTitleRain();
 </script>
+
+<!-- ══ 設定面板（放在 body 最底層，脫離所有 stacking context）══ -->
+<div id="settings-panel">
+  <div class="settings-row">
+    <span class="settings-label">🔊 音量</span>
+    <input type="range" id="settings-vol" min="0" max="100" value="10"
+      oninput="['bgm','bgm-bloodmoon','bgm-sad','bgm-day10','bgm-good-ending','bgm-captivity-ending','bgm-mist-ending','bgm-reid-ending','sfx-day0-rain','sfx-day0-walk','sfx-kitchen-stove','sfx-kitchen-boil'].forEach(id=>{const e=document.getElementById(id);if(e&&!e.paused)e.volume=this.value/100;});['bgm-good-ending','bgm-reid-ending'].forEach(id=>{const e=document.getElementById(id);if(e&&!e.paused)e.volume=Math.min(1,this.value/100*2);});">
+  </div>
+  <button id="pause-btn" onclick="togglePause()">⏸ 暫停遊戲</button>
+</div>
 </body>
 </html>
