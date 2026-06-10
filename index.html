@@ -6392,7 +6392,7 @@ function finishBloodMoonNightWithoutForget() {
   applyBGMForState();
   document.getElementById('blood-moon-7-overlay').style.display = 'none';
   setTimeout(() => {
-    if (G.pain >= 70 && G.curse >= 70) {
+    if (G.pain >= 80 && G.curse >= 80) {
       showEvent('💀', '——阿瓦倫沒能撐過來——',
         '血月夜的折磨太深重了。\n\n黑暗退去以前，你聽見房間裡的呼吸聲越來越微弱。\n\n清晨，當你走進房間，\n阿瓦倫已經沒有了呼吸。',
         () => endGame('avaren_death'), 'red');
@@ -9546,7 +9546,7 @@ function doAction_PondMenu() {
       run() { setTimeout(() => doAction_Fish(), 0); }
     },
     {
-      name: '消磨時間',
+      name: '消磨時間到晚上',
       fx: '順便釣魚',
       req: () => G.timePeriod === 'morning' && !G.fishFishing && !G.fishReady,
       run() { setTimeout(() => doAction_KillTime(), 0); }
@@ -12145,7 +12145,7 @@ function endDay() {
     G.bloodMoon7Calmed = false;
     applyBGMForState();
     document.getElementById('blood-moon-7-overlay').style.display = 'none';
-    if (G.pain >= 70 && G.curse >= 70) {
+    if (G.pain >= 80 && G.curse >= 80) {
       G.bloodMoon7Failed = true;
     }
   }
@@ -12176,7 +12176,7 @@ function endDay() {
   if (G.day === 10 && !G.usedForgetMagic && !G.bloodMoon7Active) {
     chg('curse', +6);
     renderHUD();
-    if (G.pain >= 100 && G.curse >= 80) { showEvent('💀','危機——', `阿瓦倫的疼痛與詛咒同時達到極限……\n黑霧將他吞噬。`, () => endGame('crisis'), 'red'); return; }
+    if (G.pain >= 100 && G.curse >= 95) { showEvent('💀','危機——', `阿瓦倫的疼痛與詛咒同時達到極限……\n黑霧將他吞噬。`, () => endGame('crisis'), 'red'); return; }
     const nightText = `你走近阿瓦倫的房間，想為他做些什麼。\n他沒有轉過來。\n\n「……別碰我。」\n\n你只能停在房門外，\n什麼也幫不上。\n\n詛咒 +6`;
     G.day++;
     G.slimeCalmed = false;
@@ -12190,7 +12190,7 @@ function endDay() {
   if (removed > 0) chg('curse', -removed);
   const actualRemoved = curseBefore - G.curse;
 
-  if (G.pain >= 100 && G.curse >= 80) { showEvent('💀','危機——', `阿瓦倫的疼痛與詛咒同時達到極限……\n黑霧將他吞噬。`, () => endGame('crisis'), 'red'); return; }
+  if (G.pain >= 100 && G.curse >= 95) { showEvent('💀','危機——', `阿瓦倫的疼痛與詛咒同時達到極限……\n黑霧將他吞噬。`, () => endGame('crisis'), 'red'); return; }
 
   let nightText = G.day4AvarenGone
     ? `夜晚悄然降臨。\n\n小屋裡安靜得讓人不安。\n你躺下，卻一直聽見窗外的風聲。\n\n這一夜很長。`
@@ -13067,8 +13067,7 @@ function endGame(type) {
   else if (G.mood < 50 && G.curse >= 50)          ending = ENDINGS.wormwood;
   else if (G.mood >= 70 && G.trust >= 60 && G.curse < 40 && G.pain < 40)
                                                        ending = ENDINGS.nectar;
-  else if (G.mood >= 80 && G.trust < 50 && G.pain < 60 && G.curse < 60)
-                                                       ending = ENDINGS.captivity;
+  else if (G.mood >= 70)                          ending = ENDINGS.captivity;
   else                                             ending = ENDINGS.mist;
 
   // 找出結局對應的旁白（倒下無前置旁白）
