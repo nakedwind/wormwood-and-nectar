@@ -979,11 +979,29 @@ body {
   flex-direction: row-reverse;
   padding: 10px 12px 10px 34px;
 }
+#death-text-box {
+  position: absolute;
+  bottom: calc(15% + 240px);
+  left: 50%; transform: translateX(-50%) scale(1.1);
+  transform-origin: bottom center;
+  width: 680px; max-width: calc(100% - 48px);
+  background: rgba(8, 5, 2, 0.88);
+  border: 2.5px solid #6a4a22;
+  border-radius: 18px 6px 16px 8px / 8px 15px 7px 17px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  padding: 20px 28px;
+  min-height: 70px;
+}
+#death-text-box::before {
+  content: ""; position: absolute; inset: 5px; pointer-events: none;
+  border: 2.5px dashed rgba(200, 144, 58, 0.42);
+  border-radius: 14px 5px 13px 6px / 6px 12px 6px 14px;
+}
 #action-scene-overlay.black-narration {
   position: fixed;
-  left: 50%; bottom: 364px; z-index: 900;
+  left: 50%; bottom: 564px; z-index: 900;
   width: 520px; max-width: calc(100vw - 48px);
-  transform: translateX(-50%) scale(1.5);
+  transform: translateX(-50%) scale(1.575);
   transform-origin: bottom center;
 }
 #action-scene-overlay.speaker-right #asc-arrow { right: auto; left: 12px; }
@@ -1010,7 +1028,36 @@ body {
 .asc-text-red { color: #e8aaa0; }
 .asc-text-winter { color: #a8c8e8; }
 .asc-text-noah { color: #d8ead2; }
+.asc-text-theonie { color: #e8d0f0; }
 .asc-text-fairy { color: #ff4444; }
+@keyframes reidGlitchBar {
+  0%,100% { opacity:0; transform:none; background:transparent; }
+  3%  { opacity:0.65; transform:translateX(-5px) skewX(-4deg); background:rgba(255,40,40,0.20); }
+  6%  { opacity:0; }
+  27% { opacity:0.50; transform:translateX(4px); background:rgba(0,210,255,0.16); }
+  30% { opacity:0; }
+  56% { opacity:0.70; transform:translateX(-3px) skewX(3deg); background:rgba(255,0,200,0.14); }
+  59% { opacity:0; }
+  83% { opacity:0.45; transform:translateX(6px) skewX(-2deg); background:rgba(200,255,0,0.12); }
+  86% { opacity:0; }
+}
+@keyframes reidGlitchScreen {
+  0%,100% { filter:none; }
+  4%  { filter:brightness(1.15) hue-rotate(15deg) saturate(1.3); }
+  8%  { filter:none; }
+  52% { filter:brightness(0.88) contrast(1.15) hue-rotate(-10deg); }
+  56% { filter:none; }
+}
+#glitch-overlay {
+  display:none; position:fixed; inset:0; z-index:104; pointer-events:none;
+  animation: reidGlitchBar 0.38s infinite;
+  background-image: repeating-linear-gradient(
+    0deg, rgba(0,0,0,0) 0px, rgba(0,0,0,0) 3px, rgba(0,255,200,0.025) 4px
+  );
+}
+#game-screen.glitch-active {
+  animation: reidGlitchScreen 0.38s infinite;
+}
 @keyframes screenShake {
   0%   { transform: translate(0,0); }
   15%  { transform: translate(-5px, 3px); }
@@ -1022,6 +1069,17 @@ body {
   100% { transform: translate(0,0); }
 }
 #app.shake { animation: screenShake 0.45s ease-out; }
+@keyframes reidFlashShake {
+  0%   { transform: translate(0,0); }
+  10%  { transform: translate(-4px, 2.4px); }
+  25%  { transform: translate(4px, -2.4px); }
+  45%  { transform: translate(-3.2px, 1.6px); }
+  65%  { transform: translate(3.2px, -1.6px); }
+  80%  { transform: translate(-1.6px, 0.8px); }
+  90%  { transform: translate(1.6px, -0.8px); }
+  100% { transform: translate(0,0); }
+}
+#app.reid-shake { animation: reidFlashShake 0.18s ease-out; }
 #asc-btn {
   display: block; margin-top: 8px;
   border-radius: 20px; padding: 7px 18px;
@@ -1654,8 +1712,12 @@ body {
 
 /* ══ ENDING ══ */
 #ending-screen {
-  display: none; flex-direction: column; align-items: center;
+  display: none; position: fixed; inset: 0;
+  flex-direction: column; align-items: center;
   text-align: center; padding: 40px 20px; gap: 16px;
+  overflow-y: auto;
+  background: #0a0703;
+  z-index: 200;
 }
 .end-label { font-size: 12px; letter-spacing: 6px; color: #5a4020; }
 .end-title { font-size: 35px; font-weight: 900; line-height: 1.2; }
@@ -1726,6 +1788,18 @@ body {
 </audio>
 <audio id="bgm-day10" loop>
   <source src="music/harumachimusic-a-mysterious-little-box-ancient-like-folk-music-233859.mp3" type="audio/mpeg">
+</audio>
+<audio id="bgm-good-ending" loop>
+  <source src="music/好結局.mp3" type="audio/mpeg">
+</audio>
+<audio id="bgm-captivity-ending" loop>
+  <source src="music/囚禁.mp3" type="audio/mpeg">
+</audio>
+<audio id="bgm-mist-ending" loop>
+  <source src="music/壞結局.mp3" type="audio/mpeg">
+</audio>
+<audio id="bgm-reid-ending" loop>
+  <source src="music/grand_project-mystical-forest-384201.mp3" type="audio/mpeg">
 </audio>
 <audio id="sfx-day0-rain" loop>
   <source src="music/音效/下雨.mp3" type="audio/mpeg">
@@ -1807,6 +1881,7 @@ body {
   <source src="music/音效/按紐.mp3" type="audio/mpeg">
 </audio>
 <audio id="sfx-money"><source src="music/音效/金錢.mp3" type="audio/mpeg"></audio>
+<audio id="sfx-coin"><source src="music/音效/零錢.mp3" type="audio/mpeg"></audio>
 <audio id="sfx-eat"><source src="music/音效/吃東西.mp3" type="audio/mpeg"></audio>
 <audio id="sfx-buff"><source src="music/音效/BUFF.mp3" type="audio/mpeg"></audio>
 <audio id="sfx-pickup">
@@ -1896,7 +1971,7 @@ body {
           <div class="settings-row">
             <span class="settings-label">🔊 音量</span>
             <input type="range" id="settings-vol" min="0" max="100" value="10"
-              oninput="['bgm','bgm-bloodmoon','bgm-sad','bgm-day10','sfx-day0-rain','sfx-day0-walk','sfx-kitchen-stove','sfx-kitchen-boil'].forEach(id=>{const e=document.getElementById(id);if(!e.paused)e.volume=this.value/100;});">
+              oninput="['bgm','bgm-bloodmoon','bgm-sad','bgm-day10','bgm-good-ending','bgm-captivity-ending','bgm-mist-ending','bgm-reid-ending','sfx-day0-rain','sfx-day0-walk','sfx-kitchen-stove','sfx-kitchen-boil'].forEach(id=>{const e=document.getElementById(id);if(!e.paused)e.volume=this.value/100;});">
           </div>
           <button id="pause-btn" onclick="togglePause()">⏸ 暫停遊戲</button>
         </div>
@@ -1923,7 +1998,8 @@ body {
       <div id="cw-avaren" class="char-wrap"><img id="sp-avaren" src="character_avaren.png" alt=""></div>
       <div id="cw-red"    class="char-wrap"><img id="sp-red"    src="character_red.png"    alt=""></div>
       <div id="cw-winter" class="char-wrap"><img id="sp-winter" src="character_winter.png" alt=""></div>
-      <div id="cw-noah"   class="char-wrap"><img id="sp-noah"   src="character_noah.png"   alt=""></div>
+      <div id="cw-noah"    class="char-wrap"><img id="sp-noah"    src="character_noah.png"    alt=""></div>
+      <div id="cw-theonie" class="char-wrap"><img id="sp-theonie" src="character_Theonie.png" alt=""></div>
       <div id="cw-fairy"><img src="Fairy.png" alt="妖精"></div>
       <div id="cw-red-fairy"><img src="Fairy.png" alt="紅妖精"></div>
       <div id="cw-chicken"  style="display:none;position:absolute;z-index:12;pointer-events:none;overflow:hidden;"><img id="sp-chicken"  src="chicken.png" style="position:absolute;image-rendering:pixelated;"></div>
@@ -2050,6 +2126,7 @@ body {
       <div id="red-bubble"></div>
       <div id="winter-bubble"></div>
       <div id="noah-bubble"></div>
+      <div id="theonie-bubble"></div>
       <div id="eldrin-emote">！</div>
       <div id="avaren-heart" style="display:none;position:absolute;font-size:23px;pointer-events:none;z-index:605;transform:translateX(-50%);transition:opacity 0.2s;"></div>
       <div id="farm-growth-wrap">
@@ -2129,6 +2206,10 @@ body {
         style="background:#241a0c;border:1px solid #5a3818;color:#c0a060;">🌙 入睡</button>
       <button onclick="jumpToBloodMoonLake()"
         style="background:#1a0808;border:1px solid #8a1010;color:#ff6060;">🩸 血月湖邊</button>
+      <button onclick="debugJumpToGoodEnding()"
+        style="background:#0a1a10;border:1px solid #206040;color:#60e0a0;">✨ 第11天(好結局)</button>
+      <button onclick="debugJumpToReidEnding()"
+        style="background:#1a100a;border:1px solid #604020;color:#e0a060;">⚔️ 第11天(雷德結局)</button>
     </div>
 
       <!-- Zone Editor Panel -->
@@ -2378,15 +2459,16 @@ body {
   <div class="end-title" id="end-title"></div>
   <div class="end-desc"  id="end-desc"></div>
   <div class="end-stats" id="end-stats"></div>
-  <button class="btn-restart" onclick="restartGame()">再玩一次</button>
+  <button class="btn-restart" id="btn-ending-action" onclick="restartGame()">再玩一次</button>
 </div>
 
 </div><!-- #app -->
+<div id="glitch-overlay"></div>
 <div id="night-fade"></div>
 <div id="hp-vignette"></div>
 <div id="sleep-dim" style="display:none;position:fixed;inset:0;background:#000;z-index:20;opacity:0;pointer-events:none;"></div>
 <div id="death-overlay" style="display:none;position:fixed;inset:0;z-index:110;background:transparent;cursor:pointer;pointer-events:auto;">
-  <div id="death-text-box" style="position:absolute;bottom:calc(15% + 100px);left:50%;transform:translateX(-50%);width:680px;max-width:calc(100% - 48px);background:rgba(8,5,2,0.88);border:1px solid #4a3214;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,0.35);padding:18px 48px 18px 20px;min-height:70px;">
+  <div id="death-text-box">
     <div style="font-size:13px;color:#a0a098;letter-spacing:3px;margin-bottom:8px;">― 旁白 ―</div>
     <div id="death-text-content" style="font-size:16px;color:#d4d4cc;line-height:1.7;font-weight:500;white-space:pre-line;"></div>
     <div style="position:absolute;bottom:10px;right:16px;color:#c0a060;font-size:16px;animation:arrowBlink 1.2s ease-in-out infinite;">▼</div>
@@ -3352,7 +3434,7 @@ function updateRoomDepth() {
   });
 }
 
-const spriteInfo = { eldrin:null, avaren:null, red:null, winter:null, noah:null };
+const spriteInfo = { eldrin:null, avaren:null, red:null, winter:null, noah:null, theonie:null };
 const AVAREN_SPRITE_DEFAULT = 'character_avaren.png';
 const AVAREN_SPRITE_DAY1 = 'character_avaren_day1.png';
 const AVAREN_SPRITE_DAY1_BANDAGING = 'character_avaren_day1Bandaging.png';
@@ -3363,8 +3445,8 @@ let chickenInfo = null;
 
 function loadSprites(cb) {
   let n = 0;
-  const done = () => { if (++n === 6) cb(); };
-  ['eldrin','avaren','red','winter','noah'].forEach(name => {
+  const done = () => { if (++n === 7) cb(); };
+  ['eldrin','avaren','red','winter','noah','theonie'].forEach(name => {
     const img = document.getElementById('sp-' + name);
     const init = () => {
       const fw = img.naturalWidth  / SPRITE_COLS;
@@ -4052,7 +4134,7 @@ const REID_DEMON_HEART_STORIES = [
     { speaker: '旁白', text: '雷德看著你。\n那不像是他平常的眼神。' },
     { speaker: '雷德', text: '後來我發現了，其實我可以選擇自己的玩法。\n這個世界的規則，我可以自己改寫。' },
     { speaker: '旁白', text: '空氣像是被什麼東西撕開了。\n你聽見很遠的地方，有紙頁翻動的聲音。' },
-    { speaker: '雷德', text: '但是要改寫規則的話，有些事情必須要犧牲。\n艾德林，抱歉了。\n首先，就先讓我接收這份存檔開始吧。' },
+    { speaker: '雷德', text: '但是要改寫規則的話，有些事情必須要犧牲。\n艾德林，抱歉了。\n首先，就先讓我接收這份存檔開始吧。', glitch: true },
   ],
 ];
 
@@ -4620,6 +4702,7 @@ function openRedMenu() {
         run() {
           storyAuto('雷德', '「啊，昨天的素材還沒給你！差點忘記了。」');
           claimReidSlayReward();
+          storyThen(() => openRedMenu());
         }
       },
       {
@@ -4661,6 +4744,7 @@ function showRedCommissionMenu() {
   const items = [];
   // 非正規出現日（只是來交貨）則只顯示聊聊
   const chatOnly = !isReidDay() && G.reidVisitDay === G.day;
+  console.log('[ReidMenu] day=', G.day, 'chatOnly=', chatOnly, 'chat11_1=', G.reidChat11_1Seen, 'chat11_2=', G.reidChat11_2Seen, 'heartToday=', G.reidDemonHeartCommissionedToday, 'count=', G.reidDemonHeartCount, 'snapshot=', !!G.day11Snapshot);
 
   if (!chatOnly && G.day === 11 && G.reidChat11_1Seen && G.reidChat11_2Seen) {
     const alreadyHeart = !!G.reidDemonHeartCommissionedToday;
@@ -4676,7 +4760,8 @@ function showRedCommissionMenu() {
         startActionScene(REID_DEMON_HEART_STORIES[idx], 400, () => {
           if (G.reidFakeSaveTaken) {
             showEvent('💾', '存檔已覆蓋',
-              'SAVE 01\n\n第 11 天　早晨\n勇者雷德\n\n這個存檔已被真正的玩家持有。\n艾德林無法覆蓋。', null, 'red');
+              'SAVE 01\n\n第 11 天　早晨\n勇者雷德\n\n這個存檔已被真正的玩家持有。\n艾德林無法覆蓋。',
+              startReidEndingSequence, 'red');
           }
         });
       }
@@ -6433,9 +6518,10 @@ function initState() {
     keys: {},
     eldrin: { x: 260, y: 350, pose: 'front', walkTick: 0, walkFrame: 0, blinkTimer: 200, blinkPhase: -1, blinkPhaseTick: 0, sleepEye: 0 },
     avaren: { x: 458, y: 360, pose: 'front', walkTick: 0, walkFrame: 0, wanderDir:{dx:0,dy:0}, wanderTimer:0, gatherTimer: 3600, hasSeenRed: false, nearRedTimer: 0, blinkTimer: 260, blinkPhase: -1, blinkPhaseTick: 0, sleepEye: 2, restBlinkTimer: 180, restBlinkPhase: 0, pushVx:0, pushVy:0 },
-    red:    { x: 150, y: 360, pose: 'front', walkTick: 0, walkFrame: 0, walkDir:{dx:0,dy:0}, walkTimer:0, bubbleTimer:0, bubbleText:'', autoSpeakTimer:180, blinkTimer: 310, blinkPhase: -1, blinkPhaseTick: 0, pushVx:0, pushVy:0 },
-    winter: { x: 300, y: 120, pose: 'sideR', walkTick: 0, walkFrame: 0, walkDir:{dx:0,dy:0}, walkTimer:0, bubbleTimer:0, bubbleText:'', autoSpeakTimer:320, blinkTimer: 280, blinkPhase: -1, blinkPhaseTick: 0, pushVx:0, pushVy:0 },
-    noah:   { x: 500, y: 360, pose: 'front', walkTick: 0, walkFrame: 0, walkDir:{dx:0,dy:0}, walkTimer:0, bubbleTimer:0, bubbleText:'', autoSpeakTimer:260, blinkTimer: 340, blinkPhase: -1, blinkPhaseTick: 0, pushVx:0, pushVy:0 },
+    red:     { x: 150, y: 360, pose: 'front', walkTick: 0, walkFrame: 0, walkDir:{dx:0,dy:0}, walkTimer:0, bubbleTimer:0, bubbleText:'', autoSpeakTimer:180, blinkTimer: 310, blinkPhase: -1, blinkPhaseTick: 0, pushVx:0, pushVy:0 },
+    winter:  { x: 300, y: 120, pose: 'sideR', walkTick: 0, walkFrame: 0, walkDir:{dx:0,dy:0}, walkTimer:0, bubbleTimer:0, bubbleText:'', autoSpeakTimer:320, blinkTimer: 280, blinkPhase: -1, blinkPhaseTick: 0, pushVx:0, pushVy:0 },
+    noah:    { x: 500, y: 360, pose: 'front', walkTick: 0, walkFrame: 0, walkDir:{dx:0,dy:0}, walkTimer:0, bubbleTimer:0, bubbleText:'', autoSpeakTimer:260, blinkTimer: 340, blinkPhase: -1, blinkPhaseTick: 0, pushVx:0, pushVy:0 },
+    theonie: { x: 400, y: 300, pose: 'front', walkTick: 0, walkFrame: 0, walkDir:{dx:0,dy:0}, walkTimer:0, bubbleTimer:0, bubbleText:'', autoSpeakTimer:300, blinkTimer: 300, blinkPhase: -1, blinkPhaseTick: 0, pushVx:0, pushVy:0 },
     redCommission: null,
     redDelivered: false,
     redCommissions: [],
@@ -6941,6 +7027,34 @@ function renderChars() {
     noahBub.style.top     = (noahDrawY - dispH - 40) + 'px';
   } else {
     noahBub.style.display = 'none';
+  }
+
+  // ── Theonie ──
+  const th = G.theonie;
+  const cwTh = document.getElementById('cw-theonie');
+  const theonieVisible = G.theonieVisible === true && G.scene === (G.theonieScene || 'outside') && !G.sleepAnimActive;
+  if (theonieVisible && spriteInfo.theonie) {
+    const thBlink = th.blinkPhase >= 0 && th.pose === 'front';
+    const thPose  = thBlink ? 'blink' : th.pose;
+    const thFrame = thBlink ? BLINK_SEQ[th.blinkPhase].row : th.walkFrame;
+    const dw = setPose('theonie', thPose, thFrame, dispH);
+    cwTh.style.left    = (th.x - dw / 2) + 'px';
+    cwTh.style.top     = (th.y - dispH) + 'px';
+    cwTh.style.display = 'block';
+    cwTh.style.zIndex  = String(Math.floor(th.y));
+  } else {
+    cwTh.style.display = 'none';
+  }
+
+  // ── Theonie bubble ──
+  const thBub = document.getElementById('theonie-bubble');
+  if (theonieVisible && th.bubbleTimer > 0 && !isDlgBlocking()) {
+    thBub.textContent   = th.bubbleText;
+    thBub.style.display = 'block';
+    thBub.style.left    = th.x + 'px';
+    thBub.style.top     = (th.y - dispH - 40) + 'px';
+  } else {
+    thBub.style.display = 'none';
   }
 
   // ── Chicken ──
@@ -8548,10 +8662,15 @@ document.addEventListener('keydown', e => {
     return;
   }
 
-  // 結局畫面：空白鍵 / Enter — 打字中則跳過，跑完不做事（需點按鈕）
+  // 結局畫面：空白鍵 / Enter — 打字中跳過；打字完成後觸發按鈕
   if (document.getElementById('ending-screen').style.display === 'flex') {
-    if ((e.key === ' ' || e.key === 'Enter') && !_typewriterDone) {
-      _skipEndingTypewriter();
+    if (e.key === ' ' || e.key === 'Enter') {
+      if (!_typewriterDone) {
+        _skipEndingTypewriter();
+      } else {
+        const btn = document.getElementById('btn-ending-action');
+        if (btn && btn.style.display !== 'none') btn.click();
+      }
     }
     return;
   }
@@ -8641,7 +8760,7 @@ document.addEventListener('keydown', e => {
     e.preventDefault(); advanceStory(true); return;
   }
 
-  if (G.paused || isDlgBlocking() || G.gatherSearchActive) return;
+  if (G.paused || isDlgBlocking() || G.gatherSearchActive || G.reidEndingLock) return;
 
   // 空白鍵：互動（原本E鍵的功能）
   if (e.key === ' ') {
@@ -9681,13 +9800,15 @@ function tradeNavDir(dx, dy) {
 
 function tradeNavAdj(delta) {
   const c = _tradeCursor;
+  let changed = false;
   if (c.type === 'sell-row') {
     const filteredSell = TRADE_SELL.filter(item => (G[item.id] ?? 0) > 0);
-    if (filteredSell[c.idx]) tradeAdj('sell', filteredSell[c.idx].id, delta);
+    if (filteredSell[c.idx]) { tradeAdj('sell', filteredSell[c.idx].id, delta); changed = true; }
   } else if (c.type === 'buy-row') {
     const item = (G.dailyBuyList || TRADE_BUY)[c.idx];
-    if (item) tradeAdj('buy', item.id, delta);
+    if (item) { tradeAdj('buy', item.id, delta); changed = true; }
   }
+  if (changed) playLoopingAudio('sfx-coin', 3.0);
 }
 
 function tradeNavConfirm() {
@@ -10413,7 +10534,7 @@ function startActionScene(lines, max, onDone) {
   document.getElementById('action-scene-overlay').style.display = 'flex';
 }
 
-const NPC_SPEAKERS = new Set(['旁白', '你', '艾德林', '阿瓦倫', '雷德', '陌生青年', '溫特', '神秘旅人', '諾亞', '妖精']);
+const NPC_SPEAKERS = new Set(['旁白', '你', '艾德林', '阿瓦倫', '雷德', '陌生青年', '溫特', '神秘旅人', '諾亞', '妖精', '希奧妮']);
 const SPEAKER_AVATARS = {
   '你': 'eldrin_avatar.png',
   '艾德林': 'eldrin_avatar.png',
@@ -10423,6 +10544,7 @@ const SPEAKER_AVATARS = {
   '溫特': 'winter_avatar.png',
   '神秘旅人': 'winter_avatar.png',
   '諾亞': 'noah_avatar.png',
+  '希奧妮': 'Theonie_avatar.png',
 };
 const SPEAKER_TEXT_CLASS = {
   '你': 'asc-text-eldrin',
@@ -10433,6 +10555,7 @@ const SPEAKER_TEXT_CLASS = {
   '溫特': 'asc-text-winter',
   '神秘旅人': 'asc-text-winter',
   '諾亞': 'asc-text-noah',
+  '希奧妮': 'asc-text-theonie',
   '妖精': 'asc-text-fairy',
 };
 const DIALOGUE_TYPE_SPEED = 24;
@@ -10524,6 +10647,7 @@ function isDlgBlocking() {
 }
 function _ascShowLine(idx) {
   const line     = G.actionSceneLines[idx];
+  if (line.glitch) startGlitchEffect();
   const isChar   = !NPC_SPEAKERS.has(line.speaker);
   const textEl    = document.getElementById('asc-text');
   const btn       = document.getElementById('asc-btn');
@@ -10549,6 +10673,8 @@ function _ascShowLine(idx) {
 
 function ascAdvance() {
   if (finishDialogueTypewriter()) { playDialogueNextSfx(); return; }
+  // 自動對話模式：只允許跳過打字機，不手動推進行數
+  if (G.autoScenePlaying) return;
   playDialogueNextSfx();
   G.actionSceneLineIdx++;
   if (G.actionSceneLineIdx >= G.actionSceneLines.length) {
@@ -11556,6 +11682,106 @@ function jumpToDay10ForgetTest(usedForget) {
   raf = requestAnimationFrame(gameLoop);
 }
 
+function debugJumpToGoodEnding() {
+  cancelAnimationFrame(raf);
+  storyQueue.length = 0;
+  if (_storyAutoTimer) { clearTimeout(_storyAutoTimer); _storyAutoTimer = null; }
+  const actionOverlay = document.getElementById('action-scene-overlay');
+  if (actionOverlay) actionOverlay.style.display = 'none';
+  document.getElementById('event-overlay').style.display = 'none';
+  document.getElementById('blood-moon-7-overlay').style.display = 'none';
+  document.getElementById('blood-moon-badge').style.display = 'none';
+
+  // 第11天狀態
+  G.day        = 11;
+  G.timePeriod = 'morning';
+  G.periodTransitioned    = false;
+  G.dayEndTriggered       = false;
+  G.bgmPreEveningFadeStarted = false;
+  G.bloodMoon7Active      = false;
+  G.bloodMoon7Calmed      = false;
+  G.bloodMoon7Failed      = false;
+  G.bloodMoon7Happened    = true;
+  G.usedForgetMagic       = true;
+  G.moodLocked            = false;
+  G.avarenAwake           = true;
+  G.avarenBedRest         = false;
+  G.avarenReturnPending   = false;
+  G.day4AvarenGone        = false;
+
+  // 好結局觸發條件：mood > 60, trust >= 60, curse < 30, pain < 30
+  G.mood  = 75;
+  G.trust = 65;
+  G.curse = 20;
+  G.pain  = 10;
+
+  G.scene = 'outside';
+  G.eldrin.x = 320; G.eldrin.y = 380; G.eldrin.pose = 'front'; G.eldrin.sleepEye = 0;
+  G.avaren.x = 370; G.avaren.y = 370; G.avaren.pose = 'front';
+
+  G.dayStartMs = performance.now();
+  applyBGMForState();
+  renderHUD();
+  renderScene();
+  renderChars();
+  fadeInFromBlack();
+  storyAuto('旁白', '【測試】第11天：好結局條件已設定。可直接入睡觸發好結局。');
+  raf = requestAnimationFrame(gameLoop);
+}
+
+function debugJumpToReidEnding() {
+  cancelAnimationFrame(raf);
+  storyQueue.length = 0;
+  if (_storyAutoTimer) { clearTimeout(_storyAutoTimer); _storyAutoTimer = null; }
+  const actionOverlay = document.getElementById('action-scene-overlay');
+  if (actionOverlay) actionOverlay.style.display = 'none';
+  document.getElementById('event-overlay').style.display = 'none';
+  document.getElementById('blood-moon-7-overlay').style.display = 'none';
+  document.getElementById('blood-moon-badge').style.display = 'none';
+
+  G.day        = 11;
+  G.timePeriod = 'morning';
+  G.periodTransitioned    = false;
+  G.dayEndTriggered       = false;
+  G.bgmPreEveningFadeStarted = false;
+  G.bloodMoon7Active      = false;
+  G.bloodMoon7Happened    = true;
+  G.usedForgetMagic       = true;
+  G.moodLocked            = false;
+  G.avarenAwake           = true;
+  G.avarenBedRest         = false;
+  G.avarenReturnPending   = false;
+  G.day4AvarenGone        = false;
+  G.reidDemonHeartCommissionedToday = false;
+  G.reidDemonHeartCount   = 0;
+  G.reidFakeSaveTaken     = false;
+  // 解鎖魔王心臟委託的前置對話條件
+  G.reidChat11_1Seen      = true;
+  G.reidChat11_2Seen      = true;
+  G.reidChat3CommSeen     = true;
+  G.reidVisitDay          = 11;
+
+  // 普通數值（不影響雷德結局條件）
+  G.mood  = 50;
+  G.trust = 40;
+  G.curse = 30;
+  G.pain  = 20;
+
+  G.scene = 'outside';
+  G.eldrin.x = 320; G.eldrin.y = 380; G.eldrin.pose = 'front'; G.eldrin.sleepEye = 0;
+  G.avaren.x = 370; G.avaren.y = 370; G.avaren.pose = 'front';
+  G.red.x = 150; G.red.y = 360; G.red.pose = 'front';
+
+  G.dayStartMs = performance.now();
+  applyBGMForState();
+  renderHUD();
+  renderScene();
+  renderChars();
+  fadeInFromBlack();
+  storyAuto('旁白', '【測試】第11天：雷德在戶外，可委託討伐魔王觸發雷德結局。');
+  raf = requestAnimationFrame(gameLoop);
+}
+
 function startFishingCast() {
   if (G.fishFishing || G.fishReady) return;
   G.fishFishing = true;
@@ -11746,51 +11972,95 @@ function sleepNow() {
   endDay();
 }
 
-function resetToDay11MorningAfterReidLoop(loopIndex) {
+function resetToDay11AfterReidLoop() {
   storyQueue.length = 0;
   if (_storyAutoTimer) { clearTimeout(_storyAutoTimer); _storyAutoTimer = null; }
-  G.day = 11;
-  G.timePeriod = 'morning';
-  G.periodTransitioned = false;
-  G.dayEndTriggered = false;
-  G.bgmPreEveningFadeStarted = false;
+  if (raf) cancelAnimationFrame(raf);
+
+  // 保存雷德跨迴圈的計數器
+  const loopCount   = G.reidDemonHeartCount || 0;
+  const fakeSave    = G.reidFakeSaveTaken   || false;
+  const snapshot    = G.day11Snapshot;
+
+  if (snapshot) {
+    // 還原到第一次第11天的快照
+    try {
+      G = JSON.parse(JSON.stringify(snapshot));
+    } catch(e) {}
+  }
+
+  // 覆蓋雷德跨迴圈資料（計數已在 finishReidDemonHeartDay 前遞增）
+  G.reidDemonHeartCount        = loopCount;
+  G.reidFakeSaveTaken          = fakeSave;
+  G.day11Snapshot              = snapshot; // 保留快照供下次使用
   G.reidDemonHeartCommissionedToday = false;
-  G.reidCommissionedDayKeys = [];
-  G.redCommissions = (G.redCommissions || []).filter(c => c.key !== 'demonHeart');
-  G.paused = false;
-  G.manualPaused = false;
-  G.scene = 'room';
-  G.sceneCooldown = 90;
-  G.dayStartMs = performance.now();
-  G.eldrin.x = 260; G.eldrin.y = 380; G.eldrin.pose = 'front';
-  G.avarenScene = 'room';
-  if (isAvarenBedRest()) placeAvarenBedRest();
-  else { G.avaren.x = 190; G.avaren.y = 220; G.avaren.pose = 'back'; G.avaren.sleepEye = 0; }
+  G.reidCommissionedDayKeys    = [];
+  // 第11天雷德的對話已看過，保持解鎖讓委託選項直接出現
+  G.reidChat11_1Seen  = true;
+  G.reidChat11_2Seen  = true;
+  G.reidChat3CommSeen = true; // 委託功能也保持開放
+
+  // 重置每日執行期資料
+  G.paused          = false;
+  G.manualPaused    = false;
+  G.dayEndTriggered = false;
+  G.dayStartMs      = performance.now();
+  G.periodTransitioned      = false;
+  G.bgmPreEveningFadeStarted = false;
+  G.timePeriod      = 'morning';
+  G.sceneCooldown   = 90;
+  G.reidEndingLock  = false;
+
+  // 確保雷德在戶外正確位置，玩家在房間方便走出去
   G.red.x = 150; G.red.y = 360; G.red.pose = 'front';
+  G.red.walkDir = { dx: 0, dy: 0 }; G.red.walkTimer = 0;
+  G.red.bubbleTimer = 0; G.red.autoSpeakTimer = 320;
+  G.reidVisitDay = 11; // 確保今天雷德可見
+  // 清除史萊姆討伐狀態，避免雷德跑進森林
+  G.reidSlayActive        = false;
+  G.reidSlayInForest      = false;
+  G.reidSlayDelivered     = false;
+  G.reidForestWandering   = false;
+  G.reidSlayWalkingToGate = false;
+  G.reidSlayPendingWalk   = false;
+  G.reidSlayRewardPending = false;
+  G.reidSlayRewardClaimedDay = G.day; // 視為已領取，不再重新觸發
+  G.redCommissions = (G.redCommissions || []).filter(c => c.key !== 'slay'); // 移除史萊姆委託
+  G.eldrin.x = 260; G.eldrin.y = 380; G.eldrin.pose = 'front';
+  G.scene = 'room'; G.sceneCooldown = 90;
+  console.log('[ReidReset] loopCount=', loopCount, 'heartToday=', G.reidDemonHeartCommissionedToday, 'chat11_1=', G.reidChat11_1Seen, 'chat11_2=', G.reidChat11_2Seen, 'timePeriod=', G.timePeriod, 'scene=', G.scene, 'paused=', G.paused);
   applyBGMForState();
   renderHUD();
   renderScene();
   renderChars();
   fadeInFromBlack();
-  const lines = REID_HEART_LOOP_NARRATION[Math.max(0, Math.min(loopIndex - 1, REID_HEART_LOOP_NARRATION.length - 1))];
+
+  // 顯示迴圈旁白
+  const lines = REID_HEART_LOOP_NARRATION[Math.max(0, Math.min(loopCount - 1, REID_HEART_LOOP_NARRATION.length - 1))];
   storyAuto('旁白', lines[0]);
   if (lines[1]) storyAuto('旁白', lines[1]);
+
   raf = requestAnimationFrame(gameLoop);
 }
 
 function finishReidDemonHeartDay() {
   if (G.reidFakeSaveTaken || (G.reidDemonHeartCount || 0) >= 3) {
-    endGame('wormwood');
+    endGame('reid');
     return;
   }
   const fade = document.getElementById('night-fade');
+  // 睡覺動畫結束後畫面已經是全黑的，直接等一下再 reset，避免閃出夜晚場景
+  if (fade.style.display === 'block' && parseFloat(fade.style.opacity || '0') >= 0.9) {
+    setTimeout(() => resetToDay11AfterReidLoop(), 500);
+    return;
+  }
   fade.style.transition = 'none';
   fade.style.opacity = '0';
   fade.style.display = 'block';
   fade.getBoundingClientRect();
   fade.style.transition = 'opacity 1.4s ease';
   fade.style.opacity = '1';
-  setTimeout(() => resetToDay11MorningAfterReidLoop(G.reidDemonHeartCount || 1), 1500);
+  setTimeout(() => resetToDay11AfterReidLoop(), 1500);
 }
 
 function openJumpDayMenu() {
@@ -12163,6 +12433,10 @@ function continueAfterNight(prevText) {
   G.paused = false;
   G.dayStartMs = performance.now();
   G.timePeriod = 'morning';
+  // 第11天剛開始：存下快照（只存一次，迴圈期間不覆蓋）
+  if (G.day === 11 && !G.day11Snapshot) {
+    try { G.day11Snapshot = JSON.parse(JSON.stringify(G)); } catch(e) {}
+  }
   G.periodTransitioned = false;
   G.bgmPreEveningFadeStarted = false;
   G.dayEndTriggered = false;
@@ -12224,6 +12498,8 @@ function continueAfterNight(prevText) {
   G.winter.bubbleTimer = 0; G.winter.autoSpeakTimer = 320;
   G.noah.x = 500; G.noah.y = 360; G.noah.pose = 'front'; G.noah.walkDir = {dx:0,dy:0}; G.noah.walkTimer = 0;
   G.noah.bubbleTimer = 0; G.noah.autoSpeakTimer = 260;
+  G.theonie.x = 400; G.theonie.y = 300; G.theonie.pose = 'front'; G.theonie.walkDir = {dx:0,dy:0}; G.theonie.walkTimer = 0;
+  G.theonie.bubbleTimer = 0; G.theonie.autoSpeakTimer = 300;
   const exhaustedWake = G.exhaustedSleepWake;
   G.exhaustedSleepWake = null;
   if (exhaustedWake && exhaustedWake.scene) {
@@ -12401,6 +12677,8 @@ const ENDINGS = {
     desc:'阿瓦倫的詛咒沒有完全消失。\n\n但是艾德林終於找到了能讓它穩定下來的方法。\n黑霧仍偶爾浮現在阿瓦倫的皮膚下，像一場不肯退去的舊夢。\n\n他們留在森林的小屋裡生活。\n在日復一日的藥草、爐火、雨聲與晨光裡，一點一點長大。\n\n這不是故事的終點，而是另一段故事的起點。\n他們還有好多好多故事，等待著你來閱讀。' },
   wormwood: { cls:'end-regret', title:'苦艾',
     desc:'阿瓦倫活了下來。\n\n有些裂痕太深了，無法被修補。\n他不再相信艾德林，也不再相信這間小屋能保護他。\n\n某一天，阿瓦倫消失了。\n艾德林循著詛咒留下的漆黑痕跡追進森林，卻看見黑霧已經蔓延過樹木、湖水與遠處的村莊。\n\n最後，艾德林和這片森林一起被詛咒吞沒。\n他們都沒有回來。' },
+  mist: { cls:'end-normal', title:'黑霧',
+    desc:'阿瓦倫活了下來。\n\n他遺忘了最深的疼痛，但傷口只是被掩蓋了起來，沒有復原。\n詛咒雖然不再像過去那樣啃咬他的身體，但也還是持續著存在。\n\n他開始思考著把他變成這副樣子的源頭。\n\n幾年後，阿瓦倫離開了小屋。\n\n他沒有告別得很隆重。\n只是把洗乾淨的藥瓶放回架上，把房間整理好，然後在清晨走進森林。\n\n「不要來找我。」\n\n艾德林只在桌上找到一張很短的紙條。\n\n有一天，雷德傳來了消息。\n據說某個村鎮被黑霧掩蓋，成為了詛咒之地，聽說再也沒有人可以活著走出那裡。' },
   bad_curse: { cls:'end-bad', title:'詛咒',
     desc:'詛咒終究失去了控制。\n那小小的身體，無法承受這麼殘忍的痛苦。\n疼痛與黑霧從阿瓦倫的身體裡溢出，吞掉了呼吸、聲音，以及所有還能被稱為希望的東西。\n\n艾德林伸出手時，但最終什麼也抓不住。\n這間破舊的小屋，從此空蕩蕩的。' },
   avaren_death: { cls:'end-bad', title:'血月之後',
@@ -12409,6 +12687,8 @@ const ENDINGS = {
     desc:'艾德林倒下了。\n\n長久的奔走、研究、戰鬥與自責，終於壓垮了他的身體。\n\n他曾經想要救下那個孩子。\n可是這一次，伸出去的手再也沒有力氣握住任何人。' },
   captivity: { cls:'end-regret', title:'囚禁',
     desc:'阿瓦倫活了下來。\n而你也留了下來。\n\n這不是最好的結局。卻是阿瓦倫最想要的結局。\n\n小屋沒有被詛咒吞沒。但門被關上了。\n\n窗外的世界逐漸變得遙遠。\n\n醒來時能看見你。睡著前也能看見你。\n\n再也不會分離。再也不會失去。\n\n永遠如此。' },
+  reid: { cls:'end-regret', title:'覆寫',
+    desc:'SAVE 01\n\n第 11 天　早晨\n勇者雷德\n\n那個總是迷路的勇者，終於找到了路。\n只是他抵達的地方，不是魔王城，也不是森林深處。\n\n而是這個故事之外更遠的地方。\n\n因為勇者不會屈服於世界的規則。\n他決定改寫這整個世界，拯救所有的人。\n\n勇者決定拯救你、拯救阿瓦倫，\n以及拯救那個面冷心善的魔王。' },
 };
 let _eldrinDeathTriggered = false;
 function triggerEldrinDeath() {
@@ -12457,10 +12737,21 @@ function triggerEldrinDeath() {
 }
 
 const ENDING_NARRATIONS = {
+  nectar: [
+    '黑暗沒有把他帶走。\n阿瓦倫還在這裡，他還在。',
+    '艾德林，你成功的守護了那個孩子。',
+    '從今以後的每一天，你繼續陪伴著阿瓦倫生活，\n陪他一點一滴的長大。',
+    '雖然過程有些辛苦，但你覺得這一切都是值得的。',
+  ],
   wormwood: [
     '清晨再度來臨。',
     '日子一天一天的過去，你以為清晨總會再次來臨。',
     '你以為裂縫總有一天可以被修補成功，你不斷的努力。\n但沒想到最終還是迎來了一個絕望的早晨。',
+  ],
+  mist: [
+    '阿瓦倫還活著。',
+    '清晨的霧瀰漫在森林裡。',
+    '你們之間似乎也像隔著一層霧，\n雖然他活了下來，但是你卻看不清楚他的心。',
   ],
   bad_curse: [
     '你沒能撐住。',
@@ -12478,10 +12769,240 @@ const ENDING_NARRATIONS = {
     '他把你看得很緊。緊到你不確定，這究竟是信任，還是別的什麼。',
     '小屋的門沒有壞掉。只是門鎖被加上了好幾道。',
   ],
+  reid: [
+    '畫面暗了下去。',
+    '你聽見很遠的地方，有人翻開了一頁新的存檔。',
+    '那不是艾德林的手。',
+    '這一次，選擇權落到了勇者雷德手裡。',
+  ],
 };
 
+function playEndingBGM(endingKey, ending) {
+  if (endingKey === 'reid') return; // BGM 已在故障序列開始時切換，不重複處理
+  if (endingKey === 'captivity') switchBGM('bgm-captivity-ending');
+  else if (endingKey === 'mist') switchBGM('bgm-mist-ending');
+  else if (ending.cls === 'end-bad' || ending.cls === 'end-regret') switchBGM('bgm-sad');
+  else if (ending.cls === 'end-best') fadeSwitchBGM('bgm-good-ending', 4000);
+}
+
+async function startGlitchEffect() {
+  const el = document.getElementById('glitch-overlay');
+  if (el) el.style.display = 'block';
+  const gs = document.getElementById('game-screen');
+  if (gs) gs.classList.add('glitch-active');
+}
+
+function stopGlitchEffect() {
+  const el = document.getElementById('glitch-overlay');
+  if (el) el.style.display = 'none';
+  const gs = document.getElementById('game-screen');
+  if (gs) gs.classList.remove('glitch-active');
+}
+
+function shakeScreen(times = 1) {
+  const app = document.getElementById('app');
+  let count = 0;
+  const doShake = () => {
+    app.classList.remove('shake');
+    void app.offsetWidth;
+    app.classList.add('shake');
+    count++;
+    if (count < times) setTimeout(doShake, 480);
+  };
+  doShake();
+}
+function reidShakeScreen(times = 1) {
+  const app = document.getElementById('app');
+  let count = 0;
+  const doShake = () => {
+    app.classList.remove('reid-shake');
+    void app.offsetWidth; // 強制 reflow 讓動畫重新觸發
+    app.classList.add('reid-shake');
+    count++;
+    if (count < times) setTimeout(doShake, 260);
+  };
+  doShake();
+}
+
+function startReidEndingSequence() {
+  // 鎖定互動（但允許走路），雷德不再說話
+  G.reidEndingLock = true;
+  if (G.red) { G.red.bubbleTimer = 0; G.red.autoSpeakTimer = 99999; }
+
+  // 30 秒線性壓黑
+  const fade = document.getElementById('night-fade');
+  fade.style.display = 'block';
+  fade.style.transition = 'none';
+  fade.style.opacity = '0';
+  fade.getBoundingClientRect();
+  fade.style.transition = 'opacity 30s linear';
+  fade.style.opacity = '1';
+
+  // ── BGM：4s 淡出現有音樂，接著 4s 淡入雷德結局曲 ──
+  fadeOutCurrentBGM(4000);
+  setTimeout(() => fadeSwitchBGM('bgm-reid-ending', 2000), 4000);
+
+  // ── 故障序列 ──
+  // t=0   2s 故障 + 晃動 1 下
+  startGlitchEffect(); reidShakeScreen(1);
+  // t=2   停止（平靜 3s）
+  setTimeout(() => stopGlitchEffect(), 2000);
+  // t=5   4s 故障 + 晃動 2 下
+  setTimeout(() => { startGlitchEffect(); reidShakeScreen(2); }, 5000);
+  // t=9   停止（平靜 2s）
+  setTimeout(() => stopGlitchEffect(), 9000);
+  // t=11  2s 故障 + 晃動 1 下
+  setTimeout(() => { startGlitchEffect(); reidShakeScreen(1); }, 11000);
+  // t=13  停止（平靜 3s）
+  setTimeout(() => stopGlitchEffect(), 13000);
+  // t=16  8s 故障 + 晃動 2 下
+  setTimeout(() => { startGlitchEffect(); reidShakeScreen(2); }, 16000);
+  // t=24  停止（平靜 3s）
+  setTimeout(() => stopGlitchEffect(), 24000);
+  // t=27  4s 故障 + 晃動 2 下（到全黑前最後一波）
+  setTimeout(() => { startGlitchEffect(); reidShakeScreen(2); }, 27000);
+
+  // t=30  結束，接結局
+  setTimeout(() => {
+    stopGlitchEffect();
+    fade.style.transition = 'none';
+    endGame('reid');
+  }, 30000);
+}
+
+async function startGoodEndingAnimation() {
+  // ── 階段一：戶外場景建立 ──
+
+  // 先讓 night-fade 覆蓋畫面，避免場景閃現
+  const nightFade = document.getElementById('night-fade');
+  nightFade.style.transition = 'none';
+  nightFade.style.opacity    = '1';
+  nightFade.style.display    = 'block';
+
+  // 切換畫面（night-fade 已覆蓋，不會閃）
+  document.getElementById('ending-screen').style.display = 'none';
+  document.getElementById('game-screen').style.display   = 'block';
+
+  // 設定戶外初始狀態
+  G.scene        = 'outside';
+  G.timePeriod   = 'evening';
+  G.paused       = true;
+  G.manualPaused = true;
+  G.pauseStartTime = performance.now();
+
+  // 借用 Day0 旗標：諾亞顯示、艾德林隱藏（他在裡面）
+  G.introDay0Active      = true;
+  G.introDay0NoahVisible = true;
+  G.introDay0HideEldrin  = true;
+
+  // 諾亞：戶外起始位置，背對畫面
+  G.noah.x = 302; G.noah.y = 420;
+  G.noah.pose = 'back';
+  G.noah.walkFrame = 0; G.noah.walkTick = 0;
+
+  // 希奧妮：諾亞旁邊，背對畫面
+  G.theonieVisible = true;
+  G.theonieScene   = 'outside';
+  G.theonie.x = 327; G.theonie.y = 420;
+  G.theonie.pose = 'back';
+  G.theonie.walkFrame = 0; G.theonie.walkTick = 0;
+
+  // 艾德林：大廳位置先設好（戶外不顯示）
+  G.eldrin.x = 444; G.eldrin.y = 231;
+  G.eldrin.pose = 'front';
+  G.eldrin.sleepEye = 0;
+
+  renderHUD();
+  renderScene();
+  renderChars();
+
+  // 壓黑停留 2 秒，然後慢慢淡入戶外場景
+  await waitMs(2000);
+  await fadeFromBlack(1800);
+  await waitMs(800);
+
+  // ── 階段二：走向門口 ──
+  playLoopingAudio('sfx-outdoor-walk', 1.7);
+  await Promise.all([
+    animateNpcTo(G.noah,    { x: 309, y: 252 }, 3200),
+    animateNpcTo(G.theonie, { x: 334, y: 252 }, 3200),
+  ]);
+  stopAudio('sfx-outdoor-walk');
+  await waitMs(150);
+
+  // 開門音效
+  playLoopingAudio('sfx-door-open', 6.0);
+  await waitMs(300);
+  await fadeToBlack(500);
+
+  // ── 切換到大廳 ──
+  G.scene = 'lobby';
+  G.introDay0HideEldrin = false;
+  G.theonieScene = 'lobby';
+
+  // 諾亞：門口左側，面向右（望向艾德林）
+  G.noah.x = 389; G.noah.y = 373;
+  G.noah.pose = 'back';
+  G.noah.walkFrame = 0; G.noah.walkTick = 0;
+
+  // 希奧妮：諾亞旁邊，背對畫面
+  G.theonie.x = 463; G.theonie.y = 370;
+  G.theonie.pose = 'back';
+  G.theonie.walkFrame = 0; G.theonie.walkTick = 0;
+
+  renderHUD();
+  renderScene();
+  renderChars();
+  await waitMs(200);
+  await fadeFromBlack(650);
+
+  await waitMs(1000);
+
+  // ── 階段三：自動對話 ──
+  await playAutoScene([
+    { speaker: '諾亞',   text: '艾德林...抱歉！這麼晚還來找你...但是這件事有點緊急...' },
+    { speaker: '艾德林', text: '諾亞！發生了什麼事嗎？' },
+    { speaker: '諾亞',   text: '你記得我上次和你提過那被詛咒的人嗎？她的狀況有點糟糕...' },
+    { speaker: '諾亞',   text: '我怕再晚就來不及了，所以只好直接帶她來找你...' },
+    { speaker: '諾亞',   text: '對不起！我知道這不是你的本業，但是我們除了你，沒有人可以依靠了！' },
+    { speaker: '諾亞',   text: '你可以幫幫她嗎？' },
+    { speaker: '諾亞',   text: '她是希奧妮．哈特，是我認識很久的好友！' },
+    { speaker: '希奧妮', text: '諾亞...這裡不是藥水店嗎？為什麼要帶我來這裡...一般的藥水店可沒辦法解決我的詛咒.....' },
+    { speaker: '艾德林', text: '我知道了...！希奧妮小姐，請讓我先看一下你的眼睛...' },
+  ], 4000);
+
+  // ── 階段四：結尾 ──
+
+  // 清除驚嘆號（遊戲暫停中計時器不會自動倒數）
+  G.eldrinEmoteTimer = 0;
+  renderChars();
+
+  // 6 秒慢慢壓黑
+  await fadeToBlack(6000);
+
+  // 切換到尾聲畫面（night-fade 仍覆蓋，不會閃）
+  document.getElementById('game-screen').style.display = 'none';
+  document.querySelector('.end-label').style.display   = 'none';
+  document.getElementById('end-title').style.display   = 'none';
+  document.getElementById('end-stats').style.display   = 'none';
+  document.getElementById('end-desc').textContent      = '苦艾與甘露的故事還會繼續進行下去。';
+  const epiloguBtn = document.getElementById('btn-ending-action');
+  epiloguBtn.textContent = '再玩一次';
+  epiloguBtn.onclick = restartGame;
+  epiloguBtn.style.display = 'none';
+  const epilogueScreen = document.getElementById('ending-screen');
+  epilogueScreen.style.paddingTop = '340px';
+  epilogueScreen.style.display = 'flex';
+
+  // 淡入尾聲文字
+  await fadeFromBlack(1400);
+
+  // 稍等後顯示「再玩一次」
+  await waitMs(2200);
+  epiloguBtn.style.display = '';
+}
+
 function _showEndingScreen(ending) {
-  if (ending.cls === 'end-bad') switchBGM('bgm-sad');
   document.getElementById('game-screen').style.display = 'none';
   const es = document.getElementById('ending-screen');
   es.style.display = 'flex';
@@ -12499,9 +13020,17 @@ function _showEndingScreen(ending) {
     <div class="end-stat">心情（好感）<span>${G.mood}</span></div>
     <div class="end-stat">艾德林 HP <span>${G.eldrinHp ?? 100}</span></div>
   `;
+  const btnAction = document.getElementById('btn-ending-action');
+  if (ending.cls === 'end-best') {
+    btnAction.textContent = '繼續';
+    btnAction.onclick = startGoodEndingAnimation;
+  } else {
+    btnAction.textContent = '再玩一次';
+    btnAction.onclick = restartGame;
+  }
   _startLineByLine(ending.desc, 700, 45, () => {
     document.getElementById('end-stats').style.display = '';
-    document.querySelector('.btn-restart').style.display = '';
+    btnAction.style.display = '';
   });
 }
 
@@ -12526,32 +13055,44 @@ function endGame(type) {
   else if (type === 'avaren_death') ending = ENDINGS.avaren_death;
   else if (type === 'eldrin_death') ending = ENDINGS.eldrin_death;
   else if (type === 'wormwood') ending = ENDINGS.wormwood;
-  else if (G.mood > 80 && G.trust < 30)           ending = ENDINGS.captivity;
-  else if (G.curse >= 80 || G.pain >= 95)         ending = ENDINGS.bad_curse;
-  else if (G.mood > 60 && G.trust >= 40 && G.curse <= 70 && G.pain < 90)
+  else if (type === 'reid') ending = ENDINGS.reid;
+  else if (G.mood > 80 && G.trust < 30 && G.pain < 50 && G.curse < 50)
+                                                       ending = ENDINGS.captivity;
+  else if (G.curse >= 80 || G.pain >= 80)         ending = ENDINGS.bad_curse;
+  else if (G.mood > 60 && G.trust >= 60 && G.curse < 30 && G.pain < 30)
                                                        ending = ENDINGS.nectar;
+  else if (G.mood < 40 && G.trust < 40 && G.pain < 30 && G.curse < 30)
+                                                       ending = ENDINGS.mist;
   else                                             ending = ENDINGS.wormwood;
 
-  // 找出結局對應的旁白（倒下和甘露無前置旁白）
+  // 找出結局對應的旁白（倒下無前置旁白）
   const endingKey = type === 'eldrin_death' ? null
     : Object.keys(ENDINGS).find(k => ENDINGS[k] === ending);
   const narLines = endingKey ? ENDING_NARRATIONS[endingKey] : null;
 
   if (narLines) {
-    // 壞結局旁白開始前先切換悲傷音樂
-    if (ending.cls === 'end-bad' || ending.cls === 'end-regret') switchBGM('bgm-sad');
+    // 依結局類型切換音樂
+    playEndingBGM(endingKey, ending);
     // 壓黑後顯示旁白，點擊推進，最後接結局畫面
     const fade = document.getElementById('night-fade');
     const doNarration = () => {
       const overlay = document.getElementById('death-overlay');
       const content = document.getElementById('death-text-content');
       let idx = 0;
-      content.textContent = narLines[0];
+
+      const showLine = i => {
+        startDialogueTypewriter({ text: narLines[i], targetEl: content, arrowEl: null, showArrowAfter: false });
+      };
+
+      showLine(0);
       overlay.style.display = 'block';
       overlay.onclick = () => {
+        // 打字機還在跑 → 先跳過顯示完整文字
+        if (finishDialogueTypewriter()) { playDialogueNextSfx(); return; }
+        playDialogueNextSfx();
         idx++;
         if (idx < narLines.length) {
-          content.textContent = narLines[idx];
+          showLine(idx);
         } else {
           overlay.style.display = 'none';
           overlay.onclick = null;
@@ -12825,6 +13366,9 @@ function loadFromSlot(n) {
     if (G.winterIncenseIntroSeen == null) G.winterIncenseIntroSeen = false;
     if (G.day === 8) G.weather = 'rain';
     else if (G.day === 9) G.weather = 'clear';
+    if (!G.theonie) G.theonie = { x:400, y:300, pose:'front', walkTick:0, walkFrame:0, walkDir:{dx:0,dy:0}, walkTimer:0, bubbleTimer:0, bubbleText:'', autoSpeakTimer:300, blinkTimer:300, blinkPhase:-1, blinkPhaseTick:0, pushVx:0, pushVy:0 };
+    if (G.theonieVisible == null) G.theonieVisible = false;
+    if (G.theonieScene == null) G.theonieScene = 'outside';
     if (G.noahDay2IntroSeen == null) G.noahDay2IntroSeen = false;
     if (G.noahLobbyTalking == null) G.noahLobbyTalking = false;
     if (G.noahLakeMoonSeen == null) G.noahLakeMoonSeen = false;
@@ -12933,6 +13477,56 @@ function fadeFromBlack(duration = 1800) {
 
 function playActionScene(lines) {
   return new Promise(resolve => startActionScene(lines, 0, resolve));
+}
+
+// 自動推進版對話（不需玩家點擊，打字機跑完後自動等 pauseAfterMs 再換下一行）
+function playAutoScene(lines, pauseAfterMs = 2800) {
+  return new Promise(resolve => {
+    G.paused = true;
+    G.actionSceneActive = true;
+    G.autoScenePlaying = true;
+    G.actionSceneOnDone = resolve;
+    G.actionSceneLines = lines;
+    const overlay = document.getElementById('action-scene-overlay');
+    overlay.style.pointerEvents = 'none';
+    overlay.style.display = 'flex';
+
+    const showNext = idx => {
+      if (idx >= lines.length) {
+        G.actionSceneActive = false;
+        G.autoScenePlaying = false;
+        overlay.style.display = 'none';
+        overlay.style.pointerEvents = 'auto';
+        G.actionSceneOnDone = null;
+        resolve();
+        return;
+      }
+      G.actionSceneLineIdx = idx;
+      const line    = lines[idx];
+      const isChar  = !NPC_SPEAKERS.has(line.speaker);
+      const textEl  = document.getElementById('asc-text');
+      const btn     = document.getElementById('asc-btn');
+      const portrait = document.getElementById('asc-portrait');
+      const arrow   = document.getElementById('asc-arrow');
+      setSpeakerLayout(line.speaker);
+      document.getElementById('asc-speaker').textContent = '— ' + line.speaker + ' —';
+      textEl.textContent = '';
+      textEl.className = 'asc-text' + (SPEAKER_TEXT_CLASS[line.speaker] ? ' ' + SPEAKER_TEXT_CLASS[line.speaker] : '');
+      applySpeakerPortrait(line.speaker, portrait);
+      btn.textContent = '';
+      btn.className = isChar ? 'asc-btn-char' : 'asc-btn-narr';
+      arrow.style.display = 'none';
+      startDialogueTypewriter({
+        text: line.text,
+        targetEl: isChar ? btn : textEl,
+        arrowEl: arrow,
+        showArrowAfter: false,
+        onDone: () => setTimeout(() => showNext(idx + 1), pauseAfterMs),
+      });
+    };
+
+    showNext(0);
+  });
 }
 
 function settingsVolume() {
@@ -13385,7 +13979,7 @@ async function skipToDay1() {
   document.getElementById('game-screen').style.display  = 'block';
   document.getElementById('blood-moon-badge').style.display = 'none';
   warn('');
-  ['bgm','bgm-bloodmoon','bgm-sad','bgm-day10','sfx-day0-rain','sfx-day0-walk'].forEach(id => {
+  ['bgm','bgm-bloodmoon','bgm-sad','bgm-day10','bgm-good-ending','bgm-captivity-ending','bgm-mist-ending','bgm-reid-ending','sfx-day0-rain','sfx-day0-walk'].forEach(id => {
     const el = document.getElementById(id);
     if (el) { el.pause(); el.currentTime = 0; }
   });
@@ -13406,7 +14000,7 @@ async function startGame() {
   warn('');
 
   stopAudio('sfx-day0-walk');
-  ['bgm', 'bgm-bloodmoon', 'bgm-sad', 'bgm-day10'].forEach(id => {
+  ['bgm', 'bgm-bloodmoon', 'bgm-sad', 'bgm-day10', 'bgm-good-ending', 'bgm-captivity-ending', 'bgm-mist-ending', 'bgm-reid-ending'].forEach(id => {
     const el = document.getElementById(id);
     if (el) { el.pause(); el.currentTime = 0; }
   });
@@ -13428,7 +14022,7 @@ async function startGame() {
   }, 120);
 }
 
-const BGM_IDS = ['bgm', 'bgm-bloodmoon', 'bgm-sad', 'bgm-day10'];
+const BGM_IDS = ['bgm', 'bgm-bloodmoon', 'bgm-sad', 'bgm-day10', 'bgm-good-ending', 'bgm-captivity-ending', 'bgm-mist-ending', 'bgm-reid-ending'];
 const DAILY_BGM_RULES = {
   default: {
     morning: 'bgm',
@@ -13575,7 +14169,7 @@ function restartGame() {
   if (!_typewriterDone) { _skipEndingTypewriter(); return; }
   document.getElementById('ending-screen').style.display = 'none';
   document.getElementById('title-screen').style.display  = 'flex';
-  ['bgm', 'bgm-bloodmoon', 'bgm-sad', 'bgm-day10'].forEach(id => {
+  ['bgm', 'bgm-bloodmoon', 'bgm-sad', 'bgm-day10', 'bgm-good-ending', 'bgm-captivity-ending', 'bgm-mist-ending', 'bgm-reid-ending'].forEach(id => {
     const el = document.getElementById(id);
     if (el) { el.pause(); el.currentTime = 0; }
   });
