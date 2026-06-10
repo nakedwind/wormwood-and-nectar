@@ -5412,6 +5412,29 @@ function pickGatherItem() {
   return GATHER_ITEMS[0];
 }
 
+function triggerDay6AvarenGone() {
+  if (G.day !== 6 || G.day4EventTriggered || G.mood < 50 || G.curse >= 80 || G.pain >= 80) return;
+  G.day4EventTriggered = true;
+  G.day4AvarenGone = true;
+  G.day4AvarenNotified = false;
+  G.avarenScene = 'gone';
+  if (G.carryingSoup) {
+    G.carryingSoup = false;
+    G.soupReady = true;
+    document.getElementById('soup-carry-icon').style.display = 'none';
+    document.getElementById('soup-obj').style.display = 'block';
+  }
+  if (G.scene === 'room') {
+    G.day4AvarenNotified = true;
+    setTimeout(() => {
+      startActionScene([
+        { speaker: '旁白', text: '你四處找了找，都沒有找到阿瓦倫的身影。' },
+        { speaker: '艾德林', text: '「阿瓦倫……？你在哪裡？」' }
+      ], 400, () => {});
+    }, 1200);
+  }
+}
+
 function triggerAvarenGather() {
   const gItem = pickGatherItem();
   const bagFull = isBagFull(gItem.key, 1);
@@ -6678,6 +6701,7 @@ function initState() {
     dailySellBonus: {},
     bandagedToday: false,
     exorcismToday: false,
+    avarenReadToday: 0,
   };
 }
 
@@ -7612,28 +7636,7 @@ function gameLoop() {
         }, 400);
       }
       // 第6天夜晚：阿瓦倫消失事件（旁白在玩家進房間時才觸發）
-      if (G.day === 6 && !G.day4EventTriggered && G.mood >= 50 && G.curse < 80 && G.pain < 80) {
-        G.day4EventTriggered = true;
-        G.day4AvarenGone = true;
-        G.day4AvarenNotified = false;
-        G.avarenScene = 'gone';
-        // 若玩家手上端著湯，自動放回廚房
-        if (G.carryingSoup) {
-          G.carryingSoup = false;
-          G.soupReady = true;
-          document.getElementById('soup-carry-icon').style.display = 'none';
-          document.getElementById('soup-obj').style.display = 'block';
-        }
-        if (G.scene === 'room') {
-          G.day4AvarenNotified = true;
-          setTimeout(() => {
-            startActionScene([
-              { speaker: '旁白', text: '你四處找了找，都沒有找到阿瓦倫的身影。' },
-              { speaker: '艾德林', text: '「阿瓦倫……？你在哪裡？」' }
-            ], 400, () => {});
-          }, 1200);
-        }
-      }
+      triggerDay6AvarenGone();
       // 偶數夜：在森林產生妖精
       if (G.day % 2 === 0) {
         G.fairyCaught = false;
@@ -8114,7 +8117,7 @@ function gameLoop() {
   }
 
   // 阿瓦倫戶外採集（信任>50）
-  if (!isAvarenUnconscious() && G.scene === 'outside' && G.trust > 50 && G.avarenScene === 'outside' && !G.paused) {
+  if (!isAvarenUnconscious() && G.scene === 'outside' && G.trust > 50 && G.avarenScene === 'outside' && !G.paused && !G.actionSceneActive) {
     G.avaren.gatherTimer--;
     if (G.avaren.gatherTimer <= 0) {
       G.avaren.gatherTimer = Math.floor(Math.random() * 1800) + 2700;
@@ -9863,10 +9866,10 @@ function generateDailyBuyList() {
   const shuffled = [...TRADE_BUY].sort(() => Math.random() - 0.5).slice(0, 8);
   // 隨機選2個打折
   const saleIdxs = new Set();
-  while (saleIdxs.size < 2) saleIdxs.add(Math.floor(Math.random() * 8));
+  while (saleIdxs.size < 3) saleIdxs.add(Math.floor(Math.random() * 8));
   G.dailyBuyList = shuffled.map((item, i) => {
     if (saleIdxs.has(i)) {
-      const discount = (Math.floor(Math.random() * 5) + 5) / 10; // 0.5~0.9
+      const discount = (Math.floor(Math.random() * 8) + 2) / 10; // 0.2~0.9
       const salePrice = Math.max(1, Math.round(item.price * discount));
       return { ...item, salePrice, onSale: true };
     }
@@ -9877,7 +9880,7 @@ function generateDailyBuyList() {
   const sellShuffled = [...TRADE_SELL].sort(() => Math.random() - 0.5).slice(0, 6);
   G.dailySellBonus = {};
   sellShuffled.forEach(item => {
-    const bonus = (Math.floor(Math.random() * 9) + 1) / 10 + 1; // 1.1~1.5 (步距10%)
+    const bonus = (Math.floor(Math.random() * 8) + 1) / 10 + 1; // 1.1~1.8 (步距10%)
     G.dailySellBonus[item.id] = Math.max(item.price + 1, Math.round(item.price * bonus));
   });
 }
@@ -10762,7 +10765,7 @@ function doAction_ReadBook() {
   const scene2 = AVAREN_READ_SCENES[G.avarenReadPool.pop()];
   startActionScene([...scene1, ...scene2], CARE_MAX, () => {
     chg('mood', 3);
-    chg('knowledge', 5);
+    chg('trust', 5);
     renderHUD();
   });
 }
@@ -12445,28 +12448,7 @@ function skipToEvening() {
       }, 400);
     }
     // 第6天夜晚：阿瓦倫消失事件（旁白在玩家進房間時才觸發）
-    if (G.day === 6 && !G.day4EventTriggered && G.mood >= 50 && G.curse < 80 && G.pain < 80) {
-      G.day4EventTriggered = true;
-      G.day4AvarenGone = true;
-      G.day4AvarenNotified = false;
-      G.avarenScene = 'gone';
-      // 若玩家手上端著湯，自動放回廚房
-      if (G.carryingSoup) {
-        G.carryingSoup = false;
-        G.soupReady = true;
-        document.getElementById('soup-carry-icon').style.display = 'none';
-        document.getElementById('soup-obj').style.display = 'block';
-      }
-      if (G.scene === 'room') {
-        G.day4AvarenNotified = true;
-        setTimeout(() => {
-          startActionScene([
-            { speaker: '旁白', text: '你四處找了找，都沒有找到阿瓦倫的身影。' },
-            { speaker: '艾德林', text: '「阿瓦倫……？你在哪裡？」' }
-          ], 400, () => {});
-        }, 1200);
-      }
-    }
+    triggerDay6AvarenGone();
     // 偶數夜：在森林產生妖精
     if (G.day % 2 === 0) {
       G.fairyCaught = false;
@@ -12646,15 +12628,14 @@ function endDay() {
     return;
   }
 
-  // 血月夜結束：清除疊層，判定死亡條件
+  const wasBloodMoon = G.bloodMoon7Active;
+
+  // 血月夜結束：清除疊層
   if (G.bloodMoon7Active) {
     G.bloodMoon7Active = false;
     G.bloodMoon7Calmed = false;
     applyBGMForState();
     document.getElementById('blood-moon-7-overlay').style.display = 'none';
-    if (G.pain >= 80 && G.curse >= 80) {
-      G.bloodMoon7Failed = true;
-    }
   }
 
   // Nightly decay
@@ -12680,7 +12661,7 @@ function endDay() {
   chg('eldrinHp', 20);
 
   // 第10天未使用忘卻藥水：阿瓦倫拒絕照護，詛咒不解除反而增加
-  if (G.day === 10 && !G.usedForgetMagic && !G.bloodMoon7Active) {
+  if (G.day === 10 && !G.usedForgetMagic && !wasBloodMoon) {
     chg('curse', +6);
     renderHUD();
     if (G.pain >= 100 && G.curse >= 95) { showEvent('💀','危機——', `阿瓦倫的疼痛與詛咒同時達到極限……\n黑霧將他吞噬。`, () => endGame('crisis'), 'red'); return; }
@@ -12696,6 +12677,11 @@ function endDay() {
   const curseBefore = G.curse;
   if (removed > 0) chg('curse', -removed);
   const actualRemoved = curseBefore - G.curse;
+
+  // 血月夜後：在所有數值變化完成後才判定死亡
+  if (wasBloodMoon && G.pain >= 80 && G.curse >= 80) {
+    G.bloodMoon7Failed = true;
+  }
 
   if (G.pain >= 100 && G.curse >= 95) { showEvent('💀','危機——', `阿瓦倫的疼痛與詛咒同時達到極限……\n黑霧將他吞噬。`, () => endGame('crisis'), 'red'); return; }
 
@@ -12952,10 +12938,6 @@ function continueAfterNight(prevText) {
   G.paused = false;
   G.dayStartMs = performance.now();
   G.timePeriod = 'morning';
-  // 第11天剛開始：存下快照（只存一次，迴圈期間不覆蓋）
-  if (G.day === 11 && !G.day11Snapshot) {
-    try { G.day11Snapshot = JSON.parse(JSON.stringify(G)); } catch(e) {}
-  }
   G.periodTransitioned = false;
   G.bgmPreEveningFadeStarted = false;
   G.dayEndTriggered = false;
@@ -12964,6 +12946,10 @@ function continueAfterNight(prevText) {
   G.bandagedToday = false;
   G.exorcismToday = false;
   G.avarenReadToday = 0;
+  // 第11天剛開始：存下快照（只存一次，迴圈期間不覆蓋；放在每日重置之後確保快照含正確初始值）
+  if (G.day === 11 && !G.day11Snapshot) {
+    try { G.day11Snapshot = JSON.parse(JSON.stringify(G)); } catch(e) {}
+  }
   // 史萊姆隔天早上重生
   G.reidSlaySlimesDead = false;
   // 雷德討伐委託重置
@@ -13031,18 +13017,7 @@ function continueAfterNight(prevText) {
   } else {
     changeScene('room', { x: 260, y: 380 });
   }
-  let redMsg = '';
-  if (isReidDay()) {
-    if (G.redCommission && G.redCommission.returnDay === G.day) {
-      redMsg = '\n雷德出現在戶外，背包鼓鼓的——他把委託的物品帶回來了。';
-    } else if (G.day === 3) {
-      redMsg = '\n小屋外似乎來了一位陌生的青年。';
-    } else {
-      redMsg = '\n雷德出現在戶外。';
-    }
-  }
-  redMsg = '';
-  if (showDayStartOpening(redMsg)) {
+  if (showDayStartOpening('')) {
     triggerAvarenDay2WakeIntro();
     if (G.day === 10) {
       slowFadeInFromBlack(5000);
