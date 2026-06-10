@@ -2092,7 +2092,7 @@ body {
         <div id="lobby-night-glow-1" class="lobby-night-glow"></div>
         <div id="lobby-night-glow-2" class="lobby-night-glow"></div>
         <div id="lobby-counter" style="position:absolute;left:-12px;top:152px;width:410px;height:138px;z-index:10;pointer-events:none;"><img src="bg_lobby/bg_lobby_counter.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
-        <div id="lobby-potion" style="display:none;position:absolute;left:126px;top:172px;width:45px;height:43px;z-index:12;pointer-events:none;"><img id="lobby-potion-img" src="Medicine_blue.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
+        <div id="lobby-potion" style="display:none;position:absolute;left:126px;top:182px;width:45px;height:43px;z-index:12;pointer-events:none;"><img id="lobby-potion-img" src="Medicine_blue.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
         <div id="lobby-chair"   style="position:absolute;left:6px;top:270px;width:74px;height:135px;z-index:10;pointer-events:none;"><img src="bg_lobby/bg_lobby_chair.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
         <div id="lobby-table"   style="position:absolute;left:2px;top:352px;width:85px;height:136px;z-index:10;pointer-events:none;"><img src="bg_lobby/bg_lobby_table.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
       </div>
@@ -2294,15 +2294,8 @@ body {
 
 
     <!-- 按鍵提示 -->
-    <div style="width:960px;min-width:960px;background:#0a0804;border:1px solid #2a1e08;border-top:none;padding:7px 10px;box-sizing:border-box;display:flex;flex-wrap:wrap;gap:4px 14px;">
-      <span style="color:#4a3820;font-size:11px;letter-spacing:1px;width:100%;margin-bottom:2px;">按鍵提示</span>
-      <span style="color:#706050;font-size:11px;">⬆⬇⬅➡ 移動</span>
-      <span style="color:#706050;font-size:11px;">空白鍵 互動／推進對話</span>
-      <span style="color:#706050;font-size:11px;">Enter 推進對話</span>
-      <span style="color:#706050;font-size:11px;">Esc 關閉選單</span>
-      <span style="color:#706050;font-size:11px;">E 開關背包</span>
-      <span style="color:#706050;font-size:11px;">F 換場景</span>
-      <span style="color:#706050;font-size:11px;">Tab 切換商店頁</span>
+    <div style="width:960px;min-width:960px;background:#0a0804;border:1px solid #2a1e08;border-top:none;padding:5px 10px;box-sizing:border-box;">
+      <span style="color:#706050;font-size:11px;">[⬆⬇⬅➡] 移動　　[空白鍵] 互動　　[Esc] 關閉選單　　[E] 背包　　[Tab] 切換商店頁</span>
     </div>
 
     <div id="debug-bar" style="display:none;">
@@ -5306,7 +5299,10 @@ function runWinterChat() {
   if (G.day >= 7) {
     if (!G.winterChat7_1Seen) {
       if (!canUnlockNewStage) { story('溫特', pick(WINTER_DLG_GENERAL)); return; }
-      G.winterNewStageDay = G.day; G.winterChat7_1Seen = true; chg('herb', 2); renderHUD(); startActionScene(WINTER_CHAT_DAY7_1, 400, () => {}); return;
+      G.winterNewStageDay = G.day; G.winterChat7_1Seen = true;
+      const gotHerb = !isBagFull('herb', 2);
+      if (gotHerb) { chg('herb', 2); renderHUD(); } else { toast('背包已滿，無法收下藥草。'); }
+      startActionScene(WINTER_CHAT_DAY7_1, 400, () => {}); return;
     }
     if (!G.winterChat7_2Seen) { G.winterChat7_2Seen = true; startActionScene(WINTER_CHAT_DAY7_2, 400, () => {}); return; }
   }
@@ -5495,7 +5491,7 @@ const BLOOD_MOON_MEMORIES = [
 ];
 
 const AVAREN_DAY10_FORGET_TALK_STORY = [
-  { speaker: '旁白', text: '清晨的光落在床邊。\n\n阿瓦倫躺在床上，眼睛半睜著。\n他的臉色仍然蒼白，但呼吸已經比昨夜平穩許多。\n\n你走近時，他慢慢看向你。' },
+  { speaker: '旁白', text: '清晨的光落在床邊。\n阿瓦倫躺在床上，眼睛半睜著。\n他的臉色仍然蒼白，但呼吸已經比昨夜平穩許多。\n你走近時，他慢慢看向你。' },
   { speaker: '阿瓦倫', text: '……艾德林？' },
   { speaker: '艾德林', text: '嗯，我在。' },
   { speaker: '阿瓦倫', text: '……天亮了？' },
@@ -5513,12 +5509,12 @@ const AVAREN_DAY10_FORGET_TALK_STORY = [
   { speaker: '艾德林', text: '會。' },
   { speaker: '阿瓦倫', text: '……那我可以先睡一下嗎？' },
   { speaker: '艾德林', text: '嗯，睡吧。' },
-  { speaker: '旁白', text: '阿瓦倫慢慢閉上眼睛。\n過了一會兒，你聽見了睡眠時淺淺的呼吸聲。\n\n你輕輕地撫摸阿瓦倫的額頭，你忍住情緒，很勉強的只能擠出空泛的幾句話。' },
+  { speaker: '旁白', text: '阿瓦倫慢慢閉上眼睛。\n過了一會兒，你聽見了睡眠時淺淺的呼吸聲。\n你輕輕地撫摸阿瓦倫的額頭，你忍住情緒，很勉強的只能擠出空泛的幾句話。' },
   { speaker: '艾德林', text: '阿瓦倫...對不起...都是我的錯...全都是我的錯...對不起...' },
 ];
 
 const AVAREN_DAY10_NO_FORGET_TALK_STORY = [
-  { speaker: '旁白', text: '清晨的光照進房間。\n\n阿瓦倫躺在床上，緩緩的張開了眼睛。\n你著急地走到床邊，但他沒有立刻看你。' },
+  { speaker: '旁白', text: '清晨的光照進房間。\n阿瓦倫躺在床上，緩緩的張開了眼睛。\n你著急地走到床邊，但他沒有立刻看你。' },
   { speaker: '艾德林', text: '阿瓦倫...！你醒了！你還好嗎...？' },
   { speaker: '阿瓦倫', text: '......' },
   { speaker: '旁白', text: '阿瓦倫沒有回應你，房間裡安靜了一會兒。\n你聽見自己的呼吸聲，重得像壓在胸口。' },
@@ -5533,7 +5529,7 @@ const AVAREN_DAY10_NO_FORGET_TALK_STORY = [
   { speaker: '艾德林', text: '阿瓦倫…對不起…' },
   { speaker: '旁白', text: '道歉落在房間裡而沒有回應。' },
   { speaker: '旁白', text: '你想說不是。\n想說你是真的想救他。\n想說那時候的自己太弱、太害怕、太無能。' },
-  { speaker: '旁白', text: '可是這些話都像在替自己找理由。\n\n你站在床邊。\n第一次覺得，照顧一個人有時候不是靠近。\n而是忍住不要靠近。' },
+  { speaker: '旁白', text: '可是這些話都像在替自己找理由。\n你站在床邊。\n第一次覺得，照顧一個人有時候不是靠近。\n而是忍住不要靠近。' },
 ];
 
 const NARR_GATHER = [
@@ -5612,54 +5608,59 @@ const NARR_CHAT = [
 ];
 const AVAREN_READ_SCENES = [
   [
-    { speaker: '旁白', text: '你翻開一本藥草圖鑑，把書頁稍微傾向阿瓦倫，讓他也能看見上面的圖。\n你指著一朵夜裡才會盛開的小花，輕聲念起它的名字。' },
-    { speaker: '阿瓦倫', text: '「……這個，是花嗎？」\n「它晚上才會醒嗎？」' },
-    { speaker: '旁白', text: '阿瓦倫盯著那幅小小的插圖看了很久。\n你把書頁停在那裡，沒有急著翻過去。' },
+    { speaker: '旁白', text: '你翻開一本說明野外可食植物的書，指著幾種葉子的圖，慢慢念出名字和特徵。\n有些長在路邊，有些躲在潮濕的石縫裡。' },
+    { speaker: '阿瓦倫', text: '「……那這個呢？」「這種，我見過。」' },
+    { speaker: '旁白', text: '你停下來看他指的那幅圖。是一種常見的野菜，可以煮著吃。\n阿瓦倫沒有再說話，只是把那頁看了很久。' },
   ],
   [
-    { speaker: '旁白', text: '你找出一本描寫森林動物的書，念起那些小小生物在樹叢間生活的段落。\n書頁上畫著一隻蜷在草窩裡睡覺的兔子。' },
-    { speaker: '阿瓦倫', text: '「……它會害怕人嗎？」\n「如果靠近它，它會逃走嗎？」' },
-    { speaker: '旁白', text: '你說大概會吧，因為小動物都很警覺。\n阿瓦倫沒有回答，只是安靜地看著那隻兔子。' },
+    { speaker: '旁白', text: '你念到一頁關於有毒植物的記載，語氣稍微嚴肅了一些。\n書上列出幾種顏色鮮艷的漿果，旁邊寫著誤食後的症狀。' },
+    { speaker: '阿瓦倫', text: '「……這個，不能吃嗎？」「它看起來很甜。」' },
+    { speaker: '旁白', text: '你說，越漂亮的東西有時候越危險。\n阿瓦倫盯著那張圖片一會兒，然後又轉頭盯著你的臉很久。「……是這樣嗎？。」' },
   ],
   [
-    { speaker: '旁白', text: '你拿下一本關於遠方城鎮的書，慢慢念著街道、鐘樓與市集的段落。\n書裡寫著人們會在早晨買麵包，也會在夜裡點亮窗邊的燈。' },
-    { speaker: '阿瓦倫', text: '「……真的有那麼多人住在一起嗎？」\n「他們不會覺得吵嗎？」' },
-    { speaker: '旁白', text: '你笑了一下，說有時候會很吵，但也很熱鬧。\n阿瓦倫像是不太能想像那樣的地方，卻沒有移開視線。' },
+    { speaker: '旁白', text: '你找出一本說明藥草急救用法的書，念起包紮與止血的段落。\n書上畫著手法簡單的示意圖。' },
+    { speaker: '阿瓦倫', text: '「……這些，你都會嗎？」' },
+    { speaker: '旁白', text: '你說大部分會，但有些要有材料才行。\n阿瓦倫悄悄低下頭，摸了摸自己手腕上的傷疤。\n你沒有說什麼，繼續念下去。' },
   ],
   [
-    { speaker: '旁白', text: '你念著書裡關於星星的文字，聲音很輕，像是不想驚動房間裡的安靜。\n書上說，星星即使在白天看不見，也依然停在天空深處。' },
-    { speaker: '阿瓦倫', text: '「……看不見，也還在嗎？」\n「那要怎麼知道它沒有消失？」' },
-    { speaker: '旁白', text: '你停了一下，告訴他，有些東西不是看不見就不存在。\n阿瓦倫低下眼，像是把這句話記了下來。' },
+    { speaker: '旁白', text: '你念到一段說明如何晾乾和保存藥草的記載。\n書上說，採回來的藥草要倒掛在通風的地方，等葉子完全乾透，才能放進袋子裡存起來。' },
+    { speaker: '阿瓦倫', text: '「……倒著掛，為什麼？」' },
+    { speaker: '旁白', text: '你說，這樣水分才能往下走，乾得比較均勻。\n阿瓦倫想起廚房掛著的那幾束藥草。\n「……原來如此，所以廚房的藥草才會那樣掛。」\n他輕輕地說，像是把一件一直看著、卻沒問過的事，終於對上了答案。' },
   ],
   [
-    { speaker: '旁白', text: '你找到一本破舊的童話書，封面已經磨損了。\n故事裡的孩子在森林裡迷了路，走了很久，才終於看見一盞燈。' },
-    { speaker: '阿瓦倫', text: '「……他最後有回家嗎？」' },
-    { speaker: '旁白', text: '你點點頭，繼續念下去。\n阿瓦倫聽得很安靜，直到故事結束，都沒有再打斷你。' },
+    { speaker: '旁白', text: '你找到一段說明退燒用藥草的記載，念給阿瓦倫聽。\n書上說，把某幾種葉子搗碎敷在額頭，能稍微降低體溫，讓人舒服一些。' },
+    { speaker: '阿瓦倫', text: '「……你知道這個嗎？」' },
+    { speaker: '旁白', text: '你說，你試過幾次，有點用，但還是要多喝水才行。\n阿瓦倫安靜了一下。\n「……我會記起來。」' },
   ],
   [
-    { speaker: '旁白', text: '你把一本插圖很多的舊書放在兩人中間，指著一張湖泊的圖慢慢念。\n書裡說，湖水會記住月亮的形狀。' },
-    { speaker: '阿瓦倫', text: '「……水也會記得東西嗎？」\n「那它會忘記嗎？」' },
-    { speaker: '旁白', text: '你說，也許水只是一直流動，所以看起來像忘了。\n阿瓦倫垂下眼，指尖輕輕碰了一下書頁上的湖。' },
+    { speaker: '旁白', text: '你念到一段說明如何用氣味辨別藥草的文字。\n書上說，很多植物光靠眼睛看很難分辨，但揉一下葉片，聞氣味，就能大致判斷。' },
+    { speaker: '阿瓦倫', text: '「……揉一下就能知道嗎？」' },
+    { speaker: '旁白', text: '你說，要多聞幾種才記得住。\n阿瓦倫悄悄看了一眼窗邊曬著的藥草。\n「……明天，可以帶我去聞嗎？」' },
   ],
   [
-    { speaker: '旁白', text: '你翻到一段關於鳥類遷徙的記載，念給阿瓦倫聽。\n書上說，有些鳥會飛過很遠很遠的地方，最後還是能找到回家的路。' },
-    { speaker: '阿瓦倫', text: '「……牠們不會迷路嗎？」\n「如果找不到家呢？」' },
-    { speaker: '旁白', text: '你想了一會兒，說也許牠們會停下來休息，然後再慢慢找。\n阿瓦倫小聲說了一句「這樣啊」，像是稍微安心了一點。' },
+    { speaker: '旁白', text: '你翻到一本收錄民間故事的舊書，念起一個在森林裡迷路的孩子的故事。\n書上說，有個孩子獨自進了夜晚的林子，跟著漂亮的螢火越走越深，再也沒有出來。' },
+    { speaker: '阿瓦倫', text: '「……他為什麼要跟著走？」「那個光，是壞東西嗎？」' },
+    { speaker: '旁白', text: '你說，書裡沒有寫它是什麼。只說看見漂亮的光，不要靠近。\n阿瓦倫沉默了一會兒。「……我懂了。」他說得很認真，像是把這個當成規定記下來了。' },
   ],
   [
-    { speaker: '旁白', text: '你取下一本很厚的植物書，挑了最簡單的一頁念給阿瓦倫聽。\n那一頁寫著，有些種子要在泥土裡待很久，才會慢慢發芽。' },
-    { speaker: '阿瓦倫', text: '「……一直在土裡，不會害怕嗎？」' },
-    { speaker: '旁白', text: '你說，也許它不是被埋住，而是在準備長出來。\n阿瓦倫沒有說話，只是把那一句看了很久。' },
+    { speaker: '旁白', text: '你念到一個說孩子不能在傍晚去湖邊的故事。\n書上說，夜裡的湖水裡住著一個聲音，會模仿你認識的人說話，把你引到水裡去。' },
+    { speaker: '阿瓦倫', text: '「……那個聲音，是什麼？」' },
+    { speaker: '旁白', text: '你說，沒有人知道，所以才叫傳說。\n阿瓦倫皺了一下眉，像是在認真思考。「……傍晚不要去湖邊。」\n你點點頭，翻到下一頁。' },
   ],
   [
-    { speaker: '旁白', text: '你翻開一本介紹不同房屋的書，念起木屋、石屋和建在河邊的小房子。\n你指著圖，告訴阿瓦倫每一種屋子適合住在哪裡。' },
-    { speaker: '阿瓦倫', text: '「……那這裡是哪一種？」\n「這裡……可以算家嗎？」' },
-    { speaker: '旁白', text: '你輕聲說，如果有人願意一起回來，那裡就可以慢慢變成家。\n阿瓦倫沒有抬頭，但你看見他的手指悄悄抓住了衣角。' },
+    { speaker: '旁白', text: '你念到一個老人家常說的故事。\n書上說，起霧的早晨，山上會出現一個孩子的聲音，在霧裡叫你的名字，叫你一起去玩。' },
+    { speaker: '阿瓦倫', text: '「……有人見過那個小孩嗎？」' },
+    { speaker: '旁白', text: '你說，跟著去的人就不見了，所以沒有人能說清楚長什麼樣子。\n阿瓦倫把書頁又看了一遍。「……如果有聲音叫我，我不會理它。」\n他說得很平靜，像是在提前告訴你他已經記下來了。' },
   ],
   [
-    { speaker: '旁白', text: '你念到一本故事書裡的旅人。他走過很多地方，最後在一間亮著燈的小屋前停下。\n故事沒有寫他是不是永遠留下，只寫他那晚睡得很安穩。' },
-    { speaker: '阿瓦倫', text: '「……只留一晚，也可以嗎？」\n「他明天會不會又被趕走？」' },
-    { speaker: '旁白', text: '你把聲音放得更輕，告訴他，至少在這一頁裡，沒有人趕他走。\n阿瓦倫安靜地聽著，直到你把那一頁念完。' },
+    { speaker: '旁白', text: '你翻到一段說明如何在野外找水的記載，慢慢念給阿瓦倫聽。\n書上說，流動的水比靜止的水安全，但還是要煮過才能喝。' },
+    { speaker: '阿瓦倫', text: '「……靜止的水，為什麼不行？」' },
+    { speaker: '旁白', text: '你說，因為裡面可能住著眼睛看不見的東西。\n阿瓦倫沉默了一下，「……看不見，但是存在嗎？」\n你點點頭。他低下眼，像是把這句話和什麼別的東西一起記下來了。' },
+  ],
+  [
+    { speaker: '旁白', text: '你念起一段說明如何從雲的形狀判斷天氣的文字。\n書上說，雲層變低、變厚的時候，通常代表快要下雨了。' },
+    { speaker: '阿瓦倫', text: '「……抬頭看就能知道嗎？」' },
+    { speaker: '旁白', text: '你說，要多看幾次才會準。\n阿瓦倫沒有說話，只是悄悄把視線移向窗外，對著夜空想了一會兒。' },
   ],
 ];
 const ELDRIN_BOOK_DAILY = [
@@ -6508,7 +6509,7 @@ function finishBloodMoonNightWithoutForget() {
       return;
     }
     showEvent('💔', '第10天清晨',
-      '血月夜終於過去了。\n\n你走進房間，阿瓦倫縮在最遠的角落，背對著你。\n他沒有說話，但你感覺到了。\n\n那一夜他一個人撐過去的，沒有人能替他擋下。\n\n他記得你在那裡。\n他也記得你做了什麼、沒有做什麼。\n\n「……走開。」\n\n他沒有再說別的話。',
+      '血月夜終於過去了。\n你走進房間，阿瓦倫縮在最遠的角落，背對著你。\n他沒有說話，但你感覺到了。\n那一夜他一個人撐過去的，沒有人能替他擋下。\n他記得你在那裡。\n他也記得你做了什麼、沒有做什麼。\n\n「……走開。」\n\n他沒有再說別的話。',
       () => {
         G.mood = 5;
         G.moodLocked = true;
@@ -9106,7 +9107,8 @@ function rejectDay10AvarenCare(kind) {
     curse: '你拿出解咒藥水，瓶中的光晃了一下。\n阿瓦倫沒有伸手，只是閉上眼。\n\n「……我不要。」',
     bandage: '你拿起乾淨的藥草敷料，想替他換藥。\n阿瓦倫往被子裡縮了一點。\n\n「……不要碰我。」',
     ritual: '你低聲念起除咒的咒文。\n還沒碰到他，阿瓦倫就顫了一下。\n\n「……停下來。」',
-    talk: '你想和阿瓦倫說話。\n他沒有看你，只是把自己縮得更小。\n\n房間裡只剩下很輕的呼吸聲。'
+    talk: '你想和阿瓦倫說話。\n他沒有看你，只是把自己縮得更小。\n\n房間裡只剩下很輕的呼吸聲。',
+    read: '你翻開書，想念給阿瓦倫聽。\n他沒有回應，只是把臉轉向牆壁。\n\n「……不要。」'
   };
   story('旁白', lines[kind] || '阿瓦倫拒絕了你。');
   toast('阿瓦倫拒絕了');
@@ -10596,17 +10598,17 @@ function doAction_Cook() {
 
 function doAction_PickupPotion() {
   if (!G.researchReady) return;
+  const potionKey = G.researchType === 'cold' ? 'coldPotion' : G.researchType === 'curse' ? 'cursePotion' : 'forgetPotion';
+  if (isBagFull(potionKey, 1)) { warn('背包已滿，無法取回藥水。請先清出空間。'); return; }
   SFX.collect();
-  const label = G.researchType === 'cold' ? '治療藥水' : '解咒藥水';
+  const label = G.researchType === 'cold' ? '治療藥水' : G.researchType === 'curse' ? '解咒藥水' : '忘卻藥水';
   G.researchReady = false;
   document.getElementById('research-scene-wrap').style.display = 'none';
   const potionEl = document.getElementById('lobby-potion');
   if (potionEl) potionEl.style.display = 'none';
   document.getElementById('research-scene-label').textContent = '🔬 研究藥水中…';
   document.getElementById('research-scene-bar').style.background = 'linear-gradient(90deg,#402080,#8040e0)';
-  if (G.researchType === 'cold') chg('coldPotion', 1);
-  else if (G.researchType === 'curse') chg('cursePotion', 1);
-  else if (G.researchType === 'forget') chg('forgetPotion', 1);
+  chg(potionKey, 1);
   G.researchType = null;
   renderHUD();
   story('旁白', `你取回配製好的${label}，小心地收進背包。`);
@@ -10669,7 +10671,7 @@ function doAction_BookshelfMenu() {
   if (G.paused || G.actionSceneActive) return;
   showActionMenu('書櫃', [
     {
-      name: '艾德林自己讀書',
+      name: '自己讀書',
       fx: () => {
         const todayRead = (G.eldrinBookReadDays || []).includes(G.day);
         if (todayRead) return '重讀今天的內容';
@@ -10699,12 +10701,13 @@ function doAction_ReadAlone() {
   }
   const book = ELDRIN_BOOK_DAILY[G.day - 1];
   if (!G.eldrinBookReadDays.includes(G.day)) G.eldrinBookReadDays.push(G.day);
-  startActionScene([
-    { speaker: '旁白', text: book.title },
-    { speaker: '旁白', text: book.text },
-  ], 0, () => {
-    renderHUD();
-  });
+  const parts = book.text.split('\n\n').filter(p => p.trim());
+  const mid = Math.ceil(parts.length / 2);
+  const text1 = parts.slice(0, mid).join('\n');
+  const text2 = parts.slice(mid).join('\n');
+  const lines = [{ speaker: '旁白', text: book.title }, { speaker: '旁白', text: text1 }];
+  if (text2) lines.push({ speaker: '旁白', text: text2 });
+  startActionScene(lines, 0, () => { renderHUD(); });
 }
 
 function hasReadAllEldrinBookBeforeFinal() {
@@ -10721,7 +10724,7 @@ function doAction_BookshelfMenu() {
   if (G.paused || G.actionSceneActive) return;
   showActionMenu('書櫃', [
     {
-      name: '艾德林自己讀書',
+      name: '自己讀書',
       fx: () => {
         const todayRead = (G.eldrinBookReadDays || []).includes(G.day);
         if (todayRead) return '可重讀今天的內容';
@@ -10733,7 +10736,7 @@ function doAction_BookshelfMenu() {
     },
     {
       name: '唸書給阿瓦倫聽',
-      fx: '知識+3～8  心情+1～5',
+      fx: '（每天2次）',
       req() { return G.day >= 3; },
       run() { doAction_ReadBook(); }
     },
@@ -10744,9 +10747,22 @@ function doAction_ReadBook() {
   if (G.day4AvarenGone) { warn('阿瓦倫不在這裡。'); return; }
   if (G.timePeriod !== 'evening') { timeWarn('讀書是晚上的行動。'); return; }
   if ((G.eldrinHp ?? 100) <= 20) { warn('艾德林的 HP 太低，無法集中精神讀書。'); return; }
-  startActionScene(pick(AVAREN_READ_SCENES), CARE_MAX, () => {
-    chg('trust', Math.floor(Math.random() * 6) + 3);
-    chg('mood', Math.floor(Math.random() * 5) + 1);
+  if (G.day === 10 && !G.usedForgetMagic) { rejectDay10AvarenCare('read'); return; }
+  if ((G.avarenReadToday ?? 0) >= 2) { warn('今天已經念過兩次書了。'); return; }
+  G.avarenReadToday = (G.avarenReadToday ?? 0) + 1;
+  if (!Array.isArray(G.avarenReadPool) || G.avarenReadPool.length < 2) {
+    const pool = Array.from({ length: AVAREN_READ_SCENES.length }, (_, i) => i);
+    for (let i = pool.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [pool[i], pool[j]] = [pool[j], pool[i]];
+    }
+    G.avarenReadPool = pool;
+  }
+  const scene1 = AVAREN_READ_SCENES[G.avarenReadPool.pop()];
+  const scene2 = AVAREN_READ_SCENES[G.avarenReadPool.pop()];
+  startActionScene([...scene1, ...scene2], CARE_MAX, () => {
+    chg('mood', 3);
+    chg('knowledge', 5);
     renderHUD();
   });
 }
@@ -12684,13 +12700,13 @@ function endDay() {
   if (G.pain >= 100 && G.curse >= 95) { showEvent('💀','危機——', `阿瓦倫的疼痛與詛咒同時達到極限……\n黑霧將他吞噬。`, () => endGame('crisis'), 'red'); return; }
 
   let nightText = G.day4AvarenGone
-    ? `夜晚悄然降臨。\n\n小屋裡安靜得讓人不安。\n你躺下，卻一直聽見窗外的風聲。\n\n這一夜很長。`
+    ? `夜晚悄然降臨。\n小屋裡安靜得讓人不安。\n你躺下，卻一直聽見窗外的風聲。\n這一夜很長。`
     : actualRemoved > 0
-      ? `夜晚悄然降臨。\n\n你在燭光下為阿瓦倫進行每晚的儀式。\n這一夜，他身上的詛咒散去了一些……\n\n詛咒消除了 ${actualRemoved} 點。`
-      : `夜晚悄然降臨。\n\n你精疲力竭地坐在床邊，\n今夜的解咒似乎沒什麼效果……`;
+      ? `夜晚悄然降臨。\n你在燭光下為阿瓦倫進行每晚的儀式。\n這一夜，他身上的詛咒散去了一些……\n詛咒消除了 ${actualRemoved} 點。`
+      : `夜晚悄然降臨。\n你精疲力竭地坐在床邊，\n今夜的解咒似乎沒什麼效果……`;
 
   if (exhaustedNight) {
-    nightText = `夜晚在疲憊中斷裂。\n\n你沒有回到阿瓦倫身邊，\n也沒能完成平時的照護。\n\n等你再次睜開眼時，已經是隔天早晨。`;
+    nightText = `夜晚在疲憊中斷裂。\n你沒有回到阿瓦倫身邊，\n也沒能完成平時的照護。\n等你再次睜開眼時，已經是隔天早晨。`;
     G.exhaustedNight = false;
   }
 
@@ -12947,6 +12963,7 @@ function continueAfterNight(prevText) {
   generateDailyBuyList(); // 每天早上刷新市集買入清單
   G.bandagedToday = false;
   G.exorcismToday = false;
+  G.avarenReadToday = 0;
   // 史萊姆隔天早上重生
   G.reidSlaySlimesDead = false;
   // 雷德討伐委託重置
