@@ -2370,6 +2370,11 @@ body {
           <div class="stat-bg"><div id="bar-fatigue" class="stat-fill fill-hp" style="width:100%"></div></div>
           <div id="val-fatigue" class="stat-num">100</div>
         </div>
+        <div class="stat-row">
+          <div class="stat-lbl">💪 體力</div>
+          <div class="stat-bg"><div id="bar-el-fatigue" class="stat-fill fill-fatigue" style="width:80%"></div></div>
+          <div id="val-el-fatigue" class="stat-num">80</div>
+        </div>
       </div>
 
       <!-- Resources -->
@@ -3205,6 +3210,7 @@ function isNearForestFrog() {
 
 function doAction_CatchForestFrog() {
   if (!isNearForestFrog()) return false;
+  spendFatigue(1);
   playLoopingAudio('sfx-frog', 5.0);
   playLoopingAudio('sfx-item-get', 5.0);
   G.forestFrogCaught = true;
@@ -3373,6 +3379,7 @@ function isNearForestFrog2() {
 
 function doAction_CatchForestFrog2() {
   if (!isNearForestFrog2()) return false;
+  spendFatigue(1);
   playLoopingAudio('sfx-frog', 5.0);
   playLoopingAudio('sfx-item-get', 5.0);
   G.forestFrog2Caught = true;
@@ -3426,6 +3433,7 @@ function updateForestMushroomVisuals() {
 
 function doAction_CollectMushroom(id) {
   if (!isForestMushroomAvailable(id)) return;
+  spendFatigue(1);
   G.forestMushrooms[id] = false;
   playLoopingAudio('sfx-plant-pop', 3.0);
   chg('mushroom', 1);
@@ -4638,6 +4646,7 @@ const REID_CHAT_DAY11_2 = [
 ];
 
 function runReidChat() {
+  spendFatigue(1);
   const avarenHere = G.avarenScene === 'outside' || G.avarenScene === G.scene;
 
   // 第3天的對話（初次見面後才解鎖）
@@ -4755,15 +4764,15 @@ function openRedMenu() {
     // 與雷德聊聊（第5、6、7天的溫特相遇階段）
     if (G.day === 5 && !G.reidWinterMeetSeen) {
       items.push({ name:'與雷德聊聊', fx:'（免費）', req:()=>true,
-        run() { G.reidWinterMeetSeen = true; startActionScene(RED_WINTER_MEET_STORY, 400, () => {}); }
+        run() { spendFatigue(1); G.reidWinterMeetSeen = true; startActionScene(RED_WINTER_MEET_STORY, 400, () => {}); }
       });
     } else if (G.day === 6 && !G.reidWinterMeetDay6Seen) {
       items.push({ name:'與雷德聊聊', fx:'（免費）', req:()=>true,
-        run() { G.reidWinterMeetDay6Seen = true; startActionScene(RED_WINTER_MEET_DAY6_STORY, 400, () => {}); }
+        run() { spendFatigue(1); G.reidWinterMeetDay6Seen = true; startActionScene(RED_WINTER_MEET_DAY6_STORY, 400, () => {}); }
       });
     } else if (G.day === 7 && !G.reidWinterMeetDay7Seen) {
       items.push({ name:'與雷德聊聊', fx:'（免費）', req:()=>true,
-        run() { G.reidWinterMeetDay7Seen = true; startActionScene(RED_WINTER_MEET_DAY7_STORY, 400, () => {}); }
+        run() { spendFatigue(1); G.reidWinterMeetDay7Seen = true; startActionScene(RED_WINTER_MEET_DAY7_STORY, 400, () => {}); }
       });
     } else {
       items.push({ name:'與雷德聊聊', fx:'（免費）', req:()=>true,
@@ -5410,6 +5419,45 @@ function pickGatherItem() {
   let r = Math.random() * total;
   for (const item of GATHER_ITEMS) { r -= item.weight; if (r <= 0) return item; }
   return GATHER_ITEMS[0];
+}
+
+function spendFatigue(n) {
+  if (!G) return;
+  const before = G.eldrinFatigue ?? 80;
+  G.eldrinFatigue = Math.max(0, before - n);
+  const bar = document.getElementById('bar-el-fatigue');
+  const val = document.getElementById('val-el-fatigue');
+  if (bar) bar.style.width = G.eldrinFatigue + '%';
+  if (val) val.textContent = G.eldrinFatigue;
+  if (before > 0 && G.eldrinFatigue <= 0 && !G.dayEndTriggered && !G.paused) {
+    triggerFatigueCollapse();
+  }
+}
+
+function triggerFatigueCollapse() {
+  if (G.dayEndTriggered || G.paused || G.bloodMoon7Active) return;
+  G.dayEndTriggered = true;
+  G.paused = true;
+  cancelAnimationFrame(raf);
+  applyBGMForState();
+  const fade = document.getElementById('night-fade');
+  fade.style.transition = 'none'; fade.style.display = 'block'; fade.style.opacity = '0';
+  fade.getBoundingClientRect();
+  fade.style.transition = 'opacity 1s ease'; fade.style.opacity = '1';
+  setTimeout(() => {
+    showEvent('😴', '力竭倒地', '你感到雙腿一軟。\n\n意識在一瞬間變得模糊，\n就這樣倒在原地，沉沉睡去。\n\n……直到第二天早上才甦醒。', () => {
+      fade.style.transition = 'none'; fade.style.opacity = '0'; fade.style.display = 'none';
+      G.paused = false;
+      G.exhaustedSleepWake = {
+        scene: G.scene,
+        x: G.eldrin.x,
+        y: G.eldrin.y,
+        pose: G.eldrin.pose || 'front',
+      };
+      G.exhaustedNight = true;
+      endDay();
+    }, 'blue');
+  }, 800);
 }
 
 function triggerDay6AvarenGone() {
@@ -6364,6 +6412,7 @@ function getAvarenChatGroup() {
 }
 
 function startAvarenChat(extraLines = []) {
+  spendFatigue(1);
   const lines = getAvarenChatGroup().concat(extraLines);
   startActionScene(lines, Math.max(260, CARE_MAX || 400), () => {});
 }
@@ -6573,7 +6622,7 @@ function initState() {
     avarenScene: 'room',
     weather: 'rain',
     pain: 100, curse: 100, mood: 10, trust: 10,
-    avarenHunger: 70, eldrinHunger: 80, eldrinHp: 100, fatigue: 0,
+    avarenHunger: 70, eldrinHunger: 80, eldrinHp: 100, fatigue: 0, eldrinFatigue: 80,
     money: 15, food: 4, herb: 2, wood: 0, branch: 0, bug: 0, fish: 0, stone: 0, crystal: 0, fairyItem: 0, whiteFlower: 0, apple: 0, vegetable: 0, mushroom: 0, frog: 0, egg: 0, beastMeat: 0, monsterMaterial: 0,
     nestEggs: 0,
     forestMushrooms: { 1: false, 2: false, 3: false, 4: false },
@@ -6773,7 +6822,9 @@ function renderHUD() {
   };
   set('pain', G.pain); set('curse', G.curse); set('mood', G.mood); set('trust', G.trust);
   if (G.eldrinHp == null) G.eldrinHp = 100;
+  if (G.eldrinFatigue == null) G.eldrinFatigue = 80;
   set('av-hunger', G.avarenHunger); set('el-hunger', G.eldrinHunger); set('fatigue', G.eldrinHp);
+  set('el-fatigue', G.eldrinFatigue);
   document.getElementById('r-coldPotion').textContent  = G.coldPotion;
   document.getElementById('r-cursePotion').textContent = G.cursePotion;
   document.getElementById('r-forgetPotion').textContent = G.forgetPotion;
@@ -6796,6 +6847,12 @@ function renderHUD() {
   document.getElementById('r-monsterMaterial').textContent = G.monsterMaterial ?? 0;
   updateRainButton();
   renderTime();
+  // 數量為0的物品欄半透明（金錢除外）
+  document.querySelectorAll('#res-block .res-item').forEach(el => {
+    const b = el.querySelector('b');
+    if (!b || el.contains(document.getElementById('r-money'))) return;
+    el.style.opacity = parseInt(b.textContent) === 0 ? '0.3' : '1';
+  });
 }
 
 const BG_DAY   = { outside:'bg_outside.png',       lobby:'bg_lobby.png',       room:'bg_room.png',       kitchen:'bg_kitchen.png',       forest:'bg_forest.png' };
@@ -9013,6 +9070,7 @@ document.addEventListener('keydown', e => {
     } else if (isNearNoah()) {
       openNoahMenu();
     } else if (isNearFairy()) {
+      spendFatigue(2);
       G.fairyCaught = true;
       G.fairyItem++;
       renderHUD();
@@ -9244,6 +9302,7 @@ function openAvarenMenu() {
         run() {
           if (G.day === 10 && !G.usedForgetMagic) { rejectDay10AvarenCare('bandage'); return; }
           if (G.bandagedToday) { warn('今天已經幫阿瓦倫換過藥了。'); return; }
+          spendFatigue(5);
           G.bandagedToday = true;
           chg('herb', -1); chg('pain', -3); renderHUD(); showHealEffect();
           story('旁白', '你替阿瓦倫重新換上乾淨的藥草敷料。\n他的眉頭慢慢鬆開了一點。');
@@ -9256,6 +9315,7 @@ function openAvarenMenu() {
         run() {
           if (G.day === 10 && !G.usedForgetMagic) { rejectDay10AvarenCare('ritual'); return; }
           if (G.exorcismToday) { warn('今天已經進行過除咒儀式了。'); return; }
+          spendFatigue(5);
           G.exorcismToday = true;
           chg('eldrinHp', -5); chg('curse', -3); renderHUD(); showHealEffect();
           story('旁白', '你握住阿瓦倫的手，將一小段詛咒引到自己身上。\n刺痛短暫地掠過胸口，床邊的黑霧淡了一些。');
@@ -9307,6 +9367,7 @@ function openAvarenMenu() {
         req: () => G.herb > 0 && !G.actionSceneActive,
         run() {
           if (G.bandagedToday) { warn('今天已經幫阿瓦倫換過藥了。'); return; }
+          spendFatigue(5);
           G.bandagedToday = true;
           chg('herb', -1); chg('pain', -3); renderHUD(); showHealEffect();
           markAvarenDay1Bandaged();
@@ -9319,6 +9380,7 @@ function openAvarenMenu() {
         req: () => (G.eldrinHp ?? 100) > 5 && !G.actionSceneActive,
         run() {
           if (G.exorcismToday) { warn('今天已經進行過除咒儀式了。'); return; }
+          spendFatigue(5);
           G.exorcismToday = true;
           chg('eldrinHp', -5); chg('curse', -3); renderHUD(); showHealEffect();
           story('旁白', '你握住阿瓦倫冰冷的手，把一小段詛咒引到自己身上。\n胸口一陣刺痛，但黑霧淡去了一些。');
@@ -9413,6 +9475,7 @@ function openAvarenMenu() {
       req: () => G.herb > 0 && !G.actionSceneActive,
       run() {
         if (G.bandagedToday) { warn('今天已經幫阿瓦倫換過藥了。'); return; }
+        spendFatigue(5);
         G.bandagedToday = true;
         chg('herb', -1); chg('pain', -3); renderHUD(); showHealEffect();
         markAvarenDay1Bandaged();
@@ -9426,6 +9489,7 @@ function openAvarenMenu() {
       req: () => (G.eldrinHp ?? 100) > 5 && !G.actionSceneActive,
       run() {
         if (G.exorcismToday) { warn('今天已經進行過除咒儀式了。'); return; }
+        spendFatigue(5);
         G.exorcismToday = true;
         chg('eldrinHp', -5); chg('curse', -3); renderHUD(); showHealEffect();
         story('旁白', '你握住阿瓦倫的手，低聲念出除咒的咒文。\n一點黑霧轉移到你身上，又被你壓了下去。');
@@ -9467,6 +9531,7 @@ function doAction_GatherAppleTree(treeKey) {
   if (G.actionSceneActive) { warn('正在進行其他行動。'); return; }
   if (G.gatherSearchActive) return;
   if ((G.eldrinHp ?? 100) <= 20) { warn('艾德林 HP 太低了，需要休息才能工作。'); return; }
+  spendFatigue(1);
   if (!G.forestApples) G.forestApples = { tree1: APPLE_TREE_MAX.tree1, tree3: APPLE_TREE_MAX.tree3 };
   playLoopingAudio('sfx-gather-wood', 4.0);
   startGatherSearch('🌲 搜索中…', () => {
@@ -9504,6 +9569,7 @@ function doAction_GatherWood() {
   if (G.actionSceneActive) { warn('正在進行其他行動。'); return; }
   if (G.gatherSearchActive) return;
   if ((G.eldrinHp ?? 100) <= 20) { warn('艾德林 HP 太低了，需要休息才能工作。'); return; }
+  spendFatigue(1);
   playLoopingAudio('sfx-gather-wood', 4.0);
   startGatherSearch('🌲 搜索中…', () => {
     const roll = Math.random();
@@ -9528,6 +9594,7 @@ function doAction_GatherFlower() {
   if ((G.eldrinHp ?? 100) <= 20) { warn('艾德林 HP 太低了，需要休息才能工作。'); return; }
   if (G.actionSceneActive) { warn('正在進行其他行動。'); return; }
   if (G.gatherSearchActive) return;
+  spendFatigue(1);
   playLoopingAudio('sfx-gather-bush', 1.5);
   startGatherSearch('🌼 搜索中…', () => {
     const roll = Math.random();
@@ -9552,6 +9619,7 @@ function doAction_GatherBush() {
   if ((G.eldrinHp ?? 100) <= 20) { warn('艾德林 HP 太低了，需要休息才能工作。'); return; }
   if (G.actionSceneActive) { warn('正在進行其他行動。'); return; }
   if (G.gatherSearchActive) return;
+  spendFatigue(1);
   playLoopingAudio('sfx-gather-bush', 2.0);
   startGatherSearch('🌿 搜索中…', () => {
     const roll = Math.random();
@@ -9577,6 +9645,7 @@ function doAction_SearchStolenMoney() {
   if (G.bloodMoon7Active) { warn('無法行動。'); return; }
   if ((G.eldrinHp ?? 100) <= 20) { warn('艾德林 HP 太低了，需要休息才能工作。'); return; }
   if (G.gatherSearchActive) return;
+  spendFatigue(1);
   playLoopingAudio('sfx-gather-bush', 2.0);
   startGatherSearch('搜索中…', () => {
     G.stolenMoneyFoundDay = G.day;
@@ -9627,6 +9696,7 @@ function doAction_FarmMenu() {
       fx: G.farmStage === 1 ? '開始種植' : '生長中',
       req: () => G.farmStage === 1,
       run() {
+        spendFatigue(5);
         G.farmCropType = 'vegetable';
         G.farmStage = 2;
         G.farmGrowthTimer = 0;
@@ -9641,6 +9711,7 @@ function doAction_FarmMenu() {
       fx: G.farmStage === 1 ? '開始種植' : '生長中',
       req: () => G.farmStage === 1,
       run() {
+        spendFatigue(5);
         G.farmCropType = 'herb';
         G.farmStage = 2;
         G.farmGrowthTimer = 0;
@@ -9659,6 +9730,7 @@ function doAction_Gather() {
   if (G.farmStage >= 5) G.herbReady = true;
   // 第5階段：收成
   if (G.farmStage >= 5 && G.herbReady) {
+    spendFatigue(1);
     playLoopingAudio('sfx-plant-pop', 4.0);
     G.herbReady = false;
     G.farmStage = 1;
@@ -9715,6 +9787,7 @@ function doAction_ForestFish() {
   if (G.timePeriod !== 'morning') { timeWarn('釣魚是白天的行動。'); return; }
   if (G.forestFishFishing) { warn('魚竿已經下水了，請稍候。'); return; }
   if ((G.eldrinHp ?? 100) <= 20) { warn('艾德林 HP 太低了，需要休息才能工作。'); return; }
+  spendFatigue(3);
   G.forestFishFishing = true;
   G.forestFishTimer = FISH_MAX * 2;
   document.getElementById('fish-forest-wrap').style.display = 'block';
@@ -9775,6 +9848,7 @@ function doAction_Fish() {
   if (G.timePeriod !== 'morning') { timeWarn('釣魚是白天的行動。'); return; }
   if (G.fishFishing) { warn('魚竿已經下水了，請稍候。'); return; }
   if ((G.eldrinHp ?? 100) <= 20) { warn('艾德林 HP 太低了，需要休息才能工作。'); return; }
+  spendFatigue(3);
   G.fishFishing = true;
   G.fishTimer = FISH_MAX;
   document.getElementById('fish-scene-wrap').style.display = 'block';
@@ -9805,6 +9879,7 @@ function doAction_GatherStone() {
   if (G.actionSceneActive) { warn('正在進行其他行動。'); return; }
   if (G.gatherSearchActive) return;
   if ((G.eldrinHp ?? 100) <= 20) { warn('艾德林 HP 太低了，需要休息才能工作。'); return; }
+  spendFatigue(1);
   playLoopingAudio('sfx-gather-stone', 4.0);
   startGatherSearch('🪨 搜索中…', () => {
     const roll = Math.random();
@@ -10271,6 +10346,7 @@ function putDownKettle() {
 
 function fillKettle() {
   if (!G.carryingKettle || G.kettleFull) return;
+  spendFatigue(1);
   G.kettleFull = true;
   G.fishCastLock = true;
   setTimeout(() => { G.fishCastLock = false; }, 1000);
@@ -10441,6 +10517,7 @@ function doSoupInteract() {
 }
 
 function giveSoupToAvaren() {
+  spendFatigue(1);
   G.soupReady = false;
   G.carryingSoup = false;
   document.getElementById('soup-obj').style.display = 'none';
@@ -10494,6 +10571,7 @@ function giveSoupToAvaren() {
 }
 
 function giveSoupToWinter() {
+  spendFatigue(1);
   SFX.interact();
   if (G.soupIsSpecial) {
     story('溫特', pick([
@@ -10529,6 +10607,7 @@ function giveSoupToWinter() {
 }
 
 function sellSoupToReid() {
+  spendFatigue(1);
   G.carryingSoup = false;
   G.soupReady = false;
   G.cookIngredient = null;
@@ -10580,6 +10659,7 @@ function doAction_CollectEggs() {
     storyAuto('旁白', '巢裡空空的，今天已經沒有蛋了。');
     return;
   }
+  spendFatigue(1);
   const count = G.nestEggs;
   G.nestEggs = 0;
   playLoopingAudio('sfx-plant-pop', 3.0);
@@ -10596,6 +10676,7 @@ function doAction_Cook() {
   if (G.soupReady) { warn('廚房裡已有一碗湯，先取用再烹飪。'); return; }
   if (G.carryingSoup) { warn('你手上還拿著湯，先處理完再說。'); return; }
   if ((G.eldrinHp ?? 100) <= 20) { warn('艾德林 HP 太低了，需要休息才能工作。'); return; }
+  spendFatigue(3);
   openCookSelectPanel();
 }
 
@@ -10629,6 +10710,7 @@ function doAction_StartResearch() {
       req: () => G.herb >= 2,
       run() {
         playTitleButtonSfx();
+        spendFatigue(4);
         chg('herb', -2); chg('mood', -3);
         G.researchActive = true; G.researchTimer = 0; G.researchType = 'cold';
         renderHUD();
@@ -10643,6 +10725,7 @@ function doAction_StartResearch() {
       req: () => G.herb >= 2,
       run() {
         playTitleButtonSfx();
+        spendFatigue(4);
         chg('herb', -2); chg('mood', -3);
         G.researchActive = true; G.researchTimer = 0; G.researchType = 'curse';
         renderHUD();
@@ -10657,6 +10740,7 @@ function doAction_StartResearch() {
       req: () => G.herb >= 5 && G.bug >= 3 && G.stone >= 3 && G.forgetPotion === 0,
       run() {
         playTitleButtonSfx();
+        spendFatigue(4);
         chg('herb', -5); chg('bug', -3); chg('stone', -3); chg('mood', -3);
         G.researchActive = true; G.researchTimer = 0; G.researchType = 'forget';
         renderHUD();
@@ -10697,6 +10781,7 @@ function doAction_ReadAlone() {
   if (G.timePeriod !== 'evening') { timeWarn('讀書是晚上的行動。'); return; }
   if ((G.eldrinHp ?? 100) <= 20) { warn('艾德林 HP 太低了，需要休息才能工作。'); return; }
   if (G.day < 1 || G.day > 11) { warn('今天沒有新的內容可以讀。'); return; }
+  spendFatigue(1);
   if (!Array.isArray(G.eldrinBookReadDays)) G.eldrinBookReadDays = [];
   if (G.day === 11 && !hasReadAllEldrinBookBeforeFinal()) {
     story('旁白', '你翻到關於記憶的那一頁，卻發現許多前面的註記都還沒有讀完。\n\n缺少那些線索，你無法理解這一頁真正想說的事情。');
@@ -10752,6 +10837,7 @@ function doAction_ReadBook() {
   if ((G.eldrinHp ?? 100) <= 20) { warn('艾德林的 HP 太低，無法集中精神讀書。'); return; }
   if (G.day === 10 && !G.usedForgetMagic) { rejectDay10AvarenCare('read'); return; }
   if ((G.avarenReadToday ?? 0) >= 2) { warn('今天已經念過兩次書了。'); return; }
+  spendFatigue(1);
   G.avarenReadToday = (G.avarenReadToday ?? 0) + 1;
   if (!Array.isArray(G.avarenReadPool) || G.avarenReadPool.length < 2) {
     const pool = Array.from({ length: AVAREN_READ_SCENES.length }, (_, i) => i);
@@ -11301,16 +11387,19 @@ let storyQueue = [];
 let _storyAutoTimer = null;
 
 function story(speaker, text) {
+  if (G && storyQueue.length === 0) spendFatigue(1);
   storyQueue.push({ speaker, text });
   if (storyQueue.length === 1) _showStory();
 }
 
 function storyAuto(speaker, text) {
+  if (G && storyQueue.length === 0) spendFatigue(1);
   storyQueue.push({ speaker, text, autoClose: true });
   if (storyQueue.length === 1) _showStory();
 }
 
 function storyAutoFast(speaker, text) {
+  if (G && storyQueue.length === 0) spendFatigue(1);
   storyQueue.push({ speaker, text, autoClose: true, autoDuration: 2500 });
   if (storyQueue.length === 1) _showStory();
 }
@@ -12946,6 +13035,7 @@ function continueAfterNight(prevText) {
   G.bandagedToday = false;
   G.exorcismToday = false;
   G.avarenReadToday = 0;
+  G.eldrinFatigue = Math.min(100, (G.eldrinFatigue ?? 80) + 40);
   // 第11天剛開始：存下快照（只存一次，迴圈期間不覆蓋；放在每日重置之後確保快照含正確初始值）
   if (G.day === 11 && !G.day11Snapshot) {
     try { G.day11Snapshot = JSON.parse(JSON.stringify(G)); } catch(e) {}
