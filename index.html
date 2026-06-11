@@ -751,6 +751,10 @@ body {
 .act-title { display: none; }
 .act-name  { font-size: 20px; font-weight: 900; color: #e7c98c; margin-bottom: 14px; letter-spacing:2px; }
 .act-list  { display: flex; flex-direction: column; gap: 7px; }
+.act-list.three-col { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; }
+.act-list.three-col .act-item { padding: 8px 10px; }
+.act-list.three-col .act-item .a-fx { display: none; }
+.act-list.three-col .act-item .a-name { font-size: 13px; white-space: nowrap; }
 .act-item {
   background: linear-gradient(180deg,#d9c99a,#c8b480); border: 1.5px solid #b69862;
   border-radius: 12px 5px 11px 6px/6px 12px 5px 13px;
@@ -771,10 +775,10 @@ body {
 }
 .act-item:disabled { opacity: 0.5; cursor: not-allowed; filter:saturate(.6); }
 .act-item.kbd-selected:not(:disabled) .a-name { color: #6e4a15; }
-.act-item.kbd-selected:not(:disabled) .a-name::before { content: '➥ '; font-size: 14px; color: #c07820; }
+.act-item.kbd-selected:not(:disabled) .a-name::before { content: '➥ '; font-size: 21px; color: #c07820; }
 .act-item .a-name { font-size: 15px; color: #3e2c15; font-weight: 900; letter-spacing:1px; }
 .act-item .a-fx   {
-  font-family:'Patrick Hand',cursive; font-size: 12px; color: #6e5a2e; letter-spacing: .5px;
+  font-family:'Microsoft JhengHei','PingFang TC',sans-serif; font-size: 12px; color: #6e5a2e; letter-spacing: .5px;
   border:1.5px solid #bca06a; border-radius:10px 4px 9px 4px; padding:1px 9px; white-space:nowrap; background:rgba(180,160,110,.16);
 }
 .act-cancel {
@@ -783,7 +787,7 @@ body {
   cursor: pointer; letter-spacing: 3px; transition: all 0.15s; border-radius:11px 4px 10px 5px/5px 10px 4px 11px;
 }
 .act-cancel:hover, .act-cancel.kbd-selected { border-color: #d8a23f; border-style: solid; color: #fff8e0; background: rgba(180,110,20,.55); box-shadow: 0 0 0 2px rgba(216,162,63,.6), 0 4px 12px rgba(0,0,0,.4); }
-.act-cancel.kbd-selected::before { content: '➥ '; font-size: 14px; color: #c07820; }
+.act-cancel.kbd-selected::before { content: '➥ '; font-size: 21px; color: #c07820; }
 
 /* ══ COOK INGREDIENT SELECT ══ */
 #cook-select-overlay {
@@ -858,8 +862,8 @@ body {
   box-shadow: 0 0 0 2px rgba(216,162,63,.7), 0 5px 14px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.95), inset 0 0 20px rgba(255,250,230,.5), 0 0 14px rgba(230,185,80,.3);
 }
 .csi-item.csi-kbd-sel .ci-name { color: #6e4a15; }
-.csi-item.csi-kbd-sel .ci-name::before { content: '➥ '; font-size: 14px; color: #c07820; }
-.csi-cancel-btn.csi-kbd-sel::before { content: '➥ '; font-size: 14px; color: #c07820; }
+.csi-item.csi-kbd-sel .ci-name::before { content: '➥ '; font-size: 21px; color: #c07820; }
+.csi-cancel-btn.csi-kbd-sel::before { content: '➥ '; font-size: 21px; color: #c07820; }
 
 /* ══ SOUP OBJECT ══ */
 #soup-obj {
@@ -919,8 +923,8 @@ body {
 }
 .bag-slot {
   aspect-ratio: 1;
-  background: linear-gradient(145deg, #a07848, #8a6030);
-  border: 2px solid #7a5020;
+  background: linear-gradient(145deg, #ab8d68, #967a54);
+  border: 2px solid #87694a;
   border-radius: 12px;
   box-shadow: inset 0 2px 4px rgba(0,0,0,.35), inset 0 -1px 0 rgba(255,220,140,.1);
   display: flex; flex-direction: column;
@@ -928,8 +932,12 @@ body {
   position: relative; cursor: default;
 }
 .bag-slot.filled {
-  background: linear-gradient(145deg, #c8a860, #b89040);
-  border-color: #c89840;
+  background: linear-gradient(145deg, #d2bc8e, #c2a878);
+  border-color: #c4a878;
+}
+.bag-slot.filled.gift {
+  background: linear-gradient(145deg, #b8b2a6, #a39d92);
+  border-color: #9a948a;
   box-shadow: inset 0 2px 4px rgba(0,0,0,.2), inset 0 -1px 0 rgba(255,240,180,.25);
 }
 .bag-slot .slot-icon  { font-size: 29px; line-height: 1; }
@@ -943,6 +951,10 @@ body {
   border-color: #f0c840;
   box-shadow: 0 0 0 2px rgba(240,200,60,.7), inset 0 2px 4px rgba(0,0,0,.15), 0 0 14px rgba(230,185,60,.4);
   background: linear-gradient(145deg, #e8c870, #d4a840);
+}
+.bag-slot.filled.gift.selected {
+  border-color: #f0c840;
+  background: linear-gradient(145deg, #d8cbb0, #c4b598);
 }
 .bag-desc-title { font-size: 13px; font-weight: 900; color: #f5f0e8; margin-bottom: 6px; letter-spacing: 1px; }
 .item-icon-svg { width: 1.2em; height: 1.2em; vertical-align: middle; display: inline-block; }
@@ -960,6 +972,7 @@ body {
   box-shadow:inset 0 1px 0 rgba(255,252,242,.7); transition:all 0.15s; text-align:left;
 }
 .bdp-btn:hover, .bdp-btn.kbd-sel { background:linear-gradient(180deg,#fffdf5,#f7edce); border-color:#d8a23f; transform:translateX(3px); }
+.bdp-btn:not(.cancel).kbd-sel::before, .bdp-btn:not(.cancel):hover::before { content:'➥ '; color:#c07820; font-weight:900; font-size:21px; }
 .bdp-btn.cancel { background:rgba(20,13,6,.5); border:1.5px dashed #6a5028; color:#b7a06e; }
 .bdp-btn.cancel:hover, .bdp-btn.cancel.kbd-sel { border-color:#d8a23f; border-style:solid; color:#fff8e0; background:rgba(180,110,20,.55); transform:none; }
 .ev-box {
@@ -1214,6 +1227,12 @@ body {
   background: linear-gradient(180deg,#f0e0b0,#e8c87a); border-color: #d4a030;
   box-shadow: inset 0 1px 0 rgba(255,248,200,.6), 0 1px 3px rgba(0,0,0,.3);
 }
+.trade-row-soldout {
+  background: linear-gradient(180deg,#bcb4a4,#a89f8e) !important; border-color: #948b7a !important;
+  box-shadow: inset 0 1px 0 rgba(0,0,0,.1) !important;
+  opacity: .55; filter: grayscale(.5);
+}
+.trade-row-soldout .tr-qty { color: #8a3020; font-weight: 900; }
 .tr-price-sale {
   color: #c04010 !important; border-color: #d4a030 !important;
   background: rgba(220,140,40,.2) !important; font-weight: 900; gap: 4px;
@@ -1321,7 +1340,7 @@ body {
   border-color: #e8b050; border-style: solid;
   box-shadow: 0 0 0 2px rgba(216,162,63,.7);
 }
-.trade-tab.focused::before { content: '➥ '; font-size: 13px; color: #c07820; }
+.trade-tab.focused::before { content: '➥ '; font-size: 20px; color: #c07820; }
 .trade-row.focused {
   border-color: #f0c040; border-width: 2px;
   background: linear-gradient(180deg,#fffdf0,#f5e8b0);
@@ -1329,7 +1348,7 @@ body {
 }
 .trade-row.focused .tr-name::before,
 .trade-row.editing .tr-name::before {
-  content: '➥ '; font-size: 13px; color: #c07820;
+  content: '➥ '; font-size: 20px; color: #c07820;
 }
 #trade-sell-list .trade-row.focused {
   border-color: #c8e040; border-width: 2px;
@@ -1352,14 +1371,14 @@ body {
   background: linear-gradient(180deg,#f5ecce,#e8d8ad);
   color: #3e2c15;
 }
-.trade-confirm-btn.focused::before { content: '➥ '; font-size: 13px; color: #c07820; }
+.trade-confirm-btn.focused::before { content: '➥ '; font-size: 20px; color: #c07820; }
 .trade-close-btn.focused {
   border-color: #c8903a; border-style: solid;
   box-shadow: 0 0 0 2px rgba(150,100,30,.5);
   background: rgba(50,34,14,.7);
   color: #e0c080;
 }
-.trade-close-btn.focused::before { content: '➥ '; font-size: 13px; color: #c8903a; }
+.trade-close-btn.focused::before { content: '➥ '; font-size: 20px; color: #c8903a; }
 
 /* ══ SCENE PROGRESS BARS (採藥/研究/烹飪) ══ */
 #farm-growth-wrap {
@@ -1922,6 +1941,8 @@ body {
 <audio id="sfx-chicken-3">
   <source src="music/音效/雞3聲.mp3" type="audio/mpeg">
 </audio>
+<audio id="sfx-page"><source src="music/音效/翻書.mp3" type="audio/mpeg"></audio>
+<audio id="sfx-bookshelf"><source src="music/音效/書櫃.mp3" type="audio/mpeg"></audio>
 <audio id="sfx-birdcall-1"><source src="music/音效/背景鳥叫/wiki-sing03.mp3" type="audio/mpeg"></audio>
 <audio id="sfx-birdcall-2"><source src="music/音效/背景鳥叫/wiki02.mp3" type="audio/mpeg"></audio>
 <audio id="sfx-birdcall-3"><source src="music/音效/背景鳥叫/wiki03_Audio Denoise.mp3" type="audio/mpeg"></audio>
@@ -2384,7 +2405,7 @@ body {
           <div class="res-item">💰 金錢 <b id="r-money">12</b></div>
           <div class="res-item">🌿 藥材 <b id="r-herb">2</b></div>
           <div class="res-item">🪵 木材 <b id="r-wood">0</b></div>
-          <div class="res-item">🌿 樹枝 <b id="r-branch">0</b></div>
+          <div class="res-item">🪾 樹枝 <b id="r-branch">0</b></div>
           <div class="res-item">💎 水晶碎片 <b id="r-crystal">0</b></div>
           <div class="res-item">🐛 蟲材 <b id="r-bug">0</b></div>
           <div class="res-item">🐟 魚   <b id="r-fish">0</b></div>
@@ -2399,8 +2420,9 @@ body {
           <div class="res-item">🥩 獸肉 <b id="r-beastMeat">0</b></div>
           <div class="res-item">🦴 魔物素材 <b id="r-monsterMaterial">0</b></div>
           <div class="res-item"><img src="Medicine_red.svg" class="item-icon-svg"> 治療藥水 <b id="r-coldPotion">0</b></div>
-          <div class="res-item"><img src="Medicine_green.svg" class="item-icon-svg"> 解咒藥水 <b id="r-cursePotion">0</b></div>
+          <div class="res-item"><img src="Medicine_yellow.svg" class="item-icon-svg"> 解咒藥水 <b id="r-cursePotion">0</b></div>
           <div class="res-item"><img src="Medicine_blue.svg" class="item-icon-svg"> 忘卻藥水 <b id="r-forgetPotion">0</b></div>
+          <div class="res-item"><img src="Medicine_green.svg" class="item-icon-svg"> 體力藥水 <b id="r-staminaPotion">0</b></div>
         </div>
       </div>
 
@@ -2600,7 +2622,7 @@ function initRainDrops() {
 function updateWeatherFx() {
   const canvas = document.getElementById('rain-canvas');
   if (!canvas) return;
-  const rainVisible = G.weather === 'rain' && (G.scene === 'outside' || G.scene === 'forest');
+  const rainVisible = G.weather === 'rain' && G.timePeriod === 'morning' && (G.scene === 'outside' || G.scene === 'forest');
   const tint = document.getElementById('rain-tint-overlay');
   if (tint) tint.style.display = rainVisible ? 'block' : 'none';
   canvas.style.display = rainVisible ? 'block' : 'none';
@@ -2641,6 +2663,62 @@ function toggleRainWeather() {
   G.weather = G.weather === 'rain' ? 'clear' : 'rain';
   updateRainButton();
   updateWeatherFx();
+  renderScene();
+}
+
+// ══════════════════════════════════════
+//  隨機天氣（白天偶爾下雨 1~3 分鐘）
+// ══════════════════════════════════════
+const RANDOM_RAIN_DAYS = new Set([1, 2, 3, 4, 5, 6, 7, 10]);
+// 天晴 → 下一場雨的間隔：240~480 秒（很少）
+const RAIN_CLEAR_MIN = 240 * 60, RAIN_CLEAR_MAX = 480 * 60;
+// 一場雨的持續時間：60~180 秒（1~3 分鐘）
+const RAIN_DUR_MIN = 60 * 60, RAIN_DUR_MAX = 180 * 60;
+const _randRange = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+
+// 每天早上呼叫：重設隨機天氣狀態
+function resetRandomRain() {
+  if (!G) return;
+  if (RANDOM_RAIN_DAYS.has(G.day)) {
+    G.rainPhase = 'clear';
+    G.rainTimer = _randRange(RAIN_CLEAR_MIN, RAIN_CLEAR_MAX);
+  } else {
+    // 第8天（整天雨）、第9天（血月晴天）等不啟用隨機天氣
+    G.rainPhase = 'disabled';
+    G.rainTimer = 0;
+  }
+}
+
+function startRandomRain() {
+  G.weather = 'rain';
+  G.rainPhase = 'raining';
+  G.rainTimer = _randRange(RAIN_DUR_MIN, RAIN_DUR_MAX);
+  updateRainButton();
+  updateWeatherFx();
+  renderScene();
+}
+
+function stopRandomRain() {
+  G.weather = 'clear';
+  G.rainPhase = 'clear';
+  G.rainTimer = _randRange(RAIN_CLEAR_MIN, RAIN_CLEAR_MAX);
+  updateRainButton();
+  updateWeatherFx();
+  renderScene();
+}
+
+// 每幀呼叫（遊戲主迴圈）
+function tickRandomRain() {
+  if (!G) return;
+  if (!G.rainPhase) resetRandomRain(); // 惰性初始化（新局／舊存檔）
+  if (G.rainPhase === 'disabled') return;
+  // 只在白天進行；暫停、對話、血月、睡眠動畫時不推進
+  if (G.timePeriod === 'evening' || G.paused || G.bloodMoon7Active ||
+      G.sleepAnimActive || isDlgBlocking()) return;
+  G.rainTimer--;
+  if (G.rainTimer > 0) return;
+  if (G.rainPhase === 'clear')        startRandomRain();
+  else if (G.rainPhase === 'raining') stopRandomRain();
 }
 
 // ══════════════════════════════════════
@@ -3712,6 +3790,8 @@ const ZONES = {
       fn(){ openBedMenu(); } },
     { id:'bookshelf',  x1:431, y1:42,  x2:536, y2:209, interactHint:'書櫃',
       fn(){ doAction_BookshelfMenu(); } },
+    { id:'notes',      x1:265, y1:129, x2:353, y2:191, interactHint:'艾德林的筆記',
+      fn(){ doAction_NotesMenu(); } },
   ],
 };
 
@@ -5410,7 +5490,7 @@ const GATHER_ITEMS = [
   { key:'pebble',    name:'一顆小石頭',     desc:'這個完全沒有用，但他走了很遠去撿。', weight: 30 },
   { key:'wildFlower',name:'一片漂亮的樹葉',desc:'有點皺掉了。他好像很認真地撿過來。', weight: 22 },
   { key:'herb',      name:'一把藥草',       desc:'這個真的有用。他大概看過你採藥，所以記住了。', weight: 20 },
-  { key:'bug',       name:'一隻小蟲子',     desc:'牠已經半死不活了。阿瓦倫大概以為你會喜歡。', weight: 10 },
+  { key:'giftBug',   name:'一隻小蟲子',     desc:'牠已經半死不活了。阿瓦倫大概以為你會喜歡。', weight: 10 },
   { key:'feather',   name:'一根奇怪的羽毛', desc:'顏色很特別。他把羽毛遞給你，表情有點期待。', weight: 7 },
 ];
 
@@ -5423,6 +5503,10 @@ function pickGatherItem() {
 
 function spendFatigue(n) {
   if (!G) return;
+  // 白天下雨時，在戶外或森林工作消耗體力加倍
+  if (G.weather === 'rain' && G.timePeriod !== 'evening' && (G.scene === 'outside' || G.scene === 'forest')) {
+    n *= 2;
+  }
   const before = G.eldrinFatigue ?? 80;
   G.eldrinFatigue = Math.max(0, before - n);
   const bar = document.getElementById('bar-el-fatigue');
@@ -5735,6 +5819,10 @@ const AVAREN_READ_SCENES = [
   ],
 ];
 const ELDRIN_BOOK_DAILY = [
+  {
+    title: '藥草魔女的傳聞',
+    text: '你從書櫃裡抽出一本封面磨損的舊書。\n\n書頁上記載著一位藥草魔女的故事。\n\n據說她擁有極高明的藥草學與咒術能力，曾經救活過許多染病的人，也替村鎮驅散過災厄。\n\n村鎮上的人們敬仰她，教會也給予她罕見的地位。她是少數被教會正式承認的魔女之一。\n\n人們都很好奇，她究竟是如何取得那樣驚人的成就。\n\n關於她的傳聞眾說紛紜。有人說她受到神明眷顧，有人說她在禁書中找到了失傳的藥方。\n\n也有人私下低聲說，她會收留無家可歸的孤兒，將他們帶進沒有人能靠近的地下室，那裡充滿了許多實驗器材和藥水……。\n\n那些孩子後來去了哪裡，沒有人知道。\n\n教會從未承認這些謠言。書頁的最後只留下模糊的一行字：\n\n「偉大的成果，往往需要偉大的犧牲。」'
+  },
   {
     title: '藥草誌．夜顏花',
     text: '月眠露的主成分是夜顏花。\n\n它的花瓣能緩慢釋放微量的鎮定元素，因此常被用來治療失眠。\n\n請避免陽光直曬，否則藥效容易流失。\n\n比起一般的安眠藥劑，月眠露較不容易產生倦怠感。'
@@ -6646,7 +6734,7 @@ function initState() {
     fishFishing: false, fishTimer: 0, fishReady: false,
     forestFishFishing: false, forestFishTimer: 0, forestFishReady: false,
     researchActive: false, researchTimer: 0, researchReady: false, researchType: null,
-    coldPotion: 0, cursePotion: 0, forgetPotion: 0,
+    coldPotion: 0, cursePotion: 0, forgetPotion: 0, staminaPotion: 0,
     usedForgetMagic: false, moodLocked: false, bloodMoon7Happened: false,
     avarenStolenMoney: false, stolenMoneyFoundDay: 0,
     day4EventTriggered: false, day4AvarenGone: false, day4AvarenNotified: false, avarenReturnPending: false,
@@ -6828,6 +6916,7 @@ function renderHUD() {
   document.getElementById('r-coldPotion').textContent  = G.coldPotion;
   document.getElementById('r-cursePotion').textContent = G.cursePotion;
   document.getElementById('r-forgetPotion').textContent = G.forgetPotion;
+  document.getElementById('r-staminaPotion').textContent = G.staminaPotion || 0;
   document.getElementById('r-money').textContent = G.money;
   document.getElementById('r-herb').textContent  = G.herb;
   document.getElementById('r-wood').textContent   = G.wood;
@@ -6856,6 +6945,7 @@ function renderHUD() {
 }
 
 const BG_DAY   = { outside:'bg_outside.png',       lobby:'bg_lobby.png',       room:'bg_room.png',       kitchen:'bg_kitchen.png',       forest:'bg_forest.png' };
+const BG_DAY_RAIN = { lobby:'bg_lobby-rain.png', room:'bg_room-rain.png', kitchen:'bg_kitchen-rain.png' };
 const BG_NIGHT = { outside:'bg_outside_night.png', lobby:'bg_lobby - night/bg_lobby_night.png', room:'bg_room_night.png', kitchen:'bg_kitchen_night.png', forest:'bg_forest_night.png' };
 
 function doNightFade(cb) {
@@ -6913,9 +7003,11 @@ function renderScene() {
     if (d === 7)               return 'bg_forest_night-day07.png';
     return 'bg_forest_night.png';
   })();
-  const bgUrl = isBloodMoonForest ? 'bg_forest_night_Blood Moon.png'
+  let bgUrl = isBloodMoonForest ? 'bg_forest_night_Blood Moon.png'
     : (isNight && G.scene === 'forest') ? forestNightBg
     : bgMap[G.scene];
+  // 白天下雨：室內場景改用雨天背景
+  if (!isNight && G.weather === 'rain' && BG_DAY_RAIN[G.scene]) bgUrl = BG_DAY_RAIN[G.scene];
   document.getElementById('scene-bg').style.backgroundImage = `url('${bgUrl}')`;
   document.getElementById('room-label').textContent = labelMap[G.scene];
   // 農田安全修正：farmStage >= 5 時確保 herbReady = true
@@ -6941,7 +7033,7 @@ function renderScene() {
   const potionImg2 = document.getElementById('lobby-potion-img');
   if (potionEl2 && potionImg2) {
     if (G.scene === 'lobby' && G.researchReady) {
-      const src2 = G.researchType === 'cold' ? 'Medicine_red.png' : G.researchType === 'forget' ? 'Medicine_green.png' : 'Medicine_blue.png';
+      const src2 = G.researchType === 'cold' ? 'Medicine_red.png' : G.researchType === 'stamina' ? 'Medicine_green.png' : G.researchType === 'forget' ? 'Medicine_blue.png' : 'Medicine_yellow.png';
       potionImg2.src = src2;
       potionEl2.style.display = 'block';
     } else {
@@ -6970,11 +7062,13 @@ function renderScene() {
     setOutsideFishingVisual(G.fishReady ? 'ready' : G.fishFishing ? 'fishing' : 'idle');
   }
   if (G.scene === 'lobby') {
-    const folder = G.timePeriod === 'evening' ? 'bg_lobby - night/' : 'bg_lobby/';
+    const folder = G.timePeriod === 'evening' ? 'bg_lobby - night/'
+      : (G.weather === 'rain') ? 'bg_lobby -rain/'
+      : 'bg_lobby/';
     document.querySelectorAll('#lobby-objects img').forEach(img => {
       const src = img.getAttribute('src');
       if (!src.startsWith('bg_lobby')) return; // 藥水等非場景圖片不切換
-      const filename = src.replace('bg_lobby - night/', '').replace('bg_lobby/', '');
+      const filename = src.replace('bg_lobby - night/', '').replace('bg_lobby -rain/', '').replace('bg_lobby/', '');
       img.setAttribute('src', folder + filename);
     });
   }
@@ -7551,7 +7645,7 @@ function updateHints() {
     hi.style.display = 'block'; hs.style.display = 'none'; return;
   }
   if (zone && zone.id === 'lobby_potion' && G.researchReady) {
-    const rLabel = G.researchType === 'cold' ? '治療藥水（疼痛-5）' : G.researchType === 'curse' ? '解咒藥水（詛咒-5）' : '忘卻藥水（血月夜使用）';
+    const rLabel = G.researchType === 'cold' ? '治療藥水（疼痛-5）' : G.researchType === 'curse' ? '解咒藥水（詛咒-5）' : G.researchType === 'stamina' ? '體力藥水（體力+20）' : '忘卻藥水（疼痛-25 詛咒-25）';
     hi.textContent = `取回${rLabel}`;
     hi.style.display = 'block'; hs.style.display = 'none'; return;
   }
@@ -7661,6 +7755,8 @@ function gameLoop() {
     G.periodTransitioned = true;
     doNightFade(() => {
       G.timePeriod = 'evening';
+      G.weather = 'clear';
+      updateRainButton();
       resetForestMushrooms();
       const nightBg = BG_NIGHT[G.scene];
       document.getElementById('scene-bg').style.backgroundImage = `url('${nightBg}')`;
@@ -8174,7 +8270,8 @@ function gameLoop() {
   }
 
   // 阿瓦倫戶外採集（信任>50）
-  if (!isAvarenUnconscious() && G.scene === 'outside' && G.trust > 50 && G.avarenScene === 'outside' && !G.paused && !G.actionSceneActive) {
+  if (!isAvarenUnconscious() && G.scene === 'outside' && G.trust > 50 && G.avarenScene === 'outside' && !G.paused && !G.actionSceneActive
+      && document.getElementById('bag-overlay').style.display !== 'flex') {
     G.avaren.gatherTimer--;
     if (G.avaren.gatherTimer <= 0) {
       G.avaren.gatherTimer = Math.floor(Math.random() * 1800) + 2700;
@@ -8685,7 +8782,7 @@ function gameLoop() {
       const potionEl  = document.getElementById('lobby-potion');
       const potionImg = document.getElementById('lobby-potion-img');
       if (potionEl && potionImg) {
-        const src = G.researchType === 'cold' ? 'Medicine_red.png' : G.researchType === 'forget' ? 'Medicine_green.png' : 'Medicine_blue.png';
+        const src = G.researchType === 'cold' ? 'Medicine_red.png' : G.researchType === 'stamina' ? 'Medicine_green.png' : G.researchType === 'forget' ? 'Medicine_blue.png' : 'Medicine_yellow.png';
         potionImg.src = src;
         potionEl.style.display = 'block';
       }
@@ -8736,9 +8833,9 @@ function gameLoop() {
   const herbWrap = document.getElementById('herb-harvest-wrap');
   if (herbWrap) herbWrap.style.display = (G.scene === 'outside' && G.timePeriod === 'morning' && (G.herbHarvesting || G.herbReady)) ? 'block' : 'none';
   if (G.farmStage >= 2 && G.farmStage < 5) {
-    // 第8天下雨：雨水自動澆灌農田，生長速度加倍
-    if (G.day === 8 && G.weather === 'rain') G.farmWatered = true;
-    G.farmGrowthTimer += (G.day === 8 && G.weather === 'rain') ? 2 : 1;
+    // 下雨：雨水自動澆灌農田，生長速度加倍
+    if (G.weather === 'rain') G.farmWatered = true;
+    G.farmGrowthTimer += (G.weather === 'rain') ? 2 : 1;
     const stageMax = FARM_STAGE_MAX;
     const growPct = Math.min(100, (G.farmGrowthTimer / stageMax) * 100);
     const farmBar = document.getElementById('farm-growth-bar');
@@ -8818,6 +8915,7 @@ function gameLoop() {
     G._chickenSfxTimer = 0;
   }
 
+  tickRandomRain();
   updateBirdAmbientSfx();
   updateFrogSfx();
   updateWeatherFx();
@@ -9428,46 +9526,7 @@ function openAvarenMenu() {
       req: () => !G.actionSceneActive && (G.coldPotion > 0 || G.cursePotion > 0 || G.forgetPotion > 0),
       run() {
         closeAction();
-        const potionItems = [];
-        potionItems.push({
-          name: '治療藥水', fx: () => `疼痛-5  剩餘×${G.coldPotion}`,
-          req: () => G.coldPotion > 0,
-          run() {
-            chg('coldPotion', -1); chg('pain', -5); renderHUD(); showHealEffect();
-            story('阿瓦倫', pick(['……（把藥水一口喝掉，皺了皺眉。）', '……苦。（但還是喝完了。）', '（沒有說話，只是喝完後微微鬆了口氣。）']));
-            toast('💊 治療藥水發揮了效果  疼痛 -5');
-          }
-        });
-        potionItems.push({
-          name: '解咒藥水', fx: () => `詛咒-5  剩餘×${G.cursePotion}`,
-          req: () => G.cursePotion > 0,
-          run() {
-            chg('cursePotion', -1); chg('curse', -5); renderHUD(); showHealEffect();
-            story('阿瓦倫', pick(['……（慢慢喝下，身上的黑霧輕輕顫了一下。）', '……（閉著眼睛喝完，沉默了幾秒。）「……沒那麼痛了。」', '（沒有抗拒，靜靜地把藥水喝完。）']));
-            toast('🔮 解咒藥水發揮了效果  詛咒 -5');
-          }
-        });
-        if (G.bloodMoon7Active && G.forgetPotion > 0) {
-          potionItems.push({
-            name: '忘卻藥水', fx: () => `疼痛-25  詛咒-25  剩餘×${G.forgetPotion}`,
-            req: () => G.forgetPotion > 0,
-            run() {
-              chg('forgetPotion', -1); chg('pain', -25); chg('curse', -25);
-              G.usedForgetMagic = true;
-              renderHUD();
-              startActionScene([
-                { speaker: '旁白',   text: '你打開那瓶來之不易的忘卻藥水，輕輕靠近阿瓦倫。' },
-                { speaker: '旁白',   text: '他在顫抖，眼神渙散，幾乎認不出你是誰。' },
-                { speaker: '你',     text: '沒事了，沒事了……讓這些先過去。' },
-                { speaker: '阿瓦倫', text: '……（迷迷糊糊地，身體慢慢放鬆了一些。）' },
-                { speaker: '旁白',   text: '魔法緩緩滲入，那些最深的痛苦記憶暫時沉入了黑暗。\n他的呼吸漸漸平穩下來。' },
-              ], CARE_MAX, () => {
-                story('旁白', '忘卻藥水發揮了效果，阿瓦倫的痛苦稍微緩和了。');
-              });
-            }
-          });
-        }
-        showActionMenu('給予藥水', potionItems);
+        showGivePotionMenu();
       }
     },
     {
@@ -9499,6 +9558,55 @@ function openAvarenMenu() {
     },
   );
   showActionMenu('和阿瓦倫互動', avarenMenuItems);
+}
+
+function showGivePotionMenu() {
+        const potionItems = [];
+        potionItems.push({
+          name: '治療藥水', fx: () => `疼痛-5  剩餘×${G.coldPotion}`,
+          req: () => G.coldPotion > 0,
+          run() {
+            chg('coldPotion', -1); chg('pain', -5); renderHUD(); showHealEffect();
+            story('阿瓦倫', pick(['……（把藥水一口喝掉，皺了皺眉。）', '……苦。（但還是喝完了。）', '（沒有說話，只是喝完後微微鬆了口氣。）']));
+            toast('💊 治療藥水發揮了效果  疼痛 -5');
+          }
+        });
+        potionItems.push({
+          name: '解咒藥水', fx: () => `詛咒-5  剩餘×${G.cursePotion}`,
+          req: () => G.cursePotion > 0,
+          run() {
+            chg('cursePotion', -1); chg('curse', -5); renderHUD(); showHealEffect();
+            story('阿瓦倫', pick(['……（慢慢喝下，身上的黑霧輕輕顫了一下。）', '……（閉著眼睛喝完，沉默了幾秒。）「……沒那麼痛了。」', '（沒有抗拒，靜靜地把藥水喝完。）']));
+            toast('🔮 解咒藥水發揮了效果  詛咒 -5');
+          }
+        });
+        if (G.forgetPotion > 0) {
+          potionItems.push({
+            name: '忘卻藥水', fx: () => `疼痛-25  詛咒-25  剩餘×${G.forgetPotion}`,
+            req: () => G.forgetPotion > 0,
+            run() {
+              chg('forgetPotion', -1); chg('pain', -25); chg('curse', -25);
+              if (G.bloodMoon7Active) G.usedForgetMagic = true;
+              renderHUD();
+              const lines = G.bloodMoon7Active ? [
+                { speaker: '旁白',   text: '你打開那瓶來之不易的忘卻藥水，輕輕靠近阿瓦倫。' },
+                { speaker: '旁白',   text: '他在顫抖，眼神渙散，幾乎認不出你是誰。' },
+                { speaker: '你',     text: '沒事了，沒事了……讓這些先過去。' },
+                { speaker: '阿瓦倫', text: '……（迷迷糊糊地，身體慢慢放鬆了一些。）' },
+                { speaker: '旁白',   text: '魔法緩緩滲入，那些最深的痛苦記憶暫時沉入了黑暗。\n他的呼吸漸漸平穩下來。' },
+              ] : [
+                { speaker: '旁白',   text: '你打開忘卻藥水，輕輕靠近阿瓦倫。' },
+                { speaker: '你',     text: '喝下去吧……讓那些痛苦的記憶先沉下去。' },
+                { speaker: '阿瓦倫', text: '……（安靜地喝下，眼神慢慢變得朦朧。）' },
+                { speaker: '旁白',   text: '魔法緩緩滲入，那些最深的痛苦記憶暫時沉入了黑暗。\n他的呼吸漸漸平穩下來。' },
+              ];
+              startActionScene(lines, CARE_MAX, () => {
+                story('旁白', '忘卻藥水發揮了效果，阿瓦倫的痛苦稍微緩和了。');
+              });
+            }
+          });
+        }
+        showActionMenu('給予藥水', potionItems);
 }
 
 // ══════════════════════════════════════
@@ -9552,7 +9660,7 @@ function doAction_GatherAppleTree(treeKey) {
         playLoopingAudio('sfx-item-get', 3.0); toast('🪵 木材 +1');
       } else if (roll < 0.70) {
         chg('branch', 1); renderHUD();
-        playLoopingAudio('sfx-item-get', 3.0); toast('🌿 樹枝 +1');
+        playLoopingAudio('sfx-item-get', 3.0); toast('🪾 樹枝 +1');
       } else if (roll < 0.95) {
         chg('bug', 1); renderHUD();
         playLoopingAudio('sfx-item-get', 3.0); toast('🐛 蟲材 +1');
@@ -9578,7 +9686,7 @@ function doAction_GatherWood() {
       playLoopingAudio('sfx-item-get', 3.0); toast('🪵 木材 +1');
     } else if (roll < 0.70) {
       chg('branch', 1); renderHUD();
-      playLoopingAudio('sfx-item-get', 3.0); toast('🌿 樹枝 +1');
+      playLoopingAudio('sfx-item-get', 3.0); toast('🪾 樹枝 +1');
     } else if (roll < 0.95) {
       chg('bug', 1); renderHUD();
       playLoopingAudio('sfx-item-get', 3.0); toast('🐛 蟲材 +1');
@@ -9625,7 +9733,7 @@ function doAction_GatherBush() {
     const roll = Math.random();
     if (roll < 0.50) {
       chg('branch', 1); renderHUD();
-      playLoopingAudio('sfx-item-get', 3.0); toast('🌿 樹枝 +1');
+      playLoopingAudio('sfx-item-get', 3.0); toast('🪾 樹枝 +1');
     } else if (roll < 0.60) {
       chg('herb', 1); renderHUD();
       playLoopingAudio('sfx-item-get', 3.0); toast('🌿 藥材 +1');
@@ -9901,7 +10009,7 @@ function doAction_GatherStone() {
 const TRADE_SELL = [
   { id:'herb',            icon:'🌿', name:'藥材',     price:3  },
   { id:'wood',            icon:'🪵', name:'木材',     price:2  },
-  { id:'branch',          icon:'🪹', name:'樹枝',     price:1  },
+  { id:'branch',          icon:'🪾', name:'樹枝',     price:1  },
   { id:'bug',             icon:'🐛', name:'蟲材',     price:2  },
   { id:'fish',            icon:'🐟', name:'魚',       price:3  },
   { id:'stone',           icon:'🪨', name:'礦石',     price:4  },
@@ -9916,13 +10024,13 @@ const TRADE_SELL = [
   { id:'beastMeat',       icon:'🥩', name:'獸肉',     price:5  },
   { id:'monsterMaterial', icon:'🦴', name:'魔物素材', price:8  },
   { id:'coldPotion',      icon:'<img src="Medicine_red.svg" class="item-icon-svg">',   name:'治療藥水', price:6  },
-  { id:'cursePotion',     icon:'<img src="Medicine_green.svg" class="item-icon-svg">', name:'解咒藥水', price:8  },
+  { id:'cursePotion',     icon:'<img src="Medicine_yellow.svg" class="item-icon-svg">', name:'解咒藥水', price:8  },
   { id:'forgetPotion',    icon:'<img src="Medicine_blue.svg" class="item-icon-svg">', name:'忘卻藥水', price:12 },
 ];
 const TRADE_BUY = [
   { id:'herb',        icon:'🌿', name:'藥材',     price:5  },
   { id:'wood',        icon:'🪵', name:'木材',     price:4  },
-  { id:'branch',      icon:'🪹', name:'樹枝',     price:2  },
+  { id:'branch',      icon:'🪾', name:'樹枝',     price:2  },
   { id:'bug',         icon:'🐛', name:'蟲材',     price:4  },
   { id:'fish',        icon:'🐟', name:'魚',       price:5  },
   { id:'stone',       icon:'🪨', name:'礦石',     price:6  },
@@ -9946,9 +10054,9 @@ function generateDailyBuyList() {
     if (saleIdxs.has(i)) {
       const discount = (Math.floor(Math.random() * 8) + 2) / 10; // 0.2~0.9
       const salePrice = Math.max(1, Math.round(item.price * discount));
-      return { ...item, salePrice, onSale: true };
+      return { ...item, salePrice, onSale: true, stock: 20 };
     }
-    return { ...item, salePrice: item.price, onSale: false };
+    return { ...item, salePrice: item.price, onSale: false, stock: 20 };
   });
 
   // 賣出加價：隨機6項高10~50%
@@ -10145,15 +10253,17 @@ function renderTradeMenu() {
   dailyList.forEach(item => {
     const sel = _tradeSelBuy[item.id] || 0;
     const totalCost = dailyList.reduce((s,i) => s + ((_tradeSelBuy[i.id]||0)*i.salePrice), 0);
-    const canMore = G.money - totalCost >= item.salePrice;
+    const remainStock = (item.stock ?? 0) - sel;
+    const soldOut = (item.stock ?? 0) <= 0;
+    const canMore = (G.money - totalCost >= item.salePrice) && remainStock > 0;
     const row = document.createElement('div');
-    row.className = 'trade-row' + (item.onSale ? ' trade-row-sale' : '');
+    row.className = 'trade-row' + (item.onSale ? ' trade-row-sale' : '') + (soldOut ? ' trade-row-soldout' : '');
     const priceHtml = item.onSale
       ? `<span class="tr-price tr-price-sale"><s class="tr-orig-price">$${item.price}</s> $${item.salePrice}</span>`
       : `<span class="tr-price">$${item.salePrice}</span>`;
     row.innerHTML =
       `<span class="tr-name">${item.icon} ${item.name}</span>` +
-      `<span class="tr-qty">持有 ${G[item.id]??0}</span>` +
+      `<span class="tr-qty">${soldOut ? '售完' : '庫存 '+(item.stock ?? 0)}</span>` +
       priceHtml +
       `<div class="tr-qty-ctrl">` +
         `<button class="tr-qty-btn" ${sel<=0?'disabled':''} onclick="tradeAdj('buy','${item.id}',-1)">−</button>` +
@@ -10161,7 +10271,7 @@ function renderTradeMenu() {
         `<button class="tr-qty-btn" ${!canMore?'disabled':''} onclick="tradeAdj('buy','${item.id}',1)">＋</button>` +
       `</div>` +
       `<span class="tr-subtotal">${sel > 0 ? '-$'+sel*item.salePrice : ''}</span>` +
-      (item.onSale ? `<span class="tr-sale-badge">SALE</span>` : '');
+      (item.onSale && !soldOut ? `<span class="tr-sale-badge">SALE</span>` : '');
     buyDiv.appendChild(row);
   });
   const totalBuy = dailyList.reduce((s,i) => s + ((_tradeSelBuy[i.id]||0)*i.salePrice), 0);
@@ -10175,7 +10285,11 @@ function tradeAdj(type, id, delta) {
   const sel = type === 'sell' ? _tradeSelSell : _tradeSelBuy;
   sel[id] = (sel[id] || 0) + delta;
   if (type === 'sell') sel[id] = Math.max(0, Math.min(sel[id], G[id] ?? 0));
-  if (type === 'buy')  sel[id] = Math.max(0, sel[id]);
+  if (type === 'buy') {
+    const buyItem = (G.dailyBuyList || []).find(i => i.id === id);
+    const maxStock = buyItem ? (buyItem.stock ?? 0) : 0;
+    sel[id] = Math.max(0, Math.min(sel[id], maxStock));
+  }
   renderTradeMenu();
 }
 
@@ -10195,7 +10309,7 @@ function confirmBuy() {
   let total = 0;
   (G.dailyBuyList || []).forEach(item => {
     const qty = _tradeSelBuy[item.id] || 0;
-    if (qty > 0) { chg(item.id, qty); total += qty * item.salePrice; }
+    if (qty > 0) { chg(item.id, qty); total += qty * item.salePrice; item.stock = Math.max(0, (item.stock ?? 0) - qty); }
   });
   if (total > 0) { chg('money', -total); renderHUD(); playLoopingAudio('sfx-money', 3.0); }
   _tradeSelBuy = {};
@@ -10234,7 +10348,7 @@ const COOK_INGREDIENTS_LIST = [
   { key: 'beastMeat',       name: '獸肉',   icon: '🥩', fx: '飽食度+6  心情+3',         effects: { avarenHunger: 6, mood: 3 } },
   { key: 'stone',           name: '礦石',   icon: '🪨', fx: '心情-2',                   effects: { mood: -2 } },
   { key: 'monsterMaterial', name: '魔物素材', icon: '🦴', fx: '飽食度+2  詛咒-3  心情-2', effects: { avarenHunger: 2, curse: -3, mood: -2 } },
-  { key: 'branch',          name: '樹枝',   icon: '🪵', fx: '飽食度+1  心情-2',         effects: { avarenHunger: 1, mood: -2 } },
+  { key: 'branch',          name: '樹枝',   icon: '🪾', fx: '飽食度+1  心情-2',         effects: { avarenHunger: 1, mood: -2 } },
   { key: 'crystal',         name: '水晶碎片', icon: '💎', fx: '心情-2  詛咒-5',         effects: { mood: -2, curse: -5 } },
 ];
 
@@ -10682,10 +10796,10 @@ function doAction_Cook() {
 
 function doAction_PickupPotion() {
   if (!G.researchReady) return;
-  const potionKey = G.researchType === 'cold' ? 'coldPotion' : G.researchType === 'curse' ? 'cursePotion' : 'forgetPotion';
+  const potionKey = G.researchType === 'cold' ? 'coldPotion' : G.researchType === 'curse' ? 'cursePotion' : G.researchType === 'stamina' ? 'staminaPotion' : 'forgetPotion';
   if (isBagFull(potionKey, 1)) { warn('背包已滿，無法取回藥水。請先清出空間。'); return; }
   SFX.collect();
-  const label = G.researchType === 'cold' ? '治療藥水' : G.researchType === 'curse' ? '解咒藥水' : '忘卻藥水';
+  const label = G.researchType === 'cold' ? '治療藥水' : G.researchType === 'curse' ? '解咒藥水' : G.researchType === 'stamina' ? '體力藥水' : '忘卻藥水';
   G.researchReady = false;
   document.getElementById('research-scene-wrap').style.display = 'none';
   const potionEl = document.getElementById('lobby-potion');
@@ -10736,12 +10850,27 @@ function doAction_StartResearch() {
       }
     },
     {
-      name: '忘卻藥水', fx: '藥材-5  蟲材-3  礦石-3  血月夜使用',
-      req: () => G.herb >= 5 && G.bug >= 3 && G.stone >= 3 && G.forgetPotion === 0,
+      name: '體力藥水', fx: '藥材-2  體力+20（使用後）',
+      req: () => G.herb >= 2,
       run() {
         playTitleButtonSfx();
         spendFatigue(4);
-        chg('herb', -5); chg('bug', -3); chg('stone', -3); chg('mood', -3);
+        chg('herb', -2); chg('mood', -3);
+        G.researchActive = true; G.researchTimer = 0; G.researchType = 'stamina';
+        renderHUD();
+        document.getElementById('research-scene-wrap').style.display = 'block';
+        document.getElementById('research-scene-bar').style.width = '0%';
+        document.getElementById('research-scene-label').textContent = '🔬 研究體力藥水中…';
+        story('旁白', pick(NARR_RESEARCH));
+      }
+    },
+    {
+      name: '忘卻藥水', fx: '藥材-5  蟲材-3  水晶碎片-5  妖精-1',
+      req: () => G.herb >= 5 && G.bug >= 3 && G.crystal >= 5 && G.fairyItem >= 1 && G.forgetPotion === 0,
+      run() {
+        playTitleButtonSfx();
+        spendFatigue(4);
+        chg('herb', -5); chg('bug', -3); chg('crystal', -5); chg('fairyItem', -1); chg('mood', -3);
         G.researchActive = true; G.researchTimer = 0; G.researchType = 'forget';
         renderHUD();
         document.getElementById('research-scene-wrap').style.display = 'block';
@@ -10753,6 +10882,219 @@ function doAction_StartResearch() {
   ]);
 }
 
+// ── 一、艾德林的日記（每天早上可回顧昨天）──
+// 索引 = 天數，內容是「那一天」發生的事，隔天早上才讀得到
+const ELDRIN_DIARY = {
+  0: [
+    '我帶著阿瓦倫逃出來了。',
+    '諾亞替我們處理了路上的痕跡，又把這間林中的小屋借給我。門關上的那一刻，我才終於意識到自己還在發抖。',
+    '阿瓦倫還沒有醒，我不知道自己能不能救他。可是我已經沒有退路了。',
+    '明天開始，我必須想辦法讓他活下去……。',
+  ],
+  1: [
+    '阿瓦倫今天昏睡了一整天……怎麼辦，我已經盡力的去做各種嘗試了……。',
+    '要是他再也醒不過來的話……我……這都是我的錯……',
+    '昨夜坐在書桌前翻了整夜的咒術典籍，但還是找不到方法。',
+    '對不起，阿瓦倫……拜託你要撐過今晚。',
+  ],
+  2: () => G.avarenAwake ? [
+    '他醒了！雖然還虛弱得下不了床，但他睜開眼睛看了我一眼——那一刻我差點掉下淚來。',
+    '諾亞白天來看過我們，傍晚還在湖邊和我聊了很多…。他真是個好人。',
+    '森林那片湖很美，但是也很危險，我要叮囑阿瓦倫以後不可以靠近那裡。',
+  ] : [
+    '他還是沒有醒。詛咒實在太深入他的身體了…連睜開眼睛的力氣都沒有。',
+    '諾亞白天來看過我們，傍晚還在湖邊和我聊了很多…。他是個好人…。',
+    '我必須再快一點…快點找到解咒的方法……',
+  ],
+  3: [
+    '今天來了個自稱勇者的人，雷德。他似乎……有點迷糊。',
+    '一開始我對他還充滿警戒，但是跟他聊了幾句之後，覺得他應該不是壞人。',
+    '而且他能夠替我解決森林裡的史萊姆，這真的能幫上很大的忙！',
+    '勇者嗎……？原本只會在傳說或是民間故事裡聽到，沒想到真的有這樣的人出現。',
+  ],
+  4: [
+    '空氣裡有種說不上來的沉重。也許是我多心了。',
+    '森林裡出現了一個披著黑色斗篷的旅人，他知道這裡有詛咒…也知道詛咒的源頭…。',
+    '他到底是誰？為什麼他知道這些東西？ 但至少幸好…他對阿瓦倫似乎沒有敵意。',
+    '他的容貌很好看，遠遠看時我還以為是漂亮的女性。總覺得他有股神秘的氣質。',
+  ],
+  5: [
+    '他今天氣色好很多了，幸好……我的努力沒有白費。',
+    '雷德和那個叫溫特的旅人在森林裡碰上了，兩個人之間氣氛微妙。',
+    '一點一點地，總會好起來的吧。我這樣告訴自己。',
+  ],
+  6: () => G.day4EventTriggered ? [
+    '出事了。傍晚回到房間，床是空的——阿瓦倫不見了。',
+    '我找遍了小屋的每一個角落，又衝進夜色裡喊他的名字，卻怎麼也找不到。',
+    '怎麼會……他到底跑去哪裡了，都是我不好…我沒有看好他……',
+    '要是他怎麼了……我該怎麼辦…',
+    '夜已經太深了，我沒辦法再待在外面找他了，我只能先回到這裡……明天一早我就要立刻出門去找他！',
+  ] : [
+    '傍晚回房時，總覺得哪裡不對勁。',
+    '阿瓦倫好像有自己的心事，安靜得讓我擔心。',
+    '夜晚很長。我一直注意著窗外發生的任何動靜。',
+  ],
+  7: () => {
+    if (!G.day4EventTriggered) return [
+      '平靜的一天。他乖乖待在屋裡，我也鬆了口氣。',
+      '能這樣安穩地陪著他，已經是我奢求的幸福了。',
+    ];
+    if (G.avarenStolenMoney) return [
+      '清晨，他自己回來了。我太急迫了，忍不住對他發了脾氣。',
+      '他低著頭不說話，手裡握著一個布袋——裡頭，有很多的錢，那是他偷來的嗎？他去哪裡偷的？',
+      '我不知道他經歷了什麼。我只知道，我不該讓他一個人面對這些…。',
+      '是我的錯，錢這種事情怎麼可以讓一個小孩子擔心呢？',
+    ];
+    return [
+      '他回來了。懷裡抱著親手獵來的小動物，笨拙地遞到我面前，說「這些給你」。',
+      '我先是鬆了口氣，接著才忍不住罵他不該自己跑出去。他卻只是說，因為我提過食物快不夠了。',
+      '原來那句隨口的抱怨，他一直記著……。',
+      '原來他也把我放在心裡了，雖然這次的事情真的讓我很擔心，但是我也很開心他會這麼替我著想。',
+    ];
+  },
+  8: [
+    '下了一整天的雨。雖然農田不需要澆水，但是雨天在戶外工作真的太累了。',
+    '今天的水氣充足，一整天都很潮濕……我感覺森林裡的氛圍變的怪怪的。',
+    '那片安靜的湖似乎會出現東西。',
+  ],
+  9: () => G.usedForgetMagic ? [
+    '因為急迫而尚未寫下內容。',
+  ] : [
+    '因為急迫而尚未寫下內容。',
+  ],
+  10: () => G.usedForgetMagic ? [
+    '我的手時不時地還在顫抖…。',
+    '雖然血月過去了但我還是非常不安…這次撐過來了，但未來呢？',
+    '如果血月再次來臨，那時候爆發的詛咒更嚴重的話…說不定我真的會失去他……。',
+    '我得在下一次血月時做好更多的準備……不管是什麼，只要有一線希望，我都必須去嘗試……。',
+  ] : [
+    '我的手時不時地還在顫抖…。',
+    '血月過去了，阿瓦倫想起來所有的事情，包括那時候在實驗室……。',
+    '我真的好後悔，為什麼我沒有早點發現老師會把他拿來當實驗品……',
+    '為什麼我當下動彈不得？我什麼事情都做不了…我是懦弱又可悲的人…。',
+    '我從一開始就不該將他從那個巷子裡帶回來…',
+    '如果沒有我的話，他根本不用經歷這些事情……',
+    '我現在唯一能做的事情，就是用我的一輩子去彌補我犯的錯……拜託…請原諒我……。',
+    '拜託你，阿瓦倫……請你活下來…。',
+  ],
+};
+
+// ── 二、生活筆記（玩法提示）──
+const ELDRIN_LIFE_NOTES = [
+  { name: '📖 關於照顧阿瓦倫',
+    lines: [
+      '他身上的疼痛和黑霧，越淡越好。我得想辦法一點一點把它們從他身上拿走。',
+      '白天去採些藥草，晚上回房間替他換藥、再為他唸一段除咒的咒文——這些每天都該做。',
+      '若還有餘力，就煉些治療和解咒的藥水給他。一點一滴，總會有用的。',
+    ] },
+  { name: '⏳ 該怎麼過一天',
+    lines: [
+      '採集、釣魚、種田、上市集，這些都得趁白天。天一暗，就該回屋裡了。',
+      '入夜以後，是煮飯、煉藥、守著他的時間。',
+      '……也別忘了我自己。要是累垮了昏睡過去，那一夜就什麼都做不成了。',
+      '另外——下雨天在外頭幹活格外耗神，淋著雨採集、釣魚都會比平常更累。若非必要，雨天還是少往外跑為好。',
+    ] },
+  { name: '🍲 關於吃飯',
+    lines: [
+      '廚房可以熬湯，丟進去的食材不同，效果也不一樣。煮好以後，記得親手端去他床邊。',
+      '不能讓他餓著——肚子空了，疼痛會更難熬；我自己餓過頭，也是會撐不住的。',
+      '多備些食物吧，總沒壞處。',
+    ] },
+  { name: '🏪 鎮上的市集',
+    lines: [
+      '從柵欄門出去就能到鎮上的市集，不過只有白天開門。',
+      '每天上架的貨和折扣都不一樣，而且每樣東西數量有限，手腳要快，賣完就沒了。',
+      '用不到的素材也能拿去換錢，有時候某些東西當天還收得特別高。',
+    ] },
+];
+
+// ── 三、藥草筆記（素材與配方）──
+const ELDRIN_HERB_NOTES = [
+  { name: '🌿 藥草',
+    lines: [
+      '最基本、卻也最要緊的東西。森林的草叢和花叢裡都採得到。',
+      '幾乎每一種藥水都離不開它，包紮傷口也要用上。手邊永遠別讓它見底。',
+    ] },
+  { name: '🪨 礦石與水晶碎片',
+    lines: [
+      '敲鑿岩壁就能取得礦石，運氣好還會敲出蘊著微光的水晶碎片。',
+      '水晶碎片裡封著淡淡的魔力，是高階藥水不可或缺的材料。別小看那一點微光。',
+    ] },
+  { name: '🐛 蟲材',
+    lines: [
+      '翻開樹皮、撥開落葉，總能找到些小蟲子。看著不起眼，卻是某些藥方的關鍵。',
+      '別和阿瓦倫撿回來的那隻搞混了——他那隻，是要留著的。',
+    ] },
+  { name: '🧚 妖精與白藥花',
+    lines: [
+      '雙數的夜裡，森林深處會有妖精現身，碰到牠就能收進手裡。',
+      '妖精與罕見的白藥花，都帶著安撫魔物的力量，是煉製忘卻藥水的珍貴材料。',
+    ] },
+  { name: '🧪 藥水配方',
+    lines: [
+      '治療藥水——藥草，緩解疼痛。',
+      '解咒藥水——藥草，壓下黑霧。',
+      '體力藥水——藥草，留給累壞的自己。',
+      '忘卻藥水——藥草、蟲材、水晶碎片、妖精。抹去最深的痛苦，材料卻得來不易。',
+    ] },
+];
+
+function doAction_NotesMenu(isReopen = false) {
+  if (G.bloodMoon7Active) { warn('無法行動。'); return; }
+  if (G.paused || G.actionSceneActive) return;
+  if (!isReopen) playLoopingAudio('sfx-page', 4.0);
+  showActionMenu('艾德林的筆記', [
+    { name: '📔 艾德林的日記', fx: '回顧過去幾天', req: () => true,
+      run() { setTimeout(() => doAction_DiaryMenu(), 0); } },
+    { name: '📒 生活筆記', fx: '生活中的提醒', req: () => true,
+      run() { setTimeout(() => doAction_LifeNotesMenu(), 0); } },
+    { name: '🌿 藥草筆記', fx: '素材與配方', req: () => true,
+      run() { setTimeout(() => doAction_HerbNotesMenu(), 0); } },
+  ]);
+}
+
+// 通用：顯示一段筆記內容，看完後回到指定選單
+function _showNoteLines(lines, backFn) {
+  const scene = lines.map(t => ({ speaker: '旁白', text: t }));
+  startActionScene(scene, 400, () => { setTimeout(backFn, 0); }, true);
+}
+
+function doAction_DiaryMenu() {
+  // 日記到隔天早上才會整理完成，因此只回顧到昨天為止
+  const lastDay = G.day - 1;
+  const items = [];
+  for (let d = 0; d <= lastDay; d++) {
+    if (!ELDRIN_DIARY[d]) continue;
+    items.push({
+      name: `第 ${d} 天`, fx: '', req: () => true,
+      run() {
+        const entry = typeof ELDRIN_DIARY[d] === 'function' ? ELDRIN_DIARY[d]() : ELDRIN_DIARY[d];
+        _showNoteLines(entry, () => doAction_DiaryMenu());
+      }
+    });
+  }
+  if (items.length === 0) {
+    items.push({ name: '（還沒有可以回顧的日記）', fx: '', req: () => false, run() {} });
+  }
+  showActionMenu('📔 艾德林的日記', items);
+}
+
+function doAction_LifeNotesMenu() {
+  const items = ELDRIN_LIFE_NOTES.map(tip => ({
+    name: tip.name, fx: '', req: () => true,
+    run() { _showNoteLines(tip.lines, () => doAction_LifeNotesMenu()); }
+  }));
+  showActionMenu('📒 生活筆記', items);
+}
+
+function doAction_HerbNotesMenu() {
+  const items = ELDRIN_HERB_NOTES.map(tip => ({
+    name: tip.name, fx: '', req: () => true,
+    run() { _showNoteLines(tip.lines, () => doAction_HerbNotesMenu()); }
+  }));
+  showActionMenu('🌿 藥草筆記', items);
+}
+
 function doAction_BookshelfMenu() {
   if (G.bloodMoon7Active) { warn('無法行動。'); return; }
   if (G.paused || G.actionSceneActive) return;
@@ -10762,9 +11104,9 @@ function doAction_BookshelfMenu() {
       fx: () => {
         const todayRead = (G.eldrinBookReadDays || []).includes(G.day);
         if (todayRead) return '重讀今天的內容';
-        if (G.day < 1 || G.day > 11) return '沒有新的內容';
+        if (G.day < 0 || G.day > 11) return '沒有新的內容';
         if (G.day === 11 && !hasReadAllEldrinBookBeforeFinal()) return '缺少前面的閱讀紀錄';
-        return ELDRIN_BOOK_DAILY[G.day - 1]?.title ?? '';
+        return ELDRIN_BOOK_DAILY[G.day]?.title ?? '';
       },
       run() { doAction_ReadAlone(); }
     },
@@ -10780,14 +11122,14 @@ function doAction_BookshelfMenu() {
 function doAction_ReadAlone() {
   if (G.timePeriod !== 'evening') { timeWarn('讀書是晚上的行動。'); return; }
   if ((G.eldrinHp ?? 100) <= 20) { warn('艾德林 HP 太低了，需要休息才能工作。'); return; }
-  if (G.day < 1 || G.day > 11) { warn('今天沒有新的內容可以讀。'); return; }
+  if (G.day < 0 || G.day > 11) { warn('今天沒有新的內容可以讀。'); return; }
   spendFatigue(1);
   if (!Array.isArray(G.eldrinBookReadDays)) G.eldrinBookReadDays = [];
   if (G.day === 11 && !hasReadAllEldrinBookBeforeFinal()) {
     story('旁白', '你翻到關於記憶的那一頁，卻發現許多前面的註記都還沒有讀完。\n\n缺少那些線索，你無法理解這一頁真正想說的事情。');
     return;
   }
-  const book = ELDRIN_BOOK_DAILY[G.day - 1];
+  const book = ELDRIN_BOOK_DAILY[G.day];
   if (!G.eldrinBookReadDays.includes(G.day)) G.eldrinBookReadDays.push(G.day);
   const parts = book.text.split('\n\n').filter(p => p.trim());
   const mid = Math.ceil(parts.length / 2);
@@ -10795,7 +11137,7 @@ function doAction_ReadAlone() {
   const text2 = parts.slice(mid).join('\n');
   const lines = [{ speaker: '旁白', text: book.title }, { speaker: '旁白', text: text1 }];
   if (text2) lines.push({ speaker: '旁白', text: text2 });
-  startActionScene(lines, 0, () => { renderHUD(); });
+  startActionScene(lines, 0, () => { renderHUD(); }, true);
 }
 
 function hasReadAllEldrinBookBeforeFinal() {
@@ -10810,15 +11152,16 @@ function hasReadAllEldrinBookBeforeFinal() {
 function doAction_BookshelfMenu() {
   if (G.bloodMoon7Active) { warn('血月夜無法閱讀。'); return; }
   if (G.paused || G.actionSceneActive) return;
+  playLoopingAudio('sfx-bookshelf', 4.0);
   showActionMenu('書櫃', [
     {
       name: '自己讀書',
       fx: () => {
         const todayRead = (G.eldrinBookReadDays || []).includes(G.day);
         if (todayRead) return '可重讀今天的內容';
-        if (G.day < 1 || G.day > 11) return '沒有可閱讀的內容';
+        if (G.day < 0 || G.day > 11) return '沒有可閱讀的內容';
         if (G.day === 11 && !hasReadAllEldrinBookBeforeFinal()) return '缺少前面的閱讀紀錄';
-        return ELDRIN_BOOK_DAILY[G.day - 1]?.title ?? '';
+        return ELDRIN_BOOK_DAILY[G.day]?.title ?? '';
       },
       run() { doAction_ReadAlone(); }
     },
@@ -10853,13 +11196,14 @@ function doAction_ReadBook() {
     chg('mood', 3);
     chg('trust', 5);
     renderHUD();
-  });
+  }, true);
 }
 
-function startActionScene(lines, max, onDone) {
+function startActionScene(lines, max, onDone, pageSfx = false) {
   // 清除任何進行中的旁白定時器（action scene 優先）
   if (_storyAutoTimer) { clearTimeout(_storyAutoTimer); _storyAutoTimer = null; }
   G.paused = true;
+  G.actionScenePageSfx = pageSfx;
   G.actionSceneActive = true;
   G.actionSceneOnDone = onDone;
   G.actionSceneLines = lines;
@@ -11016,9 +11360,9 @@ function ascAdvance() {
   if (finishDialogueTypewriter()) { playDialogueNextSfx(); return; }
   // 自動對話模式：只允許跳過打字機，不手動推進行數
   if (G.autoScenePlaying) return;
-  playDialogueNextSfx();
   G.actionSceneLineIdx++;
   if (G.actionSceneLineIdx >= G.actionSceneLines.length) {
+    playDialogueNextSfx();
     G.actionSceneActive = false;
     clearDialogueTypewriter();
     document.getElementById('action-scene-overlay').style.display = 'none';
@@ -11028,6 +11372,8 @@ function ascAdvance() {
     if (!G.sleepAnimActive && !isDlgBlocking()) G.paused = false;
     return;
   }
+  if (G.actionScenePageSfx) playLoopingAudio('sfx-page', 4.0);
+  else playDialogueNextSfx();
   _ascShowLine(G.actionSceneLineIdx);
 }
 
@@ -11070,6 +11416,7 @@ function showActionMenu(heading, items) {
   warn('');
   document.getElementById('act-heading').textContent = heading;
   const list = document.getElementById('act-list');
+  list.classList.remove('three-col');
   list.innerHTML = '';
   menuBtns = [];
   items.forEach(item => {
@@ -11131,7 +11478,7 @@ function closeDlg() {} // 舊 dialogue-overlay 已廢棄，保留空函式避免
 const BAG_ITEMS = [
   { key:'herb',            icon:'🌿', name:'藥材',       desc:'製作藥水的基礎素材。在森林或野外可以採集到。' },
   { key:'wood',            icon:'🪵', name:'木材',       desc:'從樹木砍下的木料，可以用來生火或修繕小屋。' },
-  { key:'branch',          icon:'🌾', name:'細枝',       desc:'細小的樹枝，有時可以入藥，也能當引火用。' },
+  { key:'branch',          icon:'🪾', name:'樹枝',       desc:'細小的樹枝，有時可以入藥，也能當引火用。' },
   { key:'stone',           icon:'🪨', name:'礦石',       desc:'從礦脈敲下的石塊，某些石材對詛咒有抑制效果。' },
   { key:'crystal',         icon:'💎', name:'水晶',       desc:'蘊含微弱魔力的天然水晶，是高階藥水的材料之一。' },
   { key:'whiteFlower',     icon:'🌼', name:'白藥花',     desc:'開在森林深處的稀有花卉。對魔物有安撫效果。' },
@@ -11140,21 +11487,23 @@ const BAG_ITEMS = [
   { key:'mushroom',        icon:'🍄', name:'蘑菇',       desc:'森林裡的野生菇類。種類繁多，有些能入藥，有些……不能。' },
   { key:'fish',            icon:'🐟', name:'魚',         desc:'從池塘或溪流裡釣到的魚。富含蛋白質，是很好的食材。' },
   { key:'frog',            icon:'🐸', name:'青蛙',       desc:'在潮濕草叢裡抓到的青蛙。某些藥方需要用到牠。' },
-  { key:'bug',             icon:'🪳', name:'蟲子',       desc:'從樹皮或落葉下翻出來的小蟲。製作特殊藥水的材料。' },
+  { key:'bug',             icon:'🐛', name:'蟲材',       desc:'從樹皮或落葉下翻出來的小蟲。製作特殊藥水的材料。' },
+  { key:'giftBug',         icon:'🪳', name:'小蟲子',     desc:'阿瓦倫帶回來的小蟲，已經半死不活了。但他大概以為你會喜歡，所以小心地捧著帶了回來。' },
   { key:'egg',             icon:'🥚', name:'蛋',         desc:'鳥巢裡撿到的蛋。質地細緻，可以用來製作料理。' },
   { key:'beastMeat',       icon:'🥩', name:'獸肉',       desc:'從野獸身上取得的肉塊。熱量高，能補充體力。' },
   { key:'monsterMaterial', icon:'🦴', name:'魔物素材',   desc:'從魔物身上取得的材料。蘊含異常的能量，用途特殊。' },
   { key:'fairyItem',       icon:'<img src="Fairy-01.svg" class="item-icon-svg">', name:'妖精物品',   desc:'妖精留下的神秘東西。看起來毫無用處，但總覺得丟掉不太好。' },
   { key:'coldPotion',      icon:'<img src="Medicine_red.svg" class="item-icon-svg">',   name:'治療藥水',   desc:'能緩解阿瓦倫身體疼痛的藥水。需要時間研製。' },
-  { key:'cursePotion',     icon:'<img src="Medicine_green.svg" class="item-icon-svg">', name:'解咒藥水',   desc:'針對詛咒調配的特殊藥水，可以暫時壓制黑霧擴散。' },
+  { key:'cursePotion',     icon:'<img src="Medicine_yellow.svg" class="item-icon-svg">', name:'解咒藥水',   desc:'針對詛咒調配的特殊藥水，可以暫時壓制黑霧擴散。' },
   { key:'forgetPotion',    icon:'<img src="Medicine_blue.svg" class="item-icon-svg">', name:'忘卻藥水',   desc:'能抹去特定記憶的危險藥水。一旦使用，無法回頭。' },
+  { key:'staminaPotion',   icon:'<img src="Medicine_green.svg" class="item-icon-svg">', name:'體力藥水',   desc:'能恢復體力的營養藥水。疲憊的時候喝一瓶，精神會好很多。' },
   { key:'pebble',          icon:'🪨', name:'小石頭',       desc:'完全沒有用的小石頭。但阿瓦倫走了很遠才撿來，覺得你可能會喜歡。' },
   { key:'wildFlower',      icon:'🍂', name:'漂亮的樹葉',   desc:'有點皺掉了的落葉。他好像很認真地撿過來，包在手心裡帶回來的。' },
   { key:'feather',         icon:'🪶', name:'奇怪的羽毛',   desc:'顏色很特別的羽毛。他把羽毛遞給你的時候，表情有一點點期待。' },
 ];
 const BAG_SLOTS = 15;
 const BAG_MAX_STACK = 10;
-const BAG_ITEM_KEYS = new Set(['herb','wood','branch','stone','crystal','whiteFlower','apple','vegetable','mushroom','fish','frog','bug','egg','beastMeat','monsterMaterial','fairyItem','coldPotion','cursePotion','forgetPotion','pebble','wildFlower','feather']);
+const BAG_ITEM_KEYS = new Set(['herb','wood','branch','stone','crystal','whiteFlower','apple','vegetable','mushroom','fish','frog','bug','egg','beastMeat','monsterMaterial','fairyItem','coldPotion','cursePotion','forgetPotion','staminaPotion','pebble','wildFlower','feather','giftBug']);
 
 // 計算背包目前佔用幾格（每疊最多 BAG_MAX_STACK 個）
 function getBagUsedSlots() {
@@ -11231,7 +11580,7 @@ function openBag() {
     const slot = document.createElement('div');
     const item = bagSlots[i];
     if (item) {
-      slot.className = 'bag-slot filled';
+      slot.className = 'bag-slot filled' + (AVAREN_GIFT_KEYS.has(item.key) ? ' gift' : '');
       slot.dataset.key = item.key;
       slot.innerHTML = `<span class="slot-name">${item.name}</span><span class="slot-icon">${item.icon}</span><span class="slot-qty">×${item.qty}</span>`;
       const idx = i;
@@ -11272,12 +11621,19 @@ function openBagDiscardMenu(key) {
   const total = G[key] ?? 0;
   const item = BAG_ITEMS.find(i => i.key === key);
   const panel = document.getElementById('bag-discard-panel');
-  document.getElementById('bdp-title').textContent = `${item ? item.icon + ' ' + item.name : key}　×${total}`;
+  document.getElementById('bdp-title').innerHTML = `${item ? item.icon + ' ' + item.name : key}　×${total}`;
   // 直接顯示數量行
   document.getElementById('bdp-qty-row').style.display = 'flex';
   document.getElementById('bdp-qty-val').textContent = '1';
   const btns = document.getElementById('bdp-btns');
   btns.innerHTML = '';
+  const usable = BAG_USABLE_POTIONS[key];
+  if (usable) {
+    const bu = document.createElement('button');
+    bu.className = 'bdp-btn bdp-use'; bu.textContent = `使用 ×1（${usable.label}+${usable.amt}）`;
+    bu.onclick = () => { bdpUsePotionN(); };
+    btns.append(bu);
+  }
   const b1 = document.createElement('button');
   b1.className = 'bdp-btn'; b1.textContent = `確認丟棄 ×1`; b1.onclick = () => { playLoopingAudio('sfx-button', 4.0); bdpConfirmN(); };
   const b2 = document.createElement('button');
@@ -11304,12 +11660,40 @@ function bdpAdjust(d) {
   const max = G[_bdpKey] ?? 0;
   _bdpQty = Math.max(1, Math.min(max, _bdpQty + d));
   document.getElementById('bdp-qty-val').textContent = _bdpQty;
-  document.getElementById('bdp-btns').querySelectorAll('.bdp-btn')[0].textContent = `確認丟棄 ×${_bdpQty}`;
+  const discardBtn = [...document.getElementById('bdp-btns').querySelectorAll('.bdp-btn')].find(b => b.textContent.startsWith('確認丟棄'));
+  if (discardBtn) discardBtn.textContent = `確認丟棄 ×${_bdpQty}`;
+  const useBtn = document.querySelector('#bdp-btns .bdp-use');
+  const u = BAG_USABLE_POTIONS[_bdpKey];
+  if (useBtn && u) useBtn.textContent = `使用 ×${_bdpQty}（${u.label}+${u.amt * _bdpQty}）`;
   playLoopingAudio('sfx-dialogue-next', 2.5);
 }
 
+const BAG_USABLE_POTIONS = {
+  staminaPotion: { name:'體力藥水', stat:'eldrinFatigue', amt:20, label:'體力', emoji:'💚' },
+  coldPotion:    { name:'治療藥水', stat:'eldrinHp',      amt:5,  label:'HP',   emoji:'🔴' },
+};
 
-const AVAREN_GIFT_KEYS = new Set(['pebble', 'wildFlower', 'feather', 'bug']);
+function bdpUsePotionN() {
+  const u = BAG_USABLE_POTIONS[_bdpKey];
+  if (!u) return;
+  const n = Math.min(_bdpQty, G[_bdpKey] ?? 0);
+  if (n <= 0) return;
+  playLoopingAudio('sfx-buff', 4.0);
+  chg(_bdpKey, -n);
+  const total = u.amt * n;
+  if (u.stat === 'eldrinFatigue') {
+    G.eldrinFatigue = Math.min(100, (G.eldrinFatigue ?? 80) + total);
+  } else {
+    chg(u.stat, total);
+  }
+  renderHUD();
+  toast(`${u.emoji} ${u.name}發揮了效果  ${u.label} +${total}`);
+  closeBagDiscardMenu();
+  _afterDiscard();
+}
+
+
+const AVAREN_GIFT_KEYS = new Set(['pebble', 'wildFlower', 'feather', 'giftBug']);
 
 function _checkAvarenGiftDiscard() {
   if (AVAREN_GIFT_KEYS.has(_bdpKey) && G.avarenScene === G.scene) {
@@ -11579,6 +11963,7 @@ function chg(stat, d) {
   else if (stat==='coldPotion')   G.coldPotion   = Math.max(0,G.coldPotion+d);
   else if (stat==='cursePotion')  G.cursePotion  = Math.max(0,G.cursePotion+d);
   else if (stat==='forgetPotion') G.forgetPotion = Math.max(0,G.forgetPotion+d);
+  else if (stat==='staminaPotion') G.staminaPotion = Math.max(0,(G.staminaPotion ?? 0)+d);
   else if (stat==='apple')        G.apple        = Math.max(0,G.apple+d);
   else if (stat==='vegetable')    G.vegetable    = Math.max(0,G.vegetable+d);
   else if (stat==='mushroom')     G.mushroom     = Math.max(0,(G.mushroom ?? 0)+d);
@@ -11590,6 +11975,7 @@ function chg(stat, d) {
   else if (stat==='pebble')     G.pebble     = Math.max(0,(G.pebble    ?? 0)+d);
   else if (stat==='wildFlower') G.wildFlower = Math.max(0,(G.wildFlower ?? 0)+d);
   else if (stat==='feather')    G.feather    = Math.max(0,(G.feather   ?? 0)+d);
+  else if (stat==='giftBug')    G.giftBug    = Math.max(0,(G.giftBug   ?? 0)+d);
 }
 
 // ══════════════════════════════════════
@@ -12118,30 +12504,44 @@ function debugHalfCursePain() {
   story('旁白', '【除錯】阿瓦倫良好狀態。');
 }
 
+const DEBUG_ITEM_LIST = [
+  { key: 'money',           name: '💰 金錢' },
+  { key: 'food',            name: '🍞 食物' },
+  { key: 'herb',            name: '🌿 藥材' },
+  { key: 'wood',            name: '🪵 木材' },
+  { key: 'branch',          name: '🪾 樹枝' },
+  { key: 'crystal',         name: '💎 水晶碎片' },
+  { key: 'bug',             name: '🐛 蟲材' },
+  { key: 'giftBug',         name: '🪳 小蟲子' },
+  { key: 'fish',            name: '🐟 魚' },
+  { key: 'stone',           name: '🪨 礦石' },
+  { key: 'fairyItem',       name: '🧚 妖精' },
+  { key: 'whiteFlower',     name: '🌼 白藥花' },
+  { key: 'apple',           name: '🍎 蘋果' },
+  { key: 'vegetable',       name: '🥬 蔬菜' },
+  { key: 'mushroom',        name: '🍄 蘑菇' },
+  { key: 'frog',            name: '🐸 青蛙' },
+  { key: 'egg',             name: '🥚 鳥蛋' },
+  { key: 'beastMeat',       name: '🥩 獸肉' },
+  { key: 'monsterMaterial', name: '🦴 魔物素材' },
+  { key: 'coldPotion',      name: '💊 治療藥水' },
+  { key: 'cursePotion',     name: '🔮 解咒藥水' },
+  { key: 'forgetPotion',    name: '💙 忘卻藥水' },
+  { key: 'staminaPotion',   name: '💛 體力藥水' },
+];
+
 function debugAddAllItems() {
-  chg('money', 10);
-  chg('food',  10);
-  chg('herb',  10);
-  chg('bug',   10);
-  chg('stone', 10);
-  chg('wood',  10);
-  chg('fish',  10);
-  chg('coldPotion',  10);
-  chg('cursePotion', 10);
-  chg('forgetPotion',10);
-  chg('apple',      10);
-  chg('vegetable',  10);
-  chg('whiteFlower',10);
-  chg('fairyItem',  10);
-  chg('mushroom',         10);
-  chg('frog',             10);
-  chg('egg',              10);
-  chg('beastMeat',        10);
-  chg('monsterMaterial',  10);
-  chg('branch',  10);
-  chg('crystal', 10);
-  renderHUD();
-  story('旁白', '【除錯】所有物品 +10。');
+  const items = DEBUG_ITEM_LIST.map(it => ({
+    name: `${it.name} ×${G[it.key] || 0}`,
+    run() {
+      chg(it.key, 10);
+      renderHUD();
+      toast(`【除錯】${it.name} +10`);
+      setTimeout(() => debugAddAllItems(), 0);
+    }
+  }));
+  showActionMenu('📦 選擇要增加的物品（+10）', items);
+  document.getElementById('act-list').classList.add('three-col');
 }
 
 function jumpToDay7Morning() {
@@ -13063,7 +13463,8 @@ function continueAfterNight(prevText) {
   }
   G.forestMushrooms = { 1: false, 2: false, 3: false, 4: false };
   if (G.day === 8) { G.weather = 'rain'; G.farmWatered = true; setOutsideFarmVisual(); }
-  else if (G.day === 9) { G.weather = 'clear'; }
+  else { G.weather = 'clear'; }
+  resetRandomRain();
   // 蘋果樹每天早上重置
   G.forestApples = { tree1: APPLE_TREE_MAX.tree1, tree3: APPLE_TREE_MAX.tree3 };
   Object.values(APPLE_TREE_DIVS).flat().forEach(id => {
