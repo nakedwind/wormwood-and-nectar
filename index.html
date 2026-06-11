@@ -864,6 +864,8 @@ body {
 .csi-item.csi-kbd-sel .ci-name { color: #6e4a15; }
 .csi-item.csi-kbd-sel .ci-name::before { content: '➥ '; font-size: 21px; color: #c07820; }
 .csi-cancel-btn.csi-kbd-sel::before { content: '➥ '; font-size: 21px; color: #c07820; }
+.csi-start.csi-kbd-sel::before { content: '➥ '; font-size: 21px; color: #c07820; }
+.csi-start.csi-kbd-sel:disabled { opacity: 0.6; border-color: #d8a23f; border-style: solid; color: #f0d8a0; }
 
 /* ══ SOUP OBJECT ══ */
 #soup-obj {
@@ -2211,7 +2213,7 @@ body {
         <div class="herb-harvest-bg"><div id="fish-forest-bar" style="height:100%;background:linear-gradient(90deg,#205880,#40a0e0);width:0%;"></div></div>
       </div>
       <div id="research-scene-wrap">
-        <div class="herb-harvest-label" id="research-scene-label">🔬 研究藥水中…</div>
+        <div class="herb-harvest-label" id="research-scene-label">🧪 研究藥水中…</div>
         <div class="herb-harvest-bg"><div id="research-scene-bar" style="height:100%;background:linear-gradient(90deg,#402080,#8040e0);width:0%;"></div></div>
       </div>
       <div id="cook-scene-wrap">
@@ -2447,7 +2449,7 @@ body {
       </button>
       <div id="warn-box"></div>
       <div id="research-progress">
-        <div class="research-label">🔬 研究藥水中…</div>
+        <div class="research-label">🧪 研究藥水中…</div>
         <div class="research-bar-bg"><div id="research-bar"></div></div>
       </div>
       <div id="cook-progress" style="display:none; background:#120e06; border:1px solid #2e1e08; padding:10px;">
@@ -2501,7 +2503,10 @@ body {
     <div class="csi-divider"></div>
     <div class="csi-summary" id="cook-select-summary">未選擇食材——基本料理</div>
     <div class="csi-footer">
-      <button class="csi-start" onclick="confirmCookStart()">🍳 開始烹飪（-3金）</button>
+      <button class="csi-start" onclick="confirmCookStart('fast')">🔥 大火快煮（-2木柴）</button>
+      <button class="csi-start" onclick="confirmCookStart('slow')">🪵 細火慢熬（-3樹枝）</button>
+    </div>
+    <div class="csi-footer" style="margin-top:8px;">
       <button class="csi-cancel-btn" onclick="closeCookSelect()">取消</button>
     </div>
   </div>
@@ -3734,7 +3739,7 @@ const ZONES = {
     { id:'bush1', x1:20,  y1:137, x2:153, y2:203, interactHint:'草叢', fn(){ doAction_GatherBush(); } },
     { id:'bush2', x1:440, y1:191, x2:528, y2:284, interactHint:'草叢', fn(){ doAction_GatherBush(); } },
     { id:'stolen_money', x1:291, y1:49, x2:340, y2:82, interactHint:'?',
-      condition(){ return G.avarenStolenMoney && G.stolenMoneyFoundDay !== G.day && (G.day === 8 || G.day === 9) && G.timePeriod === 'morning'; },
+      condition(){ return G.avarenStolenMoney && G.day >= 8 && G.day <= 11 && (G.timePeriod === 'morning' || G.timePeriod === 'evening') && (stolenMoneyReleased() - (G.stolenMoneyCollected || 0)) > 0; },
       fn(){ doAction_SearchStolenMoney(); } },
   ],
   lobby: [
@@ -4318,15 +4323,15 @@ const REID_HEART_LOOP_NARRATION = [
 ];
 
 const NOAH_DAY2_INTRO = [
-  { speaker:'諾亞', text:'「艾德林。」\n\n他站在小屋外，聲音很輕，像是怕驚動屋裡的人。' },
+  { speaker:'諾亞', text:'「艾德林。」' },
   { speaker:'諾亞', text:'「我早上看見煙囪有煙，就想你們應該還在這裡。」' },
   { speaker:'艾德林', text:'「諾亞……你怎麼來了？」' },
   { speaker:'諾亞', text:'「我不放心。」\n\n「阿瓦倫的狀況呢？昨晚有比較穩定嗎？」' },
-  { speaker:'艾德林', text:'「還在昏睡。詛咒沒有退，但也沒有更糟。」' },
-  { speaker:'諾亞', text:'「那就好。」\n\n他像是終於能呼吸一樣，慢慢鬆開手指。' },
+  { speaker:'艾德林', text:'「還可以...詛咒沒有變得更糟。」' },
+  { speaker:'諾亞', text:'「那就好。」' },
   { speaker:'諾亞', text:'「這間小屋已經很久沒有人用了。能讓你們暫時躲在這裡，我反而覺得它終於又有了用處。」' },
   { speaker:'艾德林', text:'「謝謝你。沒有這裡，我不知道該帶他去哪裡。」' },
-  { speaker:'諾亞', text:'「不要跟我道謝。」\n\n「你以前救過我。現在只是輪到我幫你。」' },
+  { speaker:'諾亞', text:'「不用跟我道謝。」\n\n「你以前幫過我。現在只是輪到我幫你。」' },
   { speaker:'諾亞', text:'「如果需要藥材、食物，或是外面的消息，就告訴我。你不要一個人硬撐，好嗎？」' },
 ];
 
@@ -4373,58 +4378,47 @@ const NOAH_LOBBY_POS = { x: 43, y: 372 };
 const NOAH_FOREST_LAKE_POS = { x: 326, y: 256 };
 const DAY2_FAIRY_BOUNDS = { x1: 250, y1: 347, x2: 412, y2: 405 };
 
-const NOAH_DAY2_LAKE_STORY = [
-  { speaker:'旁白', text:'夜晚的森林很安靜。\n\n滿月落在湖面上，水光像一層薄薄的銀霜。\n你在湖邊看見諾亞。' },
-  { speaker:'艾德林', text:'「諾亞。」\n「這麼晚了，你在這裡做什麼？」\n「湖邊有妖精...很危險，快點離開這裡吧」' },
-  { speaker:'諾亞', text:'「別擔心，我沒事的，滿月的時候，妖精蠱惑不了人。」' },
-  { speaker:'旁白', text:'他沉默了一會兒。' },
-  { speaker:'諾亞', text:'「我只是......很想念米蕾兒」' },
-  { speaker:'艾德林', text:'「……諾亞」' },
-  { speaker:'旁白', text:'諾亞的聲音很輕。\n輕得幾乎要被湖水吞掉。' },
-  { speaker:'諾亞', text:'「她很喜歡這裡。」\n「她說這片湖不像湖，像一面會發光的鏡子。」\n「只要往裡面看，就能看到別的世界。」' },
-  { speaker:'旁白', text:'他低下眼。' },
-  { speaker:'諾亞', text:'「那天，我們也是在這裡玩。」\n「我只是一小會兒沒有看著她。」' },
-  { speaker:'旁白', text:'他垂下眼，聲音低了下去。' },
-  { speaker:'諾亞', text:'「真的只有一小會兒。」\n「我回頭的時候，她就不見了。」' },
-  { speaker:'艾德林', text:'「……」' },
-  { speaker:'諾亞', text:'「我喊她的名字。」\n「森林裡沒有回音。」\n「湖邊也沒有。」' },
-  { speaker:'旁白', text:'風從湖面上掠過。\n銀白的月光碎了一下。' },
-  { speaker:'諾亞', text:'「後來，大人們來了。」\n「他們在湖邊找到了米蕾兒的鞋子。」\n「一隻。」' },
-  { speaker:'旁白', text:'他停了很久。' },
-  { speaker:'諾亞', text:'「他們找了很久。」\n「一直找到天黑，找到第二天。」\n「可是沒有找到米蕾兒。」' },
-  { speaker:'諾亞', text:'「大人們說，她掉進湖裡了。」\n「他們說那片湖很深，水底有亂流。」\n「他們說，有些人落水以後，就是找不回來。」' },
-  { speaker:'旁白', text:'他慢慢吸了一口氣。' },
-  { speaker:'諾亞', text:'「可是我沒有看見。」\n「我沒有看見她掉下去。」\n「沒有看見她沉下去。」' },
-  { speaker:'艾德林', text:'「諾亞……」' },
-  { speaker:'諾亞', text:'「所以我一直覺得，她只是迷路了。」\n「她只是被帶去了什麼地方。」\n「只要我一直找，一直喊她，她就會回來。」' },
-  { speaker:'旁白', text:'湖面安靜得像沒有底。\n\n長久的沉默落下。' },
-  { speaker:'諾亞', text:'「有一天晚上，我真的聽見她的聲音。」' },
-  { speaker:'諾亞', text:'「她在叫我哥哥。」\n「她說她找不到回家的路。」\n「她說她的腳很冷，因為鞋子掉在岸邊了。」' },
-  { speaker:'艾德林', text:'「那不是米蕾兒。」' },
-  { speaker:'諾亞', text:'「我知道。」' },
-  { speaker:'旁白', text:'他停了一下。' },
-  { speaker:'諾亞', text:'「我都知道...」' },
-  { speaker:'諾亞', text:'「可是那時候，我真的以為是她。」\n「因為它知道鞋子的事。」\n「它知道我一直想聽的那句話。」' },
-  { speaker:'艾德林', text:'「它說了什麼？」' },
-  { speaker:'諾亞', text:'「它說——」\n「哥哥，快點來找我。」' },
-  { speaker:'旁白', text:'諾亞抬起手，像是想碰一下湖面的月光。\n但他的手停在半空，沒有再往前。' },
-  { speaker:'諾亞', text:'「我走進水裡。」\n「湖水淹到我的膝蓋、腰、胸口。」\n「我聽見她一直哭，一直叫我。」\n「我想，只要我再往前一步就好。」' },
-  { speaker:'艾德林', text:'「我把你拉回來了。」' },
-  { speaker:'諾亞', text:'「嗯。」' },
-  { speaker:'旁白', text:'他終於轉頭看向你。' },
-  { speaker:'諾亞', text:'「艾德林，是你救了我。」\n「你抓住我的手，把我從湖裡拖回來。」\n「我還記得你那時候全身都在發抖，卻一直對我說『那不是她。』——」' },
-  { speaker:'諾亞', text:'「你說不可以把自己的命交給假裝成她的東西。」' },
-  { speaker:'旁白', text:'諾亞安靜地笑了一下。\n那不是開心的笑，只是很疲憊、很柔軟。' },
-  { speaker:'諾亞', text:'「我那時候很恨你。」\n「因為你把我從她身邊拉走了。」' },
-  { speaker:'艾德林', text:'「我知道。」' },
-  { speaker:'諾亞', text:'「可是後來我也知道。」\n「如果沒有你，我早就死在這裡了。」' },
-  { speaker:'諾亞', text:'「所以這一次，我也想幫助你。」\n「你救阿瓦倫的樣子，和那時候的我很像。」' },
-  { speaker:'諾亞', text:'「如果她還活著，現在應該能和阿瓦倫當好朋友吧？」' },
-  { speaker:'艾德林', text:'「他們一定能成為很好的朋友」' },
-  { speaker:'諾亞', text:'「我真的很想她。」' },
-  { speaker:'艾德林', text:'「嗯...我知道」' },
-  { speaker:'旁白', text:'湖面上的月光輕輕晃動。\n滿月照在森林上。\n今晚，湖裡沒有誰在呼喚誰。\n\n只有水聲。\n只有月光。\n只有活著的人，安靜地站在岸邊。' },
+const NOAH_DAY2_LAKE_STORY_PARTS = [
+  [
+    { speaker:'旁白', text:'你在湖邊看見諾亞。' },
+    { speaker:'艾德林', text:'「諾亞。」\n「這麼晚了，你在這裡做什麼？」\n「湖邊有妖精...很危險，快點離開這裡吧」' },
+    { speaker:'諾亞', text:'「別擔心，我沒事的，滿月的時候，妖精蠱惑不了人。」' },
+    { speaker:'旁白', text:'他沉默了一會兒。' },
+    { speaker:'諾亞', text:'「我只是......很想念米蕾兒」' },
+    { speaker:'艾德林', text:'「……諾亞」' },
+    { speaker:'諾亞', text:'「她很喜歡這裡。」\n「她說這片湖像一面會發光的鏡子，只要往裡面看，就能看到別的世界。」' },
+    { speaker:'旁白', text:'他低下眼。' },
+    { speaker:'諾亞', text:'「那天，我們也是在這裡玩。」\n「我只是一小會兒沒有看著她。」' },
+    { speaker:'諾亞', text:'「真的只有一小會兒。」\n「我回頭的時候，她就不見了。」' },
+    { speaker:'艾德林', text:'「……」' },
+    { speaker:'諾亞', text:'「第二天，大人們來了。」\n「他們在湖邊找到了米蕾兒的鞋子。」' },
+    { speaker:'旁白', text:'他停了很久。' },
+    { speaker:'諾亞', text:'「所以我一直覺得，她只是迷路了。」\n「她只是被帶去了什麼地方。」\n「只要我一直找，一直喊她，她就會回來。」' },
+  ],
+  [
+    { speaker:'諾亞', text:'「有一天晚上，我真的聽見她的聲音。」' },
+    { speaker:'諾亞', text:'「她在叫我哥哥。」\n「她說她找不到回家的路。」\n「她說她的腳很冷，因為鞋子掉在岸邊了。」' },
+    { speaker:'諾亞', text:'「它說——」\n「哥哥，快點來帶我回家。」' },
+    { speaker:'旁白', text:'諾亞抬起手，像是想碰一下湖面的月光。\n但他的手停在半空，沒有再往前。' },
+    { speaker:'諾亞', text:'「我走進水裡。」\n「湖水淹到我的膝蓋、腰。」\n「我聽見她的聲音。」\n「我想，只要我再往前一步就好。」' },
+    { speaker:'艾德林', text:'「我把你拉回來了。」' },
+    { speaker:'諾亞', text:'「嗯。」' },
+    { speaker:'諾亞', text:'「艾德林，是你救了我。」\n「你抓住我的手，把我從湖裡拖回來。」\n「我還記得你那時候全身都在發抖，卻一直對我說『那不是她。』——」' },
+    { speaker:'旁白', text:'諾亞安靜地笑了一下。\n那不是開心的笑，只是很疲憊、很柔軟。' },
+    { speaker:'諾亞', text:'「我那時候很恨你。」\n「因為你把我從她身邊拉走了。」' },
+    { speaker:'艾德林', text:'「我知道。」' },
+    { speaker:'諾亞', text:'「可是後來我也知道。」\n「如果沒有你，我早就死在這裡了。」' },
+  ],
+  [
+    { speaker:'諾亞', text:'「所以這一次，我也想幫助你。」\n「我懂你想拯救阿瓦倫的心情。」' },
+    { speaker:'諾亞', text:'「如果她還活著，現在應該能和阿瓦倫當好朋友吧？」' },
+    { speaker:'艾德林', text:'「他們一定能成為很好的朋友」' },
+    { speaker:'諾亞', text:'「我真的很想念她。」' },
+    { speaker:'艾德林', text:'「嗯...我知道」' },
+    { speaker:'旁白', text:'湖面上的月光輕輕晃動。\n今晚，湖裡沒有誰在呼喚誰。\n\n只有水聲。\n只有月光。\n只有活著的人，安靜地站在岸邊。' },
+  ],
 ];
+const NOAH_DAY2_LAKE_STORY = NOAH_DAY2_LAKE_STORY_PARTS.flat();
 
 const NOAH_LAKE_AFTER_DLG = [
   '「今晚的湖很安靜。這樣就好。」',
@@ -4983,6 +4977,9 @@ function showRedCommissionMenu() {
     }
   });
 
+  if (G.carryingSoup) {
+    items.push({ name:'遞給他料理', fx:'', req:()=>true, run: sellSoupToReid });
+  }
   items.push({ name:'與雷德聊聊', fx:'（免費）', req:()=>true,
     run(){ runReidChat(); }});
   showActionMenu('迷路勇者・雷德', items);
@@ -5017,21 +5014,36 @@ function openNoahMenu() {
       });
     }
   };
+  const finishNoahLakeTalk = () => {
+    G.noahLakeTalking = false;
+    G.noah.pose = 'front';
+  };
+  const playNoahLakeMoonPart = () => {
+    const total = NOAH_DAY2_LAKE_STORY_PARTS.length;
+    const stage = Math.max(0, Math.min(G.noahLakeMoonStage ?? 0, total - 1));
+    G.noahLakeTalking = true;
+    noah.pose = 'back';
+    NOAH_DAY2_LAKE_STORY_PARTS[stage].forEach(line => story(line.speaker, line.text));
+    storyThen(() => {
+      G.noahLakeMoonStage = Math.max(G.noahLakeMoonStage ?? 0, stage + 1);
+      if (G.noahLakeMoonStage >= total) {
+        G.noahLakeMoonSeen = true;
+        finishNoahLakeTalk();
+        return;
+      }
+      finishNoahLakeTalk();
+    });
+  };
 
   if (noahAtLake) {
-    G.noahLakeTalking = true;
     if (!G.noahLakeMoonSeen) {
-      G.noahLakeMoonSeen = true;
-      noah.pose = 'back';
-      NOAH_DAY2_LAKE_STORY.forEach(line => story(line.speaker, line.text));
+      playNoahLakeMoonPart();
     } else {
+      G.noahLakeTalking = true;
       faceEldrin();
       story('諾亞', pick(NOAH_LAKE_AFTER_DLG));
+      storyThen(finishNoahLakeTalk);
     }
-    storyThen(() => {
-      G.noahLakeTalking = false;
-      G.noah.pose = 'front';
-    });
     return;
   }
 
@@ -5468,7 +5480,7 @@ function openWinterMenu() {
   } else if (!G.slimeCalmed) {
     items.push({
       name:'魔物安撫香', fx:'白藥花-3　讓史萊姆當天無害', req:() => G.whiteFlower >= 3,
-      run() { chg('whiteFlower', -3); G.slimeCalmed = true; renderHUD(); story('溫特', '……點著以後放在窗邊。今天那些東西不會再靠近你了。'); }
+      run() { chg('whiteFlower', -3); G.slimeCalmed = true; renderHUD(); story('溫特', '……這個拿在身邊吧，今天那些孩子們不會靠近你了。'); }
     });
   }
 
@@ -5480,7 +5492,7 @@ function openWinterMenu() {
 
   // 4. 遞給她料理
   if (G.carryingSoup) {
-    items.push({ name:'遞給她料理', fx:'（溫特婉拒）', req:()=>true, run: giveSoupToWinter });
+    items.push({ name:'遞給他料理', fx:'', req:()=>true, run: giveSoupToWinter });
   }
 
   showActionMenu('神秘旅人・溫特', items);
@@ -5575,15 +5587,15 @@ function triggerAvarenGather() {
     `他悄悄走過來，把${gItem.name}放進你手裡。\n${gItem.desc}${bagFullNote}`,
     () => {
       showActionMenu(`阿瓦倫給了你${gItem.name}`, [
-        { name:'收下', fx:'好感度+2', req:() => !isBagFull(gItem.key, 1),
+        { name:'收下', fx:'心情+2', req:() => !isBagFull(gItem.key, 1),
           run(){
-            chg(gItem.key, 1); chg('trust', 2); renderHUD();
+            chg(gItem.key, 1); chg('mood', 2); renderHUD();
             story('旁白', '你伸手接過來，輕聲道謝。阿瓦倫沒有說話，但嘴角動了一下。');
           }
         },
-        { name:'婉拒', fx:'好感度-1', req:()=>true,
+        { name:'婉拒', fx:'心情-1', req:()=>true,
           run(){
-            chg('trust', -1);
+            chg('mood', -1);
             story('旁白', '你搖了搖頭，輕聲說不用了。阿瓦倫垂下眼睛，把東西重新握回手心。');
           }
         },
@@ -5713,26 +5725,11 @@ const NARR_COOK = [
   '熱氣從鍋子裡散出來，讓整間小屋都暖了起來。你想，哪怕只有這樣，也比什麼都沒有好。',
 ];
 const NARR_RESEARCH = [
-  '你翻閱古卷，嘗試調配解咒的藥水。阿瓦倫身上的黑霧稍微淡了一些，像是有什麼鬆動了。',
-  '你在燭光下讀著晦澀的古文，眼睛開始發酸。詛咒的根很深，但你感覺找到了一點線索。',
-  '藥水的顏色不對，你重做了一次。窗外天色漸暗，你沒有察覺。',
-  '你將配好的藥水靠近阿瓦倫，黑霧微微收縮。他沒有說謝謝，但他讓你靠近了。',
-  '古卷上有幾行字你完全看不懂。你把它們抄下來，告訴自己明天再試。',
-  '你把幾種藥草磨碎，試著照著古卷上的步驟調配。混合之後的氣味有些嗆，但形狀是對的。',
-  '燭火搖曳，你用手遮著光繼續讀。這些字句寫得很深奧，像是故意不讓人輕易看懂。',
-  '你調配了一整個下午，最終得到了一小瓶勉強看起來正確的藥水。你把它放好，長吐了一口氣。',
-  '書頁碎了一角，你小心地把它拼回原位。這本書比你還要懂得阿瓦倫身上的詛咒。',
-  '你把調好的藥水拿給阿瓦倫看。他盯著那瓶子看了一會兒，伸出手，讓你幫他用。',
+  '你攤開古卷，把藥草一一秤量、磨碎，按著上頭的步驟慢慢調和。指尖染上了草汁的顏色。',
+  '玻璃瓶裡的液體緩緩變了色。你屏住呼吸盯著它，深怕一個閃神又前功盡棄。',
+  '你按著古卷上的順序，把磨好的材料一份份倒入瓶中。每加一樣，液體就泛起一陣細小的氣泡。',
 ];
-const NARR_NIGHT_RESEARCH = [
-  '夜深了。艾德林坐在書桌前，翻開一本又一本關於詛咒與藥草的書。',
-  '燭光微弱，你背負著罪惡感，讀著書上一行一行的字，試著從那些古老的句子裡找出能救阿瓦倫的方法。',
-  '你把藥草磨成粉，又把失敗的配方劃掉。紙上的墨跡暈開，像一小片乾涸的黑霧。',
-  '房間另一側傳來阿瓦倫微弱的呼吸聲。你沒有回頭，只是把書頁翻得更輕了一點。',
-  '你不知道這些努力能不能來得及。\n但你還不能睡。\n至少今晚，還不能。',
-  '燭光在書桌上慢慢縮小。你的眼睛發酸，手指也因為疲憊而發冷。',
-  '你把最後一行筆記寫完時，天色仍然很黑。\n黑暗像水一樣漫上來，淹沒了書頁，也淹沒了這一夜。',
-];
+const NARR_NIGHT_RESEARCH = NARR_RESEARCH;
 const AVAREN_DAY2_WAKE_STORY = [
   { speaker: '艾德林', text: '阿瓦倫……？' },
   { speaker: '阿瓦倫', text: '……' },
@@ -6517,7 +6514,7 @@ function isReidInForestToday() {
 }
 
 function isWinterDay(day = G.day) {
-  return day === 4 || day === 6 || day === 7 || day === 8;
+  return day === 4 || day === 5 || day === 6 || day === 7 || day === 8;
 }
 
 function isWinterPresent() {
@@ -6709,7 +6706,7 @@ function initState() {
     scene: 'outside',
     avarenScene: 'room',
     weather: 'rain',
-    pain: 100, curse: 100, mood: 10, trust: 10,
+    pain: 100, curse: 100, mood: 10, trust: 10, knowledge: 0,
     avarenHunger: 70, eldrinHunger: 80, eldrinHp: 100, fatigue: 0, eldrinFatigue: 80,
     money: 15, food: 4, herb: 2, wood: 0, branch: 0, bug: 0, fish: 0, stone: 0, crystal: 0, fairyItem: 0, whiteFlower: 0, apple: 0, vegetable: 0, mushroom: 0, frog: 0, egg: 0, beastMeat: 0, monsterMaterial: 0,
     nestEggs: 0,
@@ -6736,7 +6733,7 @@ function initState() {
     researchActive: false, researchTimer: 0, researchReady: false, researchType: null,
     coldPotion: 0, cursePotion: 0, forgetPotion: 0, staminaPotion: 0,
     usedForgetMagic: false, moodLocked: false, bloodMoon7Happened: false,
-    avarenStolenMoney: false, stolenMoneyFoundDay: 0,
+    avarenStolenMoney: false, stolenMoneyFoundDay: 0, stolenMoneyCollected: 0,
     day4EventTriggered: false, day4AvarenGone: false, day4AvarenNotified: false, avarenReturnPending: false,
     introDay0Active: false,
     introDay0NoahVisible: false,
@@ -6744,6 +6741,7 @@ function initState() {
     noahDay2IntroSeen: false,
     noahLobbyTalking: false,
     noahLakeMoonSeen: false,
+    noahLakeMoonStage: 0,
     noahLakeTalking: false,
     winterIntroSeen: false,
     winterReidMeetSeen: false,
@@ -6770,7 +6768,7 @@ function initState() {
     eldrinBookReadDays: [],
     exhaustedSleepWake: null,
     exhaustedNight: false,
-    cookActive: false, cookTimer: 0, cookReady: false, soupReady: false, carryingSoup: false, soupIsSpecial: false, cookSelectedKeys: [],
+    cookActive: false, cookTimer: 0, cookMax: COOK_MAX, cookStamina: 0, cookReady: false, soupReady: false, carryingSoup: false, soupIsSpecial: false, cookSelectedKeys: [],
     actionSceneActive: false, actionSceneTimer: 0, actionSceneMax: 0,
     actionSceneOnDone: null, actionSceneLines: [], actionSceneLineIdx: 0, actionSceneLineTick: 0,
     dayStartMs: performance.now(), timePeriod: 'morning',
@@ -7645,7 +7643,7 @@ function updateHints() {
     hi.style.display = 'block'; hs.style.display = 'none'; return;
   }
   if (zone && zone.id === 'lobby_potion' && G.researchReady) {
-    const rLabel = G.researchType === 'cold' ? '治療藥水（疼痛-5）' : G.researchType === 'curse' ? '解咒藥水（詛咒-5）' : G.researchType === 'stamina' ? '體力藥水（體力+20）' : '忘卻藥水（疼痛-25 詛咒-25）';
+    const rLabel = G.researchType === 'cold' ? '治療藥水（疼痛-5）' : G.researchType === 'curse' ? '解咒藥水（詛咒-5）' : G.researchType === 'stamina' ? '體力藥水（體力+30）' : '忘卻藥水（疼痛-25 詛咒-25）';
     hi.textContent = `取回${rLabel}`;
     hi.style.display = 'block'; hs.style.display = 'none'; return;
   }
@@ -7664,10 +7662,6 @@ function updateHints() {
   }
   if (G.carryingSoup && G.scene === 'kitchen' && isNearSoupSpot()) {
     hi.textContent = '放回料理';
-    hi.style.display = 'block'; hs.style.display = 'none'; return;
-  }
-  if (G.carryingSoup && isNearReid()) {
-    hi.textContent = '料理';
     hi.style.display = 'block'; hs.style.display = 'none'; return;
   }
   if (G.scene === 'kitchen' && G.soupReady && isNearSoup()) {
@@ -7819,6 +7813,7 @@ function gameLoop() {
     fade.style.transition = 'opacity 1s ease'; fade.style.opacity = '1';
     setTimeout(() => {
       chg('eldrinHp', -5); renderHUD();
+      if ((G.eldrinHp ?? 100) <= 0) return; // HP 歸零，已觸發倒下結局，不再顯示力竭事件
       showEvent('😴', '力竭而眠', '夜已深了。\n\n你沒有意識到時間就這樣流逝，\n直到疲憊將你壓倒，\n就這樣不知不覺地昏睡過去。\n\n體力 -5', () => {
         fade.style.transition = 'none'; fade.style.opacity = '0'; fade.style.display = 'none';
         G.paused = false;
@@ -7937,8 +7932,8 @@ function gameLoop() {
     }
   }
 
-  // ── 妖精飄動（偶數夜，森林，未抓到）──
-  if (G.scene === 'forest' && G.timePeriod === 'evening' && G.day % 2 === 0 && !G.fairyCaught) {
+  // ── 妖精飄動（第2天劇情妖精／第8天可抓妖精，森林，未抓到）──
+  if (G.scene === 'forest' && G.timePeriod === 'evening' && (G.day === 2 || G.day === 8) && !G.fairyCaught) {
     if (G.day === 2) {
       if (G.fairy.vy == null) G.fairy.vy = 0.18;
       G.fairy.x += G.fairy.vx;
@@ -8269,8 +8264,8 @@ function gameLoop() {
     }
   }
 
-  // 阿瓦倫戶外採集（信任>50）
-  if (!isAvarenUnconscious() && G.scene === 'outside' && G.trust > 50 && G.avarenScene === 'outside' && !G.paused && !G.actionSceneActive
+  // 阿瓦倫戶外採集（心情>50，且阿瓦倫跟隨在戶外）
+  if (!isAvarenUnconscious() && G.scene === 'outside' && G.mood > 50 && G.avarenScene === 'outside' && !G.paused && !G.actionSceneActive
       && document.getElementById('bag-overlay').style.display !== 'flex') {
     G.avaren.gatherTimer--;
     if (G.avaren.gatherTimer <= 0) {
@@ -8726,12 +8721,25 @@ function gameLoop() {
     document.getElementById('val-el-hunger').textContent = G.eldrinHunger;
   }
 
+  // 飢餓歸零：每5秒持續扣血（阿瓦倫 疼痛+1 詛咒+1／艾德林 HP-1）
+  if (!G.paused && !G.actionSceneActive && !G.bloodMoon7Active && G.day > 0) {
+    G._starveTimer = (G._starveTimer || 0) + 1;
+    if (G._starveTimer >= 300) {
+      G._starveTimer = 0;
+      let starved = false;
+      if (G.avarenHunger <= 0) { chg('pain', +1); chg('curse', +1); starved = true; }
+      if (G.eldrinHunger <= 0) { chg('eldrinHp', -1); starved = true; }
+      if (starved) renderHUD();
+    }
+  }
+
   // 烹飪進度（可移動）
   if (G.cookActive) {
+    const cookMax = G.cookMax || COOK_MAX;
     G.cookTimer++;
     document.getElementById('cook-scene-bar').style.width =
-      (G.cookTimer / COOK_MAX * 100) + '%';
-    if (G.cookTimer >= COOK_MAX) {
+      (G.cookTimer / cookMax * 100) + '%';
+    if (G.cookTimer >= cookMax) {
       SFX.complete();
       G.cookActive = false;
       G.soupReady = true;
@@ -8777,7 +8785,7 @@ function gameLoop() {
       SFX.complete();
       G.researchActive = false;
       G.researchReady = true;
-      document.getElementById('research-scene-label').textContent = '🔬 研究完成！回來取回藥水';
+      document.getElementById('research-scene-label').textContent = '🧪 研究完成！回來取回藥水';
       document.getElementById('research-scene-bar').style.background = 'linear-gradient(90deg,#a07020,#e0b030)';
       const potionEl  = document.getElementById('lobby-potion');
       const potionImg = document.getElementById('lobby-potion-img');
@@ -8786,7 +8794,7 @@ function gameLoop() {
         potionImg.src = src;
         potionEl.style.display = 'block';
       }
-      toast('🔬 藥水研究完成');
+      toast('🧪 藥水研究完成');
     }
   }
 
@@ -9141,8 +9149,6 @@ document.addEventListener('keydown', e => {
       }
     } else if (G.carryingSoup && G.scene === 'kitchen' && isNearSoupSpot()) {
       putBackSoup();
-    } else if (G.carryingSoup && isNearReid()) {
-      sellSoupToReid();
     } else if (G.scene === 'kitchen' && G.soupReady && isNearSoup() && !G.carryingSoup) {
       doSoupInteract();
     } else if (G.carryingKettle && isNearOutsidePond() && !G.kettleFull) {
@@ -9514,10 +9520,10 @@ function openAvarenMenu() {
   }
   avarenMenuItems.push(
     {
-      name: '和阿瓦倫說說話', fx: '心情+1  知識+1',
+      name: '和阿瓦倫說說話', fx: '',
       req: () => true,
       run() {
-        chg('trust', 1); chg('mood', 1);
+        chg('trust', 1); chg('knowledge', 0.5);
         startAvarenChat();
       }
     },
@@ -9638,7 +9644,6 @@ function doAction_GatherAppleTree(treeKey) {
   if (G.timePeriod !== 'morning') { timeWarn('採集是早上的行動。'); return; }
   if (G.actionSceneActive) { warn('正在進行其他行動。'); return; }
   if (G.gatherSearchActive) return;
-  if ((G.eldrinHp ?? 100) <= 20) { warn('艾德林 HP 太低了，需要休息才能工作。'); return; }
   spendFatigue(1);
   if (!G.forestApples) G.forestApples = { tree1: APPLE_TREE_MAX.tree1, tree3: APPLE_TREE_MAX.tree3 };
   playLoopingAudio('sfx-gather-wood', 4.0);
@@ -9676,7 +9681,6 @@ function doAction_GatherWood() {
   if (G.timePeriod !== 'morning') { timeWarn('採集木材是早上的行動。'); return; }
   if (G.actionSceneActive) { warn('正在進行其他行動。'); return; }
   if (G.gatherSearchActive) return;
-  if ((G.eldrinHp ?? 100) <= 20) { warn('艾德林 HP 太低了，需要休息才能工作。'); return; }
   spendFatigue(1);
   playLoopingAudio('sfx-gather-wood', 4.0);
   startGatherSearch('🌲 搜索中…', () => {
@@ -9699,7 +9703,6 @@ function doAction_GatherWood() {
 function doAction_GatherFlower() {
   if (G.bloodMoon7Active) { warn('無法行動。'); return; }
   if (G.timePeriod !== 'morning') { timeWarn('搜尋花叢是白天的行動。'); return; }
-  if ((G.eldrinHp ?? 100) <= 20) { warn('艾德林 HP 太低了，需要休息才能工作。'); return; }
   if (G.actionSceneActive) { warn('正在進行其他行動。'); return; }
   if (G.gatherSearchActive) return;
   spendFatigue(1);
@@ -9724,7 +9727,6 @@ function doAction_GatherFlower() {
 function doAction_GatherBush() {
   if (G.bloodMoon7Active) { warn('無法行動。'); return; }
   if (G.timePeriod !== 'morning') { timeWarn('搜尋草叢是早上的行動。'); return; }
-  if ((G.eldrinHp ?? 100) <= 20) { warn('艾德林 HP 太低了，需要休息才能工作。'); return; }
   if (G.actionSceneActive) { warn('正在進行其他行動。'); return; }
   if (G.gatherSearchActive) return;
   spendFatigue(1);
@@ -9746,20 +9748,27 @@ function doAction_GatherBush() {
   });
 }
 
+// 埋起來的錢分兩期釋出：第8天釋出30，第9天起釋出滿60
+function stolenMoneyReleased() {
+  return G.day >= 9 ? 60 : 30;
+}
+
 function doAction_SearchStolenMoney() {
-  if (!G.avarenStolenMoney || G.stolenMoneyFoundDay === G.day) return;
-  if (G.day !== 8 && G.day !== 9) return;
-  if (G.timePeriod !== 'morning') { timeWarn('搜尋是白天的行動。'); return; }
+  if (!G.avarenStolenMoney) return;
+  if (G.day < 8 || G.day > 11) return;
+  if (G.timePeriod !== 'morning' && G.timePeriod !== 'evening') { timeWarn('現在無法搜尋。'); return; }
   if (G.bloodMoon7Active) { warn('無法行動。'); return; }
-  if ((G.eldrinHp ?? 100) <= 20) { warn('艾德林 HP 太低了，需要休息才能工作。'); return; }
   if (G.gatherSearchActive) return;
+  const amount = stolenMoneyReleased() - (G.stolenMoneyCollected || 0);
+  if (amount <= 0) return;
   spendFatigue(1);
   playLoopingAudio('sfx-gather-bush', 2.0);
   startGatherSearch('搜索中…', () => {
+    G.stolenMoneyCollected = (G.stolenMoneyCollected || 0) + amount;
     G.stolenMoneyFoundDay = G.day;
-    chg('money', 30); renderHUD();
+    chg('money', amount); renderHUD();
     playLoopingAudio('sfx-item-get', 3.0);
-    toast('💰 金錢 +30');
+    toast('💰 金錢 +' + amount);
     startActionScene([
       { speaker: '艾德林', text: '......？' },
       { speaker: '旁白', text: '你在小屋後方看見了一小塊隆起的不自然的土堆，你翻開了以後，發現了一個有著暗紅色污漬的小布袋，裡面是幾枚散落的金幣，你確定這跟你收到的不是同一個錢袋...。' },
@@ -9894,7 +9903,6 @@ function doAction_ForestFish() {
   if (G.bloodMoon7Active) { warn('無法行動。'); return; }
   if (G.timePeriod !== 'morning') { timeWarn('釣魚是白天的行動。'); return; }
   if (G.forestFishFishing) { warn('魚竿已經下水了，請稍候。'); return; }
-  if ((G.eldrinHp ?? 100) <= 20) { warn('艾德林 HP 太低了，需要休息才能工作。'); return; }
   spendFatigue(3);
   G.forestFishFishing = true;
   G.forestFishTimer = FISH_MAX * 2;
@@ -9955,7 +9963,6 @@ function doAction_Fish() {
   if (G.bloodMoon7Active) { warn('無法行動。'); return; }
   if (G.timePeriod !== 'morning') { timeWarn('釣魚是白天的行動。'); return; }
   if (G.fishFishing) { warn('魚竿已經下水了，請稍候。'); return; }
-  if ((G.eldrinHp ?? 100) <= 20) { warn('艾德林 HP 太低了，需要休息才能工作。'); return; }
   spendFatigue(3);
   G.fishFishing = true;
   G.fishTimer = FISH_MAX;
@@ -9986,7 +9993,6 @@ function doAction_GatherStone() {
   if (G.timePeriod !== 'morning') { timeWarn('採集礦石是白天的行動。'); return; }
   if (G.actionSceneActive) { warn('正在進行其他行動。'); return; }
   if (G.gatherSearchActive) return;
-  if ((G.eldrinHp ?? 100) <= 20) { warn('艾德林 HP 太低了，需要休息才能工作。'); return; }
   spendFatigue(1);
   playLoopingAudio('sfx-gather-stone', 4.0);
   startGatherSearch('🪨 搜索中…', () => {
@@ -10334,31 +10340,32 @@ function closeTrade() {
 const SOUP_POS = { x: 306, y: 199 };
 
 // 食材資料表
+// effects = 餵阿瓦倫時的效果；stam = 艾德林自己吃時恢復的體力
 const COOK_INGREDIENTS_LIST = [
-  { key: 'herb',            name: '藥材',   icon: '🌿', fx: '疼痛-2  飽食度+1',         effects: { pain: -2, avarenHunger: 1 } },
-  { key: 'fish',            name: '魚',     icon: '🐟', fx: '飽食度+3',                  effects: { avarenHunger: 3 } },
-  { key: 'bug',             name: '蟲材',   icon: '🐛', fx: '疼痛-1  飽食度+1  心情-1', effects: { pain: -1, avarenHunger: 1, mood: -1 } },
-  { key: 'whiteFlower',     name: '白藥花', icon: '🌼', fx: '詛咒-1  飽食度+1',         effects: { curse: -1, avarenHunger: 1 } },
-  { key: 'apple',           name: '蘋果',   icon: '🍎', fx: '心情+2  飽食度+2',         effects: { mood: 2, avarenHunger: 2 } },
-  { key: 'fairyItem',       name: '妖精',   icon: '🧚', fx: '詛咒-10  飽食度+1',        effects: { curse: -10, avarenHunger: 1 } },
-  { key: 'vegetable',       name: '蔬菜',   icon: '🥬', fx: '飽食度+3  心情+1',         effects: { avarenHunger: 3, mood: 1 } },
-  { key: 'mushroom',        name: '蘑菇',   icon: '🍄', fx: '飽食度+2  疼痛+2',         effects: { avarenHunger: 2, pain: 2 } },
-  { key: 'egg',             name: '鳥蛋',   icon: '🥚', fx: '飽食度+1  心情+1',         effects: { avarenHunger: 1, mood: 1 } },
-  { key: 'frog',            name: '青蛙',   icon: '🐸', fx: '飽食度+3  心情-2',         effects: { avarenHunger: 3, mood: -2 } },
-  { key: 'beastMeat',       name: '獸肉',   icon: '🥩', fx: '飽食度+6  心情+3',         effects: { avarenHunger: 6, mood: 3 } },
-  { key: 'stone',           name: '礦石',   icon: '🪨', fx: '心情-2',                   effects: { mood: -2 } },
-  { key: 'monsterMaterial', name: '魔物素材', icon: '🦴', fx: '飽食度+2  詛咒-3  心情-2', effects: { avarenHunger: 2, curse: -3, mood: -2 } },
-  { key: 'branch',          name: '樹枝',   icon: '🪾', fx: '飽食度+1  心情-2',         effects: { avarenHunger: 1, mood: -2 } },
-  { key: 'crystal',         name: '水晶碎片', icon: '💎', fx: '心情-2  詛咒-5',         effects: { mood: -2, curse: -5 } },
+  { key: 'herb',            name: '藥材',   icon: '🌿', fx: '飽食度+2  疼痛-3',          effects: { avarenHunger: 2, pain: -3 },           stam: 5 },
+  { key: 'fish',            name: '魚',     icon: '🐟', fx: '飽食度+15',                 effects: { avarenHunger: 15 },                     stam: 10 },
+  { key: 'bug',             name: '蟲材',   icon: '🐛', fx: '飽食度+2  疼痛-2  心情-2', effects: { avarenHunger: 2, pain: -2, mood: -2 }, stam: 3 },
+  { key: 'whiteFlower',     name: '白藥花', icon: '🌼', fx: '飽食度+2  詛咒-2',         effects: { avarenHunger: 2, curse: -2 },          stam: 6 },
+  { key: 'apple',           name: '蘋果',   icon: '🍎', fx: '飽食度+6  心情+3',         effects: { avarenHunger: 6, mood: 3 },            stam: 5 },
+  { key: 'fairyItem',       name: '妖精',   icon: '🧚', fx: '飽食度+2  詛咒-40',        effects: { avarenHunger: 2, curse: -40 },         stam: 30 },
+  { key: 'vegetable',       name: '蔬菜',   icon: '🥬', fx: '飽食度+10  心情+1',        effects: { avarenHunger: 10, mood: 1 },           stam: 10 },
+  { key: 'mushroom',        name: '蘑菇',   icon: '🍄', fx: '飽食度+8  疼痛+3',         effects: { avarenHunger: 8, pain: 3 },            stam: 6 },
+  { key: 'egg',             name: '鳥蛋',   icon: '🥚', fx: '飽食度+5  心情+1',         effects: { avarenHunger: 5, mood: 1 },            stam: 4 },
+  { key: 'frog',            name: '青蛙',   icon: '🐸', fx: '飽食度+10  心情-3',        effects: { avarenHunger: 10, mood: -3 },          stam: 8 },
+  { key: 'beastMeat',       name: '獸肉',   icon: '🥩', fx: '飽食度+30  心情+4',        effects: { avarenHunger: 30, mood: 4 },           stam: 25 },
+  { key: 'stone',           name: '礦石',   icon: '🪨', fx: '心情-5',                   effects: { mood: -5 },                            stam: 0 },
+  { key: 'monsterMaterial', name: '魔物素材', icon: '🦴', fx: '飽食度+5  詛咒-4  心情-3', effects: { avarenHunger: 5, curse: -4, mood: -3 }, stam: 5 },
+  { key: 'branch',          name: '樹枝',   icon: '🪾', fx: '飽食度+2  心情-3',         effects: { avarenHunger: 2, mood: -3 },           stam: 1 },
+  { key: 'crystal',         name: '水晶碎片', icon: '💎', fx: '詛咒-6  心情-3',          effects: { curse: -6, mood: -3 },                 stam: 0 },
 ];
 
 let cookSelectCursor = 0;
 
 function cookSelectGetItems() {
   const ingBtns = [...document.querySelectorAll('#cook-select-items .csi-item')];
-  const startBtn = document.querySelector('.csi-start');
+  const startBtns = [...document.querySelectorAll('.csi-start')];
   const cancelBtn = document.querySelector('.csi-cancel-btn');
-  return [...ingBtns, startBtn, cancelBtn].filter(Boolean);
+  return [...ingBtns, ...startBtns, cancelBtn].filter(Boolean);
 }
 
 function cookSelectUpdateFocus() {
@@ -10370,21 +10377,22 @@ function cookSelectMoveCursor(dir) {
   const items = cookSelectGetItems();
   if (!items.length) return;
   const ingCount  = document.querySelectorAll('#cook-select-items .csi-item').length;
-  const startIdx  = ingCount;
-  const cancelIdx = ingCount + 1;
+  const fastIdx   = ingCount;       // 大火快煮
+  const slowIdx   = ingCount + 1;   // 細火慢熬
+  const cancelIdx = ingCount + 2;   // 取消（獨立一排）
   const prev = cookSelectCursor;
   let next = prev;
 
   if (dir === -1 || dir === +1) {
-    // 左右：在食材區內移動，到底不換行
+    // 左右
     if (prev < ingCount) {
+      // 食材區內移動，到底不換行
       next = Math.max(0, Math.min(ingCount - 1, prev + dir));
-    } else {
-      // 在按鈕區左右切換
-      next = prev + dir;
-      if (next < startIdx) next = startIdx;
-      if (next > cancelIdx) next = cancelIdx;
+    } else if (prev === fastIdx || prev === slowIdx) {
+      // 大火／細火這排左右切換
+      next = Math.max(fastIdx, Math.min(slowIdx, prev + dir));
     }
+    // 取消那排只有一顆，左右不動
   } else if (dir === -3 || dir === +3) {
     // 上下
     if (prev < ingCount) {
@@ -10392,13 +10400,16 @@ function cookSelectMoveCursor(dir) {
       if (candidate < 0) {
         next = prev; // 已在第一排，不動
       } else if (candidate >= ingCount) {
-        next = startIdx; // 超出食材區，跳到開始烹飪
+        next = fastIdx; // 超出食材區，跳到大火快煮
       } else {
         next = candidate;
       }
-    } else {
-      // 在按鈕區按上：回到食材最後一格
-      if (dir < 0) next = ingCount - 1;
+    } else if (prev === fastIdx || prev === slowIdx) {
+      // 在烹飪按鈕排：上→回食材最後一格，下→取消
+      next = dir < 0 ? (ingCount - 1) : cancelIdx;
+    } else if (prev === cancelIdx) {
+      // 在取消排：上→回烹飪按鈕排（大火）
+      if (dir < 0) next = fastIdx;
     }
   }
 
@@ -10507,6 +10518,7 @@ function openCookSelectPanel() {
 }
 
 function closeCookSelect() {
+  playLoopingAudio('sfx-button', 3.0);
   document.getElementById('cook-select-overlay').style.display = 'none';
 }
 
@@ -10541,9 +10553,9 @@ function renderCookSelectItems() {
     container.appendChild(p);
     cookSelectCursor = 0; // 沒有食材時游標跳到開始烹飪
   }
-  // 沒有選食材時禁用開始烹飪按鈕
-  const startBtn = document.querySelector('.csi-start');
-  if (startBtn) startBtn.disabled = !G.cookSelectedKeys || G.cookSelectedKeys.length === 0;
+  // 沒有選食材時禁用兩顆烹飪按鈕
+  const noIngredient = !G.cookSelectedKeys || G.cookSelectedKeys.length === 0;
+  document.querySelectorAll('.csi-start').forEach(b => b.disabled = noIngredient);
   // clamp cursor & 更新焦點樣式
   const total = cookSelectGetItems().length;
   if (cookSelectCursor >= total) cookSelectCursor = Math.max(0, total - 1);
@@ -10570,22 +10582,33 @@ function updateCookSelectSummary() {
   summary.textContent = '合計效果：' + parts.join('  ');
 }
 
-function confirmCookStart() {
-  if (G.money < 3) { warn('金錢不足（需要3金）！'); return; }
+function confirmCookStart(mode) {
+  // mode: 'fast' 大火快煮（木柴-2，10秒）／'slow' 細火慢熬（樹枝-3，25秒）
+  if (mode === 'fast') {
+    if ((G.wood || 0) < 2) { warn('木柴不足（需要2木柴）！'); return; }
+  } else if (mode === 'slow') {
+    if ((G.branch || 0) < 3) { warn('樹枝不足（需要3樹枝）！'); return; }
+  } else {
+    return;
+  }
   playLoopingAudio('sfx-cook-lid', 4.0);
   const SPECIAL_KEYS = ['fairyItem', 'bug', 'mushroom', 'frog', 'stone', 'monsterMaterial', 'branch', 'crystal'];
   G.soupIsSpecial = G.cookSelectedKeys.some(k => SPECIAL_KEYS.includes(k));
   const effects = {};
+  let stamTotal = 0;
   G.cookSelectedKeys.forEach(key => {
     const ing = COOK_INGREDIENTS_LIST.find(i => i.key === key);
     if (ing && G[key] > 0) {
       chg(key, -1);
       for (const [k, v] of Object.entries(ing.effects)) effects[k] = (effects[k] || 0) + v;
+      stamTotal += (ing.stam || 0);
     }
   });
   G.cookIngredient = Object.keys(effects).length > 0 ? effects : null;
+  G.cookStamina = stamTotal; // 艾德林自己吃時恢復的體力
   G.cookSelectedKeys = [];
-  chg('money', -3);
+  if (mode === 'fast') { chg('wood', -2); G.cookMax = 600; }
+  else { chg('branch', -3); G.cookMax = 1500; }
   G.cookActive = true;
   G.cookTimer = 0;
   setStoveSprite('bg_kitchen/bg_kitchen_stove_cook.png');
@@ -10599,15 +10622,24 @@ function confirmCookStart() {
 
 function doSoupInteract() {
   SFX.interact();
+  // 艾德林自己吃：飢餓＝料理的飽食度，體力＝食材的體力值
+  const selfHunger = (G.cookIngredient && G.cookIngredient.avarenHunger) || 0;
+  const selfStam   = G.cookStamina || 0;
+  const selfFxParts = [];
+  if (selfHunger > 0) selfFxParts.push('飢餓+' + selfHunger);
+  if (selfStam > 0)   selfFxParts.push('體力+' + selfStam);
   showActionMenu('桌上的料理——', [
     {
-      name: '自己吃', fx: '艾德林飢餓+15  心情+3',
+      name: '自己吃', fx: '艾德林 ' + (selfFxParts.length ? selfFxParts.join('  ') : '沒什麼效果'),
       req: () => true,
       run() {
         G.soupReady = false;
         G.cookIngredient = null;
+        G.cookStamina = 0;
         document.getElementById('soup-obj').style.display = 'none';
-        chg('eldrinHunger', 15); chg('mood', 3); renderHUD();
+        if (selfHunger > 0) chg('eldrinHunger', selfHunger);
+        if (selfStam > 0)   chg('eldrinFatigue', selfStam);
+        renderHUD();
         playLoopingAudio('sfx-eat', 3.0);
         storyAuto('旁白', pick([
           '你獨自吃完了這碗湯。味道不錯，肚子暖了起來。',
@@ -10741,7 +10773,7 @@ function sellSoupToReid() {
           '……（深呼吸）身為勇者，沒什麼是我承受不了的。你的心意我明白了。謝謝你。',
           '……我以為我見過世面了………謝謝你請客。',
         ]));
-        storyThen(() => { toast('💰 雷德感謝你請他吃飯，塞給你20金'); });
+        storyThen(() => { toast('💰 雷德感謝你請他吃飯，塞給你5金'); });
       });
     });
   } else {
@@ -10756,7 +10788,7 @@ function sellSoupToReid() {
           '……謝謝你請客！你的心意讓我很感動！',
           '……（沉默片刻）你特地帶來給我的嗎。謝謝你。',
         ]));
-        storyThen(() => { toast('💰 雷德感謝你請他吃飯，塞給你20金'); });
+        storyThen(() => { toast('💰 雷德感謝你請他吃飯，塞給你5金'); });
       });
     });
   }
@@ -10789,7 +10821,6 @@ function doAction_Cook() {
   if (G.cookActive) { warn('已經在烹飪了，請稍候。'); return; }
   if (G.soupReady) { warn('廚房裡已有一碗湯，先取用再烹飪。'); return; }
   if (G.carryingSoup) { warn('你手上還拿著湯，先處理完再說。'); return; }
-  if ((G.eldrinHp ?? 100) <= 20) { warn('艾德林 HP 太低了，需要休息才能工作。'); return; }
   spendFatigue(3);
   openCookSelectPanel();
 }
@@ -10804,7 +10835,7 @@ function doAction_PickupPotion() {
   document.getElementById('research-scene-wrap').style.display = 'none';
   const potionEl = document.getElementById('lobby-potion');
   if (potionEl) potionEl.style.display = 'none';
-  document.getElementById('research-scene-label').textContent = '🔬 研究藥水中…';
+  document.getElementById('research-scene-label').textContent = '🧪 研究藥水中…';
   document.getElementById('research-scene-bar').style.background = 'linear-gradient(90deg,#402080,#8040e0)';
   chg(potionKey, 1);
   G.researchType = null;
@@ -10816,61 +10847,60 @@ function doAction_StartResearch() {
   if (G.researchReady) { warn('藥水已完成，請先靠近藥水取回。'); return; }
   if (G.timePeriod !== 'evening') { timeWarn('研究藥水是晚上的行動。'); return; }
   if (G.researchActive) { warn('已經在研究藥水了，請稍候。'); return; }
-  if ((G.eldrinHp ?? 100) <= 20) { warn('艾德林 HP 太低了，需要休息才能工作。'); return; }
   playLoopingAudio('sfx-menu-open', 4.0);
   showActionMenu('選擇研究的藥水', [
     {
-      name: '治療藥水', fx: '藥材-2  疼痛-5（使用後）',
-      req: () => G.herb >= 2,
+      name: '治療藥水', fx: '藥材-2  白藥花-1  疼痛-5（使用後）',
+      req: () => G.herb >= 2 && G.whiteFlower >= 1,
       run() {
         playTitleButtonSfx();
         spendFatigue(4);
-        chg('herb', -2); chg('mood', -3);
+        chg('herb', -2); chg('whiteFlower', -1);
         G.researchActive = true; G.researchTimer = 0; G.researchType = 'cold';
         renderHUD();
         document.getElementById('research-scene-wrap').style.display = 'block';
         document.getElementById('research-scene-bar').style.width = '0%';
-        document.getElementById('research-scene-label').textContent = '🔬 研究治療藥水中…';
+        document.getElementById('research-scene-label').textContent = '🧪 研究治療藥水中…';
         story('旁白', pick(NARR_RESEARCH));
       }
     },
     {
-      name: '解咒藥水', fx: '藥材-2  詛咒-5（使用後）',
-      req: () => G.herb >= 2,
+      name: '解咒藥水', fx: '白藥花-2  礦石-2  詛咒-5（使用後）',
+      req: () => G.whiteFlower >= 2 && G.stone >= 2,
       run() {
         playTitleButtonSfx();
         spendFatigue(4);
-        chg('herb', -2); chg('mood', -3);
+        chg('whiteFlower', -2); chg('stone', -2);
         G.researchActive = true; G.researchTimer = 0; G.researchType = 'curse';
         renderHUD();
         document.getElementById('research-scene-wrap').style.display = 'block';
         document.getElementById('research-scene-bar').style.width = '0%';
-        document.getElementById('research-scene-label').textContent = '🔬 研究解咒藥水中…';
+        document.getElementById('research-scene-label').textContent = '🧪 研究解咒藥水中…';
         story('旁白', pick(NARR_RESEARCH));
       }
     },
     {
-      name: '體力藥水', fx: '藥材-2  體力+20（使用後）',
-      req: () => G.herb >= 2,
+      name: '體力藥水', fx: '藥材-2  蘑菇-1  蟲材-2  體力+30（使用後）',
+      req: () => G.herb >= 2 && G.mushroom >= 1 && G.bug >= 2,
       run() {
         playTitleButtonSfx();
         spendFatigue(4);
-        chg('herb', -2); chg('mood', -3);
+        chg('herb', -2); chg('mushroom', -1); chg('bug', -2);
         G.researchActive = true; G.researchTimer = 0; G.researchType = 'stamina';
         renderHUD();
         document.getElementById('research-scene-wrap').style.display = 'block';
         document.getElementById('research-scene-bar').style.width = '0%';
-        document.getElementById('research-scene-label').textContent = '🔬 研究體力藥水中…';
+        document.getElementById('research-scene-label').textContent = '🧪 研究體力藥水中…';
         story('旁白', pick(NARR_RESEARCH));
       }
     },
     {
-      name: '忘卻藥水', fx: '藥材-5  蟲材-3  水晶碎片-5  妖精-1',
-      req: () => G.herb >= 5 && G.bug >= 3 && G.crystal >= 5 && G.fairyItem >= 1 && G.forgetPotion === 0,
+      name: '忘卻藥水', fx: '藥材-10  白藥花-10  蟲材-5  水晶碎片-8  妖精-1',
+      req: () => G.herb >= 10 && G.whiteFlower >= 10 && G.bug >= 5 && G.crystal >= 8 && G.fairyItem >= 1 && G.forgetPotion === 0,
       run() {
         playTitleButtonSfx();
         spendFatigue(4);
-        chg('herb', -5); chg('bug', -3); chg('crystal', -5); chg('fairyItem', -1); chg('mood', -3);
+        chg('herb', -10); chg('whiteFlower', -10); chg('bug', -5); chg('crystal', -8); chg('fairyItem', -1);
         G.researchActive = true; G.researchTimer = 0; G.researchType = 'forget';
         renderHUD();
         document.getElementById('research-scene-wrap').style.display = 'block';
@@ -11121,7 +11151,6 @@ function doAction_BookshelfMenu() {
 
 function doAction_ReadAlone() {
   if (G.timePeriod !== 'evening') { timeWarn('讀書是晚上的行動。'); return; }
-  if ((G.eldrinHp ?? 100) <= 20) { warn('艾德林 HP 太低了，需要休息才能工作。'); return; }
   if (G.day < 0 || G.day > 11) { warn('今天沒有新的內容可以讀。'); return; }
   spendFatigue(1);
   if (!Array.isArray(G.eldrinBookReadDays)) G.eldrinBookReadDays = [];
@@ -11177,7 +11206,6 @@ function doAction_BookshelfMenu() {
 function doAction_ReadBook() {
   if (G.day4AvarenGone) { warn('阿瓦倫不在這裡。'); return; }
   if (G.timePeriod !== 'evening') { timeWarn('讀書是晚上的行動。'); return; }
-  if ((G.eldrinHp ?? 100) <= 20) { warn('艾德林的 HP 太低，無法集中精神讀書。'); return; }
   if (G.day === 10 && !G.usedForgetMagic) { rejectDay10AvarenCare('read'); return; }
   if ((G.avarenReadToday ?? 0) >= 2) { warn('今天已經念過兩次書了。'); return; }
   spendFatigue(1);
@@ -11669,7 +11697,7 @@ function bdpAdjust(d) {
 }
 
 const BAG_USABLE_POTIONS = {
-  staminaPotion: { name:'體力藥水', stat:'eldrinFatigue', amt:20, label:'體力', emoji:'💚' },
+  staminaPotion: { name:'體力藥水', stat:'eldrinFatigue', amt:30, label:'體力', emoji:'💚' },
   coldPotion:    { name:'治療藥水', stat:'eldrinHp',      amt:5,  label:'HP',   emoji:'🔴' },
 };
 
@@ -11697,7 +11725,7 @@ const AVAREN_GIFT_KEYS = new Set(['pebble', 'wildFlower', 'feather', 'giftBug'])
 
 function _checkAvarenGiftDiscard() {
   if (AVAREN_GIFT_KEYS.has(_bdpKey) && G.avarenScene === G.scene) {
-    chg('trust', -3);
+    chg('mood', -3);
     story('旁白', '阿瓦倫看見你把他帶來的東西丟掉了。他沒有說話，只是悄悄地把頭轉開。');
   }
 }
@@ -11947,9 +11975,11 @@ function chg(stat, d) {
   else if (stat==='avarenHunger') G.avarenHunger = clamp(G.avarenHunger+d,0,100);
   else if (stat==='eldrinHunger') G.eldrinHunger = clamp(G.eldrinHunger+d,0,100);
   else if (stat==='eldrinHp')     G.eldrinHp     = clamp((G.eldrinHp ?? 100)+d,0,100);
+  else if (stat==='eldrinFatigue') G.eldrinFatigue = clamp((G.eldrinFatigue ?? 80)+d,0,100);
   else if (stat==='fatigue')     G.fatigue     = clamp(G.fatigue+d,0,100);
   else if (stat==='mood')        G.mood        = clamp(G.mood+d,0,100);
   else if (stat==='trust')       G.trust       = clamp(G.trust+d,0,100);
+  else if (stat==='knowledge')   G.knowledge   = Math.max(0,(G.knowledge??0)+d);
   else if (stat==='money')       G.money       = Math.max(0,G.money+d);
   else if (stat==='food')        G.food        = Math.max(0,G.food+d);
   else if (stat==='herb')        G.herb        = Math.max(0,G.herb+d);
@@ -11976,6 +12006,8 @@ function chg(stat, d) {
   else if (stat==='wildFlower') G.wildFlower = Math.max(0,(G.wildFlower ?? 0)+d);
   else if (stat==='feather')    G.feather    = Math.max(0,(G.feather   ?? 0)+d);
   else if (stat==='giftBug')    G.giftBug    = Math.max(0,(G.giftBug   ?? 0)+d);
+  // 艾德林 HP 歸零 → 倒下結局（夜間飢餓懲罰已改成淨值計算，不會在此誤觸）
+  if (stat === 'eldrinHp' && d < 0 && (G.eldrinHp ?? 100) <= 0) triggerEldrinDeath();
 }
 
 // ══════════════════════════════════════
@@ -13127,25 +13159,20 @@ function endDay() {
     document.getElementById('blood-moon-7-overlay').style.display = 'none';
   }
 
-  // Nightly decay
-  chg('pain',  +5);
-  chg('curse', +5);
-  // 飢餓自然消耗
-  chg('avarenHunger', -20);
-  chg('eldrinHunger', -15);
-  // 食物補充飢餓
-  if (G.food >= 2) {
-    chg('food', -2);
-    chg('avarenHunger', +40);
-    chg('eldrinHunger', +30);
-  } else if (G.food === 1) {
-    chg('food', -1);
-    chg('avarenHunger', +20);
-    chg('eldrinHunger', +15);
+  // 每天死亡門檻（判定當天 G.day 尚未 ++）
+  function isCrisis() {
+    if (G.day === 1) return G.pain >= 100 && G.curse >= 100;
+    if (G.day === 2) return G.pain >= 90  && G.curse >= 90;
+    return G.pain >= 80 && G.curse >= 80;
   }
-  // 飢餓歸零的後果
-  if (G.avarenHunger <= 0) chg('pain', +10);
-  if (G.eldrinHunger <= 0) chg('eldrinHp', -15);
+
+  // Nightly decay
+  chg('pain',  +10);
+  chg('curse', +10);
+  // 飢餓自然消耗（食物不自動補充，需靠烹飪）
+  chg('avarenHunger', -50);
+  chg('eldrinHunger', -40);
+  // 飢餓歸零的後果改由白天「每5秒持續扣血」處理，夜間不再一次性懲罰
   // 每晚睡眠恢復 HP
   chg('eldrinHp', 20);
 
@@ -13153,7 +13180,7 @@ function endDay() {
   if (G.day === 10 && !G.usedForgetMagic && !wasBloodMoon) {
     chg('curse', +6);
     renderHUD();
-    if (G.pain >= 100 && G.curse >= 95) { showEvent('💀','危機——', `阿瓦倫的疼痛與詛咒同時達到極限……\n黑霧將他吞噬。`, () => endGame('crisis'), 'red'); return; }
+    if (isCrisis()) { showEvent('💀','危機——', `阿瓦倫的疼痛與詛咒同時達到極限……\n黑霧將他吞噬。`, () => endGame('crisis'), 'red'); return; }
     const nightText = `你走近阿瓦倫的房間，想為他做些什麼。\n他沒有轉過來。\n\n「……別碰我。」\n\n你只能停在房門外，\n什麼也幫不上。\n\n詛咒 +6`;
     G.day++;
     G.slimeCalmed = false;
@@ -13172,7 +13199,7 @@ function endDay() {
     G.bloodMoon7Failed = true;
   }
 
-  if (G.pain >= 100 && G.curse >= 95) { showEvent('💀','危機——', `阿瓦倫的疼痛與詛咒同時達到極限……\n黑霧將他吞噬。`, () => endGame('crisis'), 'red'); return; }
+  if (isCrisis()) { showEvent('💀','危機——', `阿瓦倫的疼痛與詛咒同時達到極限……\n黑霧將他吞噬。`, () => endGame('crisis'), 'red'); return; }
 
   let nightText = G.day4AvarenGone
     ? `夜晚悄然降臨。\n小屋裡安靜得讓人不安。\n你躺下，卻一直聽見窗外的風聲。\n這一夜很長。`
@@ -13300,14 +13327,14 @@ function triggerAvarenReturnEvent() {
           { speaker: '阿瓦倫', text: '……給你的。' },
           { speaker: '旁白',   text: '他把布袋遞過來。\n很重。\n\n你接住的瞬間，裡面傳來金屬碰撞的聲音。\n金幣。\n很多很多金幣。' },
           { speaker: '艾德林', text: '……阿瓦倫。' },
-          { speaker: '旁白',   text: '你的手指一點一點收緊。\n你忽然想起自己曾經說過的話。\n食物不夠。\n錢也不夠。\n還要買藥材，還要想辦法撐過下一天。\n\n你只是說出口了。\n可是他記住了。' },
+          { speaker: '旁白',   text: '你忽然想起自己曾經說過的話。\n食物不夠。\n錢也不夠。\n還要買藥材，還要想辦法撐過下一天。\n\n你只是說出口了。\n可是他記住了。' },
           { speaker: '艾德林', text: '你是因為我……才去偷這些的嗎？' },
           { speaker: '阿瓦倫', text: '……你需要。' },
           { speaker: '艾德林', text: '我不需要你做這種事！' },
           { speaker: '旁白',   text: '你的聲音又高了起來。\n可這一次，很快就顫抖著低下去。\n\n你看見他縮了一下肩膀。\n像是已經準備好被責罵、被推開、被討厭。' },
-          { speaker: '艾德林', text: '……不是你的錯。\n\n對不起。\n是我讓你覺得，你必須替我做這種事。' },
-          { speaker: '旁白',   text: '你往前一步，把他抱進懷裡。\n\n阿瓦倫的身體僵住了。\n他手裡的錢袋垂下來，重重碰在你的手臂旁。' },
-          { speaker: '艾德林', text: '以後不要再這樣了。\n不要一個人半夜出去。\n不要為了我做這種危險的事。\n\n我想要你平安回來。\n比起錢、食物、藥材，那個重要多了。' },
+          { speaker: '艾德林', text: '……對不起…不是你的錯。\n是我讓你覺得，你必須替我做這種事。' },
+          { speaker: '旁白',   text: '你往前一步，把他抱進懷裡。\n\n阿瓦倫的身體僵住了。' },
+          { speaker: '艾德林', text: '以後不要再這樣了。\n不要一個人半夜出去。\n不要為了我做這種危險的事。\n\n我想要你平安健康。\n比起錢、食物、藥材，那些重要多了。' },
           { speaker: '阿瓦倫', text: '……' },
           { speaker: '旁白',   text: '過了很久，他的手很輕很輕地抓住你的衣服。' },
           { speaker: '阿瓦倫', text: '……我知道了。' },
@@ -14038,7 +14065,7 @@ function endGame(type) {
   else if (type === 'eldrin_death') ending = ENDINGS.eldrin_death;
   else if (type === 'wormwood') ending = ENDINGS.wormwood;
   else if (type === 'reid') ending = ENDINGS.reid;
-  else if (G.curse >= 80 || G.pain >= 80)         ending = ENDINGS.bad_curse;
+  else if (G.curse >= 70 || G.pain >= 70)         ending = ENDINGS.bad_curse;
   else if (G.mood < 50 && G.curse >= 50)          ending = ENDINGS.wormwood;
   else if (G.mood >= 70 && G.trust >= 60 && G.curse < 40 && G.pain < 40)
                                                        ending = ENDINGS.nectar;
@@ -14352,6 +14379,7 @@ function loadFromSlot(n) {
     if (G.noahDay2IntroSeen == null) G.noahDay2IntroSeen = false;
     if (G.noahLobbyTalking == null) G.noahLobbyTalking = false;
     if (G.noahLakeMoonSeen == null) G.noahLakeMoonSeen = false;
+    if (G.noahLakeMoonStage == null) G.noahLakeMoonStage = G.noahLakeMoonSeen ? NOAH_DAY2_LAKE_STORY_PARTS.length : 0;
     if (G.noahLakeTalking == null) G.noahLakeTalking = false;
     if (G.avarenWaitedForForest == null) G.avarenWaitedForForest = false;
     if (G.avarenAwake == null) G.avarenAwake = G.day > 1;
@@ -14661,32 +14689,28 @@ function setupDay0IntroState() {
 }
 
 const DAY0_STATIC_INTRO_LINES = [
-  { speaker: '旁白', text: '夜已經很深了。\n森林裡只有雨聲，還有小屋裡微弱的燈光。' },
-  { speaker: '旁白', text: '諾亞連夜把你們帶到這裡。\n這間很久沒有人使用的小屋，暫時成了你和阿瓦倫的藏身處。' },
-  { speaker: '諾亞', text: '艾德林，我把附近的痕跡都處理掉了。至少今晚，他們不會找到這裡。' },
+  { speaker: '旁白', text: '諾亞推門進來時，艾德林正站在大廳的樓梯旁。\n他的臉色比夜色還要蒼白。' },
+  { speaker: '諾亞', text: '艾德林，我把附近的痕跡都處理掉了。至少今晚，這裡是安全的。' },
   { speaker: '艾德林', text: '謝謝你……諾亞。' },
-  { speaker: '諾亞', text: '不用跟我道謝。這間小屋本來就空著，能幫上你們就好。' },
+  { speaker: '諾亞', text: '不用跟我道謝。這間小屋本來就很久沒有人來了，用來躲藏正好。' },
   { speaker: '諾亞', text: '阿瓦倫呢？那孩子的狀況怎麼樣？' },
-  { speaker: '艾德林', text: '還在房間裡昏迷。\n呼吸很弱，身上的詛咒也沒有退下去。' },
-  { speaker: '艾德林', text: '都是我的錯。' },
-  { speaker: '艾德林', text: '如果我再早一點發現，如果我能更快帶他離開……他就不會變成現在這樣。' },
+  { speaker: '艾德林', text: '還沒有醒。\n他的呼吸很弱，詛咒也還在擴散。\n我不知道我能不能救他。' },
   { speaker: '諾亞', text: '艾德林。' },
   { speaker: '諾亞', text: '你已經把他帶出來了。這不是誰都做得到的事。' },
-  { speaker: '艾德林', text: '可是那孩子還在受苦。' },
+  { speaker: '艾德林', text: '可是如果他死了，我做的事情就沒有意義了。' },
   { speaker: '諾亞', text: '所以你才會留在這裡，不是嗎？' },
   { speaker: '諾亞', text: '你會想辦法救他。你一直都是這樣的人。' },
-  { speaker: '諾亞', text: '今晚先讓他休息。你也一樣。等天亮之後，我會再過來看你們。' },
+  { speaker: '諾亞', text: '今晚先讓他休息。你也一樣。我之後會再過來看你們。' },
   { speaker: '艾德林', text: '……嗯。' },
   { speaker: '諾亞', text: '不要一個人把所有事情都扛起來。至少在這裡，你們不是孤身一人。' },
-  { speaker: '旁白', text: '諾亞輕輕關上門。\n小屋重新安靜下來。' },
-  { speaker: '旁白', text: '樓上傳來極輕的呼吸聲。\n艾德林站在原地，很久都沒有動。' }
+  { speaker: '旁白', text: '諾亞留下這句話後，輕輕關上了門。\n小屋重新安靜下來。' }
 ];
 
 const DAY0_AVAREN_MONOLOGUE_LINES = [
   { speaker: '旁白', text: '房間裡很安靜。\n阿瓦倫躺在床上，呼吸輕得像隨時會被夜色帶走。' },
   { speaker: '艾德林', text: '阿瓦倫……' },
   { speaker: '艾德林', text: '對不起。' },
-  { speaker: '艾德林', text: '我明明知道那裡有多危險，卻還是太晚了。' },
+  { speaker: '艾德林', text: '我沒有想到會發生這些事…。' },
   { speaker: '艾德林', text: '你不該變成這樣。\n不該由你來承受這些。' },
   { speaker: '旁白', text: '艾德林伸出手，又在碰到阿瓦倫之前停住。' },
   { speaker: '艾德林', text: '我會想辦法。' },
@@ -14925,25 +14949,21 @@ async function playDay0OpeningIntro() {
   renderChars();
 
   await playActionScene([
-    { speaker: '旁白', text: '夜已經很深了。\n潮濕的風穿過森林，樹影在小屋外低低搖晃。' },
     { speaker: '旁白', text: '諾亞推門進來時，艾德林正站在大廳的樓梯旁。\n他的臉色比夜色還要蒼白。' },
-    { speaker: '諾亞', text: '艾德林，我把附近的痕跡都處理掉了。至少今晚，他們不會找到這裡。' },
+    { speaker: '諾亞', text: '艾德林，我把附近的痕跡都處理掉了。至少今晚，這裡是安全的。' },
     { speaker: '艾德林', text: '謝謝你……諾亞。' },
     { speaker: '諾亞', text: '不用跟我道謝。這間小屋本來就很久沒有人來了，用來躲藏正好。' },
     { speaker: '諾亞', text: '阿瓦倫呢？那孩子的狀況怎麼樣？' },
-    { speaker: '艾德林', text: '還在房間裡昏迷。\n呼吸很弱，身上的詛咒也沒有退下去。' },
-    { speaker: '艾德林', text: '都是我的錯。' },
-    { speaker: '艾德林', text: '如果我再早一點發現，如果我能更快帶他離開……他就不會變成現在這樣。' },
+    { speaker: '艾德林', text: '還沒有醒。\n他的呼吸很弱，詛咒也還在擴散。\n我不知道我能不能救他。' },
     { speaker: '諾亞', text: '艾德林。' },
     { speaker: '諾亞', text: '你已經把他帶出來了。這不是誰都做得到的事。' },
-    { speaker: '艾德林', text: '可是那孩子還在受苦。' },
+    { speaker: '艾德林', text: '可是如果他死了，我做的事情就沒有意義了。' },
     { speaker: '諾亞', text: '所以你才會留在這裡，不是嗎？' },
     { speaker: '諾亞', text: '你會想辦法救他。你一直都是這樣的人。' },
-    { speaker: '諾亞', text: '今晚先讓他休息。你也一樣。等天亮之後，我會再過來看你們。' },
+    { speaker: '諾亞', text: '今晚先讓他休息。你也一樣。我之後會再過來看你們。' },
     { speaker: '艾德林', text: '……嗯。' },
     { speaker: '諾亞', text: '不要一個人把所有事情都扛起來。至少在這裡，你們不是孤身一人。' },
-    { speaker: '旁白', text: '諾亞留下這句話後，輕輕關上了門。\n小屋重新安靜下來。' },
-    { speaker: '旁白', text: '樓上傳來極輕的呼吸聲。\n艾德林站在原地，很久都沒有動。' }
+    { speaker: '旁白', text: '諾亞留下這句話後，輕輕關上了門。\n小屋重新安靜下來。' }
   ]);
 
   await animateNpcTo(G.noah, { x: 318, y: 440 }, 1700);
