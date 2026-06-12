@@ -2756,8 +2756,8 @@ const RESEARCH_MAX     = 600;  // 10秒
 const COOK_MAX         = 900; // 15秒
 const CARE_MAX         = 900;  // 15秒
 const GATHER_SEARCH_MAX = 210; // 採集搜索 3.5秒 × 60fps
-const DAY_REAL_SECONDS = 1080; // 18分鐘真實時間
-const MORNING_SECONDS  = 720;  // 前12分鐘（早上）
+const DAY_REAL_SECONDS = 1200; // 20分鐘真實時間
+const MORNING_SECONDS  = 800;  // 前13分20秒（早上）
 const START_HOUR = 8;
 const RAIN_DROP_COUNT = 90;
 const FOREST_FROG_DEFAULT  = { x: 95,  y: 300, state: 'sit', timer: 80, hopDx: 0, hopDy: 0, hopProgress: 0, facing: 1, stuckCooldown: 0 };
@@ -3263,7 +3263,7 @@ function updateBirds() {
     const dx = s.tx - s.x;
     const dy = s.ty - s.y;
     const dist = Math.hypot(dx, dy);
-    const moveSpeed = 0.52;
+    const moveSpeed = 0.52 * (G._frameFactor || 1);
     if (dist > 1.5) {
       const r = Math.min(moveSpeed / dist, 1);
       s.x += dx * r;
@@ -3324,7 +3324,7 @@ function updateOneSlime(slime, elId, homeX, homeY) {
           slime.wanderTimer = 40 + Math.floor(Math.random() * 60);
         }
         slime.wanderTimer--;
-        const spd = SLIME_SPEED * 0.5 * (HOP_CYCLE / HOP_AIR_END);
+        const spd = SLIME_SPEED * 0.5 * (HOP_CYCLE / HOP_AIR_END) * (G._frameFactor || 1);
         const nx = slime.x + slime.wanderDir.dx * spd;
         const ny = slime.y + slime.wanderDir.dy * spd;
         const FOREST_X1 = 40, FOREST_X2 = 600, FOREST_Y1 = 80, FOREST_Y2 = 440;
@@ -3342,7 +3342,7 @@ function updateOneSlime(slime, elId, homeX, homeY) {
       const dist = Math.hypot(dx, dy) || 1;
 
       if (inAir) {
-        const spd = SLIME_SPEED * (HOP_CYCLE / HOP_AIR_END);
+        const spd = SLIME_SPEED * (HOP_CYCLE / HOP_AIR_END) * (G._frameFactor || 1);
         const nx = slime.x + (dx / dist) * spd;
         const ny = slime.y + (dy / dist) * spd;
         if (!isObstacleAt(nx, ny)) {
@@ -3515,9 +3515,10 @@ function updateForestFrog() {
       }
     }
   } else {
-    f.hopProgress++;
-    const nx = f.x + f.hopDx / HOP_FRAMES;
-    const ny = f.y + f.hopDy / HOP_FRAMES;
+    const _fhf = (G._frameFactor || 1);
+    f.hopProgress += _fhf;
+    const nx = f.x + (f.hopDx / HOP_FRAMES) * _fhf;
+    const ny = f.y + (f.hopDy / HOP_FRAMES) * _fhf;
     if (isWalkable(nx, ny)) {
       f.x = nx;
       f.y = ny;
@@ -3686,9 +3687,10 @@ function updateForestFrog2() {
       }
     }
   } else {
-    f.hopProgress++;
-    const nx = f.x + f.hopDx / HOP_FRAMES;
-    const ny = f.y + f.hopDy / HOP_FRAMES;
+    const _fhf = (G._frameFactor || 1);
+    f.hopProgress += _fhf;
+    const nx = f.x + (f.hopDx / HOP_FRAMES) * _fhf;
+    const ny = f.y + (f.hopDy / HOP_FRAMES) * _fhf;
     if (isWalkable(nx, ny)) {
       f.x = nx;
       f.y = ny;
@@ -5114,21 +5116,24 @@ function openRedMenu() {
     }
     // 與雷德聊聊（第5、6、7天的溫特相遇階段）
     if (G.day === 5 && !G.reidWinterMeetSeen) {
-      items.push({ name:'與雷德聊聊', fx:'（免費）', req:()=>true,
+      items.push({ name:'與雷德聊聊', fx:'', req:()=>true,
         run() { spendFatigue(1); G.reidWinterMeetSeen = true; startActionScene(RED_WINTER_MEET_STORY, 400, () => {}); }
       });
     } else if (G.day === 6 && !G.reidWinterMeetDay6Seen) {
-      items.push({ name:'與雷德聊聊', fx:'（免費）', req:()=>true,
+      items.push({ name:'與雷德聊聊', fx:'', req:()=>true,
         run() { spendFatigue(1); G.reidWinterMeetDay6Seen = true; startActionScene(RED_WINTER_MEET_DAY6_STORY, 400, () => {}); }
       });
     } else if (G.day === 7 && !G.reidWinterMeetDay7Seen) {
-      items.push({ name:'與雷德聊聊', fx:'（免費）', req:()=>true,
+      items.push({ name:'與雷德聊聊', fx:'', req:()=>true,
         run() { spendFatigue(1); G.reidWinterMeetDay7Seen = true; startActionScene(RED_WINTER_MEET_DAY7_STORY, 400, () => {}); }
       });
     } else {
-      items.push({ name:'與雷德聊聊', fx:'（免費）', req:()=>true,
+      items.push({ name:'與雷德聊聊', fx:'', req:()=>true,
         run() { runReidChat(); }
       });
+    }
+    if (G.carryingSoup) {
+      items.push({ name:'遞給他料理', fx:'', req:()=>true, run: sellSoupToReid });
     }
     showActionMenu('迷路勇者・雷德', items);
     return;
@@ -5257,7 +5262,7 @@ function showRedCommissionMenu() {
   if (G.carryingSoup) {
     items.push({ name:'遞給他料理', fx:'', req:()=>true, run: sellSoupToReid });
   }
-  items.push({ name:'與雷德聊聊', fx:'（免費）', req:()=>true,
+  items.push({ name:'與雷德聊聊', fx:'', req:()=>true,
     run(){ runReidChat(); }});
   showActionMenu('迷路勇者・雷德', items);
 }
@@ -5332,9 +5337,9 @@ function openNoahMenu() {
   }
 
   const items = [
-    { name:'詢問近況', fx:'（免費）', req:()=>true,
+    { name:'詢問近況', fx:'', req:()=>true,
       run(){ queueNoahLine(pick(NOAH_DLG_STATUS)); } },
-    { name:'關於這間小屋', fx:'（免費）', req:()=>true,
+    { name:'關於這間小屋', fx:'', req:()=>true,
       run(){ queueNoahLine(pick(NOAH_DLG_HOUSE)); } },
   ];
 
@@ -5741,12 +5746,12 @@ function openWinterMenu() {
   };
 
   // 1. 與溫特聊聊
-  items.push({ name:'與溫特聊聊', fx:'（免費）', req:()=>true, run: runWinterTalk });
+  items.push({ name:'與溫特聊聊', fx:'', req:()=>true, run: runWinterTalk });
 
   // 2. 魔物安撫香（第一次是「神秘的香味」觸發對話，之後才變成可購買）
   if (!G.winterIncenseIntroSeen) {
     items.push({
-      name:'神秘的香味', fx:'（免費）', req:() => true,
+      name:'神秘的香味', fx:'', req:() => true,
       run() {
         G.winterIncenseIntroSeen = true;
         startActionScene([
@@ -5769,7 +5774,7 @@ function openWinterMenu() {
 
   // 3. 聊聊（關於那個勇者）——溫特與雷德相遇後才出現
   if (G.winterReidMeetSeen || G.winterReidMeetDay6Seen || G.winterReidMeetDay7Seen) {
-    items.push({ name:'聊聊（關於那個勇者）', fx:'（免費）', req:()=>true,
+    items.push({ name:'聊聊（關於那個勇者）', fx:'', req:()=>true,
       run(){ story('溫特', pick(WINTER_DLG_REID)); } });
   }
 
@@ -8059,6 +8064,10 @@ function gameLoop() {
   // ── 倍速：把當天時鐘往前推（測試用）──
   const _realNow = performance.now();
   const _mult = G.speedMult || 1;
+  // ── 幀率校正：以 60fps 為基準，讓移動速度不受螢幕刷新率影響 ──
+  // 高刷新率螢幕（如手機 120Hz）每秒幀數較多，若每幀固定移動會變太快。
+  const _frameDelta = (G._lastFrameMs != null) ? (_realNow - G._lastFrameMs) : (1000 / 60);
+  G._frameFactor = Math.min(3, _frameDelta / (1000 / 60)); // 60fps=1, 120fps≈0.5；上限3避免分頁切回時瞬移
   if (!G.manualPaused && _mult > 1 && G._lastFrameMs != null) {
     G.dayStartMs -= (_mult - 1) * (_realNow - G._lastFrameMs);
   }
@@ -8177,10 +8186,11 @@ function gameLoop() {
   const tradeOpen = document.getElementById('trade-overlay').style.display === 'flex';
   const bagOpen = document.getElementById('bag-overlay').style.display === 'flex';
   if (!isDlgBlocking() && !cookPanelOpen && !G.gatherSearchActive && !G.fishCastLock && !tradeOpen && !bagOpen) {
-    if (k['ArrowLeft'] ||k['a']||k['A']) dx = -SPEED;
-    if (k['ArrowRight']||k['d']||k['D']) dx = +SPEED;
-    if (k['ArrowUp']   ||k['w']||k['W']) dy = -SPEED;
-    if (k['ArrowDown'] ||k['s']||k['S']) dy = +SPEED;
+    const _sp = SPEED * (G._frameFactor || 1); // 依幀率校正，避免高刷新率螢幕走太快
+    if (k['ArrowLeft'] ||k['a']||k['A']) dx = -_sp;
+    if (k['ArrowRight']||k['d']||k['D']) dx = +_sp;
+    if (k['ArrowUp']   ||k['w']||k['W']) dy = -_sp;
+    if (k['ArrowDown'] ||k['s']||k['S']) dy = +_sp;
   }
 
   const nx = Math.max(30, Math.min(SCENE_W-30, el.x + dx));
@@ -8263,14 +8273,15 @@ function gameLoop() {
   if (G.scene === 'forest' && G.timePeriod === 'evening' && (G.day === 2 || G.day === 8) && !G.fairyCaught) {
     if (G.day === 2) {
       if (G.fairy.vy == null) G.fairy.vy = 0.18;
-      G.fairy.x += G.fairy.vx;
-      G.fairy.y += G.fairy.vy;
+      const _ff = (G._frameFactor || 1);
+      G.fairy.x += G.fairy.vx * _ff;
+      G.fairy.y += G.fairy.vy * _ff;
       if (G.fairy.x < DAY2_FAIRY_BOUNDS.x1 || G.fairy.x > DAY2_FAIRY_BOUNDS.x2) G.fairy.vx *= -1;
       if (G.fairy.y < DAY2_FAIRY_BOUNDS.y1 || G.fairy.y > DAY2_FAIRY_BOUNDS.y2) G.fairy.vy *= -1;
       G.fairy.x = Math.max(DAY2_FAIRY_BOUNDS.x1, Math.min(DAY2_FAIRY_BOUNDS.x2, G.fairy.x));
       G.fairy.y = Math.max(DAY2_FAIRY_BOUNDS.y1, Math.min(DAY2_FAIRY_BOUNDS.y2, G.fairy.y));
     } else {
-      G.fairy.x += G.fairy.vx;
+      G.fairy.x += G.fairy.vx * (G._frameFactor || 1);
       if (G.fairy.x < 170 || G.fairy.x > 460) G.fairy.vx *= -1;
     }
   }
@@ -8321,7 +8332,8 @@ function gameLoop() {
       av.walkFrame = 0;
       // 紅妖精緩慢飄動
       const rf = G.redFairy;
-      rf.x += rf.vx; rf.y += rf.vy;
+      const _rff = (G._frameFactor || 1);
+      rf.x += rf.vx * _rff; rf.y += rf.vy * _rff;
       if (rf.x < 273 || rf.x > 392) rf.vx *= -1;
       if (rf.y < 327 || rf.y > 397) rf.vy *= -1;
     } else {
@@ -8332,7 +8344,7 @@ function gameLoop() {
         av.wanderDir = dirs[Math.floor(Math.random() * dirs.length)];
         av.wanderTimer = Math.floor(Math.random() * 40) + 20;
       }
-      const bmSpd = SPEED * 0.55;
+      const bmSpd = SPEED * 0.55 * (G._frameFactor || 1);
       const nbx = av.x + av.wanderDir.dx * bmSpd;
       const nby = av.y + av.wanderDir.dy * bmSpd;
       av.x = Math.max(bounds.x1, Math.min(bounds.x2, nbx));
@@ -8423,8 +8435,9 @@ function gameLoop() {
     const av = G.avaren;
     const ddx = el.x - av.x, ddy = el.y - av.y;
     const d = Math.hypot(ddx, ddy);
-    const followSpd = G.mood > 80 ? SPEED * 0.65 : SPEED * 0.32;
-    const wanderSpd = G.mood > 80 ? SPEED * 0.28 : SPEED * 0.14;
+    const _avff = (G._frameFactor || 1);
+    const followSpd = (G.mood > 80 ? SPEED * 0.65 : SPEED * 0.32) * _avff;
+    const wanderSpd = (G.mood > 80 ? SPEED * 0.28 : SPEED * 0.14) * _avff;
     const reidPresent = G.scene === 'outside' && isReidDay() && G.timePeriod === 'morning';
     const followDist = G.mood >= 80 ? (reidPresent ? 85 : 105) : 135;
     const wanderMax  = G.mood >= 80 ? (reidPresent ? 80 : 105) : 130;
@@ -8625,7 +8638,7 @@ function gameLoop() {
         playLoopingAudio('sfx-door-open-outdoor', 6.0);
       }
     } else {
-      const spd = SPEED * 0.5;
+      const spd = SPEED * 0.5 * (G._frameFactor || 1);
       rd.x += (dx / dist) * spd;
       rd.y += (dy / dist) * spd;
       // 第2段路徑（中繼點→出口）強制正面朝下
@@ -8658,8 +8671,8 @@ function gameLoop() {
       rd.walkDir = dirs[Math.floor(Math.random() * dirs.length)];
       rd.walkTimer = Math.floor(Math.random() * 90) + 60;
     }
-    const rdx = rd.walkDir.dx * SPEED * 0.25;
-    const rdy = rd.walkDir.dy * SPEED * 0.25;
+    const rdx = rd.walkDir.dx * SPEED * 0.25 * (G._frameFactor || 1);
+    const rdy = rd.walkDir.dy * SPEED * 0.25 * (G._frameFactor || 1);
     const rdNewX = rd.x + rdx;
     const rdNewY = rd.y + rdy;
     const rdInZone = (
@@ -8715,8 +8728,8 @@ function gameLoop() {
         noah.walkDir = dirs[Math.floor(Math.random() * dirs.length)];
         noah.walkTimer = Math.floor(Math.random() * 90) + 60;
       }
-      const ndx = noah.walkDir.dx * SPEED * 0.25;
-      const ndy = noah.walkDir.dy * SPEED * 0.25;
+      const ndx = noah.walkDir.dx * SPEED * 0.25 * (G._frameFactor || 1);
+      const ndy = noah.walkDir.dy * SPEED * 0.25 * (G._frameFactor || 1);
       const noahNewX = noah.x + ndx;
       const noahNewY = noah.y + ndy;
       const noahInZone = (
@@ -8780,7 +8793,7 @@ function gameLoop() {
       wt.walkDir = dirs[Math.floor(Math.random() * dirs.length)];
       wt.walkTimer = Math.floor(Math.random() * 150) + 80;
     }
-    const wtSpd = SPEED * 0.18; // 慢慢地走
+    const wtSpd = SPEED * 0.18 * (G._frameFactor || 1); // 慢慢地走
     const wdx = wt.walkDir.dx * wtSpd;
     const wdy = wt.walkDir.dy * wtSpd;
     const nx = wt.x + wdx;
@@ -8845,7 +8858,7 @@ function gameLoop() {
       rd.walkDir = dirs[Math.floor(Math.random() * dirs.length)];
       rd.walkTimer = Math.floor(Math.random() * 120) + 60;
     }
-    const spd = SPEED * 0.22;
+    const spd = SPEED * 0.22 * (G._frameFactor || 1);
     const nx = rd.x + (rd.walkDir?.dx || 0) * spd;
     const ny = rd.y + (rd.walkDir?.dy || 0) * spd;
     const forestObs = OBSTACLES.forest || [];
@@ -8873,7 +8886,7 @@ function gameLoop() {
   if (G.scene === 'forest' && !G.paused && !G.carryingChicken) {
     const ch = G.chicken;
     if (G.timePeriod !== 'morning') { /* 晚上雞在睡覺，不移動 */ } else {
-    const chickenSpd = 0.6;
+    const chickenSpd = 0.6 * (G._frameFactor || 1);
     ch.walkTimer--;
     if (ch.walkTimer <= 0) {
       const dirs = [
@@ -8909,7 +8922,7 @@ function gameLoop() {
   // ── 第二隻雞的漫步 ──
   if (G.scene === 'forest' && !G.paused && !G.carryingChicken2 && G.timePeriod === 'morning') {
     const ch2 = G.chicken2;
-    const chickenSpd = 0.6;
+    const chickenSpd = 0.6 * (G._frameFactor || 1);
     ch2.walkTimer--;
     if (ch2.walkTimer <= 0) {
       const dirs = [
@@ -9035,12 +9048,12 @@ function gameLoop() {
   if (G.flowerCooldown > 0) G.flowerCooldown--;
   if (G.stoneCooldown > 0) G.stoneCooldown--;
 
-  // 飢餓只在白天活動時間消耗：完整一天（18分鐘）艾德林共降70、阿瓦倫共降50
-  // 第1天阿瓦倫整天昏睡無法進食，整天消耗改為35
+  // 飢餓只在白天活動時間消耗：完整一天（20分鐘）艾德林共降100、阿瓦倫共降70
+  // 第1天阿瓦倫整天昏睡無法進食，整天消耗改為50
   const _spd = (G.speedMult || 1);
-  const _avDailyHunger = (G.day === 1) ? 35 : 50;
+  const _avDailyHunger = (G.day === 1) ? 50 : 70;
   G._avHungerAccum = (G._avHungerAccum || 0) + (_avDailyHunger / (DAY_REAL_SECONDS * 60)) * _spd;
-  G._elHungerAccum = (G._elHungerAccum || 0) + (70 / (DAY_REAL_SECONDS * 60)) * _spd;
+  G._elHungerAccum = (G._elHungerAccum || 0) + (100 / (DAY_REAL_SECONDS * 60)) * _spd;
   if (G._avHungerAccum >= 1) {
     const drop = Math.floor(G._avHungerAccum);
     G._avHungerAccum -= drop;
@@ -9728,7 +9741,7 @@ function openAvarenMenu() {
     placeAvarenBedRest();
     showActionMenu('照顧阿瓦倫', [
       {
-        name: '確認狀態', fx: '不花時間',
+        name: '確認狀態', fx: '',
         req: () => true,
         run() {
           const text = G.day === 10
@@ -9792,7 +9805,7 @@ function openAvarenMenu() {
         }
       },
       {
-        name: '和他說說話', fx: '不花時間',
+        name: '和他說說話', fx: '',
         req: () => true,
         run() {
           if (G.day === 10 && !G.usedForgetMagic) { rejectDay10AvarenCare('talk'); return; }
@@ -9807,7 +9820,7 @@ function openAvarenMenu() {
     placeAvarenUnconscious();
     showActionMenu('照顧阿瓦倫', [
       {
-        name: '確認狀態', fx: '不花時間',
+        name: '確認狀態', fx: '',
         req: () => true,
         run() {
           story('旁白', '阿瓦倫躺在床上，雙眼緊閉，呼吸很淺。\n黑霧像潮濕的影子一樣貼在他的身上。');
