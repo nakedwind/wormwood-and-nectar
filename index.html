@@ -860,6 +860,18 @@ body {
 }
 .act-title { display: none; }
 .act-name  { font-size: 20px; font-weight: 900; color: #e7c98c; margin-bottom: 14px; letter-spacing:2px; }
+.act-note {
+  display: none;
+  position: absolute;
+  top: 22px;
+  right: 24px;
+  z-index: 2;
+  color: #b9965d;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  pointer-events: none;
+}
 .act-list  { display: flex; flex-direction: column; gap: 7px; }
 .act-list.three-col { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; }
 .act-list.three-col .act-item { padding: 8px 10px; }
@@ -1610,7 +1622,7 @@ body {
 }
 #research-scene-wrap {
   display: none; position: absolute;
-  left: 85px; top: 14px;
+  left: 95px; top: 44px;
   width: 120px; background: rgba(8,5,2,0.90);
   border: 1px solid #4a2090; padding: 4px 6px;
   border-radius: 5px; pointer-events: none; z-index: 20;
@@ -2657,6 +2669,7 @@ body {
   <div class="act-box">
     <div class="act-title">選擇行動</div>
     <div class="act-name" id="act-heading"></div>
+    <div class="act-note" id="act-note"></div>
     <div class="act-list" id="act-list"></div>
     <button class="act-cancel" onclick="closeAction()">取消</button>
   </div>
@@ -2743,10 +2756,10 @@ const RESEARCH_MAX     = 600;  // 10秒
 const COOK_MAX         = 900; // 15秒
 const CARE_MAX         = 900;  // 15秒
 const GATHER_SEARCH_MAX = 210; // 採集搜索 3.5秒 × 60fps
-const DAY_REAL_SECONDS = 900;  // 15分鐘真實時間
-const MORNING_SECONDS  = 600;  // 前10分鐘（早上）
+const DAY_REAL_SECONDS = 1080; // 18分鐘真實時間
+const MORNING_SECONDS  = 720;  // 前12分鐘（早上）
 const START_HOUR = 8;
-const RAIN_DROP_COUNT = 75;
+const RAIN_DROP_COUNT = 90;
 const FOREST_FROG_DEFAULT  = { x: 95,  y: 300, state: 'sit', timer: 80, hopDx: 0, hopDy: 0, hopProgress: 0, facing: 1, stuckCooldown: 0 };
 const FOREST_FROG2_DEFAULT = { x: 559, y: 267, state: 'sit', timer: 60, hopDx: 0, hopDy: 0, hopProgress: 0, facing: -1, stuckCooldown: 0 };
 const FOREST_FROG_CATCH_RANGE = 54;
@@ -3015,6 +3028,21 @@ function setOutsideFishingVisual(state) {
     ? folder + 'bg_outside_fishing02.png'
     : folder + 'bg_outside_fishing01.png';
   wrap.classList.toggle('fishing-ready', ready);
+}
+
+function syncOutsideFishingUI() {
+  const label = document.getElementById('fish-scene-label');
+  const bar = document.getElementById('fish-scene-bar');
+  if (!label || !bar) return;
+  if (G.fishReady) {
+    label.textContent = '🎣 釣到了！';
+    bar.style.width = '100%';
+    bar.style.background = 'linear-gradient(90deg,#a07020,#e0b030)';
+  } else {
+    label.textContent = '🎣 垂釣中…';
+    if (!G.fishFishing) bar.style.width = '0%';
+    bar.style.background = 'linear-gradient(90deg,#205880,#40a0e0)';
+  }
 }
 
 // ══════════════════════════════════════
@@ -3771,6 +3799,21 @@ function setForestFishingVisual(state) {
     ? folder + 'bg_forest_fishing02.png'
     : folder + 'bg_forest_fishing01.png';
   wrap.classList.toggle('fishing-ready', ready);
+}
+
+function syncForestFishingUI() {
+  const label = document.getElementById('fish-forest-label');
+  const bar = document.getElementById('fish-forest-bar');
+  if (!label || !bar) return;
+  if (G.forestFishReady) {
+    label.textContent = '🎣 釣到了！回來收取';
+    bar.style.width = '100%';
+    bar.style.background = 'linear-gradient(90deg,#a07020,#e0b030)';
+  } else {
+    label.textContent = '🎣 垂釣中…';
+    if (!G.forestFishFishing) bar.style.width = '0%';
+    bar.style.background = 'linear-gradient(90deg,#205880,#40a0e0)';
+  }
 }
 
 function setOutsideFarmVisual(flash = false) {
@@ -5296,7 +5339,7 @@ function openNoahMenu() {
   ];
 
   if (G.carryingSoup) {
-    items.push({ name:'遞給他料理', fx:'', req:()=>true, run: giveSoupToNoah });
+    items.push({ name:'遞給他料理', fx: G.noahGiftToday ? '今天已送過' : '', req:()=>!G.noahGiftToday, run: giveSoupToNoah });
   }
 
   showActionMenu('小屋主人・諾亞', items);
@@ -5732,7 +5775,7 @@ function openWinterMenu() {
 
   // 4. 遞給她料理
   if (G.carryingSoup) {
-    items.push({ name:'遞給他料理', fx:'', req:()=>true, run: giveSoupToWinter });
+    items.push({ name:'遞給他料理', fx: G.winterGiftToday ? '今天已送過' : '', req:()=>!G.winterGiftToday, run: giveSoupToWinter });
   }
 
   showActionMenu('神秘旅人・溫特', items);
@@ -5779,7 +5822,7 @@ function spendFatigue(n) {
 }
 
 function triggerFatigueCollapse() {
-  if (G.dayEndTriggered || G.paused || G.bloodMoon7Active) return;
+  if (G.dayEndTriggered || G.sleepResolving || G.paused || G.bloodMoon7Active) return;
   G.dayEndTriggered = true;
   G.paused = true;
   cancelAnimationFrame(raf);
@@ -7016,6 +7059,7 @@ function initState() {
     avarenDay10NoForgetTalkSeen: false,
     eldrinBookReadDays: [],
     exhaustedSleepWake: null,
+    sleepResolving: false,
     exhaustedNight: false,
     speedMult: 1,
     cookActive: false, cookTimer: 0, cookMax: COOK_MAX, cookStamina: 0, cookReady: false, soupReady: false, carryingSoup: false, soupIsSpecial: false, cookSelectedKeys: [],
@@ -7108,18 +7152,16 @@ function currentTimeStr() {
 
 function renderTime(elapsed) {
   if (elapsed === undefined) elapsed = (performance.now() - G.dayStartMs) / 1000;
-  // 白天色調疊層：07:00 最強(40%) → 11:00 歸零（elapsed 0→96秒）
-  // 暖色疊層：12:00 開始(0%) → 傍晚前(90%)（elapsed 128→240秒）
+  // 白天色調疊層與黃昏壓暗依早上長度等比例縮放
   if (G.timePeriod === 'morning') {
-    const NOON_SEC   = 96;  // 11:00 對應真實秒數
-    const TWELVE_SEC = 128; // 12:00 對應真實秒數
+    const NOON_SEC   = MORNING_SECONDS * 0.16;
     const tint1Amt = Math.max(0, 0.35 * (1 - elapsed / NOON_SEC));
     const tint2Amt = Math.max(0, 0.10 * (1 - elapsed / NOON_SEC));
     document.getElementById('day-tint-overlay').style.opacity   = tint1Amt;
     document.getElementById('day-tint-overlay-2').style.opacity = tint2Amt;
 
-    // 黃昏壓暗：14:00（elapsed 360）開始 0% → 18:00（elapsed 600）100%
-    const DUSK_START = 360;
+    // 黃昏壓暗：早上段 60% 開始 0% → 早上結束 100%
+    const DUSK_START = MORNING_SECONDS * 0.6;
     const warmAmt = Math.min(1, Math.max(0, (elapsed - DUSK_START) / (MORNING_SECONDS - DUSK_START)));
     const warmEl  = document.getElementById('day-warm-overlay');
     if (elapsed >= DUSK_START) {
@@ -7163,7 +7205,7 @@ function renderHUD() {
   // stats
   const set = (id, v) => {
     document.getElementById('bar-' + id).style.width = v + '%';
-    document.getElementById('val-' + id).textContent = v;
+    document.getElementById('val-' + id).textContent = Math.floor(v);
   };
   set('pain', G.pain); set('curse', G.curse); set('mood', G.mood); set('trust', G.trust);
   if (G.eldrinHp == null) G.eldrinHp = 100;
@@ -7331,6 +7373,7 @@ function renderScene() {
     });
     setOutsideFarmVisual();
     setOutsideFishingVisual(G.fishReady ? 'ready' : G.fishFishing ? 'fishing' : 'idle');
+    syncOutsideFishingUI();
   }
   if (G.scene === 'lobby') {
     const folder = G.timePeriod === 'evening' ? 'bg_lobby - night/'
@@ -7351,6 +7394,7 @@ function renderScene() {
       img.setAttribute('src', folder + filename);
     });
     setForestFishingVisual(G.forestFishReady ? 'ready' : G.forestFishFishing ? 'fishing' : 'idle');
+    syncForestFishingUI();
   }
   if (G.scene === 'room') {
     const folder = G.timePeriod === 'evening' ? 'bg_room_night/' : 'bg_room/';
@@ -7396,6 +7440,7 @@ function renderScene() {
       : showEggs ? 'bg_forest/bg_forest_Nest_egg.png' : 'bg_forest/bg_forest_Nest.png';
   }
   updateForestMushroomVisuals();
+  updateForestAppleVisuals();
   document.getElementById('nest-egg-1').style.display = 'none';
   document.getElementById('nest-egg-2').style.display = 'none';
   const soupObj = document.getElementById('soup-obj');
@@ -7771,6 +7816,8 @@ function renderChars() {
   const soupCarry = document.getElementById('soup-carry-icon');
   if (G.carryingSoup) {
     const dispH2 = sceneCharH();
+    // 依料理種類設定圖示（黑暗料理 food_02，一般 food_01），避免存讀檔後顯示錯誤
+    document.getElementById('soup-carry-img').src = G.soupIsSpecial ? 'food_02.png' : 'food_01.png';
     soupCarry.style.left = (el.x + 12) + 'px';
     soupCarry.style.top  = (el.y - dispH2 * 0.55) + 'px';
     soupCarry.style.display = 'block';
@@ -7916,7 +7963,7 @@ function updateHints() {
     hi.style.display = 'block'; hs.style.display = 'none'; return;
   }
   if (zone && zone.id === 'lobby_potion' && G.researchReady) {
-    const rLabel = G.researchType === 'cold' ? '治療藥水（疼痛-5）' : G.researchType === 'curse' ? '解咒藥水（詛咒-5）' : G.researchType === 'stamina' ? '體力藥水（體力+30）' : '忘卻藥水（疼痛-25 詛咒-25）';
+    const rLabel = G.researchType === 'cold' ? '治療藥水（疼痛-5）' : G.researchType === 'curse' ? '解咒藥水（詛咒-5）' : G.researchType === 'stamina' ? '體力藥水（體力+45）' : '忘卻藥水（疼痛-25 詛咒-25）';
     hi.textContent = `取回${rLabel}`;
     hi.style.display = 'block'; hs.style.display = 'none'; return;
   }
@@ -8081,7 +8128,7 @@ function gameLoop() {
       }
     });
   }
-  if (G.day !== 0 && !G.manualPaused && !G.dayEndTriggered && _elapsed >= DAY_REAL_SECONDS) {
+  if (G.day !== 0 && !G.manualPaused && !G.dayEndTriggered && !G.sleepResolving && _elapsed >= DAY_REAL_SECONDS) {
     G.dayEndTriggered = true;
     if (G.bloodMoon7Active) return; // 血月特殊天，由血月流程自行結束，不顯示力竭而眠
     G.paused = true;
@@ -8988,7 +9035,7 @@ function gameLoop() {
   if (G.flowerCooldown > 0) G.flowerCooldown--;
   if (G.stoneCooldown > 0) G.stoneCooldown--;
 
-  // 飢餓只在白天活動時間消耗：完整一天（15分鐘）艾德林共降70、阿瓦倫共降50
+  // 飢餓只在白天活動時間消耗：完整一天（18分鐘）艾德林共降70、阿瓦倫共降50
   // 第1天阿瓦倫整天昏睡無法進食，整天消耗改為35
   const _spd = (G.speedMult || 1);
   const _avDailyHunger = (G.day === 1) ? 35 : 50;
@@ -9071,10 +9118,10 @@ function gameLoop() {
       (G.researchTimer / RESEARCH_MAX * 100) + '%';
     if (G.researchTimer >= RESEARCH_MAX) {
       { const pb = document.getElementById('sfx-potion-bottle');
-        if (pb) { pb.currentTime = 0; pb.volume = Math.max(0, Math.min(0.6, settingsVolume() * 10.0)); pb.play().catch(() => {}); } }
+        if (pb) { pb.currentTime = 0; pb.volume = Math.max(0, Math.min(0.3, settingsVolume() * 5.0)); pb.play().catch(() => {}); } }
       G.researchActive = false;
       G.researchReady = true;
-      document.getElementById('research-scene-label').textContent = '🧪 研究完成！回來取回藥水';
+      document.getElementById('research-scene-label').textContent = '🧪 研究完成';
       document.getElementById('research-scene-bar').style.background = 'linear-gradient(90deg,#a07020,#e0b030)';
       const potionEl  = document.getElementById('lobby-potion');
       const potionImg = document.getElementById('lobby-potion-img');
@@ -9101,8 +9148,7 @@ function gameLoop() {
       G.forestFishFishing = false;
       G.forestFishReady = true;
       setForestFishingVisual('ready');
-      document.getElementById('fish-forest-label').textContent = '🎣 釣到了！回來收取';
-      document.getElementById('fish-forest-bar').style.background = 'linear-gradient(90deg,#a07020,#e0b030)';
+      syncForestFishingUI();
       toast('🎣 漁獲完成！回湖邊收取');
     }
   }
@@ -9117,8 +9163,7 @@ function gameLoop() {
       G.fishFishing = false;
       G.fishReady = true;
       setOutsideFishingVisual('ready');
-      document.getElementById('fish-scene-label').textContent = '🎣 釣到了！';
-      document.getElementById('fish-scene-bar').style.background = 'linear-gradient(90deg,#a07020,#e0b030)';
+      syncOutsideFishingUI();
       toast('🎣 漁獲完成！回池塘收取');
     }
   }
@@ -9843,7 +9888,7 @@ function openAvarenMenu() {
       name: '和阿瓦倫說說話', fx: '',
       req: () => true,
       run() {
-        chg('trust', 1); chg('knowledge', 0.5);
+        chg('mood', 1); chg('trust', 0.3);
         startAvarenChat();
       }
     },
@@ -9959,6 +10004,17 @@ const APPLE_TREE_DIVS = {
 };
 const APPLE_TREE_MAX = { tree1: 3, tree3: 2 };
 
+function updateForestAppleVisuals() {
+  if (!G.forestApples) G.forestApples = { tree1: APPLE_TREE_MAX.tree1, tree3: APPLE_TREE_MAX.tree3 };
+  Object.entries(APPLE_TREE_DIVS).forEach(([treeKey, divIds]) => {
+    const remaining = G.forestApples[treeKey] ?? APPLE_TREE_MAX[treeKey];
+    divIds.forEach((divId, idx) => {
+      const el = document.getElementById(divId);
+      if (el) el.style.display = (G.scene === 'forest' && idx < remaining) ? 'block' : 'none';
+    });
+  });
+}
+
 function doAction_GatherAppleTree(treeKey) {
   if (G.bloodMoon7Active) { warn('無法行動。'); return; }
   if (G.timePeriod !== 'morning') { timeWarn('採集是早上的行動。'); return; }
@@ -9974,6 +10030,7 @@ function doAction_GatherAppleTree(treeKey) {
       const divId = APPLE_TREE_DIVS[treeKey][remaining - 1];
       const el = document.getElementById(divId);
       if (el) el.style.display = 'none';
+      updateForestAppleVisuals();
       playLoopingAudio('sfx-item-get', 3.0);
       chg('apple', 1); renderHUD();
       toast('🍎 蘋果 +1');
@@ -10214,9 +10271,8 @@ function doAction_ForestFish() {
     playLoopingAudio('sfx-fish-catch', 5.0);
     G.forestFishReady = false;
     setForestFishingVisual('idle');
+    syncForestFishingUI();
     document.getElementById('fish-forest-wrap').style.display = 'none';
-    document.getElementById('fish-forest-label').textContent = '🎣 垂釣中…';
-    document.getElementById('fish-forest-bar').style.background = 'linear-gradient(90deg,#205880,#40a0e0)';
     chg('fish', 1); chg('frog', 1); renderHUD();
     toast('🐟 魚 +1　🐸 青蛙 +1');
     return;
@@ -10231,6 +10287,7 @@ function doAction_ForestFish() {
   G.forestFishTimer = FISH_MAX * 2;
   document.getElementById('fish-forest-wrap').style.display = 'block';
   document.getElementById('fish-forest-bar').style.width = '0%';
+  syncForestFishingUI();
   storyAuto('旁白', '你在湖邊坐下，靜靜地垂釣。魚兒會在一段時間後上鉤，你可以先去做其他事。');
   // 鎖住玩家移動2秒，並暫停圖片切換
   G.fishCastLock = true;
@@ -10293,9 +10350,8 @@ function doAction_Fish() {
     playLoopingAudio('sfx-fish-catch', 5.0);
     G.fishReady = false;
     setOutsideFishingVisual('idle');
+    syncOutsideFishingUI();
     document.getElementById('fish-scene-wrap').style.display = 'none';
-    document.getElementById('fish-scene-label').textContent = '🎣 垂釣中…';
-    document.getElementById('fish-scene-bar').style.background = 'linear-gradient(90deg,#205880,#40a0e0)';
     chg('fish', 1); renderHUD();
     toast('🐟 魚 +1');
     return;
@@ -10310,6 +10366,7 @@ function doAction_Fish() {
   G.fishTimer = FISH_MAX;
   document.getElementById('fish-scene-wrap').style.display = 'block';
   document.getElementById('fish-scene-bar').style.width = '0%';
+  syncOutsideFishingUI();
   storyAuto('旁白', '你把魚竿輕輕放進池塘裡，靜靜等待。魚兒會在一段時間後上鉤，你可以先去做其他事。');
   // 鎖住玩家移動2秒，並暫停圖片切換
   G.fishCastLock = true;
@@ -10688,13 +10745,13 @@ const COOK_INGREDIENTS_LIST = [
   { key: 'fish',            name: '魚',     icon: '🐟', fx: '飽食度+15',                 effects: { avarenHunger: 15 },                     stam: 15 },
   { key: 'bug',             name: '蟲材',   icon: '🐛', fx: '飽食度+2  疼痛-2  心情-2', effects: { avarenHunger: 2, pain: -2, mood: -2 }, stam: 3 },
   { key: 'whiteFlower',     name: '白藥花', icon: '🌼', fx: '飽食度+2  詛咒-2',         effects: { avarenHunger: 2, curse: -2 },          stam: 6 },
-  { key: 'apple',           name: '蘋果',   icon: '🍎', fx: '飽食度+6  心情+3',         effects: { avarenHunger: 6, mood: 3 },            stam: 8 },
+  { key: 'apple',           name: '蘋果',   icon: '🍎', fx: '飽食度+5  心情+1',         effects: { avarenHunger: 5, mood: 1 },            stam: 5 },
   { key: 'fairyItem',       name: '妖精',   icon: '🧚', fx: '飽食度+2  詛咒-40',        effects: { avarenHunger: 2, curse: -40 },         stam: 30 },
   { key: 'vegetable',       name: '蔬菜',   icon: '🥬', fx: '飽食度+10  心情+1',        effects: { avarenHunger: 10, mood: 1 },           stam: 15 },
-  { key: 'mushroom',        name: '蘑菇',   icon: '🍄', fx: '飽食度+8  疼痛+3',         effects: { avarenHunger: 8, pain: 3 },            stam: 8 },
+  { key: 'mushroom',        name: '蘑菇',   icon: '🍄', fx: '飽食度+2  疼痛+3  心情-2', effects: { avarenHunger: 2, pain: 3, mood: -2 },  stam: 10 },
   { key: 'egg',             name: '鳥蛋',   icon: '🥚', fx: '飽食度+5  心情+1',         effects: { avarenHunger: 5, mood: 1 },            stam: 6 },
   { key: 'frog',            name: '青蛙',   icon: '🐸', fx: '飽食度+10  心情-3',        effects: { avarenHunger: 10, mood: -3 },          stam: 10 },
-  { key: 'beastMeat',       name: '獸肉',   icon: '🥩', fx: '飽食度+30  心情+4',        effects: { avarenHunger: 30, mood: 4 },           stam: 30 },
+  { key: 'beastMeat',       name: '獸肉',   icon: '🥩', fx: '飽食度+30  心情+3',        effects: { avarenHunger: 30, mood: 3 },           stam: 30 },
   { key: 'stone',           name: '礦石',   icon: '🪨', fx: '心情-5',                   effects: { mood: -5 },                            stam: 0 },
   { key: 'monsterMaterial', name: '魔物素材', icon: '🦴', fx: '飽食度+5  詛咒-4  心情-3', effects: { avarenHunger: 5, curse: -4, mood: -3 }, stam: 5 },
   { key: 'branch',          name: '樹枝',   icon: '🪾', fx: '飽食度+2  心情-3',         effects: { avarenHunger: 2, mood: -3 },           stam: 1 },
@@ -11065,7 +11122,9 @@ function giveSoupToAvaren() {
 }
 
 function giveSoupToWinter() {
+  if (G.winterGiftToday) { warn('今天已經送過溫特了。'); return; }
   spendFatigue(1);
+  G.winterGiftToday = true;
   SFX.interact();
   if (G.soupIsSpecial) {
     story('溫特', pick([
@@ -11144,11 +11203,10 @@ function sellSoupToReid() {
 }
 
 function giveSoupToNoah() {
+  if (G.noahGiftToday) { warn('今天已經送過諾亞了。'); return; }
   spendFatigue(1);
-  G.carryingSoup = false;
-  G.soupReady = false;
-  G.cookIngredient = null;
-  document.getElementById('soup-carry-icon').style.display = 'none';
+  G.noahGiftToday = true;
+  // 諾亞婉拒料理，食物繼續留在艾德林身上，只收下他給的金錢
   SFX.collect();
   chg('money', 7);
   renderHUD();
@@ -11206,22 +11264,24 @@ function doAction_PickupPotion() {
   chg(potionKey, 1);
   G.researchType = null;
   renderHUD();
-  story('旁白', `你取回配製好的${label}，小心地收進背包。`);
+  storyQueue.push({ speaker: '旁白', text: `你取回配製好的${label}，小心地收進背包。` });
+  if (storyQueue.length === 1) _showStory();
 }
 
 function doAction_StartResearch() {
   if (G.researchReady) { warn('藥水已完成，請先靠近藥水取回。'); return; }
-  if (G.timePeriod !== 'evening') { timeWarn('研究藥水是晚上的行動。'); return; }
   if (G.researchActive) { warn('已經在研究藥水了，請稍候。'); return; }
+  const isEvening = G.timePeriod === 'evening';
+  if (!isEvening) timeWarn('晚上才能研究藥水。');
   playLoopingAudio('sfx-menu-open', 4.0);
   showActionMenu('選擇研究的藥水', [
     {
       name: '治療藥水', fx: '藥材-2　白藥花-1',
-      req: () => G.herb >= 2 && G.whiteFlower >= 1,
+      req: () => isEvening && G.herb >= 2 && G.whiteFlower >= 1,
       run() {
         showSaveConfirm('製作藥水', '確定要製作\n疼痛-5（使用後）\n的藥水嗎？', () => {
           playLoopingAudio('sfx-potion-bottle', 4.0);
-          spendFatigue(4);
+          spendFatigue(2);
           chg('herb', -2); chg('whiteFlower', -1);
           G.researchActive = true; G.researchTimer = 0; G.researchType = 'cold';
           renderHUD();
@@ -11233,12 +11293,13 @@ function doAction_StartResearch() {
       }
     },
     {
-      name: '解咒藥水', fx: '白藥花-2　礦石-2',
-      req: () => G.whiteFlower >= 2 && G.stone >= 2,
+      name: '解咒藥水', fx: '白藥花-2　礦石-2　HP-2',
+      req: () => isEvening && G.whiteFlower >= 2 && G.stone >= 2,
       run() {
         showSaveConfirm('製作藥水', '確定要製作\n詛咒-5（使用後）\n的藥水嗎？', () => {
           playLoopingAudio('sfx-potion-bottle', 4.0);
-          spendFatigue(4);
+          spendFatigue(2);
+          chg('eldrinHp', -2);
           chg('whiteFlower', -2); chg('stone', -2);
           G.researchActive = true; G.researchTimer = 0; G.researchType = 'curse';
           renderHUD();
@@ -11251,11 +11312,11 @@ function doAction_StartResearch() {
     },
     {
       name: '體力藥水', fx: '藥材-2　蘑菇-1　蟲材-2',
-      req: () => G.herb >= 2 && G.mushroom >= 1 && G.bug >= 2,
+      req: () => isEvening && G.herb >= 2 && G.mushroom >= 1 && G.bug >= 2,
       run() {
-        showSaveConfirm('製作藥水', '確定要製作\n體力+30（使用後）\n的藥水嗎？', () => {
+        showSaveConfirm('製作藥水', '確定要製作\n體力+45（使用後）\n的藥水嗎？', () => {
           playLoopingAudio('sfx-potion-bottle', 4.0);
-          spendFatigue(4);
+          spendFatigue(2);
           chg('herb', -2); chg('mushroom', -1); chg('bug', -2);
           G.researchActive = true; G.researchTimer = 0; G.researchType = 'stamina';
           renderHUD();
@@ -11268,11 +11329,11 @@ function doAction_StartResearch() {
     },
     {
       name: '忘卻藥水', fx: '藥材-10　白藥花-10　蟲材-5<br>水晶碎片-8　妖精-1',
-      req: () => G.herb >= 10 && G.whiteFlower >= 10 && G.bug >= 5 && G.crystal >= 8 && G.fairyItem >= 1 && G.forgetPotion === 0,
+      req: () => isEvening && G.herb >= 10 && G.whiteFlower >= 10 && G.bug >= 5 && G.crystal >= 8 && G.fairyItem >= 1 && G.forgetPotion === 0,
       run() {
         showSaveConfirm('製作藥水', '確定要製作\n忘卻藥水（血月夜使用）\n嗎？', () => {
           playLoopingAudio('sfx-potion-bottle', 4.0);
-          spendFatigue(4);
+          spendFatigue(2);
           chg('herb', -10); chg('whiteFlower', -10); chg('bug', -5); chg('crystal', -8); chg('fairyItem', -1);
           G.researchActive = true; G.researchTimer = 0; G.researchType = 'forget';
           renderHUD();
@@ -11283,7 +11344,7 @@ function doAction_StartResearch() {
         });
       }
     },
-  ]);
+  ], isEvening ? '' : '晚上才能研究藥水');
 }
 
 // ── 一、艾德林的日記（每天早上可回顧昨天）──
@@ -11396,6 +11457,8 @@ const ELDRIN_LIFE_NOTES = [
       '採集、釣魚、種田、上市集，這些都得趁白天。天一暗，就該回屋裡了。',
       '入夜以後，是煮飯、煉藥、守著他的時間。',
       '……也別忘了我自己。要是累垮了昏睡過去，那一夜就什麼都做不成了。',
+      '如果早上的事情都做完了，也可以去垂釣放鬆一下。',
+      '看著水裡的魚游來游去，時間很快的就過去了。',
       '另外——下雨天在外頭幹活格外耗神，淋著雨採集、釣魚都會比平常更累。若非必要，雨天還是少往外跑為好。',
     ] },
   { name: '🍲 關於吃飯',
@@ -11428,6 +11491,11 @@ const ELDRIN_HERB_NOTES = [
     lines: [
       '翻開樹皮、撥開落葉，總能找到些小蟲子。看著不起眼，卻是某些藥方的關鍵。',
       '別和阿瓦倫撿回來的那隻搞混了——他那隻，是要留著的。',
+    ] },
+  { name: '🍄 藍色蘑菇',
+    lines: [
+      '森林裡偶爾會長出帶著藍色斑紋的蘑菇。直接吃有毒，會讓身體發熱、疼痛加劇，最好不要碰。',
+      '但若經過處理，毒性反而能轉成溫和的藥力。做成藥劑以後，是很適合補充體力的材料。',
     ] },
   { name: '🧚 妖精與白藥花',
     lines: [
@@ -11812,11 +11880,16 @@ function menuMoveCursor(dir) {
 }
 
 let _actionMenuJustOpened = false;
-function showActionMenu(heading, items) {
+function showActionMenu(heading, items, noteText = '') {
   _actionMenuJustOpened = true;
   G.paused = true;
   warn('');
   document.getElementById('act-heading').textContent = heading;
+  const note = document.getElementById('act-note');
+  if (note) {
+    note.textContent = noteText || '';
+    note.style.display = noteText ? 'block' : 'none';
+  }
   const list = document.getElementById('act-list');
   list.classList.remove('three-col');
   list.innerHTML = '';
@@ -11865,6 +11938,11 @@ function showActionMenu(heading, items) {
 
 function closeAction() {
   document.getElementById('action-overlay').style.display = 'none';
+  const note = document.getElementById('act-note');
+  if (note) {
+    note.textContent = '';
+    note.style.display = 'none';
+  }
   G.paused = false;
 }
 
@@ -12537,6 +12615,14 @@ function changeScene(to, startOverride) {
 // ══════════════════════════════════════
 //  DAY END
 // ══════════════════════════════════════
+function beginSleepResolution() {
+  G.sleepResolving = true;
+  G.dayEndTriggered = true;
+  G.paused = true;
+  G.manualPaused = false;
+  G.dayStartMs = performance.now();
+}
+
 function doAction_Sleep() {
   if (G.paused || G.actionSceneActive) return;
   if (G.timePeriod !== 'evening') { timeWarn('現在還是早上，先去做些事吧。'); return; }
@@ -12550,7 +12636,7 @@ function doAction_Sleep() {
         name: '入睡', fx: '熬夜研究，結束今天',
         req: () => true,
         run() {
-          G.paused = true;
+          beginSleepResolution();
           playNightResearchAnimation(() => { endDay(); });
         }
       },
@@ -12562,7 +12648,7 @@ function doAction_Sleep() {
       name: '入睡', fx: '結束今天',
       req: () => true,
       run() {
-        G.paused = true;
+        beginSleepResolution();
         const sleepNarrationPool = G.day4AvarenGone
           ? [
             '燈熄了。這一夜沉默，什麼都沒有發生。',
@@ -12584,7 +12670,7 @@ function doAction_Sleep() {
       req: () => !G.day4AvarenGone,
       run() {
         const val = Math.floor(Math.random() * 6) + 1;
-        G.paused = true;
+        beginSleepResolution();
         playSleepAnimation(() => { chg('curse', -val); renderHUD(); endDay(); }, [
           { speaker: '旁白', text: pick([
             '燭光在搖曳中漸暗。你坐在阿瓦倫床邊，低聲念出解咒的詠語。\n\n「Aetheris puritas, cadens in cordis lumen, exsisto recondito, accepi in sanguine.」',
@@ -12605,7 +12691,7 @@ function doAction_Sleep() {
       req: () => !G.day4AvarenGone,
       run() {
         const val = Math.floor(Math.random() * 6) + 1;
-        G.paused = true;
+        beginSleepResolution();
         playSleepAnimation(() => { chg('mood', val); renderHUD(); endDay(); }, [
           { speaker: '旁白', text: pick([
             '燈光昏黃，你拿著藥用植物圖鑑坐在床邊，輕聲念起夜顏花的介紹。',
@@ -12625,6 +12711,7 @@ function doAction_Sleep() {
 }
 
 function fadeSleepToBlack() {
+  beginSleepResolution();
   playSleepAnimation(() => { endDay(); }, []);
 }
 
@@ -13832,6 +13919,7 @@ function showDayStartOpening(redMsg = '') {
 
 function continueAfterNight(prevText) {
   G.paused = false;
+  G.sleepResolving = false;
   G.dayStartMs = performance.now();
   G.timePeriod = 'morning';
   G.periodTransitioned = false;
@@ -13842,6 +13930,8 @@ function continueAfterNight(prevText) {
   G.bandagedToday = false;
   G.exorcismToday = false;
   G.avarenReadToday = 0;
+  G.noahGiftToday = false;
+  G.winterGiftToday = false;
   G.eldrinFatigue = Math.min(100, (G.eldrinFatigue ?? 80) + 60);
   // 第11天剛開始：存下快照（只存一次，迴圈期間不覆蓋；放在每日重置之後確保快照含正確初始值）
   if (G.day === 11 && !G.day11Snapshot) {
@@ -13874,10 +13964,7 @@ function continueAfterNight(prevText) {
   resetRandomRain();
   // 蘋果樹每天早上重置
   G.forestApples = { tree1: APPLE_TREE_MAX.tree1, tree3: APPLE_TREE_MAX.tree3 };
-  Object.values(APPLE_TREE_DIVS).flat().forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.style.display = '';
-  });
+  updateForestAppleVisuals();
   applyBGMForState();
   if (G.day > 2 && G.day !== 10) G.avarenBedRest = false;
   renderHUD();
@@ -14406,11 +14493,11 @@ function _showEndingScreen(ending) {
   document.querySelector('.btn-restart').style.display = 'none';
   document.getElementById('end-stats').innerHTML = `
     <div class="end-stat">最終天數 <span>${Math.min(G.day, G.maxDays)} 天</span></div>
-    <div class="end-stat">阿瓦倫疼痛 <span>${G.pain}</span></div>
-    <div class="end-stat">詛咒剩餘 <span>${G.curse}</span></div>
-    <div class="end-stat">知識程度 <span>${G.trust}</span></div>
-    <div class="end-stat">心情（好感）<span>${G.mood}</span></div>
-    <div class="end-stat">艾德林 HP <span>${G.eldrinHp ?? 100}</span></div>
+    <div class="end-stat">阿瓦倫疼痛 <span>${Math.floor(G.pain)}</span></div>
+    <div class="end-stat">詛咒剩餘 <span>${Math.floor(G.curse)}</span></div>
+    <div class="end-stat">知識程度 <span>${Math.floor(G.trust)}</span></div>
+    <div class="end-stat">心情（好感）<span>${Math.floor(G.mood)}</span></div>
+    <div class="end-stat">艾德林 HP <span>${Math.floor(G.eldrinHp ?? 100)}</span></div>
   `;
   const btnAction = document.getElementById('btn-ending-action');
   if (ending.cls === 'end-best') {
@@ -14767,6 +14854,7 @@ function loadFromSlot(n) {
     G.actionSceneActive = false;
     G.gatherSearchActive = false;
     G.dayEndTriggered = false;
+    G.sleepResolving = false;
     if (!G.weather) G.weather = 'rain';
     if (G.eldrinHp == null) G.eldrinHp = 100;
     if (G.mushroom == null) G.mushroom = 0;
@@ -14786,6 +14874,9 @@ function loadFromSlot(n) {
     for (let i = 1; i <= 4; i++) {
       if (G.forestMushrooms[i] == null) G.forestMushrooms[i] = G.timePeriod === 'evening';
     }
+    if (!G.forestApples) G.forestApples = { tree1: APPLE_TREE_MAX.tree1, tree3: APPLE_TREE_MAX.tree3 };
+    if (G.forestApples.tree1 == null) G.forestApples.tree1 = APPLE_TREE_MAX.tree1;
+    if (G.forestApples.tree3 == null) G.forestApples.tree3 = APPLE_TREE_MAX.tree3;
     if (!G.slime)  G.slime  = { x: SLIME_HOME.x,  y: SLIME_HOME.y,  attackCooldown: 0, hopTick: 0 };
     if (!G.slime2) G.slime2 = { x: SLIME2_HOME.x, y: SLIME2_HOME.y, attackCooldown: 0, hopTick: 35 };
     if (!G.slime3) G.slime3 = { x: SLIME3_HOME.x, y: SLIME3_HOME.y, attackCooldown: 0, hopTick: 18 };
@@ -15098,7 +15189,8 @@ function showHealEffect() {
 function playLoopingAudio(id, scale = 1) {
   const el = document.getElementById(id);
   if (!el) return;
-  el.volume = Math.max(0, Math.min(1, settingsVolume() * scale));
+  const pauseMult = (G && G.manualPaused) ? 0.5 : 1;
+  el.volume = Math.max(0, Math.min(1, settingsVolume() * scale * pauseMult));
   el.currentTime = 0;
   el.play().catch(() => {});
 }
@@ -15357,7 +15449,7 @@ async function beginDay1AfterStaticIntro() {
   applyBGMForState({ fade: true, duration: 5000 });
   await waitMs(3000); // 黑幕多停留 3 秒
   await fadeFromBlack(2500);
-  story('旁白', '清晨的光透過樹葉縫隙灑落。你和阿瓦倫來到這裡的第一天。前方是那間破舊的小屋。');
+  story('旁白', '第一天。屋子是舊的，食物是空的，阿瓦倫還在昏迷，現在你急需製作能夠拯救他的藥水。\n你雖然還感到不安，但你決定先去看看附近有什麼——藥草、食材、能用的東西。今天能做多少就做多少。');
 }
 
 async function finishDay0IntroToDay1() {
@@ -15381,7 +15473,7 @@ async function finishDay0IntroToDay1() {
   applyBGMForState({ fade: true, duration: 2000 });
   await waitMs(3000); // 黑幕多停留 3 秒
   await fadeFromBlack(1600);
-  story('旁白', '清晨的光透過樹葉縫隙灑落。你和阿瓦倫來到這裡的第一天。前方是那間破舊的小屋。');
+  story('旁白', '第一天。屋子是舊的，食物是空的，阿瓦倫還在昏迷，現在你急需製作能夠拯救他的藥水。\n你雖然還感到不安，但你決定先去看看附近有什麼——藥草、食材、能用的東西。今天能做多少就做多少。');
 }
 
 async function playDay0OpeningIntro() {
@@ -15679,6 +15771,8 @@ const SFX = (() => {
   // 產生一個合成音（type: sine/square/sawtooth, freq: Hz, vol: 0~1, delay: 秒, dur: 秒）
   function tone(freq, type, vol, delay, dur) {
     const c = ctx(), now = c.currentTime + delay;
+    const pauseMult = (typeof G !== 'undefined' && G && G.manualPaused) ? 0.5 : 1;
+    vol *= pauseMult;
     const o = c.createOscillator(), g = c.createGain();
     o.connect(g); g.connect(c.destination);
     o.type = type; o.frequency.value = freq;
