@@ -7296,6 +7296,8 @@ document.addEventListener('keydown', e => {
   // 空白鍵：互動（原本E鍵的功能）
   if (e.key === ' ') {
     e.preventDefault();
+    // 第0天睡覺動畫期間禁用空白鍵互動
+    if (G.sleepAnimActive && G.day === 0) return;
     // 對話框開著時，空白鍵關閉它
     if (document.getElementById('dialogue-overlay').style.display === 'flex') { closeDlg(); return; }
     // 旁白還有內容時，優先推進旁白
@@ -8543,14 +8545,15 @@ function doAction_PickupPotion() {
 
 function doAction_StartResearch() {
   if (G.researchReady) { warn('藥水已完成，請先靠近藥水取回。'); return; }
-  if (G.timePeriod !== 'evening') { timeWarn('研究藥水是晚上的行動。'); return; }
   if (G.researchActive) { warn('已經在研究藥水了，請稍候。'); return; }
   if ((G.eldrinHp ?? 100) <= 20) { warn('艾德林 HP 太低了，需要休息才能工作。'); return; }
+  const isEvening = G.timePeriod === 'evening';
+  if (!isEvening) timeWarn('晚上才能研究藥水。');
   playLoopingAudio('sfx-menu-open', 4.0);
   showActionMenu('選擇研究的藥水', [
     {
       name: '治療藥水', fx: '藥材-2  疼痛-5（使用後）',
-      req: () => G.herb >= 2,
+      req: () => isEvening && G.herb >= 2,
       run() {
         playTitleButtonSfx();
         chg('herb', -2); chg('mood', -3);
@@ -8564,7 +8567,7 @@ function doAction_StartResearch() {
     },
     {
       name: '解咒藥水', fx: '藥材-2  詛咒-5（使用後）',
-      req: () => G.herb >= 2,
+      req: () => isEvening && G.herb >= 2,
       run() {
         playTitleButtonSfx();
         chg('herb', -2); chg('mood', -3);
@@ -8578,7 +8581,7 @@ function doAction_StartResearch() {
     },
     {
       name: '忘卻藥水', fx: '藥材-5  蟲材-3  礦石-3  血月夜使用',
-      req: () => G.herb >= 5 && G.bug >= 3 && G.stone >= 3 && G.forgetPotion === 0,
+      req: () => isEvening && G.herb >= 5 && G.bug >= 3 && G.stone >= 3 && G.forgetPotion === 0,
       run() {
         playTitleButtonSfx();
         chg('herb', -5); chg('bug', -3); chg('stone', -3); chg('mood', -3);
@@ -10943,7 +10946,7 @@ async function beginDay1AfterStaticIntro() {
   G.weather = 'clear';
   fadeSwitchBGM('bgm', 5000);
   await fadeFromBlack(2500);
-  story('旁白', '清晨的光透過樹葉縫隙灑落。你和阿瓦倫來到這裡的第一天。前方是那間破舊的小屋。');
+  story('旁白', '第一天。屋子是舊的，食物是空的，你雖然還感到不安，但你決定先去看看附近有什麼——藥草、食材、能用的東西。今天能做多少就做多少。');
 }
 
 async function finishDay0IntroToDay1() {
@@ -10965,7 +10968,7 @@ async function finishDay0IntroToDay1() {
   renderScene();
   renderChars();
   await fadeFromBlack(1600);
-  story('旁白', '清晨的光透過樹葉縫隙灑落。你和阿瓦倫來到這裡的第一天。前方是那間破舊的小屋。');
+  story('旁白', '第一天。屋子是舊的，食物是空的，你雖然還感到不安，但你決定先去看看附近有什麼——藥草、食材、能用的東西。今天能做多少就做多少。');
 }
 
 async function playDay0OpeningIntro() {

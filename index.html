@@ -2141,9 +2141,9 @@ body {
       <div class="t-title-en">Wormwood<br><span class="amp">&amp;</span> Dew</div>
       <div class="t-divider"><span class="ln"></span><span class="gem"></span><span class="ln"></span></div>
       <div class="t-menu">
-        <button id="title-skip-btn" class="t-mbtn primary" onclick="playTitleButtonSfx(); skipToDay1()"><span class="t-in"><span class="mark">➥</span><span class="mtxt">跳到第一天</span></span></button>
+        <button id="title-skip-btn" class="t-mbtn primary" style="display:none;" onclick="playTitleButtonSfx(); skipToDay1()"><span class="t-in"><span class="mark">➥</span><span class="mtxt">跳到第一天</span></span></button>
         <button id="title-continue-btn" class="t-mbtn primary" onclick="playTitleButtonSfx(); openSavePanel('load')"><span class="t-in"><span class="mark">➥</span><span class="mtxt">繼續遊戲</span></span></button>
-        <button id="title-start-btn" class="t-mbtn primary" onclick="playTitleButtonSfx(); startGame()"><span class="t-in"><span class="mark">➥</span><span class="mtxt">開始遊戲</span></span></button>
+        <button id="title-start-btn" class="t-mbtn primary" onclick="playTitleButtonSfx(); startGame()"><span class="t-in"><span class="mark">➥</span><span class="mtxt">開始新遊戲</span></span></button>
       </div>
       <div class="t-foot"><span class="ver">v1.0 · 共 11 日</span><span class="t-hint">↑↓ 選擇 · ⏎ 確認</span></div>
     </div>
@@ -2560,13 +2560,13 @@ body {
       </div>
 
       <button id="btn-zone-editor" onclick="toggleZoneEditor()"
-        style="width:100%;background:#120e06;border:1px solid #2a1e08;color:#5a4020;
+        style="display:none;width:100%;background:#120e06;border:1px solid #2a1e08;color:#5a4020;
                padding:7px;font-family:inherit;font-size:12px;cursor:pointer;
                letter-spacing:2px;transition:all 0.2s;">
         ⊞ 區域編輯
       </button>
-      <button onclick="(function(){var d=document.getElementById('debug-bar');d.style.display=d.style.display==='none'?'flex':'none';})()"
-        style="width:100%;background:#0a0804;border:1px solid #2a1e08;border-top:none;color:#504030;
+      <button id="btn-debug-toggle" onclick="(function(){var d=document.getElementById('debug-bar');d.style.display=d.style.display==='none'?'flex':'none';})()"
+        style="display:none;width:100%;background:#0a0804;border:1px solid #2a1e08;border-top:none;color:#504030;
                padding:7px;font-family:inherit;font-size:12px;cursor:pointer;
                letter-spacing:2px;transition:all 0.2s;">
         🛠 除錯
@@ -6986,6 +6986,7 @@ function initState() {
     introDay0Active: false,
     introDay0NoahVisible: false,
     introDay0HideEldrin: false,
+    day0SleepInputLocked: false,
     noahDay2IntroSeen: false,
     noahLobbyTalking: false,
     noahLakeMoonSeen: false,
@@ -7136,9 +7137,11 @@ function renderTime(elapsed) {
     ? 'linear-gradient(90deg, #8a6020, #f0d060)'
     : 'linear-gradient(90deg, #22507a, #58aef0)';
   // 08:00→23:00 = 900分鐘，對應 480 秒
+  // 第0天（序章）：時間不流動，顯示 --:--
+  const isDay0 = G.day === 0;
   const gameMin = elapsed * (900 / DAY_REAL_SECONDS);
   const hh = Math.min(23, Math.floor(START_HOUR + gameMin / 60));
-  const t = String(hh).padStart(2,'0') + ':00';
+  const t = isDay0 ? '--:--' : String(hh).padStart(2,'0') + ':00';
   document.getElementById('time-label').textContent = t;
   document.getElementById('time-clock').textContent = t;
   const isMorning = G.timePeriod === 'morning';
@@ -7146,7 +7149,7 @@ function renderTime(elapsed) {
     ? Math.max(0, Math.ceil(MORNING_SECONDS - elapsed))
     : Math.max(0, Math.ceil(DAY_REAL_SECONDS - elapsed));
   document.getElementById('time-remaining').textContent =
-    (isMorning ? '☀ 早上' : '🌙 晚上') + '　剩餘 ' + secLeft + ' 秒';
+    (isMorning ? '☀ 早上' : '🌙 晚上') + '　剩餘 ' + (isDay0 ? '---' : secLeft) + ' 秒';
   document.getElementById('period-badge').textContent = isMorning ? '☀ 早上' : '🌙 晚上';
   const skipBtn = document.getElementById('btn-skip-evening');
   if (skipBtn) skipBtn.style.display = isMorning ? 'block' : 'none';
@@ -7190,12 +7193,24 @@ function renderHUD() {
   document.getElementById('r-monsterMaterial').textContent = G.monsterMaterial ?? 0;
   updateRainButton();
   renderTime();
-  // 數量為0的物品欄半透明（金錢除外）
-  document.querySelectorAll('#res-block .res-item').forEach(el => {
-    const b = el.querySelector('b');
-    if (!b || el.contains(document.getElementById('r-money'))) return;
-    el.style.opacity = parseInt(b.textContent) === 0 ? '0.3' : '1';
-  });
+  // 數量為0的物品欄隱形（金錢除外），且擁有的資源排在最上方
+  const resGrid = document.querySelector('#res-block .res-grid');
+  if (resGrid) {
+    const moneyEl = document.getElementById('r-money');
+    const items = Array.from(resGrid.querySelectorAll('.res-item'));
+    const owned = [], empty = [];
+    items.forEach(el => {
+      const b = el.querySelector('b');
+      const isMoney = b && el.contains(moneyEl);
+      const has = isMoney || (b && parseInt(b.textContent) > 0);
+      el.style.opacity = has ? '1' : '0';
+      (has ? owned : empty).push(el);
+    });
+    // 只有順序真的改變時才重新排列（搬動元素會讓動畫重播）
+    const desired = owned.concat(empty);
+    const changed = desired.some((el, i) => resGrid.children[i] !== el);
+    if (changed) desired.forEach(el => resGrid.appendChild(el));
+  }
 }
 
 const BG_DAY   = { outside:'bg_outside.png',       lobby:'bg_lobby.png',       room:'bg_room.png',       kitchen:'bg_kitchen.png',       forest:'bg_forest.png' };
@@ -8973,12 +8988,12 @@ function gameLoop() {
   if (G.flowerCooldown > 0) G.flowerCooldown--;
   if (G.stoneCooldown > 0) G.stoneCooldown--;
 
-  // 飢餓只在白天活動時間消耗：完整一天（15分鐘）艾德林共降100、阿瓦倫共降70
-  // 第1天阿瓦倫整天昏睡無法進食，整天消耗改為50
+  // 飢餓只在白天活動時間消耗：完整一天（15分鐘）艾德林共降70、阿瓦倫共降50
+  // 第1天阿瓦倫整天昏睡無法進食，整天消耗改為35
   const _spd = (G.speedMult || 1);
-  const _avDailyHunger = (G.day === 1) ? 50 : 70;
+  const _avDailyHunger = (G.day === 1) ? 35 : 50;
   G._avHungerAccum = (G._avHungerAccum || 0) + (_avDailyHunger / (DAY_REAL_SECONDS * 60)) * _spd;
-  G._elHungerAccum = (G._elHungerAccum || 0) + (100 / (DAY_REAL_SECONDS * 60)) * _spd;
+  G._elHungerAccum = (G._elHungerAccum || 0) + (70 / (DAY_REAL_SECONDS * 60)) * _spd;
   if (G._avHungerAccum >= 1) {
     const drop = Math.floor(G._avHungerAccum);
     G._avHungerAccum -= drop;
@@ -9285,6 +9300,12 @@ document.addEventListener('keydown', e => {
   if (!G.keys) return;
   G.keys[e.key] = true;
 
+  // 第0天熬夜讀書動畫：走到書桌期間禁用空白互動，避免誤開筆記。
+  if (G.day0SleepInputLocked && !G.actionSceneActive && (e.key === ' ' || e.key === 'Enter')) {
+    e.preventDefault();
+    return;
+  }
+
   // 對話場景：空白鍵 / Enter 推進
   if (G.actionSceneActive && (e.key === ' ' || e.key === 'Enter')) { ascAdvance(); return; }
 
@@ -9417,7 +9438,7 @@ document.addEventListener('keydown', e => {
     return;
   }
 
-  if (G.paused || isDlgBlocking() || G.gatherSearchActive || G.reidEndingLock) return;
+  if (G.paused || isDlgBlocking() || G.gatherSearchActive || G.reidEndingLock || G.sleepAnimActive) return;
 
   // 空白鍵：互動（原本E鍵的功能）
   if (e.key === ' ') {
@@ -9523,7 +9544,7 @@ document.addEventListener('keydown', e => {
     if (zone && zone.isScene) zone.fn();
   }
   // ` 鍵：開關除錯模式
-  if (e.key === '`') { if (G) G.debugMode = !G.debugMode; }
+  if (e.key === '`') { if (G && cheatUnlocked()) G.debugMode = !G.debugMode; }
   // P 鍵：開關場景物件編輯器
   if (e.key === 'p' || e.key === 'P') { toggleSceneObjEditor(); }
 });
@@ -10663,17 +10684,17 @@ const SOUP_POS = { x: 306, y: 199 };
 // 食材資料表
 // effects = 餵阿瓦倫時的效果；stam = 艾德林自己吃時恢復的體力
 const COOK_INGREDIENTS_LIST = [
-  { key: 'herb',            name: '藥材',   icon: '🌿', fx: '飽食度+2  疼痛-3',          effects: { avarenHunger: 2, pain: -3 },           stam: 5 },
-  { key: 'fish',            name: '魚',     icon: '🐟', fx: '飽食度+15',                 effects: { avarenHunger: 15 },                     stam: 10 },
+  { key: 'herb',            name: '藥材',   icon: '🌿', fx: '飽食度+2  疼痛-3',          effects: { avarenHunger: 2, pain: -3 },           stam: 8 },
+  { key: 'fish',            name: '魚',     icon: '🐟', fx: '飽食度+15',                 effects: { avarenHunger: 15 },                     stam: 15 },
   { key: 'bug',             name: '蟲材',   icon: '🐛', fx: '飽食度+2  疼痛-2  心情-2', effects: { avarenHunger: 2, pain: -2, mood: -2 }, stam: 3 },
   { key: 'whiteFlower',     name: '白藥花', icon: '🌼', fx: '飽食度+2  詛咒-2',         effects: { avarenHunger: 2, curse: -2 },          stam: 6 },
-  { key: 'apple',           name: '蘋果',   icon: '🍎', fx: '飽食度+6  心情+3',         effects: { avarenHunger: 6, mood: 3 },            stam: 5 },
+  { key: 'apple',           name: '蘋果',   icon: '🍎', fx: '飽食度+6  心情+3',         effects: { avarenHunger: 6, mood: 3 },            stam: 8 },
   { key: 'fairyItem',       name: '妖精',   icon: '🧚', fx: '飽食度+2  詛咒-40',        effects: { avarenHunger: 2, curse: -40 },         stam: 30 },
-  { key: 'vegetable',       name: '蔬菜',   icon: '🥬', fx: '飽食度+10  心情+1',        effects: { avarenHunger: 10, mood: 1 },           stam: 10 },
-  { key: 'mushroom',        name: '蘑菇',   icon: '🍄', fx: '飽食度+8  疼痛+3',         effects: { avarenHunger: 8, pain: 3 },            stam: 6 },
-  { key: 'egg',             name: '鳥蛋',   icon: '🥚', fx: '飽食度+5  心情+1',         effects: { avarenHunger: 5, mood: 1 },            stam: 4 },
-  { key: 'frog',            name: '青蛙',   icon: '🐸', fx: '飽食度+10  心情-3',        effects: { avarenHunger: 10, mood: -3 },          stam: 8 },
-  { key: 'beastMeat',       name: '獸肉',   icon: '🥩', fx: '飽食度+30  心情+4',        effects: { avarenHunger: 30, mood: 4 },           stam: 25 },
+  { key: 'vegetable',       name: '蔬菜',   icon: '🥬', fx: '飽食度+10  心情+1',        effects: { avarenHunger: 10, mood: 1 },           stam: 15 },
+  { key: 'mushroom',        name: '蘑菇',   icon: '🍄', fx: '飽食度+8  疼痛+3',         effects: { avarenHunger: 8, pain: 3 },            stam: 8 },
+  { key: 'egg',             name: '鳥蛋',   icon: '🥚', fx: '飽食度+5  心情+1',         effects: { avarenHunger: 5, mood: 1 },            stam: 6 },
+  { key: 'frog',            name: '青蛙',   icon: '🐸', fx: '飽食度+10  心情-3',        effects: { avarenHunger: 10, mood: -3 },          stam: 10 },
+  { key: 'beastMeat',       name: '獸肉',   icon: '🥩', fx: '飽食度+30  心情+4',        effects: { avarenHunger: 30, mood: 4 },           stam: 30 },
   { key: 'stone',           name: '礦石',   icon: '🪨', fx: '心情-5',                   effects: { mood: -5 },                            stam: 0 },
   { key: 'monsterMaterial', name: '魔物素材', icon: '🦴', fx: '飽食度+5  詛咒-4  心情-3', effects: { avarenHunger: 5, curse: -4, mood: -3 }, stam: 5 },
   { key: 'branch',          name: '樹枝',   icon: '🪾', fx: '飽食度+2  心情-3',         effects: { avarenHunger: 2, mood: -3 },           stam: 1 },
@@ -11424,7 +11445,7 @@ const ELDRIN_HERB_NOTES = [
 
 function doAction_NotesMenu(isReopen = false) {
   if (G.bloodMoon7Active) { warn('無法行動。'); return; }
-  if (G.paused || G.actionSceneActive) return;
+  if (G.paused || G.actionSceneActive || G.sleepAnimActive) return;
   if (!isReopen) playLoopingAudio('sfx-page', 4.0);
   showActionMenu('艾德林的筆記', [
     { name: '📔 艾德林的日記', fx: '回顧過去幾天', req: () => true,
@@ -12050,7 +12071,7 @@ function bdpAdjust(d) {
 }
 
 const BAG_USABLE_POTIONS = {
-  staminaPotion: { name:'體力藥水', stat:'eldrinFatigue', amt:30, label:'體力', emoji:'💚' },
+  staminaPotion: { name:'體力藥水', stat:'eldrinFatigue', amt:45, label:'體力', emoji:'💚' },
   coldPotion:    { name:'治療藥水', stat:'eldrinHp',      amt:5,  label:'HP',   emoji:'🔴' },
 };
 
@@ -12316,6 +12337,9 @@ function pingStatEl(stat) {
   row.classList.remove('stat-pop');
   void row.offsetWidth; // 強制重排，讓動畫重新觸發
   row.classList.add('stat-pop');
+  // 動畫播完就移除標記，避免之後元素被搬動時舊動畫重播
+  clearTimeout(row._popTimer);
+  row._popTimer = setTimeout(() => row.classList.remove('stat-pop'), 400);
 }
 
 function chg(stat, d) {
@@ -13529,8 +13553,8 @@ function endDay() {
   chg('pain',  +10);
   chg('curse', +10);
   // 飢餓只在白天活動時間持續消耗，入睡不扣（見下方持續消耗區塊）
-  // 每晚睡眠恢復 HP
-  chg('eldrinHp', 20);
+  // 睡眠恢復 HP，隔天早上結算
+  chg('eldrinHp', 10);
 
   // 第10天未使用忘卻藥水：阿瓦倫拒絕照護，詛咒不解除反而增加
   if (G.day === 10 && !G.usedForgetMagic && !wasBloodMoon) {
@@ -13818,7 +13842,7 @@ function continueAfterNight(prevText) {
   G.bandagedToday = false;
   G.exorcismToday = false;
   G.avarenReadToday = 0;
-  G.eldrinFatigue = Math.min(100, (G.eldrinFatigue ?? 80) + 40);
+  G.eldrinFatigue = Math.min(100, (G.eldrinFatigue ?? 80) + 60);
   // 第11天剛開始：存下快照（只存一次，迴圈期間不覆蓋；放在每日重置之後確保快照含正確初始值）
   if (G.day === 11 && !G.day11Snapshot) {
     try { G.day11Snapshot = JSON.parse(JSON.stringify(G)); } catch(e) {}
@@ -14513,20 +14537,21 @@ function titleScreenUpdateFocus(hasContinue) {
 function titleScreenKeyNav(e, hasContinue) {
   if (e.key === 'ArrowUp') {
     const prev = _titleFocus;
-    const max = hasContinue ? 2 : 2;
+    const max = cheatUnlocked() ? 2 : 1;
     _titleFocus = _titleFocus >= max ? 0 : _titleFocus + 1;
-    if (_titleFocus === 1 && !hasContinue) _titleFocus = 2;
+    if (_titleFocus === 1 && !hasContinue) _titleFocus = cheatUnlocked() ? 2 : 0;
     if (_titleFocus !== prev) playLoopingAudio('sfx-dialogue-next', 5.0);
     titleScreenUpdateFocus(hasContinue);
   } else if (e.key === 'ArrowDown') {
     const prev = _titleFocus;
-    _titleFocus = _titleFocus <= 0 ? (hasContinue ? 2 : 2) : _titleFocus - 1;
+    const max = cheatUnlocked() ? 2 : 1;
+    _titleFocus = _titleFocus <= 0 ? max : _titleFocus - 1;
     if (_titleFocus === 1 && !hasContinue) _titleFocus = 0;
     if (_titleFocus !== prev) playLoopingAudio('sfx-dialogue-next', 5.0);
     titleScreenUpdateFocus(hasContinue);
   } else if (e.key === 'Enter' || e.key === ' ') {
     playTitleButtonSfx();
-    if (_titleFocus === 2) skipToDay1();
+    if (_titleFocus === 2 && cheatUnlocked()) skipToDay1();
     else if (_titleFocus === 1 && hasContinue) openSavePanel('load');
     else startGame();
   }
@@ -15273,6 +15298,7 @@ async function playDay0EldrinStudyScene() {
   G.paused = true;
   G.manualPaused = true;
   G.pauseStartTime = performance.now();
+  G.day0SleepInputLocked = true;
 
   // 椅背強制顯示在艾德林前面
   const chairBack = document.getElementById('room-dhair02');
@@ -15320,6 +15346,7 @@ async function beginDay1AfterStaticIntro() {
   G.introDay0Active = false;
   G.introDay0NoahVisible = false;
   G.introDay0HideEldrin = false;
+  G.day0SleepInputLocked = false;
   G.manualPaused = false;
   G.paused = false;
   G.dayStartMs = performance.now();
@@ -16761,6 +16788,40 @@ function playTitleRain() {
   });
 }
 playTitleRain();
+
+// ══ 密技系統：標題畫面輸入祕密文字解鎖作弊／除錯功能 ══
+const CHEAT_KEY = 'wormwood_cheat';
+const CHEAT_CODE = 'wind';
+function cheatUnlocked() {
+  try { return localStorage.getItem(CHEAT_KEY) === '1'; } catch(e) { return false; }
+}
+function applyCheatVisibility() {
+  const on = cheatUnlocked();
+  const skipBtn  = document.getElementById('title-skip-btn');
+  const zoneBtn  = document.getElementById('btn-zone-editor');
+  const debugBtn = document.getElementById('btn-debug-toggle');
+  if (skipBtn)  skipBtn.style.display  = on ? 'block' : 'none';
+  if (zoneBtn)  zoneBtn.style.display  = on ? 'block' : 'none';
+  if (debugBtn) debugBtn.style.display = on ? 'block' : 'none';
+}
+let _cheatBuffer = '';
+document.addEventListener('keydown', (e) => {
+  // 只在標題畫面接受密技輸入
+  const title = document.getElementById('title-screen');
+  if (!title || title.style.display === 'none') return;
+  if (e.key.length !== 1) return; // 只收一般字元
+  _cheatBuffer = (_cheatBuffer + e.key.toLowerCase()).slice(-CHEAT_CODE.length);
+  if (_cheatBuffer === CHEAT_CODE) {
+    _cheatBuffer = '';
+    // 再輸入一次就切換回隱藏（開↔關）
+    try { localStorage.setItem(CHEAT_KEY, cheatUnlocked() ? '0' : '1'); } catch(e2) {}
+    applyCheatVisibility();
+    // 關閉時若游標停在被隱藏的按鈕上，移回「開始遊戲」
+    if (!cheatUnlocked() && _titleFocus === 2) { _titleFocus = 0; titleScreenUpdateFocus(_hasSaveOnLoad); }
+    playLoopingAudio('sfx-title-button', 8.0);
+  }
+});
+applyCheatVisibility();
 </script>
 
 <!-- ══ 設定面板（放在 body 最底層，脫離所有 stacking context）══ -->
