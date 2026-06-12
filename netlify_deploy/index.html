@@ -2756,8 +2756,8 @@ const RESEARCH_MAX     = 600;  // 10秒
 const COOK_MAX         = 900; // 15秒
 const CARE_MAX         = 900;  // 15秒
 const GATHER_SEARCH_MAX = 210; // 採集搜索 3.5秒 × 60fps
-const DAY_REAL_SECONDS = 1080; // 18分鐘真實時間
-const MORNING_SECONDS  = 720;  // 前12分鐘（早上）
+const DAY_REAL_SECONDS = 1200; // 20分鐘真實時間
+const MORNING_SECONDS  = 800;  // 前13分20秒（早上）
 const START_HOUR = 8;
 const RAIN_DROP_COUNT = 90;
 const FOREST_FROG_DEFAULT  = { x: 95,  y: 300, state: 'sit', timer: 80, hopDx: 0, hopDy: 0, hopProgress: 0, facing: 1, stuckCooldown: 0 };
@@ -4375,6 +4375,22 @@ const RED_DLG_AVAREN = [
 ];
 // 相容舊有引用
 const RED_DLG = RED_DLG_GENERAL;
+const RED_DLG_DAY3_EXCLUDE = new Set([
+  '「艾德林，你最近有好好吃飯嗎？你看起來比上次更瘦了。」',
+  '「勇者之劍真的很麻煩，不過……有時候它會保護我，有時候也挺方便啦。」',
+  '「你今天看起來很累。要不要先去休息，我在這裡幫你看一下附近有沒有魔物。」',
+  '「詛咒這東西，比討伐魔王還難吧？至少魔王你能看到他在哪裡。」',
+  '「你知道嗎，我其實不怕詛咒。我怕的是找不到回去的路。」',
+  '「艾德林，你真的很厲害。我說真的，不是隨便說說的那種。」',
+]);
+
+function getReidIdlePool() {
+  const general = G.day === 3
+    ? RED_DLG_GENERAL.filter(line => !RED_DLG_DAY3_EXCLUDE.has(line))
+    : RED_DLG_GENERAL;
+  if (G.day === 3) return general;
+  return G.reidChat3Avaren1Seen ? [...general, ...RED_DLG_AVAREN] : general;
+}
 
 const RED_SPEAK_DLG = [
   '嗯——這是哪裡？',
@@ -5016,7 +5032,7 @@ function runReidChat() {
   // 第5天階段
   if (G.day >= 5) {
     if (!G.reidChat5_1Seen) {
-      if (!canUnlockNewStage) { if (!G.reidChat3_1Seen) return; const _rp = G.reidChat3Avaren1Seen ? [...RED_DLG_GENERAL, ...RED_DLG_AVAREN] : RED_DLG_GENERAL; story('雷德', pick(_rp)); return; }
+      if (!canUnlockNewStage) { if (!G.reidChat3_1Seen) return; story('雷德', pick(getReidIdlePool())); return; }
       G.reidNewStageDay = G.day; G.reidChat5_1Seen = true; startActionScene(REID_CHAT_DAY5_1, 400, () => {}); return;
     }
     if (!G.reidChat5_2Seen) { G.reidChat5_2Seen = true; startActionScene(REID_CHAT_DAY5_2, 400, () => {}); return; }
@@ -5024,7 +5040,7 @@ function runReidChat() {
   // 第6天階段
   if (G.day >= 6) {
     if (!G.reidChat6_1Seen) {
-      if (!canUnlockNewStage) { if (!G.reidChat3_1Seen) return; const _rp = G.reidChat3Avaren1Seen ? [...RED_DLG_GENERAL, ...RED_DLG_AVAREN] : RED_DLG_GENERAL; story('雷德', pick(_rp)); return; }
+      if (!canUnlockNewStage) { if (!G.reidChat3_1Seen) return; story('雷德', pick(getReidIdlePool())); return; }
       G.reidNewStageDay = G.day; G.reidChat6_1Seen = true; startActionScene(REID_CHAT_DAY6_1, 400, () => {}); return;
     }
     if (!G.reidChat6_2Seen) { G.reidChat6_2Seen = true; startActionScene(REID_CHAT_DAY6_2, 400, () => {}); return; }
@@ -5032,7 +5048,7 @@ function runReidChat() {
   // 第7天階段
   if (G.day >= 7) {
     if (!G.reidChat7_1Seen) {
-      if (!canUnlockNewStage) { if (!G.reidChat3_1Seen) return; const _rp = G.reidChat3Avaren1Seen ? [...RED_DLG_GENERAL, ...RED_DLG_AVAREN] : RED_DLG_GENERAL; story('雷德', pick(_rp)); return; }
+      if (!canUnlockNewStage) { if (!G.reidChat3_1Seen) return; story('雷德', pick(getReidIdlePool())); return; }
       G.reidNewStageDay = G.day; G.reidChat7_1Seen = true; startActionScene(REID_CHAT_DAY7_1, 400, () => {}); return;
     }
     if (!G.reidChat7_2Seen) { G.reidChat7_2Seen = true; startActionScene(REID_CHAT_DAY7_2, 400, () => {}); return; }
@@ -5040,7 +5056,7 @@ function runReidChat() {
   // 第9天階段
   if (G.day >= 9) {
     if (!G.reidChat9_1Seen) {
-      if (!canUnlockNewStage) { if (!G.reidChat3_1Seen) return; const _rp = G.reidChat3Avaren1Seen ? [...RED_DLG_GENERAL, ...RED_DLG_AVAREN] : RED_DLG_GENERAL; story('雷德', pick(_rp)); return; }
+      if (!canUnlockNewStage) { if (!G.reidChat3_1Seen) return; story('雷德', pick(getReidIdlePool())); return; }
       G.reidNewStageDay = G.day; G.reidChat9_1Seen = true; startActionScene(REID_CHAT_DAY9_1, 400, () => {}); return;
     }
     if (!G.reidChat9_2Seen) { G.reidChat9_2Seen = true; startActionScene(REID_CHAT_DAY9_2, 400, () => {}); return; }
@@ -5048,7 +5064,7 @@ function runReidChat() {
   // 第11天階段
   if (G.day >= 11) {
     if (!G.reidChat11_1Seen) {
-      if (!canUnlockNewStage) { if (!G.reidChat3_1Seen) return; const _rp = G.reidChat3Avaren1Seen ? [...RED_DLG_GENERAL, ...RED_DLG_AVAREN] : RED_DLG_GENERAL; story('雷德', pick(_rp)); return; }
+      if (!canUnlockNewStage) { if (!G.reidChat3_1Seen) return; story('雷德', pick(getReidIdlePool())); return; }
       G.reidNewStageDay = G.day; G.reidChat11_1Seen = true; startActionScene(REID_CHAT_DAY11_1, 400, () => {}); return;
     }
     if (!G.reidChat11_2Seen) { G.reidChat11_2Seen = true; startActionScene(REID_CHAT_DAY11_2, 400, () => {}); return; }
@@ -5068,8 +5084,7 @@ function runReidChat() {
     startActionScene(pick(todayPool.stories), 400, () => {}); return;
   }
   if (!G.reidChat3_1Seen) return;
-  const reidPool = G.reidChat3Avaren1Seen ? [...RED_DLG_GENERAL, ...RED_DLG_AVAREN] : RED_DLG_GENERAL;
-  story('雷德', pick(reidPool));
+  story('雷德', pick(getReidIdlePool()));
 }
 
 function playReidIntro() {
@@ -5131,6 +5146,9 @@ function openRedMenu() {
       items.push({ name:'與雷德聊聊', fx:'', req:()=>true,
         run() { runReidChat(); }
       });
+    }
+    if (G.carryingSoup) {
+      items.push({ name:'遞給他料理', fx:'', req:()=>true, run: sellSoupToReid });
     }
     showActionMenu('迷路勇者・雷德', items);
     return;
@@ -9045,12 +9063,12 @@ function gameLoop() {
   if (G.flowerCooldown > 0) G.flowerCooldown--;
   if (G.stoneCooldown > 0) G.stoneCooldown--;
 
-  // 飢餓只在白天活動時間消耗：完整一天（18分鐘）艾德林共降70、阿瓦倫共降50
-  // 第1天阿瓦倫整天昏睡無法進食，整天消耗改為35
+  // 飢餓只在白天活動時間消耗：完整一天（20分鐘）艾德林共降100、阿瓦倫共降70
+  // 第1天阿瓦倫整天昏睡無法進食，整天消耗改為50
   const _spd = (G.speedMult || 1);
-  const _avDailyHunger = (G.day === 1) ? 35 : 50;
+  const _avDailyHunger = (G.day === 1) ? 50 : 70;
   G._avHungerAccum = (G._avHungerAccum || 0) + (_avDailyHunger / (DAY_REAL_SECONDS * 60)) * _spd;
-  G._elHungerAccum = (G._elHungerAccum || 0) + (70 / (DAY_REAL_SECONDS * 60)) * _spd;
+  G._elHungerAccum = (G._elHungerAccum || 0) + (100 / (DAY_REAL_SECONDS * 60)) * _spd;
   if (G._avHungerAccum >= 1) {
     const drop = Math.floor(G._avHungerAccum);
     G._avHungerAccum -= drop;
@@ -11182,7 +11200,7 @@ function sellSoupToReid() {
     // 黑暗料理：雷德喝了一口，整個人崩潰，但還是感謝並塞錢
     story('雷德', '哦！你特地來請我吃飯？太好了！讓我嚐嚐——');
     storyThen(() => {
-      storyAuto('旁白', '雷德的表情僵住了。他沉默了非常非常長的時間。');
+      story('旁白', '雷德的表情僵住了。他沉默了非常非常長的時間。');
       storyThen(() => {
         story('雷德', pick([
           '……你……親手做的？（眼眶有點紅）謝謝你。真的。你的心意我收到了。',
@@ -11197,7 +11215,7 @@ function sellSoupToReid() {
     // 一般湯：不怎麼好喝，但雷德感謝後主動付錢
     story('雷德', '哦！你特地來請我吃飯？謝謝！');
     storyThen(() => {
-      storyAuto('旁白', '雷德的表情有些微妙，但他努力維持著笑容。');
+      story('旁白', '雷德的表情有些微妙，但他努力維持著笑容。');
       storyThen(() => {
         story('雷德', pick([
           '……嗯！有……獨特的風味！你特地做來請我，我很高興。',
