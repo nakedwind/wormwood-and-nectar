@@ -9419,6 +9419,14 @@ document.addEventListener('keydown', e => {
     return;
   }
 
+  // 行動選單（含阿瓦倫送禮）優先：開著時先讓下方的選單處理鍵盤，不要被商店攔截
+  if (document.getElementById('action-overlay').style.display === 'flex') {
+    if (e.key === 'ArrowUp')   { menuMoveCursor(-1); return; }
+    if (e.key === 'ArrowDown') { menuMoveCursor(+1); return; }
+    if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); menuRunSelected(); return; }
+    return;
+  }
+
   // 商店開著：方向鍵移動格子 / 編輯模式左右調數量，Tab 切頁籤，Enter/空白 確認/進編輯模式
   if (document.getElementById('trade-overlay').style.display === 'flex') {
     if (e.key === 'ArrowUp')    { e.preventDefault(); tradeNavDir( 0, -1); return; }
@@ -11983,13 +11991,9 @@ function showActionMenu(heading, items, noteText = '', noCancel = false) {
   if (menuCursor < 0) menuCursor = 0;
   menuBtns.forEach((b, i) => b.classList.toggle('kbd-selected', i === menuCursor));
   document.getElementById('action-overlay').style.display = 'flex';
-  const _to = document.getElementById('trade-overlay');
-  if (_to.style.display !== 'none') { _to.dataset.hiddenByAction = '1'; _to.style.visibility = 'hidden'; }
 }
 
 function closeAction() {
-  const _to = document.getElementById('trade-overlay');
-  if (_to.dataset.hiddenByAction) { delete _to.dataset.hiddenByAction; _to.style.visibility = ''; }
   document.getElementById('action-overlay').style.display = 'none';
   const note = document.getElementById('act-note');
   if (note) {
