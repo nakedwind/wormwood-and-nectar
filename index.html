@@ -839,7 +839,7 @@ body {
 /* ══ ACTION OVERLAY ══ */
 #action-overlay {
   display: none; position: fixed; inset: 0;
-  background: rgba(4,2,0,0.82); z-index: 100;
+  background: rgba(4,2,0,0.82); z-index: 200;
   justify-content: center; align-items: center;
   font-family: 'Noto Sans TC', sans-serif;
 }
@@ -2450,9 +2450,10 @@ body {
     </div>
 
 
-    <!-- 按鍵提示 -->
-    <div style="width:960px;min-width:960px;background:#0a0804;border:1px solid #2a1e08;border-top:none;padding:5px 10px;box-sizing:border-box;">
-      <span style="color:#706050;font-size:11px;">[⬆⬇⬅➡] 移動　　[空白鍵] 互動　　[Esc] 關閉選單　　[E] 背包　　[Tab] 切換商店頁</span>
+    <!-- 按鍵提示 + Tips -->
+    <div style="width:960px;min-width:960px;background:#0a0804;border:1px solid #2a1e08;border-top:none;padding:5px 10px;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;">
+      <span style="color:#706050;font-size:11px;flex-shrink:0;">[⬆⬇⬅➡] 移動　　[空白鍵] 互動　　[Esc] 關閉選單　　[E] 背包　　[Tab] 切換商店頁</span>
+      <span id="tips-display" style="color:#a08848;font-size:11px;text-align:right;flex-shrink:0;max-width:420px;opacity:0;transform:translateY(12px);transition:opacity 0.5s ease,transform 0.5s ease;display:inline-block;"></span>
     </div>
 
     <div id="debug-bar" style="display:none;">
@@ -2489,27 +2490,27 @@ body {
         <div id="avaren-info">
           <div class="av-name">阿瓦倫</div>
           <div class="stat-row">
-            <div class="stat-lbl">🩹 疼痛</div>
+            <div class="stat-lbl" id="lbl-pain">🩹 疼痛</div>
             <div class="stat-bg"><div id="bar-pain" class="stat-fill fill-pain" style="width:100%"></div></div>
             <div id="val-pain" class="stat-num">100</div>
           </div>
           <div class="stat-row">
-            <div class="stat-lbl">🌑 詛咒</div>
+            <div class="stat-lbl" id="lbl-curse">🌑 詛咒</div>
             <div class="stat-bg"><div id="bar-curse" class="stat-fill fill-curse" style="width:100%"></div></div>
             <div id="val-curse" class="stat-num">100</div>
           </div>
           <div class="stat-row">
-            <div class="stat-lbl">☀ 心情</div>
+            <div class="stat-lbl" id="lbl-mood">☀ 心情</div>
             <div class="stat-bg"><div id="bar-mood" class="stat-fill fill-mood" style="width:10%"></div></div>
             <div id="val-mood" class="stat-num">10</div>
           </div>
           <div class="stat-row">
-            <div class="stat-lbl">📚 知識</div>
+            <div class="stat-lbl" id="lbl-trust">📚 知識</div>
             <div class="stat-bg"><div id="bar-trust" class="stat-fill fill-trust" style="width:10%"></div></div>
             <div id="val-trust" class="stat-num">10</div>
           </div>
           <div class="stat-row">
-            <div class="stat-lbl">🍽 飽食度</div>
+            <div class="stat-lbl" id="lbl-av-hunger">🍽 飽食度</div>
             <div class="stat-bg"><div id="bar-av-hunger" class="stat-fill fill-hunger" style="width:70%"></div></div>
             <div id="val-av-hunger" class="stat-num">70</div>
           </div>
@@ -4634,7 +4635,6 @@ const NOAH_DLG_STATUS = [
   '「你看起來又一夜沒睡。艾德林，照顧別人以前，也要先讓自己站得住。」',
   '「阿瓦倫如果醒來以後害怕陌生人，我可以待在戶外。我只想確認你們還安全。」',
   '「這裡不容易被外人發現，你可以放心待在這裡。」',
-  '「我帶了一點乾糧放在廚房裡。不是什麼好東西，但能撐一陣子。」',
   '「你有在吃東西嗎？不是問阿瓦倫，是問你。」',
   '「最近有沒有聽到什麼可疑的動靜？我會多注意有沒有人在找你們。」',
   '「你的眼睛告訴我你又沒睡好。」',
@@ -5873,6 +5873,7 @@ function triggerDay6AvarenGone() {
   G.day4AvarenGone = true;
   G.day4AvarenNotified = false;
   G.avarenScene = 'gone';
+  renderHUD();
   if (G.carryingSoup) {
     G.carryingSoup = false;
     G.soupReady = true;
@@ -5901,7 +5902,7 @@ function triggerAvarenGather() {
         { name:'收下', fx:'心情+2', req:() => !isBagFull(gItem.key, 1),
           run(){
             chg(gItem.key, 1); chg('mood', 2); renderHUD();
-            story('旁白', '你伸手接過來，輕聲道謝。阿瓦倫沒有說話，但嘴角動了一下。');
+            story('旁白', '你伸手接過來，輕聲道謝。阿瓦倫沒有說話，但耳朵微微的變紅了。');
           }
         },
         { name:'婉拒', fx:'心情-1', req:()=>true,
@@ -5910,7 +5911,7 @@ function triggerAvarenGather() {
             story('旁白', '你搖了搖頭，輕聲說不用了。阿瓦倫垂下眼睛，把東西重新握回手心。');
           }
         },
-      ]);
+      ], '', true);
     }, 'blue', 0, false);
 }
 
@@ -7227,10 +7228,17 @@ function renderHUD() {
     document.getElementById('bar-' + id).style.width = v + '%';
     document.getElementById('val-' + id).textContent = Math.floor(v);
   };
-  set('pain', G.pain); set('curse', G.curse); set('mood', G.mood); set('trust', G.trust);
+  const avGone = G.day4AvarenGone;
+  const AV_LABELS = { pain:'🩹 疼痛', curse:'🌑 詛咒', mood:'☀ 心情', trust:'📚 知識', 'av-hunger':'🍽 飽食度' };
+  const setAv = (id, v) => {
+    document.getElementById('bar-' + id).style.width = avGone ? '0%' : v + '%';
+    document.getElementById('val-' + id).textContent = avGone ? '' : Math.floor(v);
+    document.getElementById('lbl-' + id).textContent = avGone ? '--' : AV_LABELS[id];
+  };
+  setAv('pain', G.pain); setAv('curse', G.curse); setAv('mood', G.mood); setAv('trust', G.trust);
   if (G.eldrinHp == null) G.eldrinHp = 100;
   if (G.eldrinFatigue == null) G.eldrinFatigue = 80;
-  set('av-hunger', G.avarenHunger); set('el-hunger', G.eldrinHunger); set('fatigue', G.eldrinHp);
+  setAv('av-hunger', G.avarenHunger); set('el-hunger', G.eldrinHunger); set('fatigue', G.eldrinHp);
   set('el-fatigue', G.eldrinFatigue);
   document.getElementById('r-coldPotion').textContent  = G.coldPotion;
   document.getElementById('r-cursePotion').textContent = G.cursePotion;
@@ -8185,6 +8193,18 @@ function gameLoop() {
     if (G.eldrinEmoteTimer > 0) G.eldrinEmoteTimer--;
   }
 
+  // ── 每天 pain / curse 隨時間漸增（白天 800 秒內共 +10 點）──
+  if (G.day >= 1 && !G.manualPaused && !G.paused && G.timePeriod === 'morning' && !G.day4AvarenGone) {
+    const _tickDelta = Math.min(_frameDelta, 100) / 1000; // 秒，上限 0.1s 防頁面切回跳值
+    const _rate = 10 / MORNING_SECONDS;
+    G._curseDayAccum = (G._curseDayAccum || 0) + _rate * _tickDelta;
+    G._painDayAccum  = (G._painDayAccum  || 0) + _rate * _tickDelta;
+    let _hudDirty = false;
+    while (G._curseDayAccum >= 1) { chg('curse', 1); G._curseDayAccum -= 1; _hudDirty = true; }
+    while (G._painDayAccum  >= 1) { chg('pain',  1); G._painDayAccum  -= 1; _hudDirty = true; }
+    if (_hudDirty) renderHUD();
+  }
+
   if (G.paused) {
     if (G.sleepAnimActive) { updateRoomDepth(); renderChars(); }
     updateWeatherFx();
@@ -8596,7 +8616,7 @@ function gameLoop() {
   }
 
   // 阿瓦倫看見雷德的反應（A初見、B靠近）
-  if (!isAvarenUnconscious() && G.scene === 'outside' && isReidDay() && G.timePeriod === 'morning' && G.avarenScene === 'outside') {
+  if (!isAvarenUnconscious() && G.scene === 'outside' && isReidDay() && G.timePeriod === 'morning' && G.avarenScene === 'outside' && !G.reidSlayInForest && !G.reidForestWandering && !G.reidSlayActive) {
     const av = G.avaren;
     const rd = G.red;
     const distAvToRed = Math.hypot(av.x - rd.x, av.y - rd.y);
@@ -9066,15 +9086,18 @@ function gameLoop() {
   // 飢餓只在白天活動時間消耗：完整一天（20分鐘）艾德林共降100、阿瓦倫共降70
   // 第1天阿瓦倫整天昏睡無法進食，整天消耗改為50
   const _spd = (G.speedMult || 1);
-  const _avDailyHunger = (G.day === 1) ? 50 : 70;
+  const _avDailyHunger = (G.day === 1) ? 50 : (G.day >= 5) ? 100 : 85;
+  const _elDailyHunger = (G.day >= 5) ? 150 : 120;
   G._avHungerAccum = (G._avHungerAccum || 0) + (_avDailyHunger / (DAY_REAL_SECONDS * 60)) * _spd;
-  G._elHungerAccum = (G._elHungerAccum || 0) + (100 / (DAY_REAL_SECONDS * 60)) * _spd;
+  G._elHungerAccum = (G._elHungerAccum || 0) + (_elDailyHunger / (DAY_REAL_SECONDS * 60)) * _spd;
   if (G._avHungerAccum >= 1) {
     const drop = Math.floor(G._avHungerAccum);
     G._avHungerAccum -= drop;
     chg('avarenHunger', -drop);
-    document.getElementById('bar-av-hunger').style.width = G.avarenHunger + '%';
-    document.getElementById('val-av-hunger').textContent = G.avarenHunger;
+    if (!G.day4AvarenGone) {
+      document.getElementById('bar-av-hunger').style.width = G.avarenHunger + '%';
+      document.getElementById('val-av-hunger').textContent = G.avarenHunger;
+    }
   }
   if (G._elHungerAccum >= 1) {
     const drop = Math.floor(G._elHungerAccum);
@@ -9146,7 +9169,7 @@ function gameLoop() {
       (G.researchTimer / RESEARCH_MAX * 100) + '%';
     if (G.researchTimer >= RESEARCH_MAX) {
       { const pb = document.getElementById('sfx-potion-bottle');
-        if (pb) { pb.currentTime = 0; pb.volume = Math.max(0, Math.min(0.3, settingsVolume() * 5.0)); pb.play().catch(() => {}); } }
+        if (pb) { pb.currentTime = 0; pb.volume = Math.max(0, Math.min(1, settingsVolume() * 0.8)); pb.play().catch(() => {}); } }
       G.researchActive = false;
       G.researchReady = true;
       document.getElementById('research-scene-label').textContent = '🧪 研究完成';
@@ -9761,7 +9784,7 @@ function openAvarenMenu() {
         run() {
           const text = G.day === 10
             ? '阿瓦倫躺在床上，眼睛半睜著。\n血月留下的疲憊還沒有完全退去，他的呼吸很輕，但已經比昨夜平穩。'
-            : '阿瓦倫躺在床上，眼睛半睜著。\n他看起來仍然很虛弱，但已經能聽見你的聲音。';
+            : '阿瓦倫躺在床上，眼睛半睜著。\n他看起來仍然很虛弱，但已經能聽見你的聲音。\n今天最好將詛咒值和疼痛值降到90以下會比較安全。';
           story('旁白', text);
         }
       },
@@ -9838,7 +9861,7 @@ function openAvarenMenu() {
         name: '確認狀態', fx: '',
         req: () => true,
         run() {
-          story('旁白', '阿瓦倫躺在床上，雙眼緊閉，呼吸很淺。\n黑霧像潮濕的影子一樣貼在他的身上。');
+          story('旁白', '阿瓦倫躺在床上，雙眼緊閉，呼吸很淺。狀況不太樂觀。\n今天最好將詛咒值和疼痛值降到95以下會比較安全。');
         }
       },
       {
@@ -11112,13 +11135,12 @@ function giveSoupToAvaren() {
   } else {
     chg('avarenHunger', 10);
   }
-  chg('trust', 2);
   renderHUD();
   if (G.soupIsSpecial) {
     // 黑暗料理：遲疑→吃→抱怨→謝謝
     story('阿瓦倫', pick([
-      '……這是什麼。（盯著碗看了很久，還是端起來了。）',
-      '……（湊近聞了一下，表情有點微妙。）你確定這能吃？',
+      '……這是什麼？（盯著碗看了很久，還是端起來了。）',
+      '……（湊近聞了一下，表情有點微妙。）',
       '……（沉默地看著你，又低頭看著碗，深吸一口氣。）',
     ]));
     storyThen(() => {
@@ -11129,21 +11151,20 @@ function giveSoupToAvaren() {
       ]));
       storyThen(() => {
         story('阿瓦倫', pick([
-          '……很難吃。（停頓。）謝謝你做給我吃。',
-          '下次……可以不要放這個嗎。（但還是說了聲謝謝。）',
-          '……味道很奇怪。（低聲。）不過……謝謝。',
-          '（皺著眉。）這什麼東西。……但是謝謝你。',
+          '……味道很奇怪。謝謝你做給我吃。',
+          '下次……可以不要放這個嗎。但…謝謝…',
+          '……味道很奇怪。不過……謝謝。',
+          '好奇怪的東西。……但是謝謝你。',
         ]));
       });
     });
   } else {
     // 一般料理：彆扭地感謝
     story('阿瓦倫', pick([
-      '……（看了湯一眼，沒說話，但接過去了。）……謝謝。',
-      '……熱的。（停頓，耳尖微紅。）謝謝你做的。',
-      '……你自己不吃？（說完沒等你回答，就低頭喝了。）……不難吃。',
-      '（靜靜地接過碗，低著頭。）……謝。',
-      '……（皺了皺眉。）我又沒說要吃。（但還是喝了。）……謝謝。',
+      '……這是你做的嗎……謝謝。',
+      '……你自己不吃嗎？……謝謝。',
+      '…謝謝…不難吃。',
+      '……熱熱的…謝謝…。',
     ]));
   }
   G.soupIsSpecial = false;
@@ -11193,7 +11214,7 @@ function sellSoupToReid() {
   G.soupReady = false;
   G.cookIngredient = null;
   document.getElementById('soup-carry-icon').style.display = 'none';
-  SFX.collect();
+  playLoopingAudio('sfx-eat', 3.0);
   chg('money', 5);
   renderHUD();
   if (G.soupIsSpecial) {
@@ -11308,7 +11329,7 @@ function doAction_StartResearch() {
       req: () => isEvening && G.herb >= 2 && G.whiteFlower >= 1,
       run() {
         showSaveConfirm('製作藥水', '確定要製作\n疼痛-5（使用後）\n的藥水嗎？', () => {
-          playLoopingAudio('sfx-potion-bottle', 4.0);
+          playLoopingAudio('sfx-potion-bottle', 0.8);
           spendFatigue(2);
           chg('herb', -2); chg('whiteFlower', -1);
           G.researchActive = true; G.researchTimer = 0; G.researchType = 'cold';
@@ -11325,7 +11346,7 @@ function doAction_StartResearch() {
       req: () => isEvening && G.whiteFlower >= 2 && G.stone >= 2,
       run() {
         showSaveConfirm('製作藥水', '確定要製作\n詛咒-5（使用後）\n的藥水嗎？', () => {
-          playLoopingAudio('sfx-potion-bottle', 4.0);
+          playLoopingAudio('sfx-potion-bottle', 0.8);
           spendFatigue(2);
           chg('eldrinHp', -2);
           chg('whiteFlower', -2); chg('stone', -2);
@@ -11343,7 +11364,7 @@ function doAction_StartResearch() {
       req: () => isEvening && G.herb >= 2 && G.mushroom >= 1 && G.bug >= 2,
       run() {
         showSaveConfirm('製作藥水', '確定要製作\n體力+45（使用後）\n的藥水嗎？', () => {
-          playLoopingAudio('sfx-potion-bottle', 4.0);
+          playLoopingAudio('sfx-potion-bottle', 0.8);
           spendFatigue(2);
           chg('herb', -2); chg('mushroom', -1); chg('bug', -2);
           G.researchActive = true; G.researchTimer = 0; G.researchType = 'stamina';
@@ -11356,13 +11377,13 @@ function doAction_StartResearch() {
       }
     },
     {
-      name: '忘卻藥水', fx: '藥材-10　白藥花-10　蟲材-5<br>水晶碎片-8　妖精-1',
-      req: () => isEvening && G.herb >= 10 && G.whiteFlower >= 10 && G.bug >= 5 && G.crystal >= 8 && G.fairyItem >= 1 && G.forgetPotion === 0,
+      name: '忘卻藥水', fx: '藥材-10　白藥花-10　蟲材-5<br>水晶碎片-8　妖精-1　魔物素材-5',
+      req: () => isEvening && G.herb >= 10 && G.whiteFlower >= 10 && G.bug >= 5 && G.crystal >= 8 && G.fairyItem >= 1 && G.monsterMaterial >= 5 && G.forgetPotion === 0,
       run() {
         showSaveConfirm('製作藥水', '確定要製作\n忘卻藥水（血月夜使用）\n嗎？', () => {
-          playLoopingAudio('sfx-potion-bottle', 4.0);
+          playLoopingAudio('sfx-potion-bottle', 0.8);
           spendFatigue(2);
-          chg('herb', -10); chg('whiteFlower', -10); chg('bug', -5); chg('crystal', -8); chg('fairyItem', -1);
+          chg('herb', -10); chg('whiteFlower', -10); chg('bug', -5); chg('crystal', -8); chg('fairyItem', -1); chg('monsterMaterial', -5);
           G.researchActive = true; G.researchTimer = 0; G.researchType = 'forget';
           renderHUD();
           document.getElementById('research-scene-wrap').style.display = 'block';
@@ -11680,7 +11701,7 @@ function doAction_ReadBook() {
   if ((G.avarenReadToday ?? 0) >= 2) { warn('今天已經念過兩次書了。'); return; }
   spendFatigue(1);
   G.avarenReadToday = (G.avarenReadToday ?? 0) + 1;
-  if (!Array.isArray(G.avarenReadPool) || G.avarenReadPool.length < 2) {
+  if (!Array.isArray(G.avarenReadPool) || G.avarenReadPool.length < 1) {
     const pool = Array.from({ length: AVAREN_READ_SCENES.length }, (_, i) => i);
     for (let i = pool.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
@@ -11689,8 +11710,7 @@ function doAction_ReadBook() {
     G.avarenReadPool = pool;
   }
   const scene1 = AVAREN_READ_SCENES[G.avarenReadPool.pop()];
-  const scene2 = AVAREN_READ_SCENES[G.avarenReadPool.pop()];
-  startActionScene([...scene1, ...scene2], CARE_MAX, () => {
+  startActionScene([...scene1], CARE_MAX, () => {
     chg('mood', 3);
     chg('trust', 5);
     renderHUD();
@@ -11908,7 +11928,7 @@ function menuMoveCursor(dir) {
 }
 
 let _actionMenuJustOpened = false;
-function showActionMenu(heading, items, noteText = '') {
+function showActionMenu(heading, items, noteText = '', noCancel = false) {
   _actionMenuJustOpened = true;
   G.paused = true;
   warn('');
@@ -11951,20 +11971,23 @@ function showActionMenu(heading, items, noteText = '') {
     list.appendChild(btn);
     menuBtns.push(btn);
   });
-  // 把「取消」按鈕也加入鍵盤導航
+  // 把「取消」按鈕也加入鍵盤導航（noCancel 模式下隱藏）
   const cancelBtn = document.querySelector('.act-cancel');
   if (cancelBtn) {
+    cancelBtn.style.display = noCancel ? 'none' : '';
     cancelBtn.onclick = () => closeAction();
-    menuBtns.push(cancelBtn);
+    if (!noCancel) menuBtns.push(cancelBtn);
   }
   // 找第一個可用選項作為預設選取
   menuCursor = menuBtns.findIndex(b => !b.disabled);
   if (menuCursor < 0) menuCursor = 0;
   menuBtns.forEach((b, i) => b.classList.toggle('kbd-selected', i === menuCursor));
   document.getElementById('action-overlay').style.display = 'flex';
+  document.getElementById('trade-overlay').style.pointerEvents = 'none';
 }
 
 function closeAction() {
+  document.getElementById('trade-overlay').style.pointerEvents = '';
   document.getElementById('action-overlay').style.display = 'none';
   const note = document.getElementById('act-note');
   if (note) {
@@ -13418,6 +13441,8 @@ function doAction_KillTime() {
         document.getElementById('scene-bg').style.backgroundImage = `url('${nightBg}')`;
         document.getElementById('scene-bg-top').style.opacity = '0';
         renderScene();
+        triggerDay6AvarenGone();
+        renderChars(); // 黑幕期間先更新 NPC 位置/可見性，避免淡入時閃現
         applyBGMForState();
         // 淡入結束後才解除暫停
         setTimeout(() => { G.paused = false; }, 3700);
@@ -13627,7 +13652,7 @@ function endDay() {
   G.dayEndTriggered = true;
   G.paused = true;
   cancelAnimationFrame(raf);
-  const avarenWakesOnDay2 = G.day === 1 && G.pain < 95 && G.curse < 95;
+  const avarenWakesOnDay2 = G.day === 1 && G.pain < 100 && G.curse < 100 && (G.pain < 95 || G.curse < 95);
   const exhaustedNight = !!G.exhaustedNight;
 
   if (G.day === 11 && G.reidDemonHeartCommissionedToday) {
@@ -13660,13 +13685,12 @@ function endDay() {
   // 每天死亡門檻（判定當天 G.day 尚未 ++）
   function isCrisis() {
     if (G.day === 1) return G.pain >= 100 && G.curse >= 100;
-    if (G.day === 2) return G.pain >= 90  && G.curse >= 90;
+    if (G.day === 2) return G.pain >= 92  && G.curse >= 92;
+    if (G.day === 3) return G.pain >= 85  && G.curse >= 85;
     return G.pain >= 80 && G.curse >= 80;
   }
 
-  // Nightly decay
-  chg('pain',  +10);
-  chg('curse', +10);
+  // Nightly decay（pain / curse 改為白天隨時間漸增，不在此處加）
   // 飢餓只在白天活動時間持續消耗，入睡不扣（見下方持續消耗區塊）
   // 睡眠恢復 HP，隔天早上結算
   chg('eldrinHp', 10);
@@ -13675,7 +13699,7 @@ function endDay() {
   if (G.day === 10 && !G.usedForgetMagic && !wasBloodMoon) {
     chg('curse', +6);
     renderHUD();
-    if (isCrisis()) { showEvent('💀','危機——', `阿瓦倫的疼痛與詛咒同時達到極限……\n黑霧將他吞噬。`, () => endGame('crisis'), 'red'); return; }
+    if (isCrisis()) { showEvent('💀','危機——', `阿瓦倫的疼痛與詛咒值實在太高了，他的身體達到極限……\n黑霧將他吞噬。`, () => endGame('crisis'), 'red'); return; }
     const nightText = `你走近阿瓦倫的房間，想為他做些什麼。\n他沒有轉過來。\n\n「……別碰我。」\n\n你只能停在房門外，\n什麼也幫不上。\n\n詛咒 +6`;
     G.day++;
     G.slimeCalmed = false;
@@ -13683,24 +13707,16 @@ function endDay() {
     return;
   }
 
-  // Random curse removal at end of day
-  const removed = exhaustedNight ? 0 : Math.floor(Math.random() * 6) + 1; // 1-6
-  const curseBefore = G.curse;
-  if (removed > 0) chg('curse', -removed);
-  const actualRemoved = curseBefore - G.curse;
-
   // 血月夜後：在所有數值變化完成後才判定死亡
   if (wasBloodMoon && G.pain >= 80 && G.curse >= 80) {
     G.bloodMoon7Failed = true;
   }
 
-  if (isCrisis()) { showEvent('💀','危機——', `阿瓦倫的疼痛與詛咒同時達到極限……\n黑霧將他吞噬。`, () => endGame('crisis'), 'red'); return; }
+  if (isCrisis()) { showEvent('💀','危機——', `阿瓦倫的疼痛與詛咒值實在太高了，他的身體達到極限……\n黑霧將他吞噬。`, () => endGame('crisis'), 'red'); return; }
 
   let nightText = G.day4AvarenGone
     ? `夜晚悄然降臨。\n小屋裡安靜得讓人不安。\n你躺下，卻一直聽見窗外的風聲。\n這一夜很長。`
-    : actualRemoved > 0
-      ? `夜晚悄然降臨。\n你在燭光下為阿瓦倫進行每晚的儀式。\n這一夜，他身上的詛咒散去了一些……\n詛咒消除了 ${actualRemoved} 點。`
-      : `夜晚悄然降臨。\n你精疲力竭地坐在床邊，\n今夜的解咒似乎沒什麼效果……`;
+    : `夜晚悄然降臨。\n你和阿瓦倫各自沉入夢境，屋子裡只剩下平穩的呼吸聲。`;
 
   if (exhaustedNight) {
     nightText = `夜晚在疲憊中斷裂。\n你沒有回到阿瓦倫身邊，\n也沒能完成平時的照護。\n等你再次睜開眼時，已經是隔天早晨。`;
@@ -13949,6 +13965,8 @@ function continueAfterNight(prevText) {
   G.paused = false;
   G.sleepResolving = false;
   G.dayStartMs = performance.now();
+  G._curseDayAccum = 0;
+  G._painDayAccum  = 0;
   G.timePeriod = 'morning';
   G.periodTransitioned = false;
   G.bgmPreEveningFadeStarted = false;
@@ -13957,6 +13975,8 @@ function continueAfterNight(prevText) {
   generateDailyBuyList(); // 每天早上刷新市集買入清單
   G.bandagedToday = false;
   G.exorcismToday = false;
+  G.forestFrogCaught = false;
+  G.forestFrog2Caught = false;
   G.avarenReadToday = 0;
   G.noahGiftToday = false;
   G.winterGiftToday = false;
@@ -14188,7 +14208,7 @@ const ENDINGS = {
   mist: { cls:'end-normal', title:'黑霧',
     desc:'阿瓦倫活了下來。\n\n他遺忘了最深的疼痛，但傷口只是被掩蓋了起來，沒有復原。\n詛咒雖然不再像過去那樣啃咬他的身體，但也還是持續著存在。\n\n他開始思考著把他變成這副樣子的源頭。\n\n幾年後，阿瓦倫離開了小屋。\n\n他沒有告別得很隆重。\n只是把洗乾淨的藥瓶放回架上，把房間整理好，然後在清晨走進森林。\n\n「不要來找我。」\n\n艾德林只在桌上找到一張很短的紙條。\n\n有一天，雷德傳來了消息。\n據說某個村鎮被黑霧掩蓋，成為了詛咒之地，聽說再也沒有人可以活著走出那裡。' },
   bad_curse: { cls:'end-bad', title:'詛咒',
-    desc:'詛咒終究失去了控制。\n那小小的身體，無法承受這麼殘忍的痛苦。\n疼痛與黑霧從阿瓦倫的身體裡溢出，吞掉了呼吸、聲音，以及所有還能被稱為希望的東西。\n\n艾德林伸出手時，但最終什麼也抓不住。\n這間破舊的小屋，從此空蕩蕩的。' },
+    desc:'詛咒終究失去了控制。\n那小小的身體，無法承受這麼殘忍的痛苦。\n疼痛與黑霧從阿瓦倫的身體裡溢出，吞掉了呼吸、聲音，以及所有還能被稱為希望的東西。\n\n艾德林伸出手時，但最終什麼也抓不住。\n這間破舊的小屋，從此空蕩蕩的。\n\n（試著將詛咒值和疼痛值保持在80以下吧！）' },
   avaren_death: { cls:'end-bad', title:'血月之後',
     desc:'血月落下以後，森林恢復了安靜。\n\n可是那份安靜，空得讓人沒辦法呼吸。\n阿瓦倫躺在湖邊的白花之上，沒有再醒來。\n\n湖面、月光、黑霧，還有那一夜來不及說的話。\n所有的痛苦與悔恨，都只能留給自己。' },
   eldrin_death: { cls:'end-bad', title:'倒下',
@@ -16944,6 +16964,66 @@ document.addEventListener('keydown', (e) => {
   }
 });
 applyCheatVisibility();
+// ══════════════════════════════════════
+//  TIPS 輪播系統
+// ══════════════════════════════════════
+const TIPS_LIST = [
+  'Tips：每次行動都會減少體力，每次的行動都需要深思熟慮。',
+  'Tips：[Esc] 可以暫停遊戲和退出選單。',
+  'Tips：詛咒值和疼痛值最好降低的越低越好。',
+  'Tips：夜晚到森林也許會有不錯的食材。',
+  'Tips：體力耗盡會強制入睡，錯過當天的照護機會。',
+  'Tips：飽食度歸零時，將會扣除HP。',
+  'Tips：在戶外垂釣可以選擇直接跳到晚上的時間。',
+  'Tips：多備幾瓶藥水在身上很重要。',
+  'Tips：每天的市集商品價格都不一樣，精打細算很重要。',
+];
+const TIPS_DAY1_WEIGHTS = [4, 1, 4, 4, 1, 1, 1, 1, 1]; // 第1天高機率的三條權重為4
+let _tipsIndex = 0;
+let _tipsLastIndex = -1;
+function pickNextTipIndex() {
+  const isDay1 = typeof G !== 'undefined' && G && G.day === 1;
+  const weights = isDay1 ? TIPS_DAY1_WEIGHTS : TIPS_LIST.map(() => 1);
+  // 排除上一條，避免連續重複
+  const total = weights.reduce((s, w, i) => s + (i === _tipsLastIndex ? 0 : w), 0);
+  let r = Math.random() * total;
+  for (let i = 0; i < weights.length; i++) {
+    if (i === _tipsLastIndex) continue;
+    r -= weights[i];
+    if (r <= 0) return i;
+  }
+  return ((_tipsLastIndex + 1) % TIPS_LIST.length);
+}
+function runTipsCycle() {
+  const el = document.getElementById('tips-display');
+  if (!el) return;
+  // 第0天不顯示
+  if (typeof G === 'undefined' || !G || G.day === 0) {
+    el.style.opacity = '0';
+    setTimeout(runTipsCycle, 2000);
+    return;
+  }
+  _tipsIndex = pickNextTipIndex();
+  _tipsLastIndex = _tipsIndex;
+  el.textContent = TIPS_LIST[_tipsIndex];
+  // 從下方滑上來
+  el.style.transition = 'none';
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(12px)';
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+    el.style.opacity = '1';
+    el.style.transform = 'translateY(0)';
+    // 5秒後滑上去消失
+    setTimeout(() => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(-12px)';
+      // 3秒後換下一條
+      setTimeout(runTipsCycle, 3000);
+    }, 5000);
+  }));
+}
+runTipsCycle();
 </script>
 
 <!-- ══ 設定面板（放在 body 最底層，脫離所有 stacking context）══ -->
