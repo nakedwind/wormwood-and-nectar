@@ -12075,8 +12075,8 @@ const ELDRIN_HERB_NOTES = [
     ] },
   { name: '🧚 妖精與白藥花',
     lines: [
-      '雙數的夜裡，森林深處會有妖精現身，碰到牠就能收進手裡。',
-      '妖精與罕見的白藥花，都帶著安撫魔物的力量，是煉製忘卻藥水的珍貴材料。',
+      '據說妖精喜歡潮濕的環境，在特定的夜晚，森林深處會有妖精現身，不過據說見過的人再也沒有回來。',
+      '白藥花擁有安撫魔物的力量，是煉製忘卻藥水的珍貴材料。',
     ] },
   { name: '🧪 藥水配方',
     lines: [
@@ -12679,6 +12679,7 @@ function closeBag() {
 }
 let _bdpKey = null;
 let _bdpQty = 1;
+let _bdpSlotQty = 0; // 目前選中那一疊的數量（丟棄只針對這一疊）
 let _bdpMode = 'menu'; // 'menu' | 'qty'
 let _bdpCursor = 0;
 
@@ -12693,10 +12694,12 @@ function openBagDiscardMenu(key) {
   _bdpQty = 1;
   _bdpMode = 'qty';
   _bdpCursor = 0;
-  const total = G[key] ?? 0;
+  // 取得目前選中那一疊的數量；丟棄只針對這一疊（每疊最多 BAG_MAX_STACK）
+  const _selSlot = getBagSlots()[_bagCursor];
+  _bdpSlotQty = (_selSlot && _selSlot.key === key) ? _selSlot.qty : (G[key] ?? 0);
   const item = BAG_ITEMS.find(i => i.key === key);
   const panel = document.getElementById('bag-discard-panel');
-  document.getElementById('bdp-title').innerHTML = `${item ? item.icon + ' ' + item.name : key}　×${total}`;
+  document.getElementById('bdp-title').innerHTML = `${item ? item.icon + ' ' + item.name : key}　×${_bdpSlotQty}`;
   // 直接顯示數量行
   document.getElementById('bdp-qty-row').style.display = 'flex';
   document.getElementById('bdp-qty-val').textContent = '1';
@@ -12732,7 +12735,7 @@ function bdpUpdateCursor() {
 }
 
 function bdpAdjust(d) {
-  const max = G[_bdpKey] ?? 0;
+  const max = _bdpSlotQty || (G[_bdpKey] ?? 0);
   _bdpQty = Math.max(1, Math.min(max, _bdpQty + d));
   document.getElementById('bdp-qty-val').textContent = _bdpQty;
   const discardBtn = [...document.getElementById('bdp-btns').querySelectorAll('.bdp-btn')].find(b => b.textContent.startsWith('確認丟棄'));
@@ -12779,7 +12782,9 @@ function _checkAvarenGiftDiscard() {
 
 function bdpConfirmAll() {
   if (!_bdpKey) return;
-  G[_bdpKey] = 0; renderHUD();
+  // 只丟掉選中那一疊的數量，而不是該物品的全部
+  const drop = _bdpSlotQty || (G[_bdpKey] ?? 0);
+  G[_bdpKey] = Math.max(0, (G[_bdpKey] ?? 0) - drop); renderHUD();
   playDiscardSfx();
   _checkAvarenGiftDiscard();
   closeBagDiscardMenu();
