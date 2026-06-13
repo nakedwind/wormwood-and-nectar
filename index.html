@@ -15367,7 +15367,7 @@ function playTitleButtonSfx() {
 // ══════════════════════════════════════
 const SLOT_KEY     = n => `wormwood_slot_${n}`;     // Reid 結局前的舊存檔
 const NEW_SLOT_KEY = n => `wormwood_new_slot_${n}`; // Reid 結局後的新存檔
-const SLOT_COUNT = 4;
+const SLOT_COUNT = 6;
 // 依照當前狀態決定要用哪組存檔 key
 function activeSlotKey(n) {
   return hasReidEndTriggered() ? NEW_SLOT_KEY(n) : SLOT_KEY(n);
@@ -16589,7 +16589,7 @@ function openReidSaveScreen() {
   const timeStr = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
   const grid = document.getElementById('reid-save-slots-grid');
   grid.innerHTML = '';
-  for (let i = 1; i <= 4; i++) {
+  for (let i = 1; i <= SLOT_COUNT; i++) {
     const el = document.createElement('div');
     el.className = 'save-slot';
     el.id = 'reid-slot-' + i;
