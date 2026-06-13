@@ -98,6 +98,7 @@ body {
 .t-mbtn:nth-child(1){border-radius:17px 6px 14px 8px/8px 15px 7px 16px;}
 .t-mbtn:nth-child(2){border-radius:7px 16px 8px 15px/15px 7px 16px 8px;}
 .t-mbtn:nth-child(3){border-radius:14px 8px 17px 6px/7px 16px 8px 15px;}
+.t-mbtn:nth-child(4){border-radius:8px 15px 6px 17px/16px 8px 15px 7px;}
 .t-mbtn .mark{font-size:14px;color:transparent;width:16px;text-align:center;flex-shrink:0;transition:color .2s,transform .2s;}
 .t-mbtn .mtxt{font-family:'Noto Sans TC',sans-serif;font-size:18px;font-weight:900;letter-spacing:3px;flex:1;}
 .t-mbtn:hover,.t-mbtn.title-focused{transform:translateX(5px);border-color:#d8a23f;background:linear-gradient(180deg,#f7ecc0,#edcf88);box-shadow:0 0 0 2px rgba(216,162,63,.7),0 9px 22px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,252,242,.85);padding-top:20px;padding-bottom:20px;margin-left:0;margin-right:0;width:100%;}
@@ -113,6 +114,12 @@ body {
 .t-mbtn.skip .mark{color:transparent;}
 .t-mbtn.skip:hover,.t-mbtn.skip.title-focused{border-color:#c08a44;background:linear-gradient(180deg,#ece1c4,#ddcca0);}
 .t-mbtn.skip:hover .mtxt,.t-mbtn.skip.title-focused .mtxt{color:#3e2c15;}
+.t-mbtn.reid{background:linear-gradient(180deg,#e8a8a8,#d07878);border:1.5px solid #c83838;box-shadow:inset 0 0 0 1px rgba(220,80,80,.5),inset 0 1px 0 rgba(255,235,235,.7),0 2px 9px rgba(0,0,0,.55);}
+.t-mbtn.reid .mtxt{color:#5a0e0e;}
+.t-mbtn.reid .mark{color:transparent;}
+.t-mbtn.reid:hover,.t-mbtn.reid.title-focused{background:linear-gradient(180deg,#fff0f0,#f5c8c8);border-color:#e04040;box-shadow:inset 0 0 0 1px rgba(220,80,80,.85),0 9px 24px rgba(160,40,40,.45),inset 0 1px 0 rgba(255,250,250,.95),inset 0 0 30px rgba(255,200,200,.5);}
+.t-mbtn.reid:hover .mark,.t-mbtn.reid.title-focused .mark{color:#b02020;transform:scale(1.15);}
+.t-mbtn.reid:hover .mtxt,.t-mbtn.reid.title-focused .mtxt{color:#6a1414;}
 .t-mbtn.skip:hover .mark,.t-mbtn.skip.title-focused .mark{color:#c07820;}
 #title-continue-btn{display:none;}
 .t-foot{margin-top:auto;padding-top:20px;display:flex;align-items:center;justify-content:space-between;gap:10px;}
@@ -469,7 +476,8 @@ body {
   display: none; position: absolute;
   background: rgba(16,18,16,0.93); border: 1px solid #5f765f;
   padding: 6px 12px; font-size: 10px; font-weight: 400; color: #d8ead2;
-  white-space: nowrap; pointer-events: none; z-index: 25;
+  white-space: pre-line; text-align: center; line-height: 1.5;
+  pointer-events: none; z-index: 25;
   transform: translateX(-50%);
   border-radius: 10px;
   box-shadow: none;
@@ -800,6 +808,42 @@ body {
   box-shadow: 0 0 0 1px rgba(216,162,63,.55), 0 0 14px rgba(230,185,80,.4);
 }
 #save-panel-close.kbd-focus::before { content: '➥ '; color: #f0c070; }
+
+/* ── REID FAKE SAVE OVERLAY (mirrors #save-panel-overlay / #save-panel) ── */
+.save-panel-overlay-style {
+  position: fixed; inset: 0;
+  background: rgba(4,2,0,0.90); z-index: 100;
+  display: flex; justify-content: center; align-items: center;
+  font-family: 'Noto Sans TC', sans-serif;
+}
+.save-panel-style {
+  position: relative;
+  background: linear-gradient(180deg, rgba(58,40,20,.4), rgba(0,0,0,0) 20%),
+              linear-gradient(112deg,#271a0e 0%,#1d130a 52%,#160d06 100%);
+  border: 1.5px solid #c8903a;
+  border-radius: 18px 7px 16px 9px/9px 16px 7px 18px;
+  width: 460px; max-width: calc(100% - 32px); padding: 22px 22px 16px;
+  box-shadow: 0 16px 40px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,220,150,.08);
+}
+.save-panel-style::after {
+  content:""; position:absolute; inset:5px; pointer-events:none;
+  border:1.5px dashed rgba(200,144,58,.34);
+  border-radius:15px 6px 14px 7px/7px 14px 6px 15px;
+}
+.save-panel-title-style {
+  font-size: 20px; font-weight: 900; color: #e7c98c;
+  letter-spacing: 4px; text-align: center; margin-bottom: 14px;
+}
+.save-panel-close-style {
+  display: block; width: 100%; padding: 9px 0; margin-top: 9px;
+  background: rgba(20,13,6,.5); border: 1.5px dashed #6a5028;
+  color: #b7a06e; font-size: 13px; font-family: inherit; font-weight: 700;
+  letter-spacing: 3px; cursor: pointer; transition: all 0.15s;
+  border-radius: 11px 4px 10px 5px/5px 10px 4px 11px;
+}
+.save-panel-close-style:hover { border-color: #c8903a; color: #f0d898; background: rgba(40,28,14,.6); }
+.save-panel-close-style.kbd-focus { border-color: #d8a23f; border-style: solid; color: #fff8e0; background: rgba(180,110,20,.4); box-shadow: 0 0 0 1px rgba(216,162,63,.55), 0 0 14px rgba(230,185,80,.4); }
+.save-panel-close-style.kbd-focus::before { content: '➥ '; color: #f0c070; }
 
 /* ── SAVE/LOAD CONFIRM ── */
 #save-confirm-overlay {
@@ -2044,8 +2088,14 @@ body {
   background: #120e06; border: 1px solid #3a2810; color: #c0a060;
   padding: 10px 34px; font-family: inherit; font-size: 14px;
   cursor: pointer; letter-spacing: 3px; transition: all 0.2s;
+  width: 220px; display: block;
 }
 .btn-restart:hover { background: #1e1608; border-color: #5a3818; }
+.btn-restart.end-selected {
+  background: #2a1e08; border-color: #c09030; color: #ffe080;
+  text-shadow: 0 0 10px #c09030;
+}
+.btn-restart.end-selected::before { content: '▶ '; }
 
 /* ── GPU 層：讓場景物件各自獨立，z-index 重排不觸發重繪 ── */
 #outside-objects > div,
@@ -2111,7 +2161,7 @@ body {
   <source src="music/音效/室內雨.mp3" type="audio/mpeg">
 </audio>
 <audio id="sfx-day0-walk" loop>
-  <source src="music/音效/雨で濡れた道路を歩く (mp3cut.net).mp3" type="audio/mpeg">
+  <source src="music/音效/rain-walk.mp3" type="audio/mpeg">
 </audio>
 <audio id="sfx-door-open">
   <source src="music/音效/開門.mp3" type="audio/mpeg">
@@ -2264,6 +2314,7 @@ body {
       <div class="t-divider"><span class="ln"></span><span class="gem"></span><span class="ln"></span></div>
       <div class="t-menu">
         <button id="title-skip-btn" class="t-mbtn primary" style="display:none;" onclick="playTitleButtonSfx(); skipToDay1()"><span class="t-in"><span class="mark">➥</span><span class="mtxt">跳到第一天</span></span></button>
+        <button id="title-reid-btn" class="t-mbtn primary" style="display:none;" onclick="playTitleButtonSfx(); openReidSaveScreen()"><span class="t-in"><span class="mark">➥</span><span class="mtxt">雷德的存檔</span></span></button>
         <button id="title-continue-btn" class="t-mbtn primary" onclick="playTitleButtonSfx(); openSavePanel('load')"><span class="t-in"><span class="mark">➥</span><span class="mtxt">繼續遊戲</span></span></button>
         <button id="title-start-btn" class="t-mbtn primary" onclick="playTitleButtonSfx(); startGame()"><span class="t-in"><span class="mark">➥</span><span class="mtxt">開始新遊戲</span></span></button>
       </div>
@@ -2740,7 +2791,20 @@ body {
       <button class="save-tab" id="save-tab-load" onclick="switchSavePanelTab('load')">讀檔</button>
     </div>
     <div class="save-slots-grid" id="save-slots-grid"></div>
+    <div id="old-saves-section" style="display:none;margin-top:14px;border-top:1px solid #3a2810;padding-top:12px;">
+      <div style="font-size:11px;letter-spacing:3px;color:#6a5030;text-align:center;margin-bottom:8px;">— 舊存檔（雷德入侵前）—</div>
+      <div class="save-slots-grid" id="old-save-slots-grid"></div>
+    </div>
     <button id="save-panel-close" onclick="closeSavePanel()">關　閉</button>
+  </div>
+</div>
+
+<!-- ══ REID FAKE SAVE OVERLAY ══ -->
+<div id="reid-save-overlay" style="display:none;" class="save-panel-overlay-style">
+  <div id="reid-save-panel" class="save-panel-style">
+    <div class="save-panel-title-style">— 雷德的存檔 —</div>
+    <div class="save-slots-grid" id="reid-save-slots-grid"></div>
+    <button class="save-panel-close-style" onclick="closeReidSaveScreen()">關　閉</button>
   </div>
 </div>
 
@@ -2831,7 +2895,10 @@ body {
   <div class="end-title" id="end-title"></div>
   <div class="end-desc"  id="end-desc"></div>
   <div class="end-stats" id="end-stats"></div>
-  <button class="btn-restart" id="btn-ending-action" onclick="restartGame()">再玩一次</button>
+  <div id="end-btn-row" style="display:flex;flex-direction:column;gap:12px;align-items:center;">
+    <button class="btn-restart" id="btn-ending-action">再玩一次</button>
+    <button class="btn-restart" id="btn-ending-restart" style="display:none" onclick="confirmRestart()">再玩一次</button>
+  </div>
 </div>
 
 </div><!-- #app -->
@@ -2960,11 +3027,16 @@ function updateWeatherFx() {
         outRain.pause();
       }
     }
-    // 室內雨聲：在室內且正在下雨時播放
+    // 室內雨聲：淡入淡出（與戶外雨的 _rainFx 同理）
     if (inRain) {
-      if (!_outdoorScene && isRaining) {
+      const inRainTarget = (!_outdoorScene && isRaining) ? 1 : 0;
+      if (G._inRainFx == null) G._inRainFx = inRainTarget;
+      const inStep = 0.012;
+      if (G._inRainFx < inRainTarget) G._inRainFx = Math.min(inRainTarget, G._inRainFx + inStep);
+      else if (G._inRainFx > inRainTarget) G._inRainFx = Math.max(inRainTarget, G._inRainFx - inStep);
+      if (G._inRainFx > 0.001) {
         if (inRain.paused) { inRain.currentTime = 0; inRain.play().catch(() => {}); }
-        inRain.volume = Math.max(0, Math.min(1, settingsVolume() * 4.0));
+        inRain.volume = Math.max(0, Math.min(1, settingsVolume() * 4.0 * G._inRainFx));
       } else if (!inRain.paused) {
         inRain.pause();
       }
@@ -4886,6 +4958,65 @@ const NOAH_SPEAK_DLG = [
   '湖邊的路最好晚上別走。那裡的聲音會騙人。',
   '如果夜裡聽見有人叫你的名字，不要回頭。',
 ];
+const NOAH_DAY8_SPEAK_DLG = [
+  '阿瓦倫今天有好一點嗎？',
+  '你也要記得吃東西。',
+  '別硬撐，累了就歇一下。',
+  '需要什麼就跟我說。',
+  '這場雨…一時半刻停不了呢',
+  '雨聲聽久了，竟有點安心',
+  '等雨小一點我再走。',
+  '有你在，這孩子很幸運。',
+  '慢慢來，不用急。',
+  '下雨天，總會想起一些人。',
+  '最近…比較少做惡夢了。',
+  '晚上最好不要去湖邊。',
+  '那片湖感覺…很不祥。',
+];
+const NOAH_DAY8_DLG_1_1 = [
+  { speaker:'艾德林', text:'「諾亞！」' },
+  { speaker:'諾亞',   text:'「艾德林，早安！因為外面在下雨，所以我就先進來了。」' },
+  { speaker:'艾德林', text:'「今天雨這麼大，你怎麼來了？」' },
+  { speaker:'諾亞',   text:'「我想來看看你們還好嗎？阿瓦倫的狀況還好嗎？」' },
+  { speaker:'艾德林', text:'「好很多了……但詛咒還是殘留了不少……我不知道還能做什麼。」' },
+  { speaker:'諾亞',   text:'「你已經很努力的在做自己能做到的事情了，這非常不容易。」' },
+  { speaker:'艾德林', text:'「可是這樣不夠，時間一直過去，我連到底有沒有效都不確定……」' },
+  { speaker:'諾亞',   text:'「……我知道。這幾天我一直在想，有沒有什麼我能幫上的，這些你先拿著吧，這些應該能幫上一點忙。」' },
+  { speaker:'旁白',   text:'諾亞遞給了你水晶碎片×3', onStart(){
+      let added = 0;
+      for (let i = 0; i < 3; i++) {
+        if (isBagFull('crystal', 1)) break;
+        chg('crystal', 1);
+        added++;
+      }
+      renderHUD();
+      if (added > 0) playLoopingAudio('sfx-item-get', 3.0);
+      if (added < 3) toastBagFull(); // 背包放不下，多出的水晶消失
+    } },
+  { speaker:'艾德林', text:'「諾亞……謝謝你……我不知道能怎麼報答你……」' },
+  { speaker:'諾亞',   text:'「別這麼說，我們只是在互相幫忙！」' },
+];
+const NOAH_DAY8_DLG_1_2 = [
+  { speaker:'艾德林', text:'「諾亞，你最近過得怎麼樣呢？還會失眠嗎？」' },
+  { speaker:'諾亞',   text:'「嗯……雖然還是常常做惡夢，但是有你給的月眠露之後好很多了！」' },
+  { speaker:'諾亞',   text:'「你真是個厲害的藥師！」' },
+  { speaker:'艾德林', text:'「你太過獎了！這附近採不到夜顏花，不然我就能多做幾瓶讓你帶回去了。」' },
+  { speaker:'諾亞',   text:'「你有這份心意我已經很高興了！但是現在你還是先專注於過好自己的生活比較重要！」' },
+  { speaker:'艾德林', text:'「嗯……！以後有機會我會幫你多做一些的！」' },
+];
+const NOAH_DAY8_DLG_1_3 = [
+  { speaker:'諾亞',   text:'「我最近認識了一個比我小幾歲的女孩……她個性很強悍呢，而且很會使用火魔法。」' },
+  { speaker:'艾德林', text:'「真厲害啊，年紀這麼小就會魔法了！」' },
+  { speaker:'諾亞',   text:'「是啊！她真是個天才，未來一定能夠大放異彩取得很好的成就吧！」' },
+  { speaker:'艾德林', text:'「……希望如此。這個世界對有才能的女性不太友好……。」' },
+  { speaker:'諾亞',   text:'「嗯……我知道這有些困難，但我還是會支持她的！」' },
+];
+const NOAH_DAY8_DLG_1_4 = [
+  { speaker:'諾亞',   text:'「今天的森林很潮濕……我在湖邊感受到了一股不太好的氛圍。」' },
+  { speaker:'艾德林', text:'「你也這麼感覺嗎？看來不是我的錯覺。」' },
+  { speaker:'諾亞',   text:'「為了安全，今天晚上你還是盡量別出門了！我也是……等天色稍暗時，我就要快點起身回家了。」' },
+  { speaker:'艾德林', text:'「嗯！回程時記得要注意安全喔！」' },
+];
 const NOAH_LOBBY_POS = { x: 43, y: 372 };
 const NOAH_FOREST_LAKE_POS = { x: 326, y: 256 };
 const DAY2_FAIRY_BOUNDS = { x1: 250, y1: 347, x2: 412, y2: 405 };
@@ -4955,11 +5086,11 @@ function isNearWinter() {
 }
 
 function isNearNoah() {
-  if (G.day !== 2) return false;
+  if (G.day !== 2 && G.day !== 8) return false;
   if (G.scene === 'outside' && G.timePeriod === 'morning') {
     return Math.hypot(G.noah.x - G.eldrin.x, G.noah.y - G.eldrin.y) < 55;
   }
-  if (G.scene === 'lobby' && G.timePeriod === 'morning' && G.noahDay2IntroSeen) {
+  if (G.scene === 'lobby' && G.timePeriod === 'morning' && ((G.day === 2 && G.noahDay2IntroSeen) || G.day === 8)) {
     return Math.hypot(NOAH_LOBBY_POS.x - G.eldrin.x, NOAH_LOBBY_POS.y - G.eldrin.y) < 55;
   }
   if (G.scene === 'forest' && G.timePeriod === 'evening') {
@@ -5503,7 +5634,7 @@ function showRedCommissionMenu() {
 function openNoahMenu() {
   SFX.interact();
   const noah = G.noah;
-  const noahInLobby = G.scene === 'lobby' && G.noahDay2IntroSeen;
+  const noahInLobby = G.scene === 'lobby' && G.timePeriod === 'morning' && ((G.day === 2 && G.noahDay2IntroSeen) || G.day === 8);
   const noahAtLake = G.scene === 'forest' && G.day === 2 && G.timePeriod === 'evening';
   const noahX = noahInLobby ? NOAH_LOBBY_POS.x : noahAtLake ? NOAH_FOREST_LAKE_POS.x : noah.x;
   const noahY = noahInLobby ? NOAH_LOBBY_POS.y : noahAtLake ? NOAH_FOREST_LAKE_POS.y : noah.y;
@@ -5566,6 +5697,23 @@ function openNoahMenu() {
     G.noahDay2IntroSeen = true;
     faceEldrin();
     NOAH_DAY2_INTRO.forEach(line => story(line.speaker, line.text));
+    return;
+  }
+
+  if (G.day === 8) {
+    if (G.noahDay8Stage == null) G.noahDay8Stage = 0;
+    const day8Dlgs = [NOAH_DAY8_DLG_1_1, NOAH_DAY8_DLG_1_2, NOAH_DAY8_DLG_1_3, NOAH_DAY8_DLG_1_4];
+    const dlg = G.noahDay8Stage < day8Dlgs.length
+      ? day8Dlgs[G.noahDay8Stage]
+      : pick([NOAH_DAY8_DLG_1_2, NOAH_DAY8_DLG_1_3, NOAH_DAY8_DLG_1_4]);
+    if (G.noahDay8Stage < day8Dlgs.length) G.noahDay8Stage++;
+    faceEldrin();
+    G.noahLobbyTalking = true;
+    dlg.forEach(line => {
+      if (line.onStart) storyQueue.push({ cb: line.onStart });
+      story(line.speaker, line.text);
+    });
+    storyThen(() => { G.noahLobbyTalking = false; G.noah.pose = 'front'; });
     return;
   }
 
@@ -7434,8 +7582,10 @@ function renderTime(elapsed) {
   const secLeft = isMorning
     ? Math.max(0, Math.ceil(MORNING_SECONDS - elapsed))
     : Math.max(0, Math.ceil(DAY_REAL_SECONDS - elapsed));
+  const timeLeftStr = isDay0 ? '---'
+    : (secLeft >= 60 ? Math.floor(secLeft / 60) + ' 分 ' + (secLeft % 60) + ' 秒' : secLeft + ' 秒');
   document.getElementById('time-remaining').textContent =
-    (isMorning ? '☀ 早上' : '🌙 晚上') + '　剩餘 ' + (isDay0 ? '---' : secLeft) + ' 秒';
+    (isMorning ? '☀ 早上' : '🌙 晚上') + '　剩餘 ' + timeLeftStr;
   document.getElementById('period-badge').textContent = isMorning ? '☀ 早上' : '🌙 晚上';
   const skipBtn = document.getElementById('btn-skip-evening');
   if (skipBtn) skipBtn.style.display = isMorning ? 'block' : 'none';
@@ -7576,7 +7726,24 @@ function renderScene() {
   if (!isNight && G.weather === 'rain' && BG_DAY_RAIN[G.scene]) bgUrl = BG_DAY_RAIN[G.scene];
   // 第0天（雨夜）的房間用夜晚雨天背景
   if (G.day === 0 && G.scene === 'room' && G.weather === 'rain') bgUrl = 'bg_room_night-rain.png';
-  document.getElementById('scene-bg').style.backgroundImage = `url('${bgUrl}')`;
+  const sceneBgEl = document.getElementById('scene-bg');
+  const _indoorScenes = ['lobby','room','kitchen'];
+  const _isIndoorWeatherSwap = _indoorScenes.includes(G.scene)
+    && G._lastIndoorBgUrl !== undefined
+    && G._lastIndoorBgUrl !== bgUrl;
+  if (_isIndoorWeatherSwap) {
+    // 天氣切換：先淡出、換背景、再淡入
+    sceneBgEl.style.transition = 'opacity 0.5s ease';
+    sceneBgEl.style.opacity = '0';
+    setTimeout(() => {
+      sceneBgEl.style.backgroundImage = `url('${bgUrl}')`;
+      G._lastIndoorBgUrl = bgUrl;
+      sceneBgEl.style.opacity = '1';
+    }, 500);
+  } else {
+    sceneBgEl.style.backgroundImage = `url('${bgUrl}')`;
+    G._lastIndoorBgUrl = bgUrl;
+  }
   document.getElementById('room-label').textContent = labelMap[G.scene];
   // 農田安全修正：farmStage >= 5 時確保 herbReady = true
   if (G.farmStage >= 5 && !G.herbReady) G.herbReady = true;
@@ -7847,7 +8014,8 @@ function renderChars() {
   // ── Noah ──
   const noah = G.noah;
   const cwNoah = document.getElementById('cw-noah');
-  const noahInLobby = G.scene === 'lobby' && G.day === 2 && G.timePeriod === 'morning' && G.noahDay2IntroSeen;
+  const noahInLobby = G.scene === 'lobby' && G.timePeriod === 'morning' &&
+    ((G.day === 2 && G.noahDay2IntroSeen) || G.day === 8);
   const noahAtLake = G.scene === 'forest' && G.day === 2 && G.timePeriod === 'evening';
   const noahVisible = (G.scene === 'outside' && G.day === 2 && G.timePeriod === 'morning') || noahInLobby || noahAtLake || (G.introDay0Active && G.introDay0NoahVisible);
   const noahDrawX = noahInLobby ? NOAH_LOBBY_POS.x : noahAtLake ? NOAH_FOREST_LAKE_POS.x : noah.x;
@@ -7892,7 +8060,8 @@ function renderChars() {
   // ── Noah bubble ──
   const noahBub = document.getElementById('noah-bubble');
   if (noahVisible && noah.bubbleTimer > 0 && !isDlgBlocking()) {
-    noahBub.textContent   = noah.bubbleText;
+    // 每 7 個字換行
+    noahBub.textContent   = noah.bubbleText.replace(/(.{7})/g, '$1\n').replace(/\n$/, '');
     noahBub.style.display = 'block';
     noahBub.style.left    = noahDrawX + 'px';
     noahBub.style.top     = (noahDrawY - dispH - 40) + 'px';
@@ -9055,15 +9224,17 @@ function gameLoop() {
   // 諾亞頭上泡泡隨機說話（第2天白天，戶外或初登場後的大廳）
   {
     const noah = G.noah;
-    const noahVisibleNow = G.day === 2 && G.timePeriod === 'morning' &&
-      (G.scene === 'outside' || (G.scene === 'lobby' && G.noahDay2IntroSeen));
+    const noahVisibleNow = G.timePeriod === 'morning' && (
+      (G.day === 2 && (G.scene === 'outside' || (G.scene === 'lobby' && G.noahDay2IntroSeen))) ||
+      (G.day === 8 && G.scene === 'lobby')
+    );
     if (noahVisibleNow && !isDlgBlocking() && !G.noahLobbyTalking) {
       if (noah.bubbleTimer > 0) {
         noah.bubbleTimer--;
       } else {
         noah.autoSpeakTimer--;
         if (noah.autoSpeakTimer <= 0) {
-          noah.bubbleText = pick(NOAH_SPEAK_DLG);
+          noah.bubbleText = pick(G.day === 8 ? NOAH_DAY8_SPEAK_DLG : NOAH_SPEAK_DLG);
           noah.bubbleTimer = 220;
           noah.autoSpeakTimer = Math.floor(Math.random() * 260) + 180;
         }
@@ -9614,20 +9785,41 @@ document.addEventListener('keydown', e => {
       if (e.key === ' ' || e.key === 'Enter') { savePanelConfirm(); return; }
       return;
     }
+    // 行動選單開著（如存檔鎖定提示）：交給行動選單，不要穿透到標題按鈕
+    if (document.getElementById('action-overlay').style.display === 'flex') {
+      if (e.key === 'Escape')    { e.preventDefault(); closeAction(); return; }
+      if (e.key === 'ArrowUp')   { menuMoveCursor(-1); return; }
+      if (e.key === 'ArrowDown') { menuMoveCursor(+1); return; }
+      if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); menuRunSelected(); return; }
+      return;
+    }
+    // 雷德假存檔畫面開著：方向鍵移動焦點，Enter/空白確認，ESC 關閉
+    if (document.getElementById('reid-save-overlay').style.display === 'flex') {
+      if (e.key === 'Escape')    { e.preventDefault(); closeReidSaveScreen(); return; }
+      if (e.key === 'ArrowUp')   { e.preventDefault(); reidSaveMoveFocus(-1); return; }
+      if (e.key === 'ArrowDown') { e.preventDefault(); reidSaveMoveFocus(+1); return; }
+      if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); reidSaveConfirm(); return; }
+      return;
+    }
     const hasContinue = document.getElementById('title-continue-btn').style.display !== 'none';
     titleScreenKeyNav(e, hasContinue);
     return;
   }
 
-  // 結局畫面：空白鍵 / Enter — 打字中跳過；打字完成後觸發按鈕
+  // 結局畫面：↑↓ 切換按鈕；空白鍵 / Enter 確認
   if (document.getElementById('ending-screen').style.display === 'flex') {
     if (e.key === ' ' || e.key === 'Enter') {
-      if (!_typewriterDone) {
-        _skipEndingTypewriter();
-      } else {
-        const btn = document.getElementById('btn-ending-action');
-        if (btn && btn.style.display !== 'none') btn.click();
-      }
+      if (!_typewriterDone) { _skipEndingTypewriter(); return; }
+      const sel = document.querySelector('.btn-restart.end-selected');
+      if (sel && sel.style.display !== 'none') { sel.click(); return; }
+      const btn = document.getElementById('btn-ending-action');
+      if (btn && btn.style.display !== 'none') btn.click();
+      return;
+    }
+    if ((e.key === 'ArrowUp' || e.key === 'ArrowDown') && _typewriterDone) {
+      e.preventDefault();
+      _endBtnMoveFocus(e.key === 'ArrowDown' ? 1 : -1);
+      return;
     }
     return;
   }
@@ -9830,7 +10022,7 @@ document.addEventListener('keydown', e => {
     } else if (G.carryingSoup && near && G.avarenScene === G.scene) {
       openAvarenMenu();
     } else if (zone && zone.id === 'bed') {
-      if (OUTSIDE_HINT_ZONES.has('bed')) { G.usedHints = G.usedHints || {}; G.usedHints.bed = true; }
+      if (OUTSIDE_HINT_ZONES.has('bed')) { G.usedHints = G.usedHints || {}; G.usedHints.bed = true; updateEntranceArrows(); }
       openBedMenu();
     } else if (isAvarenUnconscious() && near) {
       if (G.day === 1 && !G.avarenDay1FirstLookSeen) {
@@ -12144,18 +12336,25 @@ function playDialogueNextSfx() {
 function applySpeakerPortrait(speaker, portraitEl) {
   const src = SPEAKER_AVATARS[speaker];
   if (!src) {
+    portraitEl.style.visibility = 'hidden';
     portraitEl.style.display = 'none';
     portraitEl.dataset.cur = '';
     portraitEl.removeAttribute('src');
     return;
   }
-  // 只有頭像真的換了才重新指定 src，避免同一說話者連續台詞時重新載入造成閃爍
-  if (portraitEl.dataset.cur !== src) {
-    portraitEl.src = src;
-    portraitEl.dataset.cur = src;
-  }
   portraitEl.alt = speaker;
   portraitEl.style.display = 'block';
+  if (portraitEl.dataset.cur !== src) {
+    // 換頭像前先隱藏，避免瞬間顯示前一張頭像
+    portraitEl.style.visibility = 'hidden';
+    portraitEl.onload = () => { portraitEl.style.visibility = 'visible'; portraitEl.onload = null; };
+    portraitEl.src = src;
+    portraitEl.dataset.cur = src;
+    // 圖片已在快取中時 onload 不一定觸發，直接檢查 complete
+    if (portraitEl.complete) { portraitEl.style.visibility = 'visible'; portraitEl.onload = null; }
+  } else {
+    portraitEl.style.visibility = 'visible';
+  }
 }
 function setSpeakerLayout(speaker) {
   const overlay = document.getElementById('action-scene-overlay');
@@ -12298,7 +12497,7 @@ function showActionMenu(heading, items, noteText = '', noCancel = false) {
   const cancelBtn = document.querySelector('.act-cancel');
   if (cancelBtn) {
     cancelBtn.style.display = noCancel ? 'none' : '';
-    cancelBtn.onclick = () => closeAction();
+    cancelBtn.onclick = () => { playTitleButtonSfx(); closeAction(); };
     if (!noCancel) menuBtns.push(cancelBtn);
   }
   // 找第一個可用選項作為預設選取
@@ -13665,10 +13864,11 @@ function debugJumpToReidEnding() {
   G.reidDemonHeartCount   = 0;
   G.reidFakeSaveTaken     = false;
   // 解鎖魔王心臟委託的前置對話條件
-  G.reidChat11_1Seen      = true;
-  G.reidChat11_2Seen      = true;
-  G.reidChat3CommSeen     = true;
-  G.reidVisitDay          = 11;
+  G.reidChat11_1Seen        = true;
+  G.reidChat11_2Seen        = true;
+  G.reidChat3CommSeen       = true;
+  G.reidVisitDay            = 11;
+  G.winterDay8FairyHintSeen = true;
 
   // 普通數值（不影響雷德結局條件）
   G.mood  = 50;
@@ -14611,10 +14811,10 @@ const ENDINGS = {
   avaren_death: { cls:'end-bad', type:'Bad End', title:'血月之後',
     desc:'血月落下以後，森林恢復了安靜。\n\n可是那份安靜，空得讓人沒辦法呼吸。\n阿瓦倫躺在湖邊的白花之上，沒有再醒來。\n\n湖面、月光、黑霧，還有那一夜來不及說的話。\n所有的痛苦與悔恨，都只能留給自己。' },
   eldrin_death: { cls:'end-bad', type:'Bad End', title:'倒下',
-    desc:'艾德林倒下了。\n\n長久的奔走、研究、戰鬥與自責，終於壓垮了他的身體。\n\n他曾經想要救下那個孩子。\n可是這一次，伸出去的手再也沒有力氣握住任何人。' },
+    desc:'艾德林倒下了。\n\n長久的奔走、研究、戰鬥與自責，終於壓垮了他的身體。\n\n那個孩子還在小屋等你，\n但是他卻不知道你再也不會回去那間小屋了。' },
   captivity: { cls:'end-regret', type:'Normal End', title:'囚禁',
     desc:'阿瓦倫活了下來。\n而你也留了下來。\n\n這不是最好的結局。卻是阿瓦倫最想要的結局。\n\n小屋沒有被詛咒吞沒。但門被關上了。\n\n窗外的世界逐漸變得遙遠。\n\n醒來時能看見你。睡著前也能看見你。\n\n再也不會分離。再也不會失去。\n\n永遠如此。' },
-  reid: { cls:'end-regret', type:"Reid's End", title:'覆寫',
+  reid: { cls:'end-regret', type:"Red's End", title:'覆寫',
     desc:'SAVE 01\n\n第 11 天　早晨\n勇者雷德\n\n那個總是迷路的勇者，終於找到了路。\n只是他抵達的地方，不是魔王城，也不是森林深處。\n\n而是這個故事之外更遠的地方。\n\n因為勇者不會屈服於世界的規則。\n他決定改寫這整個世界，拯救所有的人。\n\n勇者決定拯救你、拯救阿瓦倫，\n以及拯救那個面冷心善的魔王。' },
 };
 let _eldrinDeathTriggered = false;
@@ -14914,8 +15114,9 @@ async function startGoodEndingAnimation() {
   document.getElementById('end-desc').textContent      = '苦艾與甘露的故事還會繼續進行下去。';
   const epiloguBtn = document.getElementById('btn-ending-action');
   epiloguBtn.textContent = '再玩一次';
-  epiloguBtn.onclick = restartGame;
+  epiloguBtn.onclick = confirmRestart;
   epiloguBtn.style.display = 'none';
+  document.getElementById('btn-ending-restart').style.display = 'none';
   const epilogueScreen = document.getElementById('ending-screen');
   epilogueScreen.style.paddingTop = '340px';
   epilogueScreen.style.display = 'flex';
@@ -14949,20 +15150,34 @@ function _showEndingScreen(ending) {
     <div class="end-stat">艾德林 HP <span>${Math.floor(G.eldrinHp ?? 100)}</span></div>
   `;
   const btnAction = document.getElementById('btn-ending-action');
+  const btnRestart = document.getElementById('btn-ending-restart');
   if (ending.cls === 'end-best') {
     btnAction.textContent = '繼續';
     btnAction.onclick = startGoodEndingAnimation;
+    btnRestart.style.display = 'none';
   } else {
     btnAction.textContent = '再玩一次';
-    btnAction.onclick = restartGame;
+    btnAction.onclick = confirmRestart;
+    btnRestart.style.display = 'none';
   }
   _startLineByLine(ending.desc, 700, 45, () => {
     document.getElementById('end-stats').style.display = '';
     btnAction.style.display = '';
+    if (ending.cls === 'end-best') btnRestart.style.display = '';
+    _endBtnInitFocus();
   });
 }
 
+const REID_END_FLAG_KEY = 'wormwood_reid_end';
+function hasReidEndTriggered() {
+  return localStorage.getItem(REID_END_FLAG_KEY) === '1';
+}
+function setReidEndTriggered() {
+  localStorage.setItem(REID_END_FLAG_KEY, '1');
+}
+
 function endGame(type) {
+  if (type === 'reid') setReidEndTriggered();
   // 停掉走路腳步聲，避免播到結局頁面
   stopAudio('sfx-outdoor-walk'); stopAudio('sfx-indoor-walk'); stopAudio('sfx-day0-walk');
   _outdoorWalkPlaying = false; _indoorWalkPlaying = false;
@@ -15054,42 +15269,65 @@ function endGame(type) {
 // ══════════════════════════════════════
 //  TITLE SCREEN KEYBOARD NAV
 // ══════════════════════════════════════
-let _titleFocus = 0; // 0=開始遊戲, 1=繼續遊戲, 2=跳到第一天
+let _titleFocus = 0; // 0=開始新遊戲, 1=繼續遊戲, 2=雷德的存檔, 3=跳到第一天
 
-function titleScreenInitFocus(hasContinue) {
-  _titleFocus = hasContinue ? 1 : 0;
-  titleScreenUpdateFocus(hasContinue);
+// 統一標題頁初始化：按 Reid 旗標決定顯示哪些按鈕
+function setupTitleScreen() {
+  const reidEnd    = hasReidEndTriggered();
+  const hasCont    = hasSave();
+  const reidBtn    = document.getElementById('title-reid-btn');
+  const contBtn    = document.getElementById('title-continue-btn');
+  if (reidBtn)  reidBtn.style.display  = reidEnd ? 'block' : 'none';
+  if (contBtn)  contBtn.style.display  = hasCont  ? 'block' : 'none';
+  // 預設焦點：有 Reid 存檔優先，否則有繼續遊戲次之，不然從開始
+  _titleFocus = reidEnd ? 2 : hasCont ? 1 : 0;
+  titleScreenUpdateFocus();
 }
 
-function titleScreenUpdateFocus(hasContinue) {
-  const startBtn    = document.getElementById('title-start-btn');
-  const continueBtn = document.getElementById('title-continue-btn');
-  const skipBtn     = document.getElementById('title-skip-btn');
-  if (startBtn)    startBtn.classList.toggle('title-focused',   _titleFocus === 0);
-  if (continueBtn) continueBtn.classList.toggle('title-focused', _titleFocus === 1 && hasContinue);
-  if (skipBtn)     skipBtn.classList.toggle('title-focused',     _titleFocus === 2);
+function titleScreenInitFocus(hasContinue) {
+  setupTitleScreen(); // 統一走 setupTitleScreen
+}
+
+function titleScreenUpdateFocus() {
+  const reidEnd    = hasReidEndTriggered();
+  const hasCont    = hasSave();
+  const startBtn   = document.getElementById('title-start-btn');
+  const contBtn    = document.getElementById('title-continue-btn');
+  const reidBtn    = document.getElementById('title-reid-btn');
+  const skipBtn    = document.getElementById('title-skip-btn');
+  if (startBtn)  startBtn.classList.toggle('title-focused',  _titleFocus === 0);
+  if (contBtn)   contBtn.classList.toggle('title-focused',   _titleFocus === 1 && hasCont);
+  if (reidBtn)   reidBtn.classList.toggle('title-focused',   _titleFocus === 2 && reidEnd);
+  if (skipBtn)   skipBtn.classList.toggle('title-focused',   _titleFocus === 3 && cheatUnlocked());
 }
 
 function titleScreenKeyNav(e, hasContinue) {
+  const reidEnd = hasReidEndTriggered();
+  const hasCont = hasSave();
+  // 計算有效按鈕清單（由下到上：0=開始, 1=繼續, 2=雷德, 3=跳過）
+  const validFoci = [0];
+  if (hasCont)             validFoci.push(1);
+  if (reidEnd)             validFoci.push(2);
+  if (cheatUnlocked())     validFoci.push(3);
+  const curPos = validFoci.indexOf(_titleFocus);
   if (e.key === 'ArrowUp') {
     const prev = _titleFocus;
-    const max = cheatUnlocked() ? 2 : 1;
-    _titleFocus = _titleFocus >= max ? 0 : _titleFocus + 1;
-    if (_titleFocus === 1 && !hasContinue) _titleFocus = cheatUnlocked() ? 2 : 0;
+    const next = curPos < 0 ? 0 : (curPos + 1) % validFoci.length;
+    _titleFocus = validFoci[next];
     if (_titleFocus !== prev) playLoopingAudio('sfx-dialogue-next', 5.0);
-    titleScreenUpdateFocus(hasContinue);
+    titleScreenUpdateFocus();
   } else if (e.key === 'ArrowDown') {
     const prev = _titleFocus;
-    const max = cheatUnlocked() ? 2 : 1;
-    _titleFocus = _titleFocus <= 0 ? max : _titleFocus - 1;
-    if (_titleFocus === 1 && !hasContinue) _titleFocus = 0;
+    const next = curPos <= 0 ? validFoci.length - 1 : curPos - 1;
+    _titleFocus = validFoci[next];
     if (_titleFocus !== prev) playLoopingAudio('sfx-dialogue-next', 5.0);
-    titleScreenUpdateFocus(hasContinue);
+    titleScreenUpdateFocus();
   } else if (e.key === 'Enter' || e.key === ' ') {
     playTitleButtonSfx();
-    if (_titleFocus === 2 && cheatUnlocked()) skipToDay1();
-    else if (_titleFocus === 1 && hasContinue) openSavePanel('load');
-    else startGame();
+    if      (_titleFocus === 3 && cheatUnlocked()) skipToDay1();
+    else if (_titleFocus === 2 && reidEnd)         openReidSaveScreen();
+    else if (_titleFocus === 1 && hasCont)         openSavePanel('load');
+    else                                           startGame();
   }
 }
 
@@ -15103,8 +15341,13 @@ function playTitleButtonSfx() {
 // ══════════════════════════════════════
 //  SAVE / LOAD  (4 slots)
 // ══════════════════════════════════════
-const SLOT_KEY = n => `wormwood_slot_${n}`;
+const SLOT_KEY     = n => `wormwood_slot_${n}`;     // Reid 結局前的舊存檔
+const NEW_SLOT_KEY = n => `wormwood_new_slot_${n}`; // Reid 結局後的新存檔
 const SLOT_COUNT = 4;
+// 依照當前狀態決定要用哪組存檔 key
+function activeSlotKey(n) {
+  return hasReidEndTriggered() ? NEW_SLOT_KEY(n) : SLOT_KEY(n);
+}
 const SCENE_LABEL  = { outside:'戶外', lobby:'大廳', room:'房間', kitchen:'廚房', forest:'森林' };
 const PERIOD_LABEL = { morning:'白天', evening:'夜晚' };
 
@@ -15114,9 +15357,15 @@ let _savePanelFocusRow = 0;
 let _savePanelFocusCol = 0; // retained for older keyboard logic
 
 function getSlot(n) {
-  try { return JSON.parse(localStorage.getItem(SLOT_KEY(n))); } catch(e) { return null; }
+  try { return JSON.parse(localStorage.getItem(activeSlotKey(n))); } catch(e) { return null; }
 }
 function hasSave() {
+  // Reid 結局後只看新存檔；否則只看舊存檔
+  const keyFn = hasReidEndTriggered() ? NEW_SLOT_KEY : SLOT_KEY;
+  for (let i = 1; i <= SLOT_COUNT; i++) if (localStorage.getItem(keyFn(i))) return true;
+  return false;
+}
+function hasOldSave() {
   for (let i = 1; i <= SLOT_COUNT; i++) if (localStorage.getItem(SLOT_KEY(i))) return true;
   return false;
 }
@@ -15144,7 +15393,40 @@ function renderSavePanel() {
     el.innerHTML = `<img class="save-slot-avatar" src="eldrin_avatar.png" alt=""><div class="save-slot-num">艾德林<br>檔案 ${i}</div><div class="save-slot-text">${infoHtml}</div><div class="save-slot-btns">${actionBtn}</div>`;
     grid.appendChild(el);
   }
+  // 舊存檔區塊（cheat 開啟 + Reid 結局後才顯示，僅限讀取）
+  const oldSection = document.getElementById('old-saves-section');
+  const oldGrid    = document.getElementById('old-save-slots-grid');
+  const showOld    = hasReidEndTriggered() && cheatUnlocked();
+  if (oldSection) oldSection.style.display = showOld ? 'block' : 'none';
+  if (oldGrid && showOld) {
+    oldGrid.innerHTML = '';
+    for (let i = 1; i <= SLOT_COUNT; i++) {
+      let data = null;
+      try { data = JSON.parse(localStorage.getItem(SLOT_KEY(i))); } catch(e2) {}
+      const el = document.createElement('div');
+      el.className = 'save-slot';
+      const infoHtml = data
+        ? `<div class="save-slot-info">第 ${data.day} 天<br>${PERIOD_LABEL[data.timePeriod] || ''}・${SCENE_LABEL[data.scene] || data.scene}</div>
+           <div class="save-slot-date">${data.savedAt || ''}</div>`
+        : `<div class="save-slot-info" style="color:#3a2810;">－ 空檔 －</div>`;
+      const btn = `<button class="btn-load-slot" onclick="requestLoadFromOldSlot(${i})"${data ? '' : ' disabled'}>讀檔</button>`;
+      el.innerHTML = `<img class="save-slot-avatar" src="eldrin_avatar.png" alt=""><div class="save-slot-num">艾德林<br>舊檔 ${i}</div><div class="save-slot-text">${infoHtml}</div><div class="save-slot-btns">${btn}</div>`;
+      oldGrid.appendChild(el);
+    }
+  }
+
   savePanelUpdateFocus();
+}
+
+function requestLoadFromOldSlot(n) {
+  let data = null;
+  try { data = JSON.parse(localStorage.getItem(SLOT_KEY(n))); } catch(e) {}
+  if (!data) return;
+  showSaveConfirm('讀取舊存檔', `要讀取雷德入侵前的「舊檔 ${n}」嗎？\n目前尚未存檔的進度將會消失。`, () => loadFromOldSlotData(data));
+}
+
+async function loadFromOldSlotData(data) {
+  await loadFromData(data);
 }
 
 function savePanelUpdateFocus() {
@@ -15266,7 +15548,7 @@ function saveToSlot(n) {
     const nowMs = G.manualPaused ? G.pauseStartTime : performance.now();
     const dayElapsedSec = Math.max(0, (nowMs - G.dayStartMs) / 1000);
     const meta = { day: G.day, timePeriod: G.timePeriod, scene: G.scene, savedAt, dayElapsedSec };
-    localStorage.setItem(SLOT_KEY(n), JSON.stringify({ ...meta, state: JSON.stringify(G) }));
+    localStorage.setItem(activeSlotKey(n), JSON.stringify({ ...meta, state: JSON.stringify(G) }));
     renderSavePanel();
     toast(`💾 已存入檔案 ${n}`);
   } catch(e) { warn('存檔失敗。'); }
@@ -15274,6 +15556,11 @@ function saveToSlot(n) {
 
 async function loadFromSlot(n) {
   const data = getSlot(n);
+  if (!data) return;
+  await loadFromData(data);
+}
+
+async function loadFromData(data) {
   if (!data) return;
   await ensureAssetsReady();
   playLoopingAudio('sfx-page', 4.0);
@@ -15555,20 +15842,44 @@ function settingsVolume() {
 }
 
 let _outdoorWalkPlaying = false;
+let _outdoorWalkRain = false; // 記錄目前播的是否是雨天版本
 function updateOutdoorWalkSfx() {
   const outdoorScenes = ['outside', 'forest'];
   const isOutdoor = outdoorScenes.includes(G.scene);
   const eldrinWalking = isOutdoor && G.eldrin.walkTick > 0;
   const shouldPlay = !G.manualPaused && !G.paused && eldrinWalking;
-  const sfx = document.getElementById('sfx-outdoor-walk');
-  if (!sfx) return;
-  if (shouldPlay && !_outdoorWalkPlaying) {
-    sfx.volume = Math.max(0, Math.min(1, settingsVolume() * 1.0));
-    sfx.play().catch(() => {});
-    _outdoorWalkPlaying = true;
-  } else if (!shouldPlay && _outdoorWalkPlaying) {
-    sfx.pause();
+  const isRaining = G.weather === 'rain' && G.timePeriod === 'morning';
+
+  const sfxNormal = document.getElementById('sfx-outdoor-walk');
+  const sfxRain   = document.getElementById('sfx-day0-walk'); // rain-walk.mp3
+
+  if (!shouldPlay) {
+    if (_outdoorWalkPlaying) {
+      if (sfxNormal) sfxNormal.pause();
+      if (sfxRain)   sfxRain.pause();
+      _outdoorWalkPlaying = false;
+    }
+    return;
+  }
+
+  // 需要播放：若雨天/晴天切換了，先停舊的再播新的
+  if (_outdoorWalkPlaying && _outdoorWalkRain !== isRaining) {
+    if (sfxNormal) sfxNormal.pause();
+    if (sfxRain)   sfxRain.pause();
     _outdoorWalkPlaying = false;
+  }
+
+  if (!_outdoorWalkPlaying) {
+    if (isRaining && sfxRain) {
+      sfxRain.volume = Math.max(0, Math.min(1, settingsVolume() * 5.0));
+      sfxRain.currentTime = 0;
+      sfxRain.play().catch(() => {});
+    } else if (sfxNormal) {
+      sfxNormal.volume = Math.max(0, Math.min(1, settingsVolume() * 1.0));
+      sfxNormal.play().catch(() => {});
+    }
+    _outdoorWalkPlaying = true;
+    _outdoorWalkRain = isRaining;
   }
 }
 
@@ -15781,14 +16092,18 @@ function setupDay0OutsidePreviewState() {
 async function playDay0OutsideWalkThenLobby() {
   forceClearNightFade();
   await waitMs(2000);
-  playLoopingAudio('sfx-day0-walk', 1.7);
+  // 直接用 new Audio 播放，確保不受 HTML 元素狀態影響
+  const _walkSfx = new Audio('music/音效/rain-walk.mp3');
+  _walkSfx.loop = true;
+  _walkSfx.volume = Math.max(0, Math.min(1, settingsVolume() * 5.0));
+  _walkSfx.play().catch(() => {});
   await animateNpcTo(G.noah, { x: 320, y: 252 }, 3000);
-  stopAudio('sfx-day0-walk');
+  _walkSfx.pause();
+  _walkSfx.currentTime = 0;
   await waitMs(150);
   playLoopingAudio('sfx-door-open', 6.0);
   await waitMs(300);
   await fadeToBlack(500);
-  stopAudio('sfx-day0-walk');
   playLoopingAudio('sfx-day0-rain', 5.0);
   setupDay0StaticIntroState();
   renderHUD();
@@ -16089,8 +16404,8 @@ function currentPlayingBGMId() {
 
 function bgmTargetVolume(id) {
   const baseVol = Number(document.getElementById('settings-vol').value) / 100;
-  const titleMult = id === 'bgm' ? 0.6 : 1.0;
-  const endingMult = (id === 'bgm-good-ending' || id === 'bgm-reid-ending') ? 2.0 : 1.0;
+  const titleMult = id === 'bgm' ? 0.7 : 1.3;
+  const endingMult = (id === 'bgm-good-ending' || id === 'bgm-reid-ending') ? (2.5 / 1.3) : 1.0;
   const pauseMult = (G && G.manualPaused) ? 0.5 : 1.0;
   return Math.min(1, baseVol * titleMult * endingMult * pauseMult);
 }
@@ -16199,7 +16514,101 @@ function _skipEndingTypewriter() {
   document.getElementById('end-desc').textContent = fullText;
   _typewriterDone = true;
   document.getElementById('end-stats').style.display = '';
-  document.querySelector('.btn-restart').style.display = '';
+  document.getElementById('btn-ending-action').style.display = '';
+  const _titleEl = document.getElementById('end-title');
+  const _endingIsGood = _titleEl.style.display !== 'none' && _titleEl.classList.contains('end-best');
+  document.getElementById('btn-ending-restart').style.display = _endingIsGood ? '' : 'none';
+  _endBtnInitFocus();
+}
+
+function _endBtnGetVisible() {
+  return ['btn-ending-action', 'btn-ending-restart']
+    .map(id => document.getElementById(id))
+    .filter(b => b && b.style.display !== 'none');
+}
+function _endBtnMoveFocus(dir) {
+  const btns = _endBtnGetVisible();
+  if (btns.length === 0) return;
+  const cur = btns.findIndex(b => b.classList.contains('end-selected'));
+  btns.forEach(b => b.classList.remove('end-selected'));
+  const next = cur < 0 ? 0 : (cur + dir + btns.length) % btns.length;
+  btns[next].classList.add('end-selected');
+}
+function _endBtnInitFocus() {
+  const btns = _endBtnGetVisible();
+  if (btns.length > 0) btns[0].classList.add('end-selected');
+}
+
+// ══ 假存檔畫面（Reid's End 後） ══
+let _reidSaveFocus = 0; // 0-3 = slot 1-4, 4 = 關閉按鈕
+
+function openReidSaveScreen() {
+  const now = new Date();
+  const timeStr = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
+  const grid = document.getElementById('reid-save-slots-grid');
+  grid.innerHTML = '';
+  for (let i = 1; i <= 4; i++) {
+    const el = document.createElement('div');
+    el.className = 'save-slot';
+    el.id = 'reid-slot-' + i;
+    el.innerHTML = `
+      <img class="save-slot-avatar" src="red_avatar.png" alt="">
+      <div class="save-slot-num">雷德<br>檔案 ${i}</div>
+      <div class="save-slot-text">
+        <div class="save-slot-info">第 11 天<br>白天・艾德林的小屋戶外</div>
+        <div class="save-slot-date">${timeStr}</div>
+      </div>
+      <div class="save-slot-btns">
+        <button class="btn-load-slot" id="reid-load-btn-${i}" onclick="reidSaveDeny(event)">讀檔</button>
+      </div>`;
+    grid.appendChild(el);
+  }
+  _reidSaveFocus = 0;
+  reidSaveUpdateFocus();
+  document.getElementById('reid-save-overlay').style.display = 'flex';
+}
+
+function reidSaveUpdateFocus() {
+  for (let i = 1; i <= 4; i++) {
+    const slot = document.getElementById('reid-slot-' + i);
+    const btn  = document.getElementById('reid-load-btn-' + i);
+    const on = (_reidSaveFocus === i - 1);
+    if (slot) slot.classList.toggle('kbd-focus', on);
+    if (btn)  btn.classList.toggle('kbd-focus', on);
+  }
+  const closeBtn = document.querySelector('#reid-save-panel .save-panel-close-style');
+  if (closeBtn) closeBtn.classList.toggle('kbd-focus', _reidSaveFocus === 4);
+}
+
+function reidSaveMoveFocus(dir) {
+  _reidSaveFocus = Math.max(0, Math.min(4, _reidSaveFocus + dir));
+  reidSaveUpdateFocus();
+  playLoopingAudio('sfx-dialogue-next', 5.0);
+}
+
+function reidSaveConfirm() {
+  if (_reidSaveFocus === 4) { playTitleButtonSfx(); closeReidSaveScreen(); return; }
+  reidSaveDeny({ stopPropagation: () => {} });
+}
+
+function closeReidSaveScreen() {
+  document.getElementById('reid-save-overlay').style.display = 'none';
+}
+
+function reidSaveDeny(e) {
+  if (e && e.stopPropagation) e.stopPropagation();
+  playTitleButtonSfx();
+  closeReidSaveScreen();
+  showActionMenu(
+    '<div style="font-size:20px;font-weight:900;color:#e7c98c;letter-spacing:2px;">存檔鎖定</div>'
+    + '<div style="font-size:14px;font-weight:600;color:#c9b48c;margin-top:12px;line-height:1.7;letter-spacing:1px;">這份存檔由雷德擁有，無法使用。</div>',
+    []
+  );
+}
+
+function confirmRestart() {
+  if (!confirm('確定要回到遊戲初始頁嗎？\n目前的進度將不會被保留。')) return;
+  restartGame();
 }
 
 function restartGame() {
@@ -16210,10 +16619,7 @@ function restartGame() {
     const el = document.getElementById(id);
     if (el) { el.pause(); el.currentTime = 0; }
   });
-  const _hasSave = hasSave();
-  const btn = document.getElementById('title-continue-btn');
-  if (btn) btn.style.display = _hasSave ? 'block' : 'none';
-  titleScreenInitFocus(_hasSave);
+  setupTitleScreen();
   playTitleRain();
 }
 
@@ -17322,13 +17728,8 @@ document.addEventListener('mouseup', () => {
 // ══════════════════════════════════════
 loadSprites(() => { console.log('Sprites ready.'); });
 
-// 標題頁：若有存檔則顯示繼續按鈕，並初始化鍵盤焦點
-const _hasSaveOnLoad = hasSave();
-{
-  const btn = document.getElementById('title-continue-btn');
-  if (btn) btn.style.display = _hasSaveOnLoad ? 'block' : 'none';
-}
-titleScreenInitFocus(_hasSaveOnLoad);
+// 標題頁：初始化按鈕顯示與鍵盤焦點
+setupTitleScreen();
 
 // ══════════════════════════════════════
 //  全資源預載（避免進場景時一片黑、圖片一張張跑出來）
@@ -17430,7 +17831,7 @@ document.addEventListener('keydown', (e) => {
     try { localStorage.setItem(CHEAT_KEY, cheatUnlocked() ? '0' : '1'); } catch(e2) {}
     applyCheatVisibility();
     // 關閉時若游標停在被隱藏的按鈕上，移回「開始遊戲」
-    if (!cheatUnlocked() && _titleFocus === 2) { _titleFocus = 0; titleScreenUpdateFocus(_hasSaveOnLoad); }
+    if (!cheatUnlocked() && _titleFocus === 3) { _titleFocus = 0; titleScreenUpdateFocus(); }
     playLoopingAudio('sfx-title-button', 8.0);
   }
 });
