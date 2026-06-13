@@ -342,6 +342,49 @@ body {
   100% { transform: scale(1.5) translate(0px, 0px); }
 }
 #scene-wrap.dizzy { animation: dizzyShake 2.1s ease-in-out infinite; }
+/* 受到攻擊時畫面四周紅暈閃一下 */
+@keyframes damageFlash {
+  0%   { opacity: 0; }
+  25%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+#damage-vignette {
+  display: none; position: fixed; inset: 0; z-index: 20;
+  pointer-events: none;
+  box-shadow: inset 0 0 150px 75px rgba(200, 0, 0, 0.7);
+}
+#damage-vignette.flash {
+  display: block;
+  animation: damageFlash 0.45s ease-out;
+}
+/* 第一天出入口提示：半透明白色倒三角，上下浮動 */
+@keyframes entranceArrowFloat {
+  0%, 100% { transform: translate(-50%, 0); }
+  50%      { transform: translate(-50%, -7px); }
+}
+.entrance-arrow {
+  position: absolute;
+  width: 0; height: 0;
+  border-left: 6.5px solid transparent;
+  border-right: 6.5px solid transparent;
+  border-top: 9px solid rgba(255, 255, 255, 0.55);
+  transform: translate(-50%, 0);
+  animation: entranceArrowFloat 1.3s ease-in-out infinite;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.5));
+  pointer-events: none;
+}
+/* 戶外採集物件提示：黃色半透明倒三角，大小為門箭頭的一半 */
+.hint-arrow {
+  position: absolute;
+  width: 0; height: 0;
+  border-left: 3.25px solid transparent;
+  border-right: 3.25px solid transparent;
+  border-top: 4.5px solid rgba(255, 215, 40, 0.6);
+  transform: translate(-50%, 0);
+  animation: entranceArrowFloat 1.3s ease-in-out infinite;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.5));
+  pointer-events: none;
+}
 #cw-avaren { z-index: 9; }
 #cw-red    { z-index: 8; }
 #cw-winter { z-index: 8; }
@@ -912,14 +955,18 @@ body {
 .act-note {
   display: none;
   position: absolute;
-  top: 22px;
-  right: 24px;
+  top: 18px;
+  right: 20px;
   z-index: 2;
-  color: #b9965d;
-  font-size: 11px;
+  color: #e7c98c;
+  font-size: 13px;
   font-weight: 800;
   letter-spacing: 1px;
   pointer-events: none;
+  padding: 4px 10px;
+  border: 1.5px solid #c8903a;
+  border-radius: 9px 4px 8px 5px/5px 8px 4px 9px;
+  background: rgba(40, 26, 12, 0.6);
 }
 .act-list  { display: flex; flex-direction: column; gap: 7px; }
 .act-list.three-col { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; }
@@ -951,6 +998,13 @@ body {
 .act-item .a-fx   {
   font-family:'Microsoft JhengHei','PingFang TC',sans-serif; font-size: 12px; color: #6e5a2e; letter-spacing: .5px;
   border:1.5px solid #bca06a; border-radius:10px 4px 9px 4px; padding:1px 9px; white-space:nowrap; background:rgba(180,160,110,.16);
+}
+/* 上下排兩個獨立小框時，外層不再加邊框 */
+.act-item .a-fx:has(.fx-stack) { border:none; background:none; padding:0; }
+.fx-stack { display:flex; flex-direction:column; gap:6px; align-items:flex-end; text-align:right; }
+.fx-stack > span {
+  border:1.5px solid #bca06a; border-radius:10px 4px 9px 4px; padding:3px 9px;
+  background:rgba(180,160,110,.16); white-space:normal;
 }
 .act-cancel {
   margin-top: 9px; width: 100%; background: rgba(20,13,6,.5); border: 1.5px dashed #6a5028;
@@ -1136,7 +1190,7 @@ body {
 }
 .bag-desc-title { font-size: 13px; font-weight: 900; color: #f5f0e8; margin-bottom: 6px; letter-spacing: 1px; }
 .item-icon-svg { width: 1.2em; height: 1.2em; vertical-align: middle; display: inline-block; }
-.bag-desc-text  { font-size: 11px; color: #e8e0d0; line-height: 1.7; letter-spacing: .3px; margin-bottom: 8px; }
+.bag-desc-text  { font-size: 11px; color: #e8e0d0; line-height: 1.7; letter-spacing: .3px; margin-bottom: 8px; white-space: pre-line; }
 .bag-discard-btn-REMOVED {
   width: 100%; background: rgba(255,255,255,0.08); border: 1px dashed rgba(255,180,160,.4);
   color: #f0c0b0; font-family: inherit; font-size: 11px; cursor: pointer;
@@ -2785,6 +2839,7 @@ body {
 <div id="night-fade"></div>
 <div id="hp-vignette"></div>
 <div id="stamina-vignette"></div>
+<div id="damage-vignette"></div>
 <div id="sleep-dim" style="display:none;position:fixed;inset:0;background:#000;z-index:20;opacity:0;pointer-events:none;"></div>
 <div id="death-overlay" style="display:none;position:fixed;inset:0;z-index:110;background:transparent;cursor:pointer;pointer-events:auto;">
   <div id="death-text-box">
@@ -3455,6 +3510,14 @@ function triggerEldrinDamageFlash() {
   void el.offsetWidth;
   el.classList.add('damage-flash');
   setTimeout(() => el.classList.remove('damage-flash'), 380);
+  // 畫面四周紅暈閃一下
+  const dv = document.getElementById('damage-vignette');
+  if (dv) {
+    dv.classList.remove('flash');
+    void dv.offsetWidth;
+    dv.classList.add('flash');
+    setTimeout(() => dv.classList.remove('flash'), 460);
+  }
 }
 
 function updateForestFrog() {
@@ -4111,7 +4174,7 @@ const ZONES = {
     { id:'forest_mushroom_2', x1:67,  y1:170, x2:104, y2:207, interactHint:'蘑菇', condition(){ return isForestMushroomAvailable(2); }, fn(){ doAction_CollectMushroom(2); } },
     { id:'forest_mushroom_3', x1:557, y1:36,  x2:594, y2:73,  interactHint:'蘑菇', condition(){ return isForestMushroomAvailable(3); }, fn(){ doAction_CollectMushroom(3); } },
     { id:'forest_mushroom_4', x1:576, y1:278, x2:606, y2:309, interactHint:'蘑菇', condition(){ return isForestMushroomAvailable(4); }, fn(){ doAction_CollectMushroom(4); } },
-    { id:'forest_tree1',  x1:3,   y1:4,   x2:108, y2:138, interactHint:'樹木', fn(){ doAction_GatherAppleTree('tree1'); } },
+    { id:'forest_tree1',  x1:5,   y1:8,   x2:105, y2:133, interactHint:'樹木', fn(){ doAction_GatherAppleTree('tree1'); } },
     { id:'forest_tree2',  x1:5,   y1:361, x2:69,  y2:477, interactHint:'樹木', fn(){ doAction_GatherWood(); } },
     { id:'forest_tree3',  x1:556, y1:195, x2:637, y2:318, interactHint:'樹木', fn(){ doAction_GatherAppleTree('tree3'); } },
     { id:'forest_tree4',  x1:481, y1:5,   x2:634, y2:102, interactHint:'樹木', fn(){ doAction_GatherWood(); } },
@@ -4272,6 +4335,99 @@ function getActiveZone() {
     if (el.x >= z.x1 && el.x <= z.x2 && el.y >= z.y1 && el.y <= z.y2) return z;
   }
   return null;
+}
+
+// 每個出入口（門）對應的目的地場景，用來判斷是否已經走過
+const EXIT_DEST = {
+  'outside:to_lobby': 'lobby',
+  'outside:gate':     'forest',
+  'lobby:to_room':    'room',
+  'lobby:to_outside': 'outside',
+  'lobby:to_kitchen': 'kitchen',
+  'kitchen:to_lobby': 'lobby',
+  'room:to_lobby':    'lobby',
+  'forest:to_outside':'outside',
+};
+
+// 第一天：採集物件提示（黃色箭頭），互動該物件後永久消失。依場景分組
+const SCENE_HINT_ARROWS = {
+  outside: [
+    { zone:'bush1', x1:77,  y1:156, x2:93,  y2:172 },
+    { zone:'farm',  x1:90,  y1:266, x2:107, y2:283 },
+    { zone:'pond',  x1:510, y1:51,  x2:527, y2:66  },
+    { zone:'stone', x1:608, y1:269, x2:626, y2:286 },
+    { zone:'tree1', x1:100, y1:61,  x2:118, y2:80  },
+  ],
+  forest: [
+    { zone:'forest_flower5', x1:224, y1:195, x2:244, y2:214 },
+  ],
+  lobby: [
+    { zone:'save_desk', x1:173, y1:42,  x2:193, y2:64  },
+    { zone:'cabinet',   x1:242, y1:171, x2:264, y2:192 },
+  ],
+  room: [
+    { zone:'bed',       x1:445, y1:270, x2:471, y2:292 },
+    { zone:'bookshelf', x1:467, y1:66,  x2:487, y2:85  },
+    { zone:'notes',     x1:299, y1:73,  x2:319, y2:91  },
+  ],
+  kitchen: [
+    { zone:'stove', x1:297, y1:172, x2:317, y2:192 },
+  ],
+};
+const OUTSIDE_HINT_ZONES = new Set(
+  Object.values(SCENE_HINT_ARROWS).flat().map(h => h.zone)
+);
+
+// 第一天：在沒走過的出入口上方顯示半透明白色倒三角提示
+function updateEntranceArrows() {
+  let container = document.getElementById('entrance-arrows');
+  if (!container) {
+    container = document.createElement('div');
+    container.id = 'entrance-arrows';
+    container.style.cssText = 'position:absolute;inset:0;pointer-events:none;z-index:300;';
+    const wrap = document.getElementById('scene-wrap');
+    if (!wrap) return;
+    wrap.appendChild(container);
+  }
+  if (!G || G.day !== 1) {
+    if (container._sig !== 'none') { container.innerHTML = ''; container._sig = 'none'; }
+    return;
+  }
+  G.usedExits = G.usedExits || {};
+  G.usedHints = G.usedHints || {};
+  const zones = (ZONES[G.scene] || []).filter(z => {
+    if (!(z.isScene || z.id === 'gate')) return false;
+    const dest = EXIT_DEST[G.scene + ':' + z.id];
+    return dest && !G.usedExits[G.scene + '>' + dest];
+  });
+  // 採集物件提示（黃色）依場景顯示
+  const hints = (SCENE_HINT_ARROWS[G.scene] || []).filter(h => !G.usedHints[h.zone]);
+  const sig = G.scene + '|' + zones.map(z => z.id).join(',') + '|' + hints.map(h => h.zone).join(',');
+  if (container._sig === sig) return; // 沒變化就不重建，避免浮動動畫被重置
+  container._sig = sig;
+  container.innerHTML = '';
+  // 個別門的微調（X 負值往左；Y 正值往下）
+  const ARROW_OFFSET   = { 'outside:to_lobby': -3, 'outside:gate': -4 };
+  const ARROW_OFFSET_Y = { 'outside:gate': 35, 'lobby:to_outside': 25, 'room:to_lobby': 35 };
+  zones.forEach(z => {
+    const key = G.scene + ':' + z.id;
+    const cx = (z.x1 + z.x2) / 2 + (ARROW_OFFSET[key] || 0);
+    const a = document.createElement('div');
+    a.className = 'entrance-arrow';
+    a.style.left = cx + 'px';
+    a.style.top  = (Math.max(6, z.y1 - 24) + (ARROW_OFFSET_Y[key] || 0)) + 'px';
+    container.appendChild(a);
+  });
+  // 個別採集提示箭頭的垂直微調（正值往下）
+  const HINT_OFFSET_Y = { pond: 15, tree1: 15, save_desk: 15, cabinet: 15, bed: 15, bookshelf: 15, notes: 15 };
+  hints.forEach(h => {
+    const cx = (h.x1 + h.x2) / 2;
+    const a = document.createElement('div');
+    a.className = 'hint-arrow';
+    a.style.left = cx + 'px';
+    a.style.top  = (Math.max(4, h.y1 - 10) + (HINT_OFFSET_Y[h.zone] || 0)) + 'px';
+    container.appendChild(a);
+  });
 }
 
 function isNearAvaren() {
@@ -7108,6 +7264,7 @@ function initState() {
     researchActive: false, researchTimer: 0, researchReady: false, researchType: null,
     coldPotion: 0, cursePotion: 0, forgetPotion: 0, staminaPotion: 0,
     usedForgetMagic: false, moodLocked: false, bloodMoon7Happened: false,
+    usedExits: {}, usedHints: {},
     avarenStolenMoney: false, stolenMoneyFoundDay: 0, stolenMoneyCollected: 0,
     day4EventTriggered: false, day4AvarenGone: false, day4AvarenNotified: false, avarenReturnPending: false,
     introDay0Active: false,
@@ -7548,6 +7705,8 @@ function renderScene() {
   } else {
     soupObj.style.display = 'none';
   }
+  // 第一天出入口提示三角形
+  updateEntranceArrows();
 }
 
 function renderChars() {
@@ -9662,6 +9821,7 @@ document.addEventListener('keydown', e => {
     } else if (G.carryingSoup && near && G.avarenScene === G.scene) {
       openAvarenMenu();
     } else if (zone && zone.id === 'bed') {
+      if (OUTSIDE_HINT_ZONES.has('bed')) { G.usedHints = G.usedHints || {}; G.usedHints.bed = true; }
       openBedMenu();
     } else if (isAvarenUnconscious() && near) {
       if (G.day === 1 && !G.avarenDay1FirstLookSeen) {
@@ -9727,6 +9887,11 @@ document.addEventListener('keydown', e => {
     } else if (zone && zone.isScene) {
       zone.fn();
     } else if (zone && zone.interactHint) {
+      // 採集物件提示箭頭：互動過就永久消失
+      if (OUTSIDE_HINT_ZONES.has(zone.id)) {
+        G.usedHints = G.usedHints || {};
+        G.usedHints[zone.id] = true;
+      }
       zone.fn();
     } else if (zone && zone.fn) {
       zone.fn();
@@ -9965,6 +10130,11 @@ function openAvarenMenu() {
   }
   if (isAvarenUnconscious()) {
     placeAvarenUnconscious();
+    // 第一天昏迷時帶著料理靠近：跳出無法進食提示，可按取消離開
+    if (G.carryingSoup) {
+      showAvarenNoEatPopup();
+      return;
+    }
     showActionMenu('照顧阿瓦倫', [
       {
         name: '確認狀態', fx: '',
@@ -11193,6 +11363,23 @@ function doSoupInteract() {
   const selfFxParts = [];
   if (selfHunger > 0) selfFxParts.push('飽食度+' + selfHunger);
   if (selfStam > 0)   selfFxParts.push('體力+' + selfStam);
+  // 計算這道料理餵給阿瓦倫的全部功效（無食材的基本料理＝飽食度+10）
+  const ci = G.cookIngredient;
+  const avParts = [];
+  if (ci) {
+    if (ci.avarenHunger) avParts.push(`飽食度${ci.avarenHunger > 0 ? '+' : ''}${ci.avarenHunger}`);
+    if (ci.pain)         avParts.push(`疼痛${ci.pain > 0 ? '+' : ''}${ci.pain}`);
+    if (ci.curse)        avParts.push(`詛咒${ci.curse > 0 ? '+' : ''}${ci.curse}`);
+    if (ci.mood)         avParts.push(`心情${ci.mood > 0 ? '+' : ''}${ci.mood}`);
+  } else {
+    avParts.push('飽食度+10');
+  }
+  const avEffectStr = avParts.length ? avParts.join('　') : '沒什麼效果';
+  const carryFx =
+    '<div class="fx-stack">'
+    + '<span>拿起料理，可以拿去給別人或放回桌上</span>'
+    + '<span style="color:#5a4818;font-weight:800;">' + avEffectStr + '</span>'
+    + '</div>';
   showActionMenu('桌上的料理——', [
     {
       name: '自己吃', fx: '艾德林 ' + (selfFxParts.length ? selfFxParts.join('  ') : '沒什麼效果'),
@@ -11217,7 +11404,7 @@ function doSoupInteract() {
       }
     },
     {
-      name: '端起食物', fx: '拿起料理，可以拿去給別人或放回桌上',
+      name: '端起食物', fx: carryFx,
       req: () => true,
       run() {
         G.carryingSoup = true;
@@ -11440,7 +11627,7 @@ function doAction_StartResearch() {
       name: '治療藥水', fx: '藥材-2　白藥花-1',
       req: () => isEvening && G.herb >= 2 && G.whiteFlower >= 1,
       run() {
-        showSaveConfirm('製作藥水', '確定要製作\n疼痛-5（使用後）\n的藥水嗎？', () => {
+        showSaveConfirm('製作藥水', '確定要製作\n疼痛-5（使用後）\n（自己喝可恢復HP5）\n的藥水嗎？', () => {
           playLoopingAudio('sfx-potion-bottle', 0.8);
           spendFatigue(2);
           chg('herb', -2); chg('whiteFlower', -1);
@@ -12146,7 +12333,7 @@ const BAG_ITEMS = [
   { key:'beastMeat',       icon:'🥩', name:'獸肉',       desc:'從野獸身上取得的肉塊。熱量高，能補充體力。' },
   { key:'monsterMaterial', icon:'🦴', name:'魔物素材',   desc:'從魔物身上取得的材料。蘊含異常的能量，用途特殊。' },
   { key:'fairyItem',       icon:'<img src="Fairy-01.svg" class="item-icon-svg">', name:'妖精物品',   desc:'妖精留下的神秘東西。看起來毫無用處，但總覺得丟掉不太好。' },
-  { key:'coldPotion',      icon:'<img src="Medicine_red.svg" class="item-icon-svg">',   name:'治療藥水',   desc:'能緩解阿瓦倫身體疼痛的藥水。需要時間研製。' },
+  { key:'coldPotion',      icon:'<img src="Medicine_red.svg" class="item-icon-svg">',   name:'治療藥水',   desc:'能緩解阿瓦倫身體疼痛的藥水（疼痛-5）。\n艾德林自己喝下時，則能恢復 HP（+5）。需要時間研製。' },
   { key:'cursePotion',     icon:'<img src="Medicine_yellow.svg" class="item-icon-svg">', name:'解咒藥水',   desc:'針對詛咒調配的特殊藥水，可以暫時壓制黑霧擴散。' },
   { key:'forgetPotion',    icon:'<img src="Medicine_blue.svg" class="item-icon-svg">', name:'忘卻藥水',   desc:'能抹去特定記憶的危險藥水。一旦使用，無法回頭。' },
   { key:'staminaPotion',   icon:'<img src="Medicine_green.svg" class="item-icon-svg">', name:'體力藥水',   desc:'能恢復體力的營養藥水。疲憊的時候喝一瓶，精神會好很多。' },
@@ -12544,7 +12731,8 @@ function toast(text) {
   setTimeout(() => el.remove(), 3000);
   // 文字含「+數字」時，在人物頭頂彈出第一個圖示（可能是 emoji 或 <img>）
   if (/\+\d/.test(text) && G && G.eldrin) {
-    const m = text.match(/^\s*(<img\b[^>]*>|\S)/);
+    // 抓第一個圖示：可能是 <img> 標籤、完整的表情符號（含變體選擇符），或單一字元
+    const m = text.match(/^\s*(<img\b[^>]*>|\p{Extended_Pictographic}️?|\S)/u);
     popupItem(m ? m[1] : '');
   }
 }
@@ -12676,6 +12864,9 @@ function changeScene(to, startOverride) {
   }
   G.sceneTransitioning = true;
   G.paused = true;
+  // 記錄走過的出入口（第一天教學三角形：走過就不再出現）
+  G.usedExits = G.usedExits || {};
+  G.usedExits[G.scene + '>' + to] = true;
   stopSteam();
   const indoorSceneChange = ['lobby', 'kitchen', 'room'].includes(G.scene) || ['lobby', 'kitchen', 'room'].includes(to);
   if (!indoorSceneChange) SFX.scene();
@@ -13793,7 +13984,21 @@ function openJumpDayMenu() {
   showActionMenu('🌙 跳到哪一天？', items);
 }
 
+function showAvarenNoEatPopup() {
+  playLoopingAudio('sfx-button', 3.0);
+  showActionMenu(
+    '<div style="font-size:20px;font-weight:900;color:#e7c98c;letter-spacing:2px;">無法進食</div>'
+    + '<div style="font-size:14px;font-weight:600;color:#c9b48c;margin-top:12px;line-height:1.7;letter-spacing:1px;">阿瓦倫還在昏迷中，無法進食。<br>還是先製作治療藥水和解咒藥水吧。</div>',
+    []
+  );
+}
+
 function openBedMenu() {
+  // 昏迷時（第一天）帶著料理靠近床邊：直接跳出無法進食提示
+  if (G.carryingSoup && isAvarenUnconscious()) {
+    showAvarenNoEatPopup();
+    return;
+  }
   showActionMenu('床邊', [
     {
       name: '入睡',
