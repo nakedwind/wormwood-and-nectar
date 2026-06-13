@@ -6108,19 +6108,12 @@ function openWinterMenu() {
   const items = [];
   const reidActuallyInForest = isReidInForestToday();
   const runWinterTalk = () => {
-    if (reidActuallyInForest && G.day === 5 && !G.winterReidMeetSeen) {
-      G.winterReidMeetSeen = true;
-      startActionScene(WINTER_REID_MEET_STORY, 400, () => {});
-      return;
-    }
-    if (reidActuallyInForest && G.day === 6 && !G.winterReidMeetDay6Seen) {
-      G.winterReidMeetDay6Seen = true;
-      startActionScene(WINTER_REID_MEET_DAY6_STORY, 400, () => {});
-      return;
-    }
-    if (reidActuallyInForest && G.day === 7 && !G.winterReidMeetDay7Seen) {
-      G.winterReidMeetDay7Seen = true;
-      startActionScene(WINTER_REID_MEET_DAY7_STORY, 400, () => {});
+    // 溫特與雷德相遇：依「實際第幾次見面」順序播放，而非綁定日期
+    const WINTER_MEET_STORIES = [WINTER_REID_MEET_STORY, WINTER_REID_MEET_DAY6_STORY, WINTER_REID_MEET_DAY7_STORY];
+    const _wStage = G.winterReidMeetStage || 0;
+    if (reidActuallyInForest && _wStage < WINTER_MEET_STORIES.length) {
+      G.winterReidMeetStage = _wStage + 1;
+      startActionScene(WINTER_MEET_STORIES[_wStage], 400, () => {});
       return;
     }
     runWinterChat();
@@ -7381,6 +7374,7 @@ let G = {};
 let raf = null;
 
 function initState() {
+  _eldrinDeathTriggered = false; // 重設「已倒下」旗標，否則重新開始後 HP 歸零不會再觸發倒下
   G = {
     day: 1, maxDays: 11,
     scene: 'outside',
@@ -7493,6 +7487,10 @@ function initState() {
     reidWinterMeetDay6Seen: false,
     reidWinterMeetDay7Seen: false,
     reidWinterMeetStage: 0,
+    winterReidMeetSeen: false,
+    winterReidMeetDay6Seen: false,
+    winterReidMeetDay7Seen: false,
+    winterReidMeetStage: 0,
     reidSlayPendingWalk: false,
     reidSlayFollowDelay: 0,
     reidSlayWalkPhase: 0,
@@ -8060,8 +8058,14 @@ function renderChars() {
   // ── Noah bubble ──
   const noahBub = document.getElementById('noah-bubble');
   if (noahVisible && noah.bubbleTimer > 0 && !isDlgBlocking()) {
-    // 每 7 個字換行
-    noahBub.textContent   = noah.bubbleText.replace(/(.{7})/g, '$1\n').replace(/\n$/, '');
+    // 第8天每 7 個字換行；其他天（第2天）維持單行不換行
+    if (G.day === 8) {
+      noahBub.style.whiteSpace = 'pre-line';
+      noahBub.textContent = noah.bubbleText.replace(/(.{7})/g, '$1\n').replace(/\n$/, '');
+    } else {
+      noahBub.style.whiteSpace = 'nowrap';
+      noahBub.textContent = noah.bubbleText;
+    }
     noahBub.style.display = 'block';
     noahBub.style.left    = noahDrawX + 'px';
     noahBub.style.top     = (noahDrawY - dispH - 40) + 'px';
@@ -10000,6 +10004,7 @@ document.addEventListener('keydown', e => {
       return;
     }
     if (e.key === 'Escape') { e.preventDefault(); closeBag(); return; }
+    if (e.key === 'e' || e.key === 'E') { e.preventDefault(); closeBag(); return; }
     return;
   }
 
@@ -11245,6 +11250,25 @@ function confirmSell() {
 }
 
 function confirmBuy() {
+  // 先檢查背包裝不裝得下，裝不下就跳彈窗、不扣錢
+  const bought = {};
+  (G.dailyBuyList || []).forEach(item => {
+    const qty = _tradeSelBuy[item.id] || 0;
+    if (qty > 0 && BAG_ITEM_KEYS.has(item.id)) bought[item.id] = (bought[item.id] || 0) + qty;
+  });
+  if (Object.keys(bought).length > 0) {
+    let usedSlots = 0;
+    [...BAG_ITEM_KEYS].forEach(k => {
+      const q = (G[k] || 0) + (bought[k] || 0);
+      if (q > 0) usedSlots += Math.ceil(q / BAG_MAX_STACK);
+    });
+    if (usedSlots > BAG_SLOTS) {
+      showEvent('🎒', '背包已滿',
+        '背包空間不足，沒辦法買下這些東西。\n先回去清出一些空間再來吧。',
+        () => { G.paused = true; }, 'blue'); // 關掉彈窗後維持商店暫停
+      return; // 不扣錢、不購買
+    }
+  }
   let total = 0;
   (G.dailyBuyList || []).forEach(item => {
     const qty = _tradeSelBuy[item.id] || 0;
@@ -12046,7 +12070,7 @@ const ELDRIN_HERB_NOTES = [
     ] },
   { name: '<img src="mushroom.png" class="item-icon-svg"> 藍色蘑菇',
     lines: [
-      '森林裡偶爾會長出帶著藍色斑紋的蘑菇。直接吃有毒，會讓身體發熱、疼痛加劇，最好不要碰。',
+      '夜晚的森林裡偶爾會長出帶著藍色斑紋的蘑菇。直接吃有毒，疼痛加劇，最好不要碰。',
       '但若經過處理，毒性反而能轉成溫和的藥力。做成藥劑以後，是很適合補充體力的材料。',
     ] },
   { name: '🧚 妖精與白藥花',
@@ -15655,6 +15679,9 @@ async function loadFromData(data) {
     if (G.winterReidMeetSeen == null) G.winterReidMeetSeen = false;
     if (G.winterReidMeetDay6Seen == null) G.winterReidMeetDay6Seen = false;
     if (G.winterReidMeetDay7Seen == null) G.winterReidMeetDay7Seen = false;
+    if (G.winterReidMeetStage == null) {
+      G.winterReidMeetStage = G.winterReidMeetDay7Seen ? 3 : G.winterReidMeetDay6Seen ? 2 : G.winterReidMeetSeen ? 1 : 0;
+    }
     if (G.winterDay8FairyHintSeen == null) G.winterDay8FairyHintSeen = false;
     if (G.winterChat4_1Seen == null) G.winterChat4_1Seen = false;
     if (G.winterChat4_2Seen == null) G.winterChat4_2Seen = false;
@@ -16197,13 +16224,26 @@ async function playDay0EldrinStudyScene() {
   await beginDay1AfterStaticIntro();
 }
 
+// 第0天→第1天：保留玩家在第0天累積的背包（藥水、素材、金錢、食物等）
+function _snapshotDay0Inventory() {
+  const keys = ['money', 'food', ...BAG_ITEM_KEYS];
+  const snap = {};
+  keys.forEach(k => { snap[k] = G[k]; });
+  return snap;
+}
+function _restoreDay0Inventory(snap) {
+  for (const k in snap) { if (snap[k] != null) G[k] = snap[k]; }
+}
+
 async function beginDay1AfterStaticIntro() {
   await fadeToBlack(2000);
   stopDay0IntroSfx();
   storyQueue.length = 0;
   if (_storyAutoTimer) { clearTimeout(_storyAutoTimer); _storyAutoTimer = null; }
   clearDialogueTypewriter();
+  const _day0Inv = _snapshotDay0Inventory();
   initState();
+  _restoreDay0Inventory(_day0Inv);
   G.day = 1;
   G.scene = 'outside';
   G.timePeriod = 'morning';
@@ -16229,7 +16269,9 @@ async function finishDay0IntroToDay1() {
   storyQueue.length = 0;
   if (_storyAutoTimer) { clearTimeout(_storyAutoTimer); _storyAutoTimer = null; }
   clearDialogueTypewriter();
+  const _day0Inv = _snapshotDay0Inventory();
   initState();
+  _restoreDay0Inventory(_day0Inv);
   G.day = 1;
   G.scene = 'outside';
   G.timePeriod = 'morning';
