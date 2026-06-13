@@ -27,6 +27,22 @@ body {
   background: radial-gradient(ellipse at 60% 45%, #1a1109 0%, #0c0703 70%, #070502 100%);
   box-shadow: 0 0 0 2px #271a0c, 0 0 0 5px #0c0804, 0 0 0 6px #3a2811, 0 18px 60px rgba(0,0,0,.6);
 }
+#asset-loading-overlay {
+  display: none; position: fixed; inset: 0; z-index: 3000;
+  background: radial-gradient(ellipse at center, #1a1008 0%, #080502 100%);
+  flex-direction: column; align-items: center; justify-content: center;
+  font-family: 'Noto Sans TC', sans-serif; color: #d8b878; gap: 16px;
+}
+#asset-loading-overlay .alo-title { font-size: 16px; letter-spacing: 4px; font-weight: 700; }
+#asset-loading-overlay .alo-bar-bg {
+  width: 260px; height: 8px; background: #1a120a;
+  border: 1px solid #3a2811; border-radius: 5px; overflow: hidden;
+}
+#asset-loading-overlay .alo-bar {
+  height: 100%; width: 0%; background: linear-gradient(90deg,#6a4818,#c8903a);
+  transition: width 0.2s ease;
+}
+#asset-loading-overlay .alo-pct { font-size: 12px; color: #a08850; letter-spacing: 2px; }
 #title-cover-art { position:absolute; top:0; right:0; width:702px; height:100%; overflow:hidden; }
 #title-cover { width:100%; height:100%; object-fit:cover; object-position:50% 42%; image-rendering:pixelated; display:block; }
 #title-cover-art::after{
@@ -564,6 +580,19 @@ body {
   animation: toastIn 0.3s ease, toastOut 0.6s ease 4.4s forwards;
 }
 .toast-rain::before { content: '🌧'; font-size: 13px; flex-shrink: 0; }
+.toast-bagfull {
+  background: rgba(26,10,8,0.93); border: 1px solid #a05030;
+  color: #f5c0a0; font-size: 11px; font-weight: 700;
+  padding: 6px 12px 6px 9px; letter-spacing: 1px; border-radius: 6px;
+  display: flex; align-items: center; gap: 5px; max-width: 230px; line-height: 1.45;
+  animation: toastIn 0.3s ease, toastOut 0.6s ease 3.4s forwards;
+}
+.toast-bagfull::before { content: '🎒'; font-size: 13px; flex-shrink: 0; }
+/* 白藥花自訂圖示（取代 🌼 emoji） */
+.wf-icon {
+  width: 1.15em; height: 1.15em; vertical-align: -0.25em;
+  display: inline-block; object-fit: contain;
+}
 @keyframes toastIn  { from{ opacity:0; transform:translateY(-6px); } to{ opacity:1; transform:translateY(0); } }
 @keyframes toastOut { from{ opacity:1; } to{ opacity:0; } }
 
@@ -2143,6 +2172,13 @@ body {
 
 </audio>
 
+<!-- ══ 資源載入畫面 ══ -->
+<div id="asset-loading-overlay">
+  <div class="alo-title">載入中…</div>
+  <div class="alo-bar-bg"><div class="alo-bar" id="alo-bar"></div></div>
+  <div class="alo-pct" id="alo-pct">0%</div>
+</div>
+
 <!-- ══ TITLE ══ -->
 <div id="title-screen">
     <div id="title-cover-art"><img id="title-cover" src="Game cover.png" alt="Wormwood & Dew"></div>
@@ -2550,7 +2586,7 @@ body {
           <div class="res-item">🐟 魚   <b id="r-fish">0</b></div>
           <div class="res-item">🪨 礦石 <b id="r-stone">0</b></div>
           <div class="res-item"><img src="Fairy-01.svg" class="item-icon-svg"> 妖精 <b id="r-fairy">0</b></div>
-          <div class="res-item">🌼 白藥花 <b id="r-white-flower">0</b></div>
+          <div class="res-item"><img src="white-flower.svg" class="wf-icon" alt=""> 白藥花 <b id="r-white-flower">0</b></div>
           <div class="res-item">🍎 蘋果 <b id="r-apple">0</b></div>
           <div class="res-item">🥦 蔬菜 <b id="r-vegetable">0</b></div>
           <div class="res-item">🍄 蘑菇 <b id="r-mushroom">0</b></div>
@@ -2740,6 +2776,8 @@ body {
 // ══════════════════════════════════════
 //  CONSTANTS
 // ══════════════════════════════════════
+// 白藥花自訂圖示（取代 🌼 emoji），用於各 innerHTML 渲染處
+const WF_ICON = '<img src="white-flower.svg" class="wf-icon" alt="白藥花">';
 const SCENE_W = 640, SCENE_H = 480;
 const CHAR_H  = 90;
 const SPEED   = 3;
@@ -7286,6 +7324,10 @@ function renderHUD() {
 const BG_DAY   = { outside:'bg_outside.png',       lobby:'bg_lobby.png',       room:'bg_room.png',       kitchen:'bg_kitchen.png',       forest:'bg_forest.png' };
 const BG_DAY_RAIN = { lobby:'bg_lobby-rain.png', room:'bg_room-rain.png', kitchen:'bg_kitchen-rain.png' };
 const BG_NIGHT = { outside:'bg_outside_night.png', lobby:'bg_lobby - night/bg_lobby_night.png', room:'bg_room_night.png', kitchen:'bg_kitchen_night.png', forest:'bg_forest_night.png' };
+// 預先載入背景圖（含室內雨天版），避免天氣切換時還要向伺服器抓圖造成閃爍
+const _preloadedBgs = [];
+[...Object.values(BG_DAY), ...Object.values(BG_DAY_RAIN), ...Object.values(BG_NIGHT), 'bg_room_night-rain.png']
+  .forEach(src => { const img = new Image(); img.src = src; _preloadedBgs.push(img); });
 
 function doNightFade(cb) {
   const el = document.getElementById('night-fade');
@@ -7367,7 +7409,7 @@ function renderScene() {
   document.getElementById('fish-scene-wrap').style.display =
     (G.scene === 'outside' && (G.fishFishing || G.fishReady)) ? 'block' : 'none';
   document.getElementById('fish-forest-wrap').style.display =
-    (G.scene === 'forest' && (G.forestFishFishing || G.forestFishReady)) ? 'block' : 'none';
+    (G.scene === 'forest' && (G.forestFishFishing || G.forestFishReady) && !G.bloodMoon7Active) ? 'block' : 'none';
   document.getElementById('research-scene-wrap').style.display =
     (G.scene === 'lobby' && (G.researchActive || G.researchReady)) ? 'block' : 'none';
   const potionEl2  = document.getElementById('lobby-potion');
@@ -8160,9 +8202,9 @@ function gameLoop() {
       }
     });
   }
-  if (G.day !== 0 && !G.manualPaused && !G.dayEndTriggered && !G.sleepResolving && _elapsed >= DAY_REAL_SECONDS) {
+  if (G.day !== 0 && !G.manualPaused && !G.dayEndTriggered && !G.sleepResolving && !G.bloodMoon7Active && _elapsed >= DAY_REAL_SECONDS) {
+    // 血月特殊天由血月流程自行結束，不在此處觸發力竭而眠（且絕不可在此 return 而不重排 raf，否則迴圈會停掉）
     G.dayEndTriggered = true;
-    if (G.bloodMoon7Active) return; // 血月特殊天，由血月流程自行結束，不顯示力竭而眠
     G.paused = true;
     cancelAnimationFrame(raf);
     applyBGMForState();
@@ -8249,6 +8291,19 @@ function gameLoop() {
     const nudge = 4;
     if      (!isPlayerObstacleAt(el.x - nudge, ny, -nudge, dy)) { el.x -= nudge; el.y = ny; }
     else if (!isPlayerObstacleAt(el.x + nudge, ny, nudge, dy)) { el.x += nudge; el.y = ny; }
+  }
+
+  // ── 防卡死自救：若玩家錨點落在硬障礙內，自動推往最近的可行走位置 ──
+  if (isObstacleAt(el.x, el.y)) {
+    let ejected = false;
+    for (let r = 6; r <= 140 && !ejected; r += 6) {
+      for (const a of [0, 45, 90, 135, 180, 225, 270, 315]) {
+        const rad = a * Math.PI / 180;
+        const tx = Math.max(30, Math.min(SCENE_W - 30, el.x + Math.cos(rad) * r));
+        const ty = Math.max(minY, Math.min(SCENE_H - 10, el.y + Math.sin(rad) * r));
+        if (!isObstacleAt(tx, ty)) { el.x = tx; el.y = ty; ejected = true; break; }
+      }
+    }
   }
 
   if      (dx < 0) el.pose = 'sideL';
@@ -8456,8 +8511,8 @@ function gameLoop() {
     }
   }
 
-  // Avaren following + wandering（血月期間、血月隔天白天、對話中跳過移動）
-  const bloodMoonAfterMorning = G.day === 10 && G.timePeriod === 'morning';
+  // Avaren following + wandering（血月當天白天、血月期間、血月隔天白天、對話中跳過移動）
+  const bloodMoonAfterMorning = (G.day === 9 || G.day === 10) && G.timePeriod === 'morning';
   if (isDlgBlocking() && G.avarenScene === G.scene) {
     // 對話中：阿瓦倫面向艾德林，不移動
     const av = G.avaren;
@@ -9200,6 +9255,8 @@ function gameLoop() {
       G.forestFishReady = true;
       setForestFishingVisual('ready');
       syncForestFishingUI();
+      // 血月期間阿瓦倫站在湖邊，提示會蓋到他的臉，先隱藏（血月結束後 renderScene 會再顯示）
+      if (G.bloodMoon7Active) document.getElementById('fish-forest-wrap').style.display = 'none';
       toast('🎣 漁獲完成！回湖邊收取');
     }
   }
@@ -9268,7 +9325,7 @@ function gameLoop() {
     } else if (G.avarenScene === G.scene) {
       G.autoSpeakTimer--;
       if (G.autoSpeakTimer <= 0) {
-        G.bubbleText = (G.day === 10 && G.timePeriod === 'morning')
+        G.bubbleText = ((G.day === 9 || G.day === 10) && G.timePeriod === 'morning')
           ? pick(AVAREN_DAY7_DLG)
           : G.moodLocked ? pick(AVAREN_BETRAYAL_DLG) : getAvarenDlg();
         G.bubbleTimer = 300;
@@ -10050,7 +10107,7 @@ function startGatherSearch(label, cb) {
   G.gatherSearchTimer = GATHER_SEARCH_MAX;
   G.gatherSearchCb = cb;
   const gsWrap = document.getElementById('gather-search-wrap');
-  document.getElementById('gather-search-label').textContent = label;
+  document.getElementById('gather-search-label').innerHTML = label;
   document.getElementById('gather-search-bar').style.width = '0%';
   gsWrap.style.left = Math.round(G.eldrin.x - 62) + 'px';
   gsWrap.style.top  = Math.round(G.eldrin.y - sceneCharH() - 40) + 'px';
@@ -10143,14 +10200,14 @@ function doAction_GatherFlower() {
   if (G.gatherSearchActive) return;
   spendFatigue(1);
   playLoopingAudio('sfx-gather-bush', 1.5);
-  startGatherSearch('🌼 搜索中…', () => {
+  startGatherSearch(WF_ICON + ' 搜索中…', () => {
     const roll = Math.random();
     if (roll < 0.10) {
       chg('herb', 1); renderHUD();
       playLoopingAudio('sfx-item-get', 3.0); toast('🌿 藥材 +1');
     } else if (roll < 0.60) {
       chg('whiteFlower', 1); renderHUD();
-      playLoopingAudio('sfx-item-get', 3.0); toast('🌼 白藥花 +1');
+      playLoopingAudio('sfx-item-get', 3.0); toast(WF_ICON + ' 白藥花 +1');
     } else if (roll < 0.95) {
       chg('bug', 1); renderHUD();
       playLoopingAudio('sfx-item-get', 3.0); toast('🐛 蟲材 +1');
@@ -10483,7 +10540,7 @@ const TRADE_SELL = [
   { id:'mushroom',        icon:'🍄', name:'蘑菇',     price:3  },
   { id:'egg',             icon:'🥚', name:'鳥蛋',     price:3  },
   { id:'frog',            icon:'🐸', name:'青蛙',     price:3  },
-  { id:'whiteFlower',     icon:'🌼', name:'白藥花',   price:4  },
+  { id:'whiteFlower',     icon:WF_ICON, name:'白藥花',   price:4  },
   { id:'fairyItem',       icon:'<img src="Fairy-01.svg" class="item-icon-svg">', name:'妖精',     price:10 },
   { id:'beastMeat',       icon:'🥩', name:'獸肉',     price:5  },
   { id:'monsterMaterial', icon:'🦴', name:'魔物素材', price:8  },
@@ -10504,7 +10561,7 @@ const TRADE_BUY = [
   { id:'mushroom',    icon:'🍄', name:'蘑菇',     price:5  },
   { id:'egg',         icon:'🥚', name:'鳥蛋',     price:5  },
   { id:'frog',        icon:'🐸', name:'青蛙',     price:5  },
-  { id:'whiteFlower', icon:'🌼', name:'白藥花',   price:7  },
+  { id:'whiteFlower', icon:WF_ICON, name:'白藥花',   price:7  },
   { id:'beastMeat',   icon:'🥩', name:'獸肉',     price:8  },
 ];
 
@@ -10803,7 +10860,7 @@ const COOK_INGREDIENTS_LIST = [
   { key: 'herb',            name: '藥材',   icon: '🌿', fx: '飽食度+2  疼痛-3',          effects: { avarenHunger: 2, pain: -3 },           stam: 8 },
   { key: 'fish',            name: '魚',     icon: '🐟', fx: '飽食度+15',                 effects: { avarenHunger: 15 },                     stam: 15 },
   { key: 'bug',             name: '蟲材',   icon: '🐛', fx: '飽食度+2  疼痛-2  心情-2', effects: { avarenHunger: 2, pain: -2, mood: -2 }, stam: 3 },
-  { key: 'whiteFlower',     name: '白藥花', icon: '🌼', fx: '飽食度+2  詛咒-2',         effects: { avarenHunger: 2, curse: -2 },          stam: 6 },
+  { key: 'whiteFlower',     name: '白藥花', icon: WF_ICON, fx: '飽食度+2  詛咒-2',         effects: { avarenHunger: 2, curse: -2 },          stam: 6 },
   { key: 'apple',           name: '蘋果',   icon: '🍎', fx: '飽食度+5  心情+1',         effects: { avarenHunger: 5, mood: 1 },            stam: 5 },
   { key: 'fairyItem',       name: '妖精',   icon: '🧚', fx: '飽食度+2  詛咒-40',        effects: { avarenHunger: 2, curse: -40 },         stam: 30 },
   { key: 'vegetable',       name: '蔬菜',   icon: '🥬', fx: '飽食度+10  心情+1',        effects: { avarenHunger: 10, mood: 1 },           stam: 15 },
@@ -11105,11 +11162,14 @@ function doSoupInteract() {
         if (selfStam > 0)   chg('eldrinFatigue', selfStam);
         renderHUD();
         playLoopingAudio('sfx-eat', 3.0);
-        storyAuto('旁白', pick([
+        // 阿瓦倫在旁邊時，不講「一個人吃飯」那句
+        const avarenNearby = !isAvarenUnconscious() && G.avarenScene === G.scene && !G.day4AvarenGone;
+        const eatLines = [
           '你獨自吃完了這碗湯。味道不錯，肚子暖了起來。',
-          '你坐下來把湯喝完。一個人吃飯，安靜得有點奇怪。',
           '湯還是熱的。你一口一口喝完，覺得好一些了。',
-        ]));
+        ];
+        if (!avarenNearby) eatLines.push('你坐下來把湯喝完。一個人吃飯，安靜得有點奇怪。');
+        storyAuto('旁白', pick(eatLines));
       }
     },
     {
@@ -11752,6 +11812,13 @@ const SPEAKER_AVATARS = {
   '諾亞': 'noah_avatar.png',
   '希奧妮': 'Theonie_avatar.png',
 };
+// 預先載入所有對話頭像，避免首次顯示時還要向伺服器抓圖造成閃爍
+const _preloadedAvatars = [];
+[...new Set(Object.values(SPEAKER_AVATARS))].forEach(src => {
+  const img = new Image();
+  img.src = src;
+  _preloadedAvatars.push(img); // 保留參考避免被垃圾回收
+});
 const SPEAKER_TEXT_CLASS = {
   '你': 'asc-text-eldrin',
   '艾德林': 'asc-text-eldrin',
@@ -11835,10 +11902,15 @@ function applySpeakerPortrait(speaker, portraitEl) {
   const src = SPEAKER_AVATARS[speaker];
   if (!src) {
     portraitEl.style.display = 'none';
+    portraitEl.dataset.cur = '';
     portraitEl.removeAttribute('src');
     return;
   }
-  portraitEl.src = src;
+  // 只有頭像真的換了才重新指定 src，避免同一說話者連續台詞時重新載入造成閃爍
+  if (portraitEl.dataset.cur !== src) {
+    portraitEl.src = src;
+    portraitEl.dataset.cur = src;
+  }
   portraitEl.alt = speaker;
   portraitEl.style.display = 'block';
 }
@@ -12018,7 +12090,7 @@ const BAG_ITEMS = [
   { key:'branch',          icon:'🪾', name:'樹枝',       desc:'細小的樹枝，有時可以入藥，也能當引火用。' },
   { key:'stone',           icon:'🪨', name:'礦石',       desc:'從礦脈敲下的石塊，某些石材對詛咒有抑制效果。' },
   { key:'crystal',         icon:'💎', name:'水晶',       desc:'蘊含微弱魔力的天然水晶，是高階藥水的材料之一。' },
-  { key:'whiteFlower',     icon:'🌼', name:'白藥花',     desc:'開在森林深處的稀有花卉。對魔物有安撫效果。' },
+  { key:'whiteFlower',     icon:WF_ICON, name:'白藥花',     desc:'開在森林深處的稀有花卉。對魔物有安撫效果。' },
   { key:'apple',           icon:'🍎', name:'蘋果',       desc:'酸甜的果實，可以直接食用，也能入菜。' },
   { key:'vegetable',       icon:'🥬', name:'蔬菜',       desc:'從田裡收穫的新鮮蔬菜，烹飪時不可或缺。' },
   { key:'mushroom',        icon:'🍄', name:'蘑菇',       desc:'森林裡的野生菇類。種類繁多，有些能入藥，有些……不能。' },
@@ -12412,7 +12484,7 @@ function popupItem(icon) {
   if (!G || !G.eldrin) return;
   const el = document.createElement('div');
   el.className = 'item-popup';
-  el.textContent = icon;
+  el.innerHTML = icon; // 支援 emoji 或 <img> 圖示
   el.style.left = G.eldrin.x + 'px';
   el.style.top  = (G.eldrin.y - sceneCharH() - 50) + 'px';
   document.getElementById('scene-wrap').appendChild(el);
@@ -12423,13 +12495,28 @@ function toast(text) {
   const wrap = document.getElementById('toast-wrap');
   const el = document.createElement('div');
   el.className = 'toast-msg';
-  el.textContent = text;
+  el.innerHTML = text; // 支援內嵌 <img> 圖示
   wrap.appendChild(el);
   setTimeout(() => el.remove(), 3000);
-  // 文字含「+數字」時，在人物頭頂彈出第一個表情圖示
+  // 文字含「+數字」時，在人物頭頂彈出第一個圖示（可能是 emoji 或 <img>）
   if (/\+\d/.test(text) && G && G.eldrin) {
-    popupItem([...text][0]);
+    const m = text.match(/^\s*(<img\b[^>]*>|\S)/);
+    popupItem(m ? m[1] : '');
   }
+}
+
+let _bagFullToastUntil = 0;
+function toastBagFull() {
+  const now = performance.now();
+  if (now < _bagFullToastUntil) return; // 防止短時間內連續彈出
+  _bagFullToastUntil = now + 2500;
+  const wrap = document.getElementById('toast-wrap');
+  if (!wrap) return;
+  const el = document.createElement('div');
+  el.className = 'toast-bagfull';
+  el.textContent = '背包已滿！';
+  wrap.appendChild(el);
+  setTimeout(() => el.remove(), 4000);
 }
 
 function warn(msg) {
@@ -12478,7 +12565,7 @@ function pingStatEl(stat) {
 }
 
 function chg(stat, d) {
-  if (d > 0 && isBagFull(stat, d)) { warn('背包已滿，無法取得新物品！'); return; }
+  if (d > 0 && isBagFull(stat, d)) { warn('背包已滿，無法取得新物品！'); toastBagFull(); return; }
   if (stat === 'mood' && d > 0 && G.moodLocked) return; // 血月壞結局後心情鎖定
   if (stat === 'mood' && d !== 0) showHeart(d > 0 ? '❤' : '💔');
   if (d > 0 && STAT_EL_MAP[stat]) pingStatEl(stat); // 取得物品時彈跳提示
@@ -12830,7 +12917,10 @@ function playNightResearchAnimation(onComplete) {
     fade.style.opacity = '0';
     setTimeout(() => {
       fade.style.display = 'none';
-      NARR_NIGHT_RESEARCH.slice(0, 3).forEach(text => storyAutoFast('旁白', text));
+      [
+        '…你拖著一身的疲憊坐下來，翻開一本又一本關於詛咒的古籍，一行一行地看。',
+        '燭火在眼前搖曳。字句開始變得模糊。你的眼皮越來越沉，可是你的手，不願停下來。',
+      ].forEach(text => storyAutoFast('旁白', text));
       setTimeout(() => {
         dim.style.display = 'block';
         dim.style.opacity = '0';
@@ -13075,7 +13165,7 @@ const DEBUG_ITEM_LIST = [
   { key: 'fish',            name: '🐟 魚' },
   { key: 'stone',           name: '🪨 礦石' },
   { key: 'fairyItem',       name: '🧚 妖精' },
-  { key: 'whiteFlower',     name: '🌼 白藥花' },
+  { key: 'whiteFlower',     name: WF_ICON + ' 白藥花' },
   { key: 'apple',           name: '🍎 蘋果' },
   { key: 'vegetable',       name: '🥬 蔬菜' },
   { key: 'mushroom',        name: '🍄 蘑菇' },
@@ -14877,9 +14967,10 @@ function saveToSlot(n) {
   } catch(e) { warn('存檔失敗。'); }
 }
 
-function loadFromSlot(n) {
+async function loadFromSlot(n) {
   const data = getSlot(n);
   if (!data) return;
+  await ensureAssetsReady();
   playLoopingAudio('sfx-page', 4.0);
   closeSavePanel();
   const fade = document.getElementById('night-fade');
@@ -15589,6 +15680,7 @@ async function playDay0OpeningIntro() {
 }
 
 async function skipToDay1() {
+  await ensureAssetsReady();
   initState();
   document.getElementById('title-screen').style.display = 'none';
   document.getElementById('game-screen').style.display  = 'block';
@@ -15605,6 +15697,7 @@ async function skipToDay1() {
 }
 
 async function startGame() {
+  await ensureAssetsReady();
   zeRestoreSaved(); // 套用之前用區域編輯器儲存的座標
   initState();
   setupDay0OutsidePreviewState();
@@ -16922,6 +17015,62 @@ const _hasSaveOnLoad = hasSave();
   if (btn) btn.style.display = _hasSaveOnLoad ? 'block' : 'none';
 }
 titleScreenInitFocus(_hasSaveOnLoad);
+
+// ══════════════════════════════════════
+//  全資源預載（避免進場景時一片黑、圖片一張張跑出來）
+// ══════════════════════════════════════
+const _preloadKeep = [];
+window._assetsReady = false;
+const _assetsReadyPromise = (() => {
+  const urls = new Set();
+  // 1. 頁面上所有 <img> 的圖（場景物件、樹、房子、頭像、封面…）
+  document.querySelectorAll('img[src]').forEach(im => {
+    const s = im.getAttribute('src');
+    if (s) urls.add(s);
+  });
+  // 2. 以 JS 動態設定的背景圖（不是 <img>，要另外列）
+  [BG_DAY, BG_DAY_RAIN, BG_NIGHT].forEach(m => Object.values(m).forEach(u => urls.add(u)));
+  Object.values(SPEAKER_AVATARS).forEach(u => urls.add(u));
+  [
+    'bg_room_night-rain.png', 'bg_forest_night_Blood Moon.png', 'UI_Blood Moon.png',
+    'bg_forest_night-day0108.png', 'bg_forest_night-day02.png', 'bg_forest_night-day0310.png',
+    'bg_forest_night-day0411.png', 'bg_forest_night-day05.png', 'bg_forest_night-day06.png',
+    'bg_forest_night-day07.png', 'bg_forest_night.png',
+  ].forEach(u => urls.add(u));
+
+  const total = urls.size;
+  const bar = document.getElementById('alo-bar');
+  const pct = document.getElementById('alo-pct');
+  return new Promise(resolve => {
+    if (total === 0) { window._assetsReady = true; resolve(); return; }
+    let done = 0;
+    const onOne = () => {
+      done++;
+      const p = Math.round(done / total * 100);
+      if (bar) bar.style.width = p + '%';
+      if (pct) pct.textContent = p + '%';
+      if (done >= total && !window._assetsReady) { window._assetsReady = true; resolve(); }
+    };
+    urls.forEach(u => {
+      const img = new Image();
+      img.onload = onOne;
+      img.onerror = onOne; // 某張圖失敗也不卡住
+      img.src = u;
+      _preloadKeep.push(img);
+    });
+    // 安全逾時：最多等 12 秒就放行，避免單一資源卡死
+    setTimeout(() => { if (!window._assetsReady) { window._assetsReady = true; resolve(); } }, 12000);
+  });
+})();
+
+// 進入遊戲場景前呼叫：資源還沒載完就先顯示載入畫面，載完才繼續
+async function ensureAssetsReady() {
+  if (window._assetsReady) return;
+  const overlay = document.getElementById('asset-loading-overlay');
+  if (overlay) overlay.style.display = 'flex';
+  await _assetsReadyPromise;
+  if (overlay) overlay.style.display = 'none';
+}
 
 // 標題頁雨聲
 function playTitleRain() {
