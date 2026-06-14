@@ -5485,16 +5485,20 @@ function runReidChat() {
   spendFatigue(1);
   const avarenHere = G.avarenScene === 'outside' || G.avarenScene === G.scene;
 
-  // 第3天的對話（初次見面後才解鎖）
+  // 一天只能「開始」一個新階段，但同一階段內可以連著看完
+  const canUnlockNewStage = G.reidNewStageDay !== G.day;
+
+  // 第3天的對話（初次見面後才解鎖，第一段也佔用當天新階段名額）
   if (G.reidIntroSeen) {
-    if (!G.reidChat3_1Seen) { G.reidChat3_1Seen = true; startActionScene(REID_CHAT_DAY3_1, 400, () => {}); return; }
+    if (!G.reidChat3_1Seen) {
+      if (!canUnlockNewStage) { story('雷德', pick(getReidIdlePool())); return; }
+      G.reidNewStageDay = G.day; G.reidChat3_1Seen = true; startActionScene(REID_CHAT_DAY3_1, 400, () => {}); return;
+    }
     if (!G.reidChat3_2Seen) { G.reidChat3_2Seen = true; startActionScene(REID_CHAT_DAY3_2, 400, () => {}); return; }
     if (!G.reidChat3CommSeen) { G.reidChat3CommSeen = true; startActionScene(REID_CHAT_DAY3_COMMISSION, 400, () => {}); return; }
     if (avarenHere && !G.reidChat3Avaren1Seen) { G.reidChat3Avaren1Seen = true; startActionScene(REID_CHAT_DAY3_AVAREN_1, 400, () => {}); return; }
     if (avarenHere && !G.reidChat3Avaren2Seen) { G.reidChat3Avaren2Seen = true; startActionScene(REID_CHAT_DAY3_AVAREN_2, 400, () => {}); return; }
   }
-  // 一天只能「開始」一個新階段，但同一階段內可以連著看完
-  const canUnlockNewStage = G.reidNewStageDay !== G.day;
 
   // 第5天階段
   if (G.day >= 5) {
@@ -6234,6 +6238,9 @@ function openWinterMenu() {
     if (reidActuallyInForest && _wStage < WINTER_MEET_STORIES.length && !_alreadySeenToday) {
       G.winterReidMeetStage = _wStage + 1;
       G.winterReidMeetDay = G.day;
+      if (_wStage === 0) G.winterReidMeetSeen = true;
+      if (_wStage === 1) G.winterReidMeetDay6Seen = true;
+      if (_wStage === 2) G.winterReidMeetDay7Seen = true;
       startActionScene(WINTER_MEET_STORIES[_wStage], 400, () => {});
       return;
     }
@@ -7545,6 +7552,7 @@ function initState() {
     winterReidMeetSeen: false,
     winterReidMeetDay6Seen: false,
     winterReidMeetDay7Seen: false,
+    winterReidMeetDay: 0,
     winterDay8FairyHintSeen: false,
     winterChat4_1Seen: false, winterChat4_2Seen: false,
     winterChat5_1Seen: false, winterChat5_2Seen: false,
@@ -7612,6 +7620,7 @@ function initState() {
     winterReidMeetDay6Seen: false,
     winterReidMeetDay7Seen: false,
     winterReidMeetStage: 0,
+    winterReidMeetDay: 0,
     reidSlayPendingWalk: false,
     reidSlayFollowDelay: 0,
     reidSlayWalkPhase: 0,
