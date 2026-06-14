@@ -3297,7 +3297,7 @@ function tickRandomRain() {
   // 只在白天進行；暫停、對話、血月、睡眠動畫時不推進
   if (G.timePeriod === 'evening' || G.paused || G.bloodMoon7Active ||
       G.sleepAnimActive || isDlgBlocking()) return;
-  G.rainTimer--;
+  G.rainTimer -= (G._frameFactor || 1);
   if (G.rainTimer > 0) return;
   if (G.rainPhase === 'clear')        startRandomRain();
   else if (G.rainPhase === 'raining') stopRandomRain();
@@ -3460,7 +3460,7 @@ function updateBirdAmbientSfx() {
     _birdAmbientTimer = 420 + Math.floor(Math.random() * 480);
     return;
   }
-  _birdAmbientTimer--;
+  _birdAmbientTimer -= (G && G._frameFactor || 1);
   if (_birdAmbientTimer <= 0) {
     playRandomBirdWiki(4.4);
     _birdAmbientTimer = 420 + Math.floor(Math.random() * 480);
@@ -3475,7 +3475,7 @@ function updateFrogSfx() {
     return;
   }
   // 靠近青蛙時叫一聲（有冷卻）
-  if (_frogNearCooldown > 0) _frogNearCooldown--;
+  if (_frogNearCooldown > 0) _frogNearCooldown -= (G && G._frameFactor || 1);
   if ((isNearForestFrog() || isNearForestFrog2()) && _frogNearCooldown <= 0) {
     playLoopingAudio('sfx-frog', 5.0);
     _frogNearCooldown = 300; // 約5秒冷卻
@@ -3485,7 +3485,7 @@ function updateFrogSfx() {
     _frogAmbientTimer = 480 + Math.floor(Math.random() * 600);
     return;
   }
-  _frogAmbientTimer--;
+  _frogAmbientTimer -= (G && G._frameFactor || 1);
   if (_frogAmbientTimer <= 0) {
     playLoopingAudio('sfx-frog', 4.0);
     _frogAmbientTimer = 480 + Math.floor(Math.random() * 600);
@@ -3501,7 +3501,7 @@ function updateBirds() {
     if (s.gone) {
       el.style.display = 'none';
       if (s.respawnTimer > 0) {
-        s.respawnTimer--;
+        s.respawnTimer -= (G._frameFactor || 1);
         if (s.respawnTimer <= 0) {
           // 重置到初始位置重新出現
           const mx = cfg.initX !== undefined ? cfg.initX : (cfg.x1 + cfg.x2) / 2;
@@ -3545,7 +3545,7 @@ function updateBirds() {
     const playerDist = Math.hypot(G.eldrin.x - s.x, G.eldrin.y - s.y);
     const FLY_RANGE = 55;
     if (playerDist < FLY_RANGE) { triggerBirdFlyAway(scene); return; }
-    s.hopTick = (s.hopTick || 0) + 1;
+    s.hopTick = (s.hopTick || 0) + (G._frameFactor || 1);
 
     const FLEE_RANGE = 100;
     if (playerDist < FLEE_RANGE) {
@@ -3630,12 +3630,12 @@ function updateOneSlime(slime, elId, homeX, homeY) {
   if (!active) { el.style.display = 'none'; return; }
 
   if (slime.x == null) { slime.x = homeX; slime.y = homeY; }
-  if (slime.attackCooldown > 0) slime.attackCooldown--;
+  if (slime.attackCooldown > 0) slime.attackCooldown -= (G._frameFactor || 1);
 
   const HOP_CYCLE   = 110;
   const HOP_AIR_END = 68;
   const prevHopTick = slime.hopTick || 0;
-  slime.hopTick = (prevHopTick + 1) % HOP_CYCLE;
+  slime.hopTick = (prevHopTick + (G._frameFactor || 1)) % HOP_CYCLE;
   const inAir = slime.hopTick < HOP_AIR_END;
   // 落地瞬間（從 inAir 切換到 onGround 的第一幀）
   if (prevHopTick === HOP_AIR_END - 1) {
@@ -3652,7 +3652,7 @@ function updateOneSlime(slime, elId, homeX, homeY) {
           slime.wanderDir = { dx: Math.cos(angle), dy: Math.sin(angle) };
           slime.wanderTimer = 40 + Math.floor(Math.random() * 60);
         }
-        slime.wanderTimer--;
+        slime.wanderTimer -= (G._frameFactor || 1);
         const spd = SLIME_SPEED * 0.5 * (HOP_CYCLE / HOP_AIR_END) * (G._frameFactor || 1);
         const nx = slime.x + slime.wanderDir.dx * spd;
         const ny = slime.y + slime.wanderDir.dy * spd;
@@ -8669,7 +8669,7 @@ function gameLoop() {
   const _elapsed = (_now - G.dayStartMs) / 1000;
   if (G.day === 0) {
     renderTime(0);
-    if (G.eldrinEmoteTimer > 0) G.eldrinEmoteTimer--;
+    if (G.eldrinEmoteTimer > 0) G.eldrinEmoteTimer -= (G._frameFactor || 1);
   } else if (!G.manualPaused && G.timePeriod === 'morning' && !G.periodTransitioned && !G.bgmPreEveningFadeStarted && !G.actionSceneActive && _elapsed >= MORNING_SECONDS - 10) {
     G.bgmPreEveningFadeStarted = true;
     if (shouldFadeBeforeEveningBGM()) fadeOutCurrentBGM(10000);
@@ -8767,7 +8767,7 @@ function gameLoop() {
   }
   if (G.day !== 0) {
     renderTime(_elapsed);
-    if (G.eldrinEmoteTimer > 0) G.eldrinEmoteTimer--;
+    if (G.eldrinEmoteTimer > 0) G.eldrinEmoteTimer -= (G._frameFactor || 1);
   }
 
   // ── 每天 pain / curse 隨時間漸增（白天 800 秒內共 +10 點）──
@@ -8913,8 +8913,8 @@ function gameLoop() {
 
   // 艾德林走路動畫＋腳步聲
   if (dx !== 0 || dy !== 0) {
-    el.walkTick++;
-    if (el.walkTick % 8  === 0) el.walkFrame = (el.walkFrame + 1) % 4;
+    el.walkTick += (G._frameFactor || 1);
+    if (el.walkTick >= 8) { el.walkFrame = (el.walkFrame + 1) % 4; el.walkTick -= 8; }
     // if (el.walkTick % 18 === 1) SFX.footstep(); // 已移除腳步音效
   } else {
     el.walkFrame = 0; el.walkTick = 0;
@@ -8922,7 +8922,7 @@ function gameLoop() {
 
   // 艾德林眨眼
   if (el.blinkPhase >= 0) {
-    el.blinkPhaseTick--;
+    el.blinkPhaseTick -= (G._frameFactor || 1);
     if (el.blinkPhaseTick <= 0) {
       el.blinkPhase++;
       if (el.blinkPhase >= BLINK_SEQ.length) {
@@ -8933,7 +8933,7 @@ function gameLoop() {
       }
     }
   } else {
-    el.blinkTimer--;
+    el.blinkTimer -= (G._frameFactor || 1);
     if (el.blinkTimer <= 0) {
       el.blinkPhase = 0;
       el.blinkPhaseTick = BLINK_SEQ[0].dur;
@@ -8962,7 +8962,7 @@ function gameLoop() {
       if (rf.x < 273 || rf.x > 392) rf.vx *= -1;
       if (rf.y < 327 || rf.y > 397) rf.vy *= -1;
     } else {
-      av.wanderTimer--;
+      av.wanderTimer -= (G._frameFactor || 1);
       if (av.wanderTimer <= 0) {
         const dirs = [{dx:-1,dy:0},{dx:1,dy:0},{dx:0,dy:-1},{dx:0,dy:1},
                       {dx:-1,dy:-1},{dx:1,dy:-1},{dx:-1,dy:1},{dx:1,dy:1}];
@@ -8978,15 +8978,15 @@ function gameLoop() {
       else if (av.wanderDir.dx > 0) av.pose = 'sideR';
       else if (av.wanderDir.dy < 0) av.pose = 'back';
       else                          av.pose = 'front';
-      av.walkTick++;
-      if (av.walkTick % 8 === 0) av.walkFrame = (av.walkFrame + 1) % 4;
+      av.walkTick += (G._frameFactor || 1);
+      if (av.walkTick >= 8) { av.walkFrame = (av.walkFrame + 1) % 4; av.walkTick -= 8; }
     }
 
     // 血月自動說話
     if (G.bubbleTimer > 0) {
-      G.bubbleTimer--;
+      G.bubbleTimer -= (G._frameFactor || 1);
     } else {
-      G.bloodMoon7SpeakTimer--;
+      G.bloodMoon7SpeakTimer -= (G._frameFactor || 1);
       if (G.bloodMoon7SpeakTimer <= 0) {
         const pool = G.avarenScene === 'forest'
           ? BLOOD_MOON_FAIRY_DLG
@@ -9005,7 +9005,7 @@ function gameLoop() {
 
     // 記憶閃回（觸發場景轉移）
     if (!G.paused && G.bloodMoon7PlayerVisited) {
-      G.bloodMoon7MemoryTimer--;
+      G.bloodMoon7MemoryTimer -= (G._frameFactor || 1);
       const memSceneOk = (
         (G.bloodMoon7MemoryIndex === 0 && G.scene === 'room') ||
         (G.bloodMoon7MemoryIndex === 1 && G.scene === 'lobby') ||
@@ -9076,11 +9076,11 @@ function gameLoop() {
       const { x: newAvX, y: newAvY } = avClamp(av.x + (ddx / d) * followSpd, av.y + (ddy / d) * followSpd);
       if (!avBlocked(newAvX, newAvY)) { av.x = newAvX; av.y = newAvY; }
       av.pose = ddx < 0 ? 'sideL' : 'sideR';
-      av.walkTick++;
-      if (av.walkTick % 8 === 0) av.walkFrame = (av.walkFrame + 1) % 4;
+      av.walkTick += (G._frameFactor || 1);
+      if (av.walkTick >= 8) { av.walkFrame = (av.walkFrame + 1) % 4; av.walkTick -= 8; }
     } else {
       // 靠近時在附近小幅漫走
-      av.wanderTimer--;
+      av.wanderTimer -= (G._frameFactor || 1);
       if (av.wanderTimer <= 0) {
         const dirs = [{dx:-1,dy:0},{dx:1,dy:0},{dx:0,dy:-1},{dx:0,dy:1},{dx:0,dy:0},{dx:0,dy:0}];
         av.wanderDir = dirs[Math.floor(Math.random() * dirs.length)];
@@ -9096,8 +9096,8 @@ function gameLoop() {
         else if (wdx > 0) av.pose = 'sideR';
         else if (wdy < 0) av.pose = 'back';
         else              av.pose = 'front';
-        av.walkTick++;
-        if (av.walkTick % 8 === 0) av.walkFrame = (av.walkFrame + 1) % 4;
+        av.walkTick += (G._frameFactor || 1);
+        if (av.walkTick >= 8) { av.walkFrame = (av.walkFrame + 1) % 4; av.walkTick -= 8; }
       } else {
         av.pose = 'front'; av.walkFrame = 0; av.walkTick = 0;
       }
@@ -9109,7 +9109,7 @@ function gameLoop() {
     if (av.restBlinkPhase > 0) {
       av.restBlinkPhase--;
     } else {
-      av.restBlinkTimer--;
+      av.restBlinkTimer -= (G._frameFactor || 1);
       if (av.restBlinkTimer <= 0) {
         av.restBlinkPhase = 10;
         av.restBlinkTimer = Math.floor(Math.random() * 240) + 180;
@@ -9120,7 +9120,7 @@ function gameLoop() {
   // 阿瓦倫眨眼
   { const av = G.avaren;
     if (av.blinkPhase >= 0) {
-      av.blinkPhaseTick--;
+      av.blinkPhaseTick -= (G._frameFactor || 1);
       if (av.blinkPhaseTick <= 0) {
         av.blinkPhase++;
         if (av.blinkPhase >= BLINK_SEQ.length) {
@@ -9131,7 +9131,7 @@ function gameLoop() {
         }
       }
     } else {
-      av.blinkTimer--;
+      av.blinkTimer -= (G._frameFactor || 1);
       if (av.blinkTimer <= 0) {
         av.blinkPhase = 0;
         av.blinkPhaseTick = BLINK_SEQ[0].dur;
@@ -9142,7 +9142,7 @@ function gameLoop() {
   // 雷德眨眼
   { const rd = G.red;
     if (rd.blinkPhase >= 0) {
-      rd.blinkPhaseTick--;
+      rd.blinkPhaseTick -= (G._frameFactor || 1);
       if (rd.blinkPhaseTick <= 0) {
         rd.blinkPhase++;
         if (rd.blinkPhase >= BLINK_SEQ.length) {
@@ -9153,7 +9153,7 @@ function gameLoop() {
         }
       }
     } else {
-      rd.blinkTimer--;
+      rd.blinkTimer -= (G._frameFactor || 1);
       if (rd.blinkTimer <= 0) {
         rd.blinkPhase = 0;
         rd.blinkPhaseTick = BLINK_SEQ[0].dur;
@@ -9164,7 +9164,7 @@ function gameLoop() {
   // 溫特眨眼
   { const wt = G.winter;
     if (wt.blinkPhase >= 0) {
-      wt.blinkPhaseTick--;
+      wt.blinkPhaseTick -= (G._frameFactor || 1);
       if (wt.blinkPhaseTick <= 0) {
         wt.blinkPhase++;
         if (wt.blinkPhase >= BLINK_SEQ.length) {
@@ -9175,7 +9175,7 @@ function gameLoop() {
         }
       }
     } else {
-      wt.blinkTimer--;
+      wt.blinkTimer -= (G._frameFactor || 1);
       if (wt.blinkTimer <= 0) {
         wt.blinkPhase = 0;
         wt.blinkPhaseTick = BLINK_SEQ[0].dur;
@@ -9186,7 +9186,7 @@ function gameLoop() {
   // 諾亞眨眼
   { const noah = G.noah;
     if (noah.blinkPhase >= 0) {
-      noah.blinkPhaseTick--;
+      noah.blinkPhaseTick -= (G._frameFactor || 1);
       if (noah.blinkPhaseTick <= 0) {
         noah.blinkPhase++;
         if (noah.blinkPhase >= BLINK_SEQ.length) {
@@ -9197,7 +9197,7 @@ function gameLoop() {
         }
       }
     } else {
-      noah.blinkTimer--;
+      noah.blinkTimer -= (G._frameFactor || 1);
       if (noah.blinkTimer <= 0) {
         noah.blinkPhase = 0;
         noah.blinkPhaseTick = BLINK_SEQ[0].dur;
@@ -9219,7 +9219,7 @@ function gameLoop() {
     }
     // B. 靠近雷德時的反應（距離<85px，每隔一段時間觸發）
     if (av.hasSeenRed && distAvToRed < 85 && G.bubbleTimer <= 0) {
-      av.nearRedTimer--;
+      av.nearRedTimer -= (G._frameFactor || 1);
       if (av.nearRedTimer <= 0) {
         const tier = getAvarenMoodTier();
         G.bubbleText = pick(AVAREN_RED_DLG['near_' + tier]);
@@ -9232,7 +9232,7 @@ function gameLoop() {
   // 阿瓦倫戶外採集（心情>50，且阿瓦倫跟隨在戶外）
   if (!isAvarenUnconscious() && G.scene === 'outside' && G.mood > 50 && G.avarenScene === 'outside' && !G.paused && !G.actionSceneActive
       && document.getElementById('bag-overlay').style.display !== 'flex') {
-    G.avaren.gatherTimer -= (G.speedMult || 1);
+    G.avaren.gatherTimer -= (G.speedMult || 1) * (G._frameFactor || 1);
     if (G.avaren.gatherTimer <= 0) {
       G.avaren.gatherTimer = Math.floor(Math.random() * 1800) + 2700;
       triggerAvarenGather();
@@ -9275,8 +9275,8 @@ function gameLoop() {
         else if (dy < 0) rd.pose = 'back';
         else             rd.pose = 'front';
       }
-      rd.walkTick++;
-      if (rd.walkTick % 8 === 0) rd.walkFrame = (rd.walkFrame + 1) % 4;
+      rd.walkTick += (G._frameFactor || 1);
+      if (rd.walkTick >= 8) { rd.walkFrame = (rd.walkFrame + 1) % 4; rd.walkTick -= 8; }
     }
   }
 
@@ -9290,7 +9290,7 @@ function gameLoop() {
       else { rd.pose = ddy < 0 ? 'back' : 'front'; }
       rd.walkFrame = 0; rd.walkTick = 0;
     } else {
-    rd.walkTimer--;
+    rd.walkTimer -= (G._frameFactor || 1);
     if (rd.walkTimer <= 0) {
       const dirs = [{dx:-1,dy:0},{dx:1,dy:0},{dx:0,dy:-1},{dx:0,dy:1},{dx:0,dy:0},{dx:0,dy:0}];
       rd.walkDir = dirs[Math.floor(Math.random() * dirs.length)];
@@ -9316,16 +9316,16 @@ function gameLoop() {
     else if (rdy < 0) rd.pose = 'back';
     else if (rdy > 0) rd.pose = 'front';
     if (rdx !== 0 || rdy !== 0) {
-      rd.walkTick++;
-      if (rd.walkTick % 8 === 0) rd.walkFrame = (rd.walkFrame + 1) % 4;
+      rd.walkTick += (G._frameFactor || 1);
+      if (rd.walkTick >= 8) { rd.walkFrame = (rd.walkFrame + 1) % 4; rd.walkTick -= 8; }
     } else {
       rd.walkFrame = 0; rd.walkTick = 0;
     }
     // 雷德自動說話
     if (rd.bubbleTimer > 0) {
-      rd.bubbleTimer--;
+      rd.bubbleTimer -= (G._frameFactor || 1);
     } else {
-      rd.autoSpeakTimer--;
+      rd.autoSpeakTimer -= (G._frameFactor || 1);
       if (rd.autoSpeakTimer <= 0) {
         const avarenOutside = G.avarenScene === 'outside';
         rd.bubbleText = (avarenOutside && Math.random() < 0.5)
@@ -9347,7 +9347,7 @@ function gameLoop() {
       else { noah.pose = ddy < 0 ? 'back' : 'front'; }
       noah.walkFrame = 0; noah.walkTick = 0;
     } else {
-      noah.walkTimer--;
+      noah.walkTimer -= (G._frameFactor || 1);
       if (noah.walkTimer <= 0) {
         const dirs = [{dx:-1,dy:0},{dx:1,dy:0},{dx:0,dy:-1},{dx:0,dy:1},{dx:0,dy:0},{dx:0,dy:0}];
         noah.walkDir = dirs[Math.floor(Math.random() * dirs.length)];
@@ -9373,8 +9373,8 @@ function gameLoop() {
       else if (ndy < 0) noah.pose = 'back';
       else if (ndy > 0) noah.pose = 'front';
       if (ndx !== 0 || ndy !== 0) {
-        noah.walkTick++;
-        if (noah.walkTick % 8 === 0) noah.walkFrame = (noah.walkFrame + 1) % 4;
+        noah.walkTick += (G._frameFactor || 1);
+        if (noah.walkTick >= 8) { noah.walkFrame = (noah.walkFrame + 1) % 4; noah.walkTick -= 8; }
       } else {
         noah.walkFrame = 0; noah.walkTick = 0;
       }
@@ -9390,9 +9390,9 @@ function gameLoop() {
     );
     if (noahVisibleNow && !isDlgBlocking() && !G.noahLobbyTalking) {
       if (noah.bubbleTimer > 0) {
-        noah.bubbleTimer--;
+        noah.bubbleTimer -= (G._frameFactor || 1);
       } else {
-        noah.autoSpeakTimer--;
+        noah.autoSpeakTimer -= (G._frameFactor || 1);
         if (noah.autoSpeakTimer <= 0) {
           noah.bubbleText = pick(G.day === 8 ? NOAH_DAY8_SPEAK_DLG : NOAH_SPEAK_DLG);
           noah.bubbleTimer = 220;
@@ -9414,7 +9414,7 @@ function gameLoop() {
       else { wt.pose = ddy < 0 ? 'back' : 'front'; }
       wt.walkFrame = 0; wt.walkTick = 0;
     } else {
-    wt.walkTimer--;
+    wt.walkTimer -= (G._frameFactor || 1);
     if (wt.walkTimer <= 0) {
       const dirs = [{dx:-1,dy:0},{dx:1,dy:0},{dx:0,dy:-1},{dx:0,dy:1},{dx:0,dy:0},{dx:0,dy:0},{dx:0,dy:0}];
       wt.walkDir = dirs[Math.floor(Math.random() * dirs.length)];
@@ -9435,16 +9435,16 @@ function gameLoop() {
       else if (wdx > 0) wt.pose = 'sideR';
       else if (wdy < 0) wt.pose = 'back';
       else              wt.pose = 'front';
-      wt.walkTick++;
-      if (wt.walkTick % 8 === 0) wt.walkFrame = (wt.walkFrame + 1) % 4;
+      wt.walkTick += (G._frameFactor || 1);
+      if (wt.walkTick >= 8) { wt.walkFrame = (wt.walkFrame + 1) % 4; wt.walkTick -= 8; }
     } else {
       wt.walkFrame = 0; wt.walkTick = 0;
     }
     // 溫特自動說話（說話頻率低，沉默感）
     if (wt.bubbleTimer > 0) {
-      wt.bubbleTimer--;
+      wt.bubbleTimer -= (G._frameFactor || 1);
     } else {
-        wt.autoSpeakTimer--;
+        wt.autoSpeakTimer -= (G._frameFactor || 1);
         if (wt.autoSpeakTimer <= 0) {
         const reidHere = isReidInForestToday();
         let pool;
@@ -9468,9 +9468,9 @@ function gameLoop() {
       rd.x = 320; rd.y = 160; rd.walkTimer = 0; rd.walkDir = {dx:0,dy:0};
     }
     if (rd.bubbleTimer > 0) {
-      rd.bubbleTimer--;
+      rd.bubbleTimer -= (G._frameFactor || 1);
     } else {
-      rd.autoSpeakTimer = (rd.autoSpeakTimer || 0) - 1;
+      rd.autoSpeakTimer = (rd.autoSpeakTimer || 0) - (G._frameFactor || 1);
       if (rd.autoSpeakTimer <= 0) {
         rd.bubbleText = (isWinterPresent() && Math.random() < 0.45)
           ? pick(RED_SPEAK_WINTER_DLG)
@@ -9479,7 +9479,7 @@ function gameLoop() {
         rd.autoSpeakTimer = Math.floor(Math.random() * 250) + 150;
       }
     }
-    rd.walkTimer = (rd.walkTimer || 0) - 1;
+    rd.walkTimer = (rd.walkTimer || 0) - (G._frameFactor || 1);
     if (rd.walkTimer <= 0) {
       const dirs = [{dx:-1,dy:0},{dx:1,dy:0},{dx:0,dy:-1},{dx:0,dy:1},{dx:0,dy:0},{dx:0,dy:0}];
       rd.walkDir = dirs[Math.floor(Math.random() * dirs.length)];
@@ -9499,22 +9499,23 @@ function gameLoop() {
       else if (dy < 0) rd.pose = 'back';
       else if (dy > 0) rd.pose = 'front';
       if (dx !== 0 || dy !== 0) {
-        rd.walkTick++; if (rd.walkTick % 8 === 0) rd.walkFrame = (rd.walkFrame + 1) % 4;
+        rd.walkTick += (G._frameFactor || 1);
+        if (rd.walkTick >= 8) { rd.walkFrame = (rd.walkFrame + 1) % 4; rd.walkTick -= 8; }
       } else { rd.walkFrame = 0; rd.walkTick = 0; }
     } else {
       rd.walkDir = {dx:0,dy:0}; rd.walkTimer = 0;
     }
   }
 
-  if (G.heartTimer > 0) G.heartTimer--;
-  if (G.woodCooldown > 0) G.woodCooldown--;
+  if (G.heartTimer > 0) G.heartTimer -= (G._frameFactor || 1);
+  if (G.woodCooldown > 0) G.woodCooldown -= (G._frameFactor || 1);
 
   // ── 雞的漫步（森林場景）──
   if (G.scene === 'forest' && !G.paused && !G.carryingChicken) {
     const ch = G.chicken;
     if (G.timePeriod !== 'morning') { /* 晚上雞在睡覺，不移動 */ } else {
     const chickenSpd = 0.6 * (G._frameFactor || 1);
-    ch.walkTimer--;
+    ch.walkTimer -= (G._frameFactor || 1);
     if (ch.walkTimer <= 0) {
       const dirs = [
         {dx:-1,dy:0},{dx:1,dy:0},{dx:0,dy:-1},{dx:0,dy:1},
@@ -9536,8 +9537,8 @@ function gameLoop() {
       ch.walkTimer = 0;
     }
     if (ch.walkDir.dx !== 0 || ch.walkDir.dy !== 0) {
-      ch.walkTick++;
-      if (ch.walkTick % 10 === 0) ch.walkFrame++;
+      ch.walkTick += (G._frameFactor || 1);
+      if (ch.walkTick >= 10) { ch.walkFrame++; ch.walkTick -= 10; }
       if (ch.walkDir.dx < 0) ch.facing = 'left';
       else if (ch.walkDir.dx > 0) ch.facing = 'right';
     } else {
@@ -9550,7 +9551,7 @@ function gameLoop() {
   if (G.scene === 'forest' && !G.paused && !G.carryingChicken2 && G.timePeriod === 'morning') {
     const ch2 = G.chicken2;
     const chickenSpd = 0.6 * (G._frameFactor || 1);
-    ch2.walkTimer--;
+    ch2.walkTimer -= (G._frameFactor || 1);
     if (ch2.walkTimer <= 0) {
       const dirs = [
         {dx:-1,dy:0},{dx:1,dy:0},{dx:0,dy:-1},{dx:0,dy:1},
@@ -9572,8 +9573,8 @@ function gameLoop() {
       ch2.walkTimer = 0;
     }
     if (ch2.walkDir.dx !== 0 || ch2.walkDir.dy !== 0) {
-      ch2.walkTick++;
-      if (ch2.walkTick % 10 === 0) ch2.walkFrame++;
+      ch2.walkTick += (G._frameFactor || 1);
+      if (ch2.walkTick >= 10) { ch2.walkFrame++; ch2.walkTick -= 10; }
       if (ch2.walkDir.dx < 0) ch2.facing = 'left';
       else if (ch2.walkDir.dx > 0) ch2.facing = 'right';
     } else {
@@ -9671,9 +9672,9 @@ function gameLoop() {
     }
   }
 
-  if (G.bushCooldown > 0) G.bushCooldown--;
-  if (G.flowerCooldown > 0) G.flowerCooldown--;
-  if (G.stoneCooldown > 0) G.stoneCooldown--;
+  if (G.bushCooldown > 0) G.bushCooldown -= (G._frameFactor || 1);
+  if (G.flowerCooldown > 0) G.flowerCooldown -= (G._frameFactor || 1);
+  if (G.stoneCooldown > 0) G.stoneCooldown -= (G._frameFactor || 1);
 
   // 對話中暫停所有時間流逝（飢餓、烹飪、研究、釣魚、農場）
   if (!isDlgBlocking()) {
@@ -9686,8 +9687,8 @@ function gameLoop() {
   const _elDailyHunger = (G.day <= 2) ? 100 : (G.day === 3) ? 120 : (G.day === 4) ? 130 : 140;
   // 血月之夜暫停飢餓消耗（玩家與阿瓦倫都不扣飽食度）
   if (!G.bloodMoon7Active) {
-    G._avHungerAccum = (G._avHungerAccum || 0) + (_avDailyHunger / (DAY_REAL_SECONDS * 60)) * _spd;
-    G._elHungerAccum = (G._elHungerAccum || 0) + (_elDailyHunger / (DAY_REAL_SECONDS * 60)) * _spd;
+    G._avHungerAccum = (G._avHungerAccum || 0) + (_avDailyHunger / (DAY_REAL_SECONDS * 60)) * _spd * (G._frameFactor || 1);
+    G._elHungerAccum = (G._elHungerAccum || 0) + (_elDailyHunger / (DAY_REAL_SECONDS * 60)) * _spd * (G._frameFactor || 1);
   }
   if (G._avHungerAccum >= 1) {
     const drop = Math.floor(G._avHungerAccum);
@@ -9709,7 +9710,7 @@ function gameLoop() {
 
   // 飢餓歸零：每5秒持續扣血（阿瓦倫 疼痛+1 詛咒+1／艾德林 HP-1）
   if (!G.paused && !G.actionSceneActive && !G.bloodMoon7Active && G.day > 0) {
-    G._starveTimer = (G._starveTimer || 0) + (G.speedMult || 1);
+    G._starveTimer = (G._starveTimer || 0) + (G.speedMult || 1) * (G._frameFactor || 1);
     if (G._starveTimer >= 300) {
       G._starveTimer = 0;
       let starved = false;
@@ -9722,7 +9723,7 @@ function gameLoop() {
   // 烹飪進度（可移動）
   if (G.cookActive) {
     const cookMax = G.cookMax || COOK_MAX;
-    G.cookTimer += (G.speedMult || 1);
+    G.cookTimer += (G.speedMult || 1) * (G._frameFactor || 1);
     document.getElementById('cook-scene-bar').style.width =
       (G.cookTimer / cookMax * 100) + '%';
     if (G.cookTimer >= cookMax) {
