@@ -304,10 +304,10 @@ body {
 /* ── SCENE ── */
 /* 外框：保留放大後的版面空間 */
 #scene-outer {
-  width: 960px; min-width: 960px; height: 720px; flex-shrink: 0; overflow: hidden;
+  width: 960px; height: 720px; flex-shrink: 0; overflow: hidden;
 }
 #scene-wrap {
-  position: relative; width: 640px; min-width: 640px; height: 480px;
+  position: relative; width: 640px; height: 480px;
   overflow: hidden; background: #080604; flex-shrink: 0;
   transform: scale(1.5); transform-origin: top left;
 }
@@ -9749,7 +9749,7 @@ function gameLoop() {
 
   // 採集搜索進度（2秒，鎖移動）
   if (G.gatherSearchActive) {
-    G.gatherSearchTimer -= (G.speedMult || 1);
+    G.gatherSearchTimer -= (G.speedMult || 1) * (G._frameFactor || 1);
     const gsPct = ((GATHER_SEARCH_MAX - G.gatherSearchTimer) / GATHER_SEARCH_MAX) * 100;
     const gsWrap = document.getElementById('gather-search-wrap');
     document.getElementById('gather-search-bar').style.width = gsPct + '%';
@@ -9764,7 +9764,7 @@ function gameLoop() {
 
   // 研究藥水進度（可移動）
   if (G.researchActive) {
-    G.researchTimer += (G.speedMult || 1);
+    G.researchTimer += (G.speedMult || 1) * (G._frameFactor || 1);
     document.getElementById('research-scene-bar').style.width =
       (G.researchTimer / RESEARCH_MAX * 100) + '%';
     if (G.researchTimer >= RESEARCH_MAX) {
@@ -9791,7 +9791,7 @@ function gameLoop() {
   // 森林湖釣魚異步計時（等待時間為池塘兩倍）
   const FOREST_FISH_MAX = FISH_MAX * 2;
   if (G.forestFishFishing) {
-    G.forestFishTimer -= (G.speedMult || 1);
+    G.forestFishTimer -= (G.speedMult || 1) * (G._frameFactor || 1);
     const fpct = ((FOREST_FISH_MAX - G.forestFishTimer) / FOREST_FISH_MAX) * 100;
     document.getElementById('fish-forest-bar').style.width = fpct + '%';
     if (G.forestFishTimer <= 0) {
@@ -9808,7 +9808,7 @@ function gameLoop() {
 
   // 池塘釣魚異步計時
   if (G.fishFishing) {
-    G.fishTimer -= (G.speedMult || 1);
+    G.fishTimer -= (G.speedMult || 1) * (G._frameFactor || 1);
     const pct = ((FISH_MAX - G.fishTimer) / FISH_MAX) * 100;
     document.getElementById('fish-scene-bar').style.width = pct + '%';
     if (G.fishTimer <= 0) {
@@ -9830,7 +9830,7 @@ function gameLoop() {
   if (G.farmStage >= 2 && G.farmStage < 5) {
     // 下雨：雨水自動澆灌農田，生長速度加倍
     if (G.weather === 'rain' && !G.farmWatered) { G.farmWatered = true; setOutsideFarmVisual(); }
-    G.farmGrowthTimer += ((G.weather === 'rain') ? 2 : 1) * (G.speedMult || 1);
+    G.farmGrowthTimer += ((G.weather === 'rain') ? 2 : 1) * (G.speedMult || 1) * (G._frameFactor || 1);
     const stageMax = FARM_STAGE_MAX;
     const growPct = Math.min(100, (G.farmGrowthTimer / stageMax) * 100);
     const farmBar = document.getElementById('farm-growth-bar');
@@ -15791,6 +15791,25 @@ function initTitleSpine() {
   } catch(e) { console.error('Spine init error:', e); }
 }
 window.addEventListener('load', initTitleSpine);
+
+// ── 動態縮放：讓場景適應小螢幕，最大維持 1.5x ──
+function updateSceneScale() {
+  const BASE_W = 640, BASE_H = 480;
+  const MAX_SCALE = 1.5;
+  const outer = document.getElementById('scene-outer');
+  if (!outer) return;
+  const gameScreen = document.getElementById('game-screen');
+  const availW = gameScreen ? gameScreen.clientWidth  || window.innerWidth  : window.innerWidth;
+  const availH = gameScreen ? gameScreen.clientHeight || window.innerHeight : window.innerHeight;
+  const scale = Math.min(MAX_SCALE, availW / BASE_W, availH / BASE_H);
+  const dispW = Math.round(BASE_W * scale);
+  const dispH = Math.round(BASE_H * scale);
+  document.getElementById('scene-wrap').style.transform = `scale(${scale})`;
+  outer.style.width  = dispW + 'px';
+  outer.style.height = dispH + 'px';
+}
+window.addEventListener('load',   updateSceneScale);
+window.addEventListener('resize', updateSceneScale);
 
 function setupTitleScreen() {
   const reidEnd    = hasReidEndTriggered();
