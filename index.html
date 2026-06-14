@@ -6227,11 +6227,13 @@ function openWinterMenu() {
   const items = [];
   const reidActuallyInForest = isReidInForestToday();
   const runWinterTalk = () => {
-    // 溫特與雷德相遇：依「實際第幾次見面」順序播放，而非綁定日期
+    // 溫特與雷德相遇：每次雷德被委託進森林才算一次見面，同一天只能觸發一段新對話
     const WINTER_MEET_STORIES = [WINTER_REID_MEET_STORY, WINTER_REID_MEET_DAY6_STORY, WINTER_REID_MEET_DAY7_STORY];
     const _wStage = G.winterReidMeetStage || 0;
-    if (reidActuallyInForest && _wStage < WINTER_MEET_STORIES.length) {
+    const _alreadySeenToday = (G.winterReidMeetDay === G.day);
+    if (reidActuallyInForest && _wStage < WINTER_MEET_STORIES.length && !_alreadySeenToday) {
       G.winterReidMeetStage = _wStage + 1;
+      G.winterReidMeetDay = G.day;
       startActionScene(WINTER_MEET_STORIES[_wStage], 400, () => {});
       return;
     }
