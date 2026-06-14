@@ -4,8 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Wormwood & Dew</title>
-<link rel="stylesheet" href="https://unpkg.com/@esotericsoftware/spine-player@3.8.99/dist/spine-player.css">
-<script src="https://unpkg.com/@esotericsoftware/spine-player@3.8.99/dist/spine-player.js"></script>
+<script src="spine-webgl.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&family=Patrick+Hand&family=Gaegu:wght@700&family=Noto+Sans+TC:wght@400;500;700;900&display=swap');
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -15697,24 +15696,53 @@ let _titleFocus = 0; // 0=開始新遊戲, 1=繼續遊戲, 2=雷德的存檔, 3=
 
 // 統一標題頁初始化：按 Reid 旗標決定顯示哪些按鈕
 let _spinePlayerInited = false;
+let _spineRafId = null;
 function initTitleSpine() {
   if (_spinePlayerInited) return;
-  console.log('initTitleSpine called, spine type=', typeof spine);
-  if (typeof spine === 'undefined' || !spine.SpinePlayer) {
-    setTimeout(initTitleSpine, 200);
-    return;
-  }
+  if (typeof spine === 'undefined' || !spine.webgl) { setTimeout(initTitleSpine, 200); return; }
   _spinePlayerInited = true;
-  try { new spine.SpinePlayer('title-spine-bg', {
-    jsonUrl: 'spine/封面拆圖.json',
-    atlasUrl: 'spine/封面拆圖.atlas',
-    animation: 'animation',
-    loop: true,
-    showControls: false,
-    backgroundColor: '#1a1109ff',
-    error: function(player, msg) { console.warn('Spine error:', msg); },
-    success: function(player) { console.log('Spine loaded OK'); }
-  }); } catch(e) { console.error('Spine init error:', e); }
+  try {
+    const container = document.getElementById('title-spine-bg');
+    if (!container) return;
+    const canvas = document.createElement('canvas');
+    canvas.width = 1509; canvas.height = 849;
+    canvas.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;';
+    container.appendChild(canvas);
+    const context = new spine.webgl.ManagedWebGLRenderingContext(canvas, { alpha: true, premultipliedAlpha: false });
+    const gl = context.gl;
+    const assetManager = new spine.webgl.AssetManager(context);
+    assetManager.loadTextureAtlas('spine/封面拆圖.atlas');
+    assetManager.loadText('spine/封面拆圖.json');
+    const renderer = new spine.webgl.SceneRenderer(canvas, context, true);
+    let skeleton, state, lastTime = 0;
+    function load() {
+      if (!assetManager.isLoadingComplete()) { _spineRafId = requestAnimationFrame(load); return; }
+      if (assetManager.hasErrors()) { console.warn('Spine load error', assetManager.getErrors()); return; }
+      const atlas = assetManager.get('spine/封面拆圖.atlas');
+      const jsonData = JSON.parse(assetManager.get('spine/封面拆圖.json'));
+      const skeletonData = new spine.SkeletonJson(new spine.AtlasAttachmentLoader(atlas)).readSkeletonData(jsonData);
+      skeleton = new spine.Skeleton(skeletonData);
+      state = new spine.AnimationState(new spine.AnimationStateData(skeletonData));
+      state.setAnimation(0, 'animation', true);
+      skeleton.updateWorldTransform();
+      const offset = new spine.Vector2(), size = new spine.Vector2();
+      skeleton.getBounds(offset, size, []);
+      renderer.camera.position.x = offset.x + size.x / 2;
+      renderer.camera.position.y = offset.y + size.y / 2;
+      renderer.camera.setViewport(size.x, size.y);
+      renderer.camera.update();
+      lastTime = performance.now();
+      _spineRafId = requestAnimationFrame(render);
+    }
+    function render(now) {
+      const delta = Math.min((now - lastTime) / 1000, 0.1); lastTime = now;
+      gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT);
+      state.update(delta); state.apply(skeleton); skeleton.updateWorldTransform();
+      renderer.begin(); renderer.drawSkeleton(skeleton, false); renderer.end();
+      _spineRafId = requestAnimationFrame(render);
+    }
+    _spineRafId = requestAnimationFrame(load);
+  } catch(e) { console.error('Spine init error:', e); }
 }
 window.addEventListener('load', initTitleSpine);
 
