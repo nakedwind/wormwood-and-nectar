@@ -15710,9 +15710,9 @@ function initTitleSpine() {
     animation: 'animation',
     loop: true,
     showControls: false,
-    backgroundColor: '#00000000',
-    alpha: true,
-    error: function(player, msg) { console.warn('Spine error:', msg); }
+    backgroundColor: '#1a1109ff',
+    error: function(player, msg) { console.warn('Spine error:', msg); },
+    success: function(player) { console.log('Spine loaded OK'); }
   });
 }
 window.addEventListener('load', initTitleSpine);
