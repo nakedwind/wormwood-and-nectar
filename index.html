@@ -15699,12 +15699,13 @@ let _titleFocus = 0; // 0=開始新遊戲, 1=繼續遊戲, 2=雷德的存檔, 3=
 let _spinePlayerInited = false;
 function initTitleSpine() {
   if (_spinePlayerInited) return;
+  console.log('initTitleSpine called, spine=', typeof spine, typeof spine !== 'undefined' ? Object.keys(spine).join(',') : 'N/A');
   if (typeof spine === 'undefined' || !spine.SpinePlayer) {
     setTimeout(initTitleSpine, 200);
     return;
   }
   _spinePlayerInited = true;
-  new spine.SpinePlayer('title-spine-bg', {
+  try { new spine.SpinePlayer('title-spine-bg', {
     jsonUrl: 'spine/封面拆圖.json',
     atlasUrl: 'spine/封面拆圖.atlas',
     animation: 'animation',
@@ -15713,7 +15714,7 @@ function initTitleSpine() {
     backgroundColor: '#1a1109ff',
     error: function(player, msg) { console.warn('Spine error:', msg); },
     success: function(player) { console.log('Spine loaded OK'); }
-  });
+  }); } catch(e) { console.error('Spine init error:', e); }
 }
 window.addEventListener('load', initTitleSpine);
 
