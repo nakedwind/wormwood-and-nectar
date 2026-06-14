@@ -5212,7 +5212,7 @@ function isNearNoah() {
   if (G.scene === 'lobby' && G.timePeriod === 'morning' && ((G.day === 2 && G.noahDay2IntroSeen) || G.day === 8)) {
     return Math.hypot(NOAH_LOBBY_POS.x - G.eldrin.x, NOAH_LOBBY_POS.y - G.eldrin.y) < 55;
   }
-  if (G.scene === 'forest' && G.timePeriod === 'evening') {
+  if (G.scene === 'forest' && G.timePeriod === 'evening' && G.day === 2) {
     const inTalkBox = G.eldrin.x >= 285 && G.eldrin.x <= 367 && G.eldrin.y >= 198 && G.eldrin.y <= 285;
     return inTalkBox || Math.hypot(NOAH_FOREST_LAKE_POS.x - G.eldrin.x, NOAH_FOREST_LAKE_POS.y - G.eldrin.y) < 85;
   }
@@ -5488,14 +5488,11 @@ function runReidChat() {
   // 一天只能「開始」一個新階段，但同一階段內可以連著看完
   const canUnlockNewStage = G.reidNewStageDay !== G.day;
 
-  // 第3天的對話（初次見面後才解鎖，第一段也佔用當天新階段名額）
+  // 第3天的對話（初次見面後才解鎖，Day3_Comm 是必要最後一段，觸發時鎖住當天新階段）
   if (G.reidIntroSeen) {
-    if (!G.reidChat3_1Seen) {
-      if (!canUnlockNewStage) { story('雷德', pick(getReidIdlePool())); return; }
-      G.reidNewStageDay = G.day; G.reidChat3_1Seen = true; startActionScene(REID_CHAT_DAY3_1, 400, () => {}); return;
-    }
+    if (!G.reidChat3_1Seen) { G.reidChat3_1Seen = true; startActionScene(REID_CHAT_DAY3_1, 400, () => {}); return; }
     if (!G.reidChat3_2Seen) { G.reidChat3_2Seen = true; startActionScene(REID_CHAT_DAY3_2, 400, () => {}); return; }
-    if (!G.reidChat3CommSeen) { G.reidChat3CommSeen = true; startActionScene(REID_CHAT_DAY3_COMMISSION, 400, () => {}); return; }
+    if (!G.reidChat3CommSeen) { G.reidChat3CommSeen = true; G.reidNewStageDay = G.day; startActionScene(REID_CHAT_DAY3_COMMISSION, 400, () => {}); return; }
     if (avarenHere && !G.reidChat3Avaren1Seen) { G.reidChat3Avaren1Seen = true; startActionScene(REID_CHAT_DAY3_AVAREN_1, 400, () => {}); return; }
     if (avarenHere && !G.reidChat3Avaren2Seen) { G.reidChat3Avaren2Seen = true; startActionScene(REID_CHAT_DAY3_AVAREN_2, 400, () => {}); return; }
   }
@@ -5606,13 +5603,14 @@ function openRedMenu() {
         }
       });
     }
-    // 與雷德聊聊（溫特相遇階段：依「實際第幾次見面」順序，而非綁定日期）
+    // 與雷德聊聊（溫特相遇階段：每次委託進森林只觸發一段新對話）
     const MEET_STORIES = [RED_WINTER_MEET_STORY, RED_WINTER_MEET_DAY6_STORY, RED_WINTER_MEET_DAY7_STORY];
     const _meetStage = G.reidWinterMeetStage || 0;
-    if (isWinterPresent() && _meetStage < MEET_STORIES.length) {
+    const _reidMeetSeenToday = (G.reidWinterMeetDay === G.day);
+    if (isWinterPresent() && _meetStage < MEET_STORIES.length && !_reidMeetSeenToday) {
       const _meetStory = MEET_STORIES[_meetStage];
       items.push({ name:'與雷德聊聊', fx:'', req:()=>true,
-        run() { spendFatigue(1); G.reidWinterMeetStage = _meetStage + 1; startActionScene(_meetStory, 400, () => {}); }
+        run() { spendFatigue(1); G.reidWinterMeetStage = _meetStage + 1; G.reidWinterMeetDay = G.day; startActionScene(_meetStory, 400, () => {}); }
       });
     } else {
       items.push({ name:'與雷德聊聊', fx:'', req:()=>true,
@@ -6238,6 +6236,7 @@ function openWinterMenu() {
     if (reidActuallyInForest && _wStage < WINTER_MEET_STORIES.length && !_alreadySeenToday) {
       G.winterReidMeetStage = _wStage + 1;
       G.winterReidMeetDay = G.day;
+      G.winterNewStageDay = G.day; // 鎖住當天 Winter 一般聊天的新階段，避免同一天再解鎖其他劇情
       if (_wStage === 0) G.winterReidMeetSeen = true;
       if (_wStage === 1) G.winterReidMeetDay6Seen = true;
       if (_wStage === 2) G.winterReidMeetDay7Seen = true;
@@ -7616,6 +7615,7 @@ function initState() {
     reidWinterMeetDay6Seen: false,
     reidWinterMeetDay7Seen: false,
     reidWinterMeetStage: 0,
+    reidWinterMeetDay: 0,
     winterReidMeetSeen: false,
     winterReidMeetDay6Seen: false,
     winterReidMeetDay7Seen: false,
