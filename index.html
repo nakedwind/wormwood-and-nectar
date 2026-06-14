@@ -3572,7 +3572,7 @@ function updateBirds() {
       return;
     }
 
-    if (s.pause > 0) { s.pause--; return; }
+    if (s.pause > 0) { s.pause -= (G._frameFactor || 1); return; }
 
     // 隨機挑一個附近目標點，之後每幀慢慢走過去，避免看起來像瞬移。
     if (s.tx == null || s.ty == null) {
@@ -3835,14 +3835,14 @@ function updateForestFrog() {
 
   // 玩家距離
   const playerDist = Math.hypot(G.eldrin.x - f.x, G.eldrin.y - f.y);
-  if (f.stuckCooldown > 0) f.stuckCooldown--;
+  if (f.stuckCooldown > 0) f.stuckCooldown -= (G._frameFactor || 1);
 
   if (f.state === 'sit') {
     // 玩家靠近 70px 時逃跑
     if (playerDist < 70 && playerDist > FOREST_FROG_CATCH_RANGE && !(f.stuckCooldown > 0)) {
       startFleeHop();
     } else {
-      f.timer--;
+      f.timer -= (G._frameFactor || 1);
       if (f.timer <= 0) {
         const angle = Math.random() * Math.PI * 2;
         const dist  = 15 + Math.random() * 30;
@@ -4008,13 +4008,13 @@ function updateForestFrog2() {
   }
 
   const playerDist = Math.hypot(G.eldrin.x - f.x, G.eldrin.y - f.y);
-  if (f.stuckCooldown > 0) f.stuckCooldown--;
+  if (f.stuckCooldown > 0) f.stuckCooldown -= (G._frameFactor || 1);
 
   if (f.state === 'sit') {
     if (playerDist < 70 && playerDist > FOREST_FROG_CATCH_RANGE && !(f.stuckCooldown > 0)) {
       startFleeHop();
     } else {
-      f.timer--;
+      f.timer -= (G._frameFactor || 1);
       if (f.timer <= 0) {
         const angle = Math.random() * Math.PI * 2;
         const dist  = 15 + Math.random() * 30;
@@ -9107,7 +9107,7 @@ function gameLoop() {
   if (isAvarenBedRest() && !G.paused && !isDlgBlocking()) {
     const av = G.avaren;
     if (av.restBlinkPhase > 0) {
-      av.restBlinkPhase--;
+      av.restBlinkPhase -= (G._frameFactor || 1);
     } else {
       av.restBlinkTimer -= (G._frameFactor || 1);
       if (av.restBlinkTimer <= 0) {
@@ -9869,9 +9869,9 @@ function gameLoop() {
   // 阿瓦倫不定時自動說話
   if (!isAvarenUnconscious() && !G.bloodMoon7Active) {
     if (G.bubbleTimer > 0) {
-      G.bubbleTimer--;
+      G.bubbleTimer -= (G._frameFactor || 1);
     } else if (G.avarenScene === G.scene) {
-      G.autoSpeakTimer--;
+      G.autoSpeakTimer -= (G._frameFactor || 1);
       if (G.autoSpeakTimer <= 0) {
         G.bubbleText = ((G.day === 9 || G.day === 10) && G.timePeriod === 'morning')
           ? pick(AVAREN_DAY7_DLG)
@@ -9886,12 +9886,12 @@ function gameLoop() {
   }
 
   // 場景冷卻倒數（防止切換後立刻又觸發）
-  if (G.sceneCooldown > 0) G.sceneCooldown--;
+  if (G.sceneCooldown > 0) G.sceneCooldown -= (G._frameFactor || 1);
 
   // 隨機背景鳥叫（戶外/森林白天，8~20秒）
   if ((G.scene === 'outside' || G.scene === 'forest') && G.timePeriod === 'morning') {
     if (!G._birdCallTimer) G._birdCallTimer = Math.floor(Math.random() * 600) + 300;
-    G._birdCallTimer--;
+    G._birdCallTimer -= (G._frameFactor || 1);
     if (G._birdCallTimer <= 0) {
       const idx = Math.floor(Math.random() * 6) + 1;
       playLoopingAudio('sfx-birdcall-' + idx, 4.0);
@@ -9904,7 +9904,7 @@ function gameLoop() {
   // 森林隨機雞叫（10~30秒）
   if (G.scene === 'forest' && G.timePeriod === 'morning') {
     if (!G._chickenSfxTimer) G._chickenSfxTimer = Math.floor(Math.random() * 1200) + 600;
-    G._chickenSfxTimer--;
+    G._chickenSfxTimer -= (G._frameFactor || 1);
     if (G._chickenSfxTimer <= 0) {
       playLoopingAudio('sfx-chicken-3', 3.0);
       G._chickenSfxTimer = Math.floor(Math.random() * 1200) + 600;
