@@ -49,6 +49,25 @@ body {
 #title-spine-bg .spine-player,
 #title-spine-bg .spine-player canvas { width:100% !important; height:100% !important; background:transparent !important; }
 #title-spine-bg canvas { background:transparent !important; }
+#spine-loading {
+  position:absolute; bottom:32px; left:50%; transform:translateX(-50%);
+  display:flex; flex-direction:column; align-items:center; gap:8px;
+  pointer-events:none; z-index:10;
+}
+#spine-loading-text {
+  color:rgba(220,200,160,0.85); font-size:13px; letter-spacing:0.08em;
+  text-shadow:0 1px 4px rgba(0,0,0,0.7);
+}
+#spine-loading-bar-bg {
+  width:160px; height:5px; border-radius:3px;
+  background:rgba(255,255,255,0.15);
+  overflow:hidden;
+}
+#spine-loading-bar {
+  height:100%; width:0%; border-radius:3px;
+  background:rgba(220,200,160,0.75);
+  transition:width 0.15s ease;
+}
 #title-panel{
   position:absolute; top:0; left:90px; width:446px; height:100%; z-index:2;
   background: none;
@@ -2397,7 +2416,12 @@ body {
 <div id="title-screen">
   <div id="title-scroll">
     <div id="title-stage">
-      <div id="title-spine-bg" style="position:absolute;top:0;left:0;width:1509px;height:849px;"></div>
+      <div id="title-spine-bg" style="position:absolute;top:0;left:0;width:1509px;height:849px;">
+        <div id="spine-loading">
+          <div id="spine-loading-text">動畫載入中…</div>
+          <div id="spine-loading-bar-bg"><div id="spine-loading-bar"></div></div>
+        </div>
+      </div>
       <div class="t-menu">
         <button id="title-skip-btn" class="t-mbtn primary" style="display:none;" onclick="playTitleButtonSfx(); skipToDay1()"><span class="t-in"><span class="mark">➥</span><span class="mtxt">跳到第一天</span></span></button>
         <button id="title-reid-btn" class="t-mbtn primary" style="display:none;" onclick="playTitleButtonSfx(); openReidSaveScreen()"><span class="t-in"><span class="mark">➥</span><span class="mtxt">雷德的存檔</span></span></button>
@@ -15726,9 +15750,19 @@ function initTitleSpine() {
     assetManager.loadTextureAtlas('spine/封面拆圖.atlas');
     assetManager.loadText('spine/封面拆圖.json');
     const renderer = new spine.webgl.SceneRenderer(canvas, context, true);
+    const _spineLoadBar = document.getElementById('spine-loading-bar');
+    const _spineLoadUi  = document.getElementById('spine-loading');
     let skeleton, state, lastTime = 0;
     function load() {
-      if (!assetManager.isLoadingComplete()) { _spineRafId = requestAnimationFrame(load); return; }
+      if (!assetManager.isLoadingComplete()) {
+        if (_spineLoadBar) {
+          const total = assetManager.toLoad + assetManager.loaded;
+          const pct = total > 0 ? Math.round(assetManager.loaded / total * 100) : 0;
+          _spineLoadBar.style.width = pct + '%';
+        }
+        _spineRafId = requestAnimationFrame(load); return;
+      }
+      if (_spineLoadBar) _spineLoadBar.style.width = '100%';
       if (assetManager.hasErrors()) { console.warn('Spine load error', assetManager.getErrors()); return; }
       const atlas = assetManager.get('spine/封面拆圖.atlas');
       const jsonData = JSON.parse(assetManager.get('spine/封面拆圖.json'));
@@ -15744,6 +15778,7 @@ function initTitleSpine() {
       renderer.camera.setViewport(size.x, size.y);
       renderer.camera.update();
       lastTime = performance.now();
+      setTimeout(() => { if (_spineLoadUi) _spineLoadUi.style.display = 'none'; }, 300);
       _spineRafId = requestAnimationFrame(render);
     }
     function render(now) {
