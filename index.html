@@ -8621,8 +8621,11 @@ function gameLoop() {
     G.dayStartMs -= (_mult - 1) * (_realNow - G._lastFrameMs);
   }
   G._lastFrameMs = _realNow;
-  // ── 真實時間追蹤（手動暫停時凍結時間）──
-  const _now = G.manualPaused ? G.pauseStartTime : performance.now();
+  // ── 真實時間追蹤（手動暫停 / 對話中 凍結時間）──
+  const _inDlg = isDlgBlocking();
+  if (_inDlg && !G._dlgPauseStart) G._dlgPauseStart = performance.now();
+  if (!_inDlg && G._dlgPauseStart) { G.dayStartMs += performance.now() - G._dlgPauseStart; G._dlgPauseStart = null; }
+  const _now = G.manualPaused ? G.pauseStartTime : (_inDlg ? G._dlgPauseStart : performance.now());
   const _elapsed = (_now - G.dayStartMs) / 1000;
   if (G.day === 0) {
     renderTime(0);
@@ -9632,6 +9635,8 @@ function gameLoop() {
   if (G.flowerCooldown > 0) G.flowerCooldown--;
   if (G.stoneCooldown > 0) G.stoneCooldown--;
 
+  // 對話中暫停所有時間流逝（飢餓、烹飪、研究、釣魚、農場）
+  if (!isDlgBlocking()) {
   // 飢餓只在白天活動時間消耗：完整一天（20分鐘）依天數遞增，第5天起維持
   // 阿瓦倫：1→40 2→50 3→60 4→70 5+→80　艾德林：1~2→100 3→120 4→130 5+→140
   // 血月之夜（第9天晚上）暫停飢餓計算
@@ -9817,6 +9822,8 @@ function gameLoop() {
       }
     }
   }
+
+  } // end !isDlgBlocking()
 
   // 阿瓦倫不定時自動說話
   if (!isAvarenUnconscious() && !G.bloodMoon7Active) {
