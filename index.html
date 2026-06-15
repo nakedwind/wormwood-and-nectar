@@ -14811,24 +14811,16 @@ function continueAfterNight(prevText) {
   }
   // 史萊姆隔天早上重生
   G.reidSlaySlimesDead = false;
-  // 雷德討伐委託重置
+  // 雷德討伐委託重置（史萊姆委託當天限定，無論有沒有領取都清除）
   G.reidSlayActive = false;
   G.reidSlayInForest = false;
   G.reidSlayDelivered = false;
   G.reidSlayWalkingToGate = false;
   G.reidSlayPendingWalk = false;
+  G.reidSlayRewardPending = false;
+  G.reidSlaySlimesDead = false;
   G.reidForestWandering = false;
-  if (G.reidSlayRewardPending && !G.reidSlayDelivered) {
-    // 當天未領取直接失效，雷德不會隔天補送
-    G.reidSlayRewardPending = false;
-    G.reidSlayInForest = false;
-    G.reidSlayActive = false;
-    G.reidSlaySlimesDead = false;
-    G.redCommissions = (G.redCommissions || []).filter(c => c.key !== 'slay');
-  }
-  if (G.reidSlayRewardClaimedDay > 0) {
-    G.redCommissions = (G.redCommissions || []).filter(c => c.key !== 'slay');
-  }
+  G.redCommissions = (G.redCommissions || []).filter(c => c.key !== 'slay');
   // 每日委託限制重置
   G.reidCommissionedDayKeys = [];
   // 如果今天有待交貨的委託，提前標記雷德今天會出現
