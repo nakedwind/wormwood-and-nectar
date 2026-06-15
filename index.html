@@ -9263,9 +9263,10 @@ function gameLoop() {
     }
   }
 
-  // 阿瓦倫戶外採集（心情>50，且阿瓦倫跟隨在戶外；第9天血月期間暫停）
+  // 阿瓦倫戶外採集（心情>50，且阿瓦倫跟隨在戶外；第9天血月期間、第11天委託魔王心臟後暫停）
   if (!isAvarenUnconscious() && G.scene === 'outside' && G.mood > 50 && G.avarenScene === 'outside' && !G.paused && !G.actionSceneActive
       && !(G.day === 9 && G.bloodMoon7Active)
+      && !(G.day === 11 && G.reidDemonHeartCommissionedToday)
       && document.getElementById('bag-overlay').style.display !== 'flex') {
     G.avaren.gatherTimer -= (G.speedMult || 1) * (G._frameFactor || 1);
     if (G.avaren.gatherTimer <= 0) {
@@ -15204,6 +15205,7 @@ function reidShakeScreen(times = 1) {
 function startReidEndingSequence() {
   // 鎖定互動（但允許走路），雷德不再說話
   G.reidEndingLock = true;
+  G.paused = true;
   if (G.red) { G.red.bubbleTimer = 0; G.red.autoSpeakTimer = 99999; }
 
   // 30 秒線性壓黑
