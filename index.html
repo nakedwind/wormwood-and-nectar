@@ -5642,6 +5642,30 @@ function openRedMenu() {
         run() { runReidChat(); }
       });
     }
+    // 第11天魔王心臟委託（即使雷德在森林也可委託）
+    const _fSlayDays = G.reidSlayCommissionedDays || [];
+    const _fHasSlayDay567 = [5,6,7].every(d => _fSlayDays.includes(d));
+    if (G.day === 11 && G.reidChat11_1Seen && G.reidChat11_2Seen && G.winterDay8FairyHintSeen && _fHasSlayDay567) {
+      const alreadyHeart = !!G.reidDemonHeartCommissionedToday;
+      items.push({
+        name: alreadyHeart ? '今日已委託：魔王的心臟' : '委託：魔王的心臟',
+        fx: alreadyHeart ? '（今天已接過）' : '隱藏委託',
+        req: () => !alreadyHeart,
+        run() {
+          G.reidDemonHeartCommissionedToday = true;
+          G.reidDemonHeartCount = (G.reidDemonHeartCount || 0) + 1;
+          const idx = Math.min(G.reidDemonHeartCount - 1, REID_DEMON_HEART_STORIES.length - 1);
+          if (G.reidDemonHeartCount >= 3) { G.reidFakeSaveTaken = true; G.periodTransitioned = true; }
+          startActionScene(REID_DEMON_HEART_STORIES[idx], 400, () => {
+            if (G.reidFakeSaveTaken) {
+              showEvent('💾', '存檔已覆蓋',
+                'SAVE 00\n\n第 11 天　早晨\n勇者雷德\n\n這個存檔已被真正的玩家持有。\n艾德林無法覆蓋。',
+                startReidEndingSequence, 'red');
+            }
+          });
+        }
+      });
+    }
     if (G.carryingSoup) {
       items.push({ name:'遞給他料理', fx:'', req:()=>true, run: sellSoupToReid });
     }
@@ -5720,7 +5744,7 @@ function showRedCommissionMenu() {
         startActionScene(REID_DEMON_HEART_STORIES[idx], 400, () => {
           if (G.reidFakeSaveTaken) {
             showEvent('💾', '存檔已覆蓋',
-              'SAVE 01\n\n第 11 天　早晨\n勇者雷德\n\n這個存檔已被真正的玩家持有。\n艾德林無法覆蓋。',
+              'SAVE 00\n\n第 11 天　早晨\n勇者雷德\n\n這個存檔已被真正的玩家持有。\n艾德林無法覆蓋。',
               startReidEndingSequence, 'red');
           }
         });
@@ -15037,7 +15061,7 @@ const ENDINGS = {
   captivity: { cls:'end-regret', type:'Normal End', title:'囚禁',
     desc:'阿瓦倫活了下來。\n而你也留了下來。\n\n這不是最好的結局。卻是阿瓦倫最想要的結局。\n\n小屋沒有被詛咒吞沒。但門被關上了。\n\n窗外的世界逐漸變得遙遠。\n\n醒來時能看見你。睡著前也能看見你。\n\n再也不會分離。再也不會失去。\n\n永遠如此。' },
   reid: { cls:'end-regret', type:"Red's End", title:'覆寫',
-    desc:'SAVE 01\n\n第 11 天　早晨\n勇者雷德\n\n那個總是迷路的勇者，終於找到了路。\n只是他抵達的地方，不是魔王城，也不是森林深處。\n\n而是這個故事之外更遠的地方。\n\n因為勇者不會屈服於世界的規則。\n他決定改寫這整個世界，拯救所有的人。\n\n勇者決定拯救你、拯救阿瓦倫，\n以及拯救那個面冷心善的魔王。' },
+    desc:'SAVE 00\n\n第 11 天　早晨\n勇者雷德\n\n那個總是迷路的勇者，終於找到了路。\n只是他抵達的地方，不是魔王城，也不是森林深處。\n\n而是這個故事之外更遠的地方。\n\n因為勇者不會屈服於世界的規則。\n他決定改寫這整個世界，拯救所有的人。\n\n勇者決定拯救你、拯救阿瓦倫，\n以及拯救那個面冷心善的魔王。' },
 };
 let _eldrinDeathTriggered = false;
 function triggerEldrinDeath() {
