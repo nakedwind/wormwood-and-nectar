@@ -14819,16 +14819,12 @@ function continueAfterNight(prevText) {
   G.reidSlayPendingWalk = false;
   G.reidForestWandering = false;
   if (G.reidSlayRewardPending && !G.reidSlayDelivered) {
-    if (G.day > (G.reidSlayDayCommissioned || 0) + 1) {
-      // 超過 1 天未領取，過期清除
-      G.reidSlayRewardPending = false;
-      G.reidSlayInForest = false;
-      G.reidSlayActive = false;
-      G.reidSlaySlimesDead = false;
-      G.redCommissions = (G.redCommissions || []).filter(c => c.key !== 'slay');
-    } else {
-      G.reidVisitDay = G.day;
-    }
+    // 當天未領取直接失效，雷德不會隔天補送
+    G.reidSlayRewardPending = false;
+    G.reidSlayInForest = false;
+    G.reidSlayActive = false;
+    G.reidSlaySlimesDead = false;
+    G.redCommissions = (G.redCommissions || []).filter(c => c.key !== 'slay');
   }
   if (G.reidSlayRewardClaimedDay > 0) {
     G.redCommissions = (G.redCommissions || []).filter(c => c.key !== 'slay');
