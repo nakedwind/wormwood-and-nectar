@@ -5699,7 +5699,9 @@ function showRedCommissionMenu() {
   const chatOnly = !isReidDay() && G.reidVisitDay === G.day;
   console.log('[ReidMenu] day=', G.day, 'chatOnly=', chatOnly, 'chat11_1=', G.reidChat11_1Seen, 'chat11_2=', G.reidChat11_2Seen, 'heartToday=', G.reidDemonHeartCommissionedToday, 'count=', G.reidDemonHeartCount, 'snapshot=', !!G.day11Snapshot);
 
-  if (!chatOnly && G.day === 11 && G.reidChat11_1Seen && G.reidChat11_2Seen && G.winterDay8FairyHintSeen) {
+  const _slayDays = G.reidSlayCommissionedDays || [];
+  const _hasSlayDay567 = [5,6,7].every(d => _slayDays.includes(d));
+  if (!chatOnly && G.day === 11 && G.reidChat11_1Seen && G.reidChat11_2Seen && G.winterDay8FairyHintSeen && _hasSlayDay567) {
     const alreadyHeart = !!G.reidDemonHeartCommissionedToday;
     items.push({
       name: alreadyHeart ? '今日已委託：魔王的心臟' : '委託：魔王的心臟',
@@ -5752,6 +5754,8 @@ function showRedCommissionMenu() {
             '「交給我！我去我去！……等等，是往那邊嗎？」',
           ]));
           if (c.key === 'slay') {
+            if (!G.reidSlayCommissionedDays) G.reidSlayCommissionedDays = [];
+            if (!G.reidSlayCommissionedDays.includes(G.day)) G.reidSlayCommissionedDays.push(G.day);
             G.reidSlayPendingWalk = true;  // 等對話結束再開始走
             G.reidSlayWalkPhase = 0;
             G.reidSlayActive = false;
@@ -7620,6 +7624,7 @@ function initState() {
     redDelivered: false,
     redCommissions: [],
     reidCommissionedDayKeys: [],
+    reidSlayCommissionedDays: [],
     reidDemonHeartCount: 0,
     reidDemonHeartCommissionedToday: false,
     reidFakeSaveTaken: false,
@@ -9229,8 +9234,9 @@ function gameLoop() {
     }
   }
 
-  // 阿瓦倫戶外採集（心情>50，且阿瓦倫跟隨在戶外）
+  // 阿瓦倫戶外採集（心情>50，且阿瓦倫跟隨在戶外；第9天血月期間暫停）
   if (!isAvarenUnconscious() && G.scene === 'outside' && G.mood > 50 && G.avarenScene === 'outside' && !G.paused && !G.actionSceneActive
+      && !(G.day === 9 && G.bloodMoon7Active)
       && document.getElementById('bag-overlay').style.display !== 'flex') {
     G.avaren.gatherTimer -= (G.speedMult || 1) * (G._frameFactor || 1);
     if (G.avaren.gatherTimer <= 0) {
