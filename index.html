@@ -10154,7 +10154,7 @@ document.addEventListener('keydown', e => {
   }
 
   // 旁白/對話顯示中：空白鍵 / Enter 推進（要在 isDlgBlocking return 之前處理）
-  if ((e.key === ' ' || e.key === 'Enter') && storyQueue.length > 0 && !storyQueue[0].autoClose) {
+  if ((e.key === ' ' || e.key === 'Enter') && !G.reidEndingLock && storyQueue.length > 0 && !storyQueue[0].autoClose) {
     e.preventDefault(); advanceStory(true); return;
   }
 
@@ -12654,7 +12654,8 @@ function ascAdvance() {
     if (G.actionSceneOnDone) { const cb = G.actionSceneOnDone; G.actionSceneOnDone = null; cb(); }
     // action scene 結束後，若旁白佇列有內容則繼續顯示
     if (storyQueue.length > 0) _showStory();
-    if (!G.sleepAnimActive && !isDlgBlocking()) G.paused = false;
+    const _eventShowing = document.getElementById('event-overlay').style.display === 'flex';
+    if (!G.sleepAnimActive && !isDlgBlocking() && !_eventShowing) G.paused = false;
     return;
   }
   if (G.actionScenePageSfx) playLoopingAudio('sfx-page', 4.0);
@@ -15205,7 +15206,6 @@ function reidShakeScreen(times = 1) {
 function startReidEndingSequence() {
   // 鎖定互動（但允許走路），雷德不再說話
   G.reidEndingLock = true;
-  G.paused = true;
   if (G.red) { G.red.bubbleTimer = 0; G.red.autoSpeakTimer = 99999; }
 
   // 30 秒線性壓黑
