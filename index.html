@@ -6263,7 +6263,6 @@ function openWinterMenu() {
     if (reidActuallyInForest && _wStage < WINTER_MEET_STORIES.length && !_alreadySeenToday) {
       G.winterReidMeetStage = _wStage + 1;
       G.winterReidMeetDay = G.day;
-      G.winterNewStageDay = G.day; // 鎖住當天 Winter 一般聊天的新階段，避免同一天再解鎖其他劇情
       if (_wStage === 0) G.winterReidMeetSeen = true;
       if (_wStage === 1) G.winterReidMeetDay6Seen = true;
       if (_wStage === 2) G.winterReidMeetDay7Seen = true;
