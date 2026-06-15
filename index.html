@@ -3546,6 +3546,8 @@ function updateBirds() {
     const FLY_RANGE = 55;
     if (playerDist < FLY_RANGE) { triggerBirdFlyAway(scene); return; }
     s.hopTick = (s.hopTick || 0) + (G._frameFactor || 1);
+    const _doHop = s.hopTick >= 22;
+    if (_doHop) s.hopTick -= 22;
 
     const FLEE_RANGE = 100;
     if (playerDist < FLEE_RANGE) {
@@ -3568,7 +3570,7 @@ function updateBirds() {
       const birdImgF = el.querySelector('img');
       if (birdImgF) birdImgF.style.transform = s.facing > 0 ? 'scaleX(-1)' : 'scaleX(1)';
       const hopElF = el.querySelector('.bird-hop');
-      if (hopElF && s.hopTick % 22 === 0) { hopElF.classList.remove('scene-bird-hop'); void hopElF.offsetWidth; hopElF.classList.add('scene-bird-hop'); }
+      if (hopElF && _doHop) { hopElF.classList.remove('scene-bird-hop'); void hopElF.offsetWidth; hopElF.classList.add('scene-bird-hop'); }
       return;
     }
 
@@ -3615,7 +3617,7 @@ function updateBirds() {
 
     // 觸發跳躍動畫（套在內層 .bird-hop，不影響翻轉）
     const hopEl = el.querySelector('.bird-hop');
-    if (hopEl && s.hopTick % 22 === 0) {
+    if (hopEl && _doHop) {
       hopEl.classList.remove('scene-bird-hop');
       void hopEl.offsetWidth;
       hopEl.classList.add('scene-bird-hop');
@@ -4988,7 +4990,7 @@ const RED_WINTER_MEET_DAY7_STORY = [
   { speaker:'雷德', text:'雖然大家都說勇者就是要討伐魔王。\n可是我覺得，至少要先知道對方做了什麼壞事才行。' },
   { speaker:'艾德林', text:'……雷德。' },
   { speaker:'雷德', text:'嗯？' },
-  { speaker:'艾德林', text:'你有時候比我想像中還清楚。' },
+  { speaker:'艾德林', text:'你的腦袋有時候比我想像中還清楚。' },
   { speaker:'雷德', text:'真的嗎？\n溫特剛剛才說我腦袋裡可能只有麵包屑。' },
   { speaker:'艾德林', text:'……' },
   { speaker:'雷德', text:'但他願意跟我說這些，所以我覺得他其實是很溫柔的人。' },
@@ -5756,6 +5758,7 @@ function showRedCommissionMenu() {
           if (c.key === 'slay') {
             if (!G.reidSlayCommissionedDays) G.reidSlayCommissionedDays = [];
             if (!G.reidSlayCommissionedDays.includes(G.day)) G.reidSlayCommissionedDays.push(G.day);
+            G.reidSlayDayCommissioned = G.day;
             G.reidSlayPendingWalk = true;  // 等對話結束再開始走
             G.reidSlayWalkPhase = 0;
             G.reidSlayActive = false;
@@ -6218,9 +6221,11 @@ function runWinterChat() {
     if (!G.winterChat7_1Seen) {
       if (!canUnlockNewStage) { story('溫特', pick(WINTER_DLG_GENERAL)); return; }
       G.winterNewStageDay = G.day; G.winterChat7_1Seen = true;
-      const gotHerb = !isBagFull('herb', 2);
-      if (gotHerb) { chg('herb', 2); renderHUD(); } else { toastBagFull(); toast('背包已滿，無法收下藥草。'); }
-      startActionScene(WINTER_CHAT_DAY7_1, 400, () => {}); return;
+      startActionScene(WINTER_CHAT_DAY7_1, 400, () => {
+        const gotHerb = !isBagFull('herb', 2);
+        if (gotHerb) { chg('herb', 2); renderHUD(); story('旁白', '你收下了溫特給的藥材。'); }
+        else { toastBagFull(); story('旁白', '背包已滿，無法收下藥材。'); }
+      }); return;
     }
     if (!G.winterChat7_2Seen) { G.winterChat7_2Seen = true; startActionScene(WINTER_CHAT_DAY7_2, 400, () => {}); return; }
   }
@@ -7658,6 +7663,7 @@ function initState() {
     reidSlaySlimesDead: false,
     reidSlayRewardClaimedDay: 0,
     reidSlayRewardPending: false,
+    reidSlayDayCommissioned: 0,
     reidForestWandering: false,
     bubbleTimer: 0,
     bubbleText: '',
@@ -14813,7 +14819,16 @@ function continueAfterNight(prevText) {
   G.reidSlayPendingWalk = false;
   G.reidForestWandering = false;
   if (G.reidSlayRewardPending && !G.reidSlayDelivered) {
-    G.reidVisitDay = G.day;
+    if (G.day > (G.reidSlayDayCommissioned || 0) + 1) {
+      // 超過 1 天未領取，過期清除
+      G.reidSlayRewardPending = false;
+      G.reidSlayInForest = false;
+      G.reidSlayActive = false;
+      G.reidSlaySlimesDead = false;
+      G.redCommissions = (G.redCommissions || []).filter(c => c.key !== 'slay');
+    } else {
+      G.reidVisitDay = G.day;
+    }
   }
   if (G.reidSlayRewardClaimedDay > 0) {
     G.redCommissions = (G.redCommissions || []).filter(c => c.key !== 'slay');
