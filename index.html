@@ -10337,8 +10337,8 @@ document.addEventListener('keydown', e => {
       openAvarenMenu();
     }
   }
-  // E 鍵：開關背包
-  if (e.key === 'e' || e.key === 'E') {
+  // E / B 鍵：開關背包
+  if (e.key === 'e' || e.key === 'E' || e.key === 'b' || e.key === 'B') {
     if (document.getElementById('bag-overlay').style.display === 'flex') { closeBag(); return; }
     openBag(); return;
   }
@@ -18513,6 +18513,7 @@ runTipsCycle();
       oninput="refreshActiveBGMVolume();['sfx-day0-rain','sfx-indoor-rain','sfx-day0-walk','sfx-kitchen-stove','sfx-kitchen-boil'].forEach(id=>{const e=document.getElementById(id);if(e&&!e.paused)e.volume=this.value/100;});">
   </div>
   <button id="pause-btn" onclick="togglePause()">⏸ 暫停遊戲</button>
+  <button id="bag-btn" onclick="openBag();document.getElementById('settings-panel').classList.remove('open');" style="width:100%;background:#1a1208;border:1px solid #3a2810;color:#c0a060;padding:7px;font-family:inherit;font-size:13px;cursor:pointer;letter-spacing:2px;transition:all 0.2s;margin-top:6px;">🎒 開啟背包</button>
 </div>
 </body>
 </html>
