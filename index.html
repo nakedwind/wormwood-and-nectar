@@ -10352,8 +10352,8 @@ document.addEventListener('keydown', e => {
   // Shift+F 密技：召喚妖精（測試用）
   if (e.key === 'F' && e.shiftKey && G) {
     G.fairyCaught = false;
-    G.fairy.x = DAY2_FAIRY_BOUNDS.x1 + Math.random() * (DAY2_FAIRY_BOUNDS.x2 - DAY2_FAIRY_BOUNDS.x1);
-    G.fairy.y = DAY2_FAIRY_BOUNDS.y1 + Math.random() * (DAY2_FAIRY_BOUNDS.y2 - DAY2_FAIRY_BOUNDS.y1);
+    G.fairy.x = 180 + Math.random() * 260;
+    G.fairy.y = 235 + Math.random() * 20;
     G.fairy.vx = (Math.random() < 0.5 ? 1 : -1) * (0.3 + Math.random() * 0.3);
     G.fairy.vy = 0;
     toast('✨ 妖精召喚');
