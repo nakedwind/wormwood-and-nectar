@@ -10342,13 +10342,22 @@ document.addEventListener('keydown', e => {
     if (document.getElementById('bag-overlay').style.display === 'flex') { closeBag(); return; }
     openBag(); return;
   }
-  // F: scene transition (備用，走入會自動觸發)
-  if (e.key === 'f' || e.key === 'F') {
+  // F: scene transition (備用，走入會自動觸發)；Shift+F 保留給密技
+  if ((e.key === 'f' || e.key === 'F') && !e.shiftKey) {
     const zone = getActiveZone();
     if (zone && zone.isScene) zone.fn();
   }
   // ` 鍵：開關除錯模式
   if (e.key === '`') { if (G && cheatUnlocked()) G.debugMode = !G.debugMode; }
+  // Shift+F 密技：召喚妖精（測試用）
+  if (e.key === 'F' && e.shiftKey && G) {
+    G.fairyCaught = false;
+    G.fairy.x = DAY2_FAIRY_BOUNDS.x1 + Math.random() * (DAY2_FAIRY_BOUNDS.x2 - DAY2_FAIRY_BOUNDS.x1);
+    G.fairy.y = DAY2_FAIRY_BOUNDS.y1 + Math.random() * (DAY2_FAIRY_BOUNDS.y2 - DAY2_FAIRY_BOUNDS.y1);
+    G.fairy.vx = (Math.random() < 0.5 ? 1 : -1) * (0.3 + Math.random() * 0.3);
+    G.fairy.vy = 0;
+    toast('✨ 妖精召喚');
+  }
   // P 鍵：開關場景物件編輯器
   if (e.key === 'p' || e.key === 'P') { toggleSceneObjEditor(); }
 });
