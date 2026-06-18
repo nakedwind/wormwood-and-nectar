@@ -8837,10 +8837,27 @@ function gameLoop() {
   const bagOpen = document.getElementById('bag-overlay').style.display === 'flex';
   if (!isDlgBlocking() && !cookPanelOpen && !G.gatherSearchActive && !G.fishCastLock && !tradeOpen && !bagOpen) {
     const _sp = SPEED * (G._frameFactor || 1); // 依幀率校正，避免高刷新率螢幕走太快
+    const _anyKey = k['ArrowLeft']||k['a']||k['A']||k['ArrowRight']||k['d']||k['D']||k['ArrowUp']||k['w']||k['W']||k['ArrowDown']||k['s']||k['S'];
     if (k['ArrowLeft'] ||k['a']||k['A']) dx = -_sp;
     if (k['ArrowRight']||k['d']||k['D']) dx = +_sp;
     if (k['ArrowUp']   ||k['w']||k['W']) dy = -_sp;
     if (k['ArrowDown'] ||k['s']||k['S']) dy = +_sp;
+    // 點擊移動（平板/滑鼠）：鍵盤優先，有按鍵時取消點擊目標
+    if (_anyKey) {
+      G.touchTarget = null;
+    } else if (G.touchTarget) {
+      const _tdx = G.touchTarget.x - el.x;
+      const _tdy = G.touchTarget.y - el.y;
+      const _dist = Math.sqrt(_tdx * _tdx + _tdy * _tdy);
+      if (_dist < _sp * 1.5) {
+        G.touchTarget = null;
+      } else {
+        dx = (_tdx / _dist) * _sp;
+        dy = (_tdy / _dist) * _sp;
+      }
+    }
+  } else {
+    G.touchTarget = null;
   }
 
   const nx = Math.max(30, Math.min(SCENE_W-30, el.x + dx));
@@ -10362,6 +10379,23 @@ document.addEventListener('keydown', e => {
   if (e.key === 'p' || e.key === 'P') { toggleSceneObjEditor(); }
 });
 document.addEventListener('keyup', e => { if (G.keys) G.keys[e.key] = false; });
+
+// 點擊移動（平板 / 滑鼠左鍵）
+document.getElementById('scene-wrap').addEventListener('click', e => {
+  if (!G || G.paused || G.actionSceneActive || G.fishCastLock || G.gatherSearchActive) return;
+  if (isDlgBlocking()) return;
+  if (document.getElementById('bag-overlay').style.display === 'flex') return;
+  if (document.getElementById('trade-overlay').style.display === 'flex') return;
+  if (document.getElementById('cook-select-overlay').style.display === 'flex') return;
+  // 忽略點到 UI 元素（按鈕、對話框等）
+  if (e.target !== e.currentTarget && e.target.closest('button, .dlg-box, #hud, #story-box, #interact-hint, #bag-overlay, #trade-overlay')) return;
+  const rect = e.currentTarget.getBoundingClientRect();
+  const scaleX = 640 / rect.width;
+  const scaleY = 480 / rect.height;
+  const gx = (e.clientX - rect.left) * scaleX;
+  const gy = (e.clientY - rect.top)  * scaleY;
+  G.touchTarget = { x: gx, y: gy };
+});
 
 // 除錯模式：滑鼠座標顯示
 document.getElementById('scene-wrap').addEventListener('mousemove', e => {
