@@ -9080,6 +9080,8 @@ function gameLoop() {
     // 冷靜判定（詛咒 < 50 且 疼痛 < 50）
     if (!G.bloodMoon7Calmed && G.curse < 50 && G.pain < 50) {
       G.bloodMoon7Calmed = true;
+      // 統計：玩家成功安撫血月（撐過血月夜）。失敗的情況會由 ending/avaren_death 記錄
+      gcEvent('bloodmoon/calmed', '血月：成功安撫');
       story('旁白', '阿瓦倫的顫抖稍微緩和了一些……\n他還是茫然的，但似乎沒有剛才那麼痛了。');
     }
   }
@@ -9823,6 +9825,8 @@ function gameLoop() {
         potionEl.style.display = 'block';
       }
       toast('🧪 藥水研究完成');
+      // 統計：玩家製作了哪種藥水（cold治療／curse解咒／stamina體力／forget忘卻）
+      gcEvent('potion/' + (G.researchType || 'unknown'), '製作藥水：' + (G.researchType || 'unknown'));
     }
   }
 
@@ -14496,6 +14500,15 @@ function openBedMenu() {
   ]);
 }
 
+// 統計小工具：送一個 GoatCounter 自訂事件（未載入時自動略過，絕不影響遊戲）
+function gcEvent(path, title) {
+  try {
+    if (window.goatcounter && window.goatcounter.count) {
+      window.goatcounter.count({ path: path, title: title || path, event: true });
+    }
+  } catch (e) {}
+}
+
 function endDay() {
   G.dayEndTriggered = true;
   G.paused = true;
@@ -14843,6 +14856,8 @@ function continueAfterNight(prevText) {
   G.avarenReadToday = 0;
   G.noahGiftToday = false;
   G.winterGiftToday = false;
+  // 統計：玩家進入第 N 天（看玩家玩到哪一天、在哪裡流失）
+  if (G.day >= 1 && G.day <= 11) gcEvent('day/' + G.day, '第 ' + G.day + ' 天');
   G.eldrinFatigue = Math.min(100, (G.eldrinFatigue ?? 80) + 60);
   // 第11天剛開始：存下快照（只存一次，迴圈期間不覆蓋；放在每日重置之後確保快照含正確初始值）
   if (G.day === 11 && !G.day11Snapshot) {
@@ -15516,13 +15531,9 @@ function endGame(type) {
   else if (G.mood >= 70)                          ending = ENDINGS.captivity;
   else                                             ending = ENDINGS.mist;
 
-  // 統計：回報這次玩家拿到的結局（GoatCounter 自訂事件；分析工具未載入時自動略過，不影響遊戲）
-  try {
-    const _endKey = Object.keys(ENDINGS).find(k => ENDINGS[k] === ending) || 'unknown';
-    if (window.goatcounter && window.goatcounter.count) {
-      window.goatcounter.count({ path: 'ending/' + _endKey, title: '結局：' + _endKey, event: true });
-    }
-  } catch (e) {}
+  // 統計：回報這次玩家拿到的結局
+  const _endKey = Object.keys(ENDINGS).find(k => ENDINGS[k] === ending) || 'unknown';
+  gcEvent('ending/' + _endKey, '結局：' + _endKey);
 
   // 找出結局對應的旁白（倒下無前置旁白）
   const endingKey = type === 'eldrin_death' ? null
