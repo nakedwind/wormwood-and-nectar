@@ -8855,6 +8855,8 @@ function gameLoop() {
       } else {
         dx = (_tdx / _dist) * _sp;
         dy = (_tdy / _dist) * _sp;
+        G._touchMovePreX = el.x;
+        G._touchMovePreY = el.y;
       }
     }
   } else {
@@ -8882,6 +8884,14 @@ function gameLoop() {
     const nudge = 4;
     if      (!isPlayerObstacleAt(el.x - nudge, ny, -nudge, dy)) { el.x -= nudge; el.y = ny; }
     else if (!isPlayerObstacleAt(el.x + nudge, ny, nudge, dy)) { el.x += nudge; el.y = ny; }
+  }
+
+  // 點擊移動：若這幀完全沒移動（被障礙擋住），清除目標
+  if (G.touchTarget && G._touchMovePreX != null) {
+    if (Math.abs(el.x - G._touchMovePreX) < 0.1 && Math.abs(el.y - G._touchMovePreY) < 0.1) {
+      G.touchTarget = null;
+    }
+    G._touchMovePreX = null; G._touchMovePreY = null;
   }
 
   // ── 防卡死自救：若玩家錨點落在硬障礙內，自動推往最近的可行走位置 ──
@@ -15920,6 +15930,23 @@ function updateSceneScale() {
   document.getElementById('scene-wrap').style.transform = `scale(${scale})`;
   outer.style.width  = dispW + 'px';
   outer.style.height = dispH + 'px';
+
+  // ── 整頁縮放：螢幕比 #app 窄時，縮小置中 ──
+  const APP_W = 1180;
+  const app = document.getElementById('app');
+  const vw = window.innerWidth;
+  if (app && vw < APP_W) {
+    const s = vw / APP_W;
+    app.style.transform = `scale(${s})`;
+    app.style.transformOrigin = 'top center';
+    app.style.marginBottom = `-${Math.round(app.offsetHeight * (1 - s))}px`;
+    document.body.style.overflowX = 'hidden';
+  } else if (app) {
+    app.style.transform = '';
+    app.style.transformOrigin = '';
+    app.style.marginBottom = '';
+    document.body.style.overflowX = '';
+  }
 }
 window.addEventListener('load',   updateSceneScale);
 window.addEventListener('resize', updateSceneScale);
