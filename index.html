@@ -10391,8 +10391,16 @@ document.getElementById('scene-wrap').addEventListener('click', e => {
   if (document.getElementById('bag-overlay').style.display === 'flex') return;
   if (document.getElementById('trade-overlay').style.display === 'flex') return;
   if (document.getElementById('cook-select-overlay').style.display === 'flex') return;
-  // 忽略點到 UI 元素（按鈕、對話框等）
-  if (e.target !== e.currentTarget && e.target.closest('button, .dlg-box, #hud, #story-box, #interact-hint, #bag-overlay, #trade-overlay')) return;
+  // 忽略點到 UI 元素或可互動角色
+  if (e.target !== e.currentTarget && e.target.closest('button, .dlg-box, #hud, #story-box, #interact-hint, #bag-overlay, #trade-overlay, #cw-avaren, #cw-noah')) return;
+  // 已在互動範圍內 → 直接觸發互動（等同空白鍵）
+  const hi = document.getElementById('hint-interact');
+  const hs = document.getElementById('hint-scene');
+  if ((hi && hi.style.display === 'block') || (hs && hs.style.display === 'block')) {
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: ' ', bubbles: true }));
+    return;
+  }
+  // 不在範圍內 → 走過去
   const rect = e.currentTarget.getBoundingClientRect();
   const scaleX = 640 / rect.width;
   const scaleY = 480 / rect.height;
