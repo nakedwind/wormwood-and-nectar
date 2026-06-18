@@ -10337,18 +10337,27 @@ document.addEventListener('keydown', e => {
       openAvarenMenu();
     }
   }
-  // E 鍵：開關背包
-  if (e.key === 'e' || e.key === 'E') {
+  // E / B 鍵：開關背包
+  if (e.key === 'e' || e.key === 'E' || e.key === 'b' || e.key === 'B') {
     if (document.getElementById('bag-overlay').style.display === 'flex') { closeBag(); return; }
     openBag(); return;
   }
-  // F: scene transition (備用，走入會自動觸發)
-  if (e.key === 'f' || e.key === 'F') {
+  // F: scene transition (備用，走入會自動觸發)；Shift+F 保留給密技
+  if ((e.key === 'f' || e.key === 'F') && !e.shiftKey) {
     const zone = getActiveZone();
     if (zone && zone.isScene) zone.fn();
   }
   // ` 鍵：開關除錯模式
   if (e.key === '`') { if (G && cheatUnlocked()) G.debugMode = !G.debugMode; }
+  // Shift+F 密技：召喚妖精（測試用）
+  if (e.key === 'F' && e.shiftKey && G) {
+    G.fairyCaught = false;
+    G.fairy.x = 180 + Math.random() * 260;
+    G.fairy.y = 235 + Math.random() * 20;
+    G.fairy.vx = (Math.random() < 0.5 ? 1 : -1) * (0.3 + Math.random() * 0.3);
+    G.fairy.vy = 0;
+    toast('✨ 妖精召喚');
+  }
   // P 鍵：開關場景物件編輯器
   if (e.key === 'p' || e.key === 'P') { toggleSceneObjEditor(); }
 });
@@ -18521,6 +18530,7 @@ runTipsCycle();
       oninput="refreshActiveBGMVolume();['sfx-day0-rain','sfx-indoor-rain','sfx-day0-walk','sfx-kitchen-stove','sfx-kitchen-boil'].forEach(id=>{const e=document.getElementById(id);if(e&&!e.paused)e.volume=this.value/100;});">
   </div>
   <button id="pause-btn" onclick="togglePause()">⏸ 暫停遊戲</button>
+  <button id="bag-btn" onclick="openBag();document.getElementById('settings-panel').classList.remove('open');" style="width:100%;background:#1a1208;border:1px solid #3a2810;color:#c0a060;padding:7px;font-family:inherit;font-size:13px;cursor:pointer;letter-spacing:2px;transition:all 0.2s;margin-top:6px;">🎒 開啟背包</button>
 </div>
 
 <!-- ══ GoatCounter 玩家統計 ══
