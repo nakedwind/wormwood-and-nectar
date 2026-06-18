@@ -430,11 +430,12 @@ body {
 .zone-hint {
   position: absolute; background: rgba(14,10,4,0.88); border: 1px solid #6a4820;
   color: #f0d060; font-size: 10px; font-weight: 400; padding: 3px 10px;
-  border-radius: 5px; pointer-events: none; z-index: 30; letter-spacing: 1px; white-space: nowrap;
+  border-radius: 5px; pointer-events: none; z-index: 30; letter-spacing: 1px; white-space: nowrap; transition: background 0.1s;
   transform: translateX(-50%);
 }
-#hint-interact { display: none; }
-#hint-scene    { display: none; }
+#hint-interact { display: none; pointer-events: auto; cursor: pointer; }
+#hint-scene    { display: none; pointer-events: auto; cursor: pointer; }
+#hint-interact:hover, #hint-scene:hover { background: rgba(80,50,10,0.95); }
 #room-label {
   position: absolute; top: 8px; left: 8px;
   background: rgba(8,5,2,0.80); border: 1px solid #3a2810;
@@ -10393,13 +10394,6 @@ document.getElementById('scene-wrap').addEventListener('click', e => {
   if (document.getElementById('cook-select-overlay').style.display === 'flex') return;
   // 忽略點到 UI 元素或可互動角色
   if (e.target !== e.currentTarget && e.target.closest('button, .dlg-box, #hud, #story-box, #interact-hint, #bag-overlay, #trade-overlay, #cw-avaren, #cw-noah')) return;
-  // 已在互動範圍內 → 直接觸發互動（等同空白鍵）
-  const hi = document.getElementById('hint-interact');
-  const hs = document.getElementById('hint-scene');
-  if ((hi && hi.style.display === 'block') || (hs && hs.style.display === 'block')) {
-    document.dispatchEvent(new KeyboardEvent('keydown', { key: ' ', bubbles: true }));
-    return;
-  }
   // 不在範圍內 → 走過去
   const rect = e.currentTarget.getBoundingClientRect();
   const scaleX = 640 / rect.width;
@@ -10425,6 +10419,16 @@ document.getElementById('scene-wrap').addEventListener('mouseleave', () => {
 });
 
 // Click on Avaren
+// 點擊互動提示框 = 等同按空白鍵
+document.getElementById('hint-interact').addEventListener('click', e => {
+  e.stopPropagation();
+  document.dispatchEvent(new KeyboardEvent('keydown', { key: ' ', bubbles: true }));
+});
+document.getElementById('hint-scene').addEventListener('click', e => {
+  e.stopPropagation();
+  document.dispatchEvent(new KeyboardEvent('keydown', { key: ' ', bubbles: true }));
+});
+
 document.getElementById('cw-avaren').addEventListener('click', () => {
   if (!G || G.paused) return;
   if (G.day === 0 && G.scene === 'room' && isNearAvaren()) {
