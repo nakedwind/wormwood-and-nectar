@@ -30,6 +30,8 @@
   - `day/<N>`（玩到第幾天，1~11，在每日重置區）
   - `potion/<type>`（cold/curse/stamina/forget，研究完成時）
   - `bloodmoon/calmed`（成功安撫血月；失敗看 ending/avaren_death）
+  - `replay/restart`（按「再玩一次」回初始頁，在 restartGame）
+  - `replay/continue`（讀取存檔繼續遊戲，在 loadFromData；每次讀檔都算一次。中英文版共用路徑）
 - 改完統計程式碼要重新 build_netlify.bat 上架才生效；本機測試 GoatCounter 會忽略 localhost。
 - **發現：玩家多用手機（iOS）玩 → 之後做手機版值得。**
 
