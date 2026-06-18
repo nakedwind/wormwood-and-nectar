@@ -16177,6 +16177,7 @@ async function loadFromSlot(n) {
 
 async function loadFromData(data) {
   if (!data) return;
+  gcEvent('replay/continue', '繼續遊戲');
   await ensureAssetsReady();
   playLoopingAudio('sfx-page', 4.0);
   closeSavePanel();
@@ -17246,6 +17247,7 @@ function confirmRestart() {
 
 function restartGame() {
   if (!_typewriterDone) { _skipEndingTypewriter(); return; }
+  gcEvent('replay/restart', '再玩一次');
   document.getElementById('ending-screen').style.display = 'none';
   document.getElementById('title-screen').style.display  = 'flex';
   ['bgm', 'bgm-bloodmoon', 'bgm-sad', 'bgm-day10', 'bgm-good-ending', 'bgm-captivity-ending', 'bgm-mist-ending', 'bgm-reid-ending', 'sfx-indoor-rain'].forEach(id => {
