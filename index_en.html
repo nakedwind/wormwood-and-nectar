@@ -2604,31 +2604,31 @@ body {
       <div id="eldrin-emote">！</div>
       <div id="avaren-heart" style="display:none;position:absolute;font-size:23px;pointer-events:none;z-index:605;transform:translateX(-50%);transition:opacity 0.2s;"></div>
       <div id="farm-growth-wrap">
-        <div class="herb-harvest-label" id="farm-growth-label">🌱 農田生長中…</div>
+        <div class="herb-harvest-label" id="farm-growth-label">🌱 Farm growing…</div>
         <div class="herb-harvest-bg"><div id="farm-growth-bar" style="height:100%;background:linear-gradient(90deg,#206020,#60c040);width:0%;"></div></div>
       </div>
       <div id="herb-harvest-wrap">
-        <div class="herb-harvest-label"><img src="herbs.png" class="item-icon-svg"> 藥草採收中…</div>
+        <div class="herb-harvest-label"><img src="herbs.png" class="item-icon-svg"> Harvesting herbs…</div>
         <div class="herb-harvest-bg"><div id="herb-harvest-bar"></div></div>
       </div>
       <div id="fish-scene-wrap">
-        <div class="herb-harvest-label" id="fish-scene-label">🎣 垂釣中…</div>
+        <div class="herb-harvest-label" id="fish-scene-label">🎣 Fishing…</div>
         <div class="herb-harvest-bg"><div id="fish-scene-bar" style="height:100%;background:linear-gradient(90deg,#205880,#40a0e0);width:0%;"></div></div>
       </div>
       <div id="fish-forest-wrap">
-        <div class="herb-harvest-label" id="fish-forest-label">🎣 垂釣中…</div>
+        <div class="herb-harvest-label" id="fish-forest-label">🎣 Fishing…</div>
         <div class="herb-harvest-bg"><div id="fish-forest-bar" style="height:100%;background:linear-gradient(90deg,#205880,#40a0e0);width:0%;"></div></div>
       </div>
       <div id="research-scene-wrap">
-        <div class="herb-harvest-label" id="research-scene-label">🧪 研究藥水中…</div>
+        <div class="herb-harvest-label" id="research-scene-label">🧪 Researching potion…</div>
         <div class="herb-harvest-bg"><div id="research-scene-bar" style="height:100%;background:linear-gradient(90deg,#402080,#8040e0);width:0%;"></div></div>
       </div>
       <div id="cook-scene-wrap">
-        <div class="herb-harvest-label" id="cook-scene-label">🍳 烹飪中…</div>
+        <div class="herb-harvest-label" id="cook-scene-label">🍳 Cooking…</div>
         <div class="herb-harvest-bg"><div id="cook-scene-bar" style="height:100%;background:linear-gradient(90deg,#6a2010,#c04020);width:0%;"></div></div>
       </div>
       <div id="gather-search-wrap">
-        <div class="herb-harvest-label" id="gather-search-label">🔍 搜索中…</div>
+        <div class="herb-harvest-label" id="gather-search-label">🔍 Searching…</div>
         <div class="herb-harvest-bg"><div id="gather-search-bar" style="height:100%;background:linear-gradient(90deg,#3a5c20,#70b040);width:0%;"></div></div>
       </div>
       <div id="soup-obj"><img id="soup-obj-img" src="food_01.png"></div>
@@ -2652,7 +2652,7 @@ body {
       <div id="action-scene-overlay" onclick="onOverlayClick()">
         <img id="asc-portrait" src="avaren_avatar.png" alt="">
         <div id="asc-main">
-          <div class="asc-speaker" id="asc-speaker">— 旁白 —</div>
+          <div class="asc-speaker" id="asc-speaker">— Narrator —</div>
           <div class="asc-text" id="asc-text"></div>
           <button id="asc-btn" class="asc-btn-narr" onclick="event.stopPropagation(); ascAdvance()"></button>
         </div>
@@ -2725,7 +2725,7 @@ body {
 
     <!-- 按鍵提示 + Tips -->
     <div style="width:960px;min-width:960px;background:#0a0804;border:1px solid #2a1e08;border-top:none;padding:5px 10px;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;">
-      <span style="color:#706050;font-size:12px;flex-shrink:0;">[⬆⬇⬅➡] 移動　　[空白鍵] 互動　　[Esc] 關閉選單　　[E] 背包　　[Tab] 切換商店頁</span>
+      <span style="color:#706050;font-size:12px;flex-shrink:0;">[⬆⬇⬅➡] Move　　[Space] Interact　　[Esc] Close Menu　　[E] Backpack　　[Tab] Switch Shop Tab</span>
       <span id="tips-display" style="color:#a08848;font-size:13px;text-align:right;flex-shrink:0;max-width:420px;opacity:0;transform:translateY(12px);transition:opacity 0.5s ease,transform 0.5s ease;display:inline-block;"></span>
     </div>
 
@@ -2761,29 +2761,29 @@ body {
       <!-- Avaren status -->
       <div id="avaren-block">
         <div id="avaren-info">
-          <div class="av-name">阿瓦倫</div>
+          <div class="av-name">Avaren</div>
           <div class="stat-row">
-            <div class="stat-lbl" id="lbl-pain">🩹 疼痛</div>
+            <div class="stat-lbl" id="lbl-pain">🩹 Pain</div>
             <div class="stat-bg"><div id="bar-pain" class="stat-fill fill-pain" style="width:100%"></div></div>
             <div id="val-pain" class="stat-num">100</div>
           </div>
           <div class="stat-row">
-            <div class="stat-lbl" id="lbl-curse">🌑 詛咒</div>
+            <div class="stat-lbl" id="lbl-curse">🌑 Curse</div>
             <div class="stat-bg"><div id="bar-curse" class="stat-fill fill-curse" style="width:100%"></div></div>
             <div id="val-curse" class="stat-num">100</div>
           </div>
           <div class="stat-row">
-            <div class="stat-lbl" id="lbl-mood">☀ 心情</div>
+            <div class="stat-lbl" id="lbl-mood">☀ Mood</div>
             <div class="stat-bg"><div id="bar-mood" class="stat-fill fill-mood" style="width:10%"></div></div>
             <div id="val-mood" class="stat-num">10</div>
           </div>
           <div class="stat-row">
-            <div class="stat-lbl" id="lbl-trust">📚 知識</div>
+            <div class="stat-lbl" id="lbl-trust">📚 Knowledge</div>
             <div class="stat-bg"><div id="bar-trust" class="stat-fill fill-trust" style="width:10%"></div></div>
             <div id="val-trust" class="stat-num">10</div>
           </div>
           <div class="stat-row">
-            <div class="stat-lbl" id="lbl-av-hunger">🍽 飽食度</div>
+            <div class="stat-lbl" id="lbl-av-hunger">🍽 Satiety</div>
             <div class="stat-bg"><div id="bar-av-hunger" class="stat-fill fill-hunger" style="width:70%"></div></div>
             <div id="val-av-hunger" class="stat-num">70</div>
           </div>
@@ -2792,9 +2792,9 @@ body {
 
       <!-- Eldrin status -->
       <div id="eldrin-block" style="margin-top:8px;padding:6px 4px;border-top:1px solid #2a1e08;">
-        <div class="av-name" style="font-size:12px;margin-bottom:4px;">艾德林</div>
+        <div class="av-name" style="font-size:12px;margin-bottom:4px;">Eldrin</div>
         <div class="stat-row">
-          <div class="stat-lbl">🍽 飽食度</div>
+          <div class="stat-lbl">🍽 Satiety</div>
           <div class="stat-bg"><div id="bar-el-hunger" class="stat-fill fill-hunger" style="width:80%"></div></div>
           <div id="val-el-hunger" class="stat-num">80</div>
         </div>
@@ -2804,7 +2804,7 @@ body {
           <div id="val-fatigue" class="stat-num">100</div>
         </div>
         <div class="stat-row">
-          <div class="stat-lbl">💪 體力</div>
+          <div class="stat-lbl">💪 Stamina</div>
           <div class="stat-bg"><div id="bar-el-fatigue" class="stat-fill fill-fatigue" style="width:80%"></div></div>
           <div id="val-el-fatigue" class="stat-num">80</div>
         </div>
@@ -2812,37 +2812,37 @@ body {
 
       <!-- Resources -->
       <div id="res-block">
-        <div class="res-title">資源</div>
+        <div class="res-title">Resources</div>
         <div class="res-grid">
-          <div class="res-item">💰 金錢 <b id="r-money">12</b></div>
-          <div class="res-item"><img src="herbs.png" class="item-icon-svg"> 藥材 <b id="r-herb">2</b></div>
-          <div class="res-item"><img src="wood.png" class="item-icon-svg"> 木材 <b id="r-wood">0</b></div>
-          <div class="res-item"><img src="Branches.png" class="item-icon-svg"> 樹枝 <b id="r-branch">0</b></div>
-          <div class="res-item"><img src="crystal.png" class="item-icon-svg"> 水晶碎片 <b id="r-crystal">0</b></div>
-          <div class="res-item"><img src="bug01.png" class="item-icon-svg"> 蟲材 <b id="r-bug">0</b></div>
-          <div class="res-item">🐟 魚   <b id="r-fish">0</b></div>
-          <div class="res-item"><img src="Stone.png" class="item-icon-svg"> 礦石 <b id="r-stone">0</b></div>
-          <div class="res-item"><img src="Fairy.png" class="item-icon-svg"> 妖精 <b id="r-fairy">0</b></div>
-          <div class="res-item"><img src="white-flower.svg" class="wf-icon" alt=""> 白藥花 <b id="r-white-flower">0</b></div>
-          <div class="res-item">🍎 蘋果 <b id="r-apple">0</b></div>
-          <div class="res-item">🥦 蔬菜 <b id="r-vegetable">0</b></div>
-          <div class="res-item"><img src="mushroom.png" class="item-icon-svg"> 蘑菇 <b id="r-mushroom">0</b></div>
-          <div class="res-item"><img src="frog.png" class="item-icon-svg"> 青蛙 <b id="r-frog">0</b></div>
-          <div class="res-item">🥚 鳥蛋 <b id="r-egg">0</b></div>
-          <div class="res-item">🥩 獸肉 <b id="r-beastMeat">0</b></div>
-          <div class="res-item">🦴 魔物素材 <b id="r-monsterMaterial">0</b></div>
-          <div class="res-item"><img src="Medicine_red.svg" class="item-icon-svg"> 治療藥水 <b id="r-coldPotion">0</b></div>
-          <div class="res-item"><img src="Medicine_yellow.svg" class="item-icon-svg"> 解咒藥水 <b id="r-cursePotion">0</b></div>
-          <div class="res-item"><img src="Medicine_blue.svg" class="item-icon-svg"> 忘卻藥水 <b id="r-forgetPotion">0</b></div>
-          <div class="res-item"><img src="Medicine_green.svg" class="item-icon-svg"> 體力藥水 <b id="r-staminaPotion">0</b></div>
+          <div class="res-item">💰 Money <b id="r-money">12</b></div>
+          <div class="res-item"><img src="herbs.png" class="item-icon-svg"> Herbs <b id="r-herb">2</b></div>
+          <div class="res-item"><img src="wood.png" class="item-icon-svg"> Wood <b id="r-wood">0</b></div>
+          <div class="res-item"><img src="Branches.png" class="item-icon-svg"> Branches <b id="r-branch">0</b></div>
+          <div class="res-item"><img src="crystal.png" class="item-icon-svg"> Crystal Shards <b id="r-crystal">0</b></div>
+          <div class="res-item"><img src="bug01.png" class="item-icon-svg"> Insect Parts <b id="r-bug">0</b></div>
+          <div class="res-item">🐟 Fish   <b id="r-fish">0</b></div>
+          <div class="res-item"><img src="Stone.png" class="item-icon-svg"> Ore <b id="r-stone">0</b></div>
+          <div class="res-item"><img src="Fairy.png" class="item-icon-svg"> Fairy <b id="r-fairy">0</b></div>
+          <div class="res-item"><img src="white-flower.svg" class="wf-icon" alt=""> White Medicine Flower <b id="r-white-flower">0</b></div>
+          <div class="res-item">🍎 Apple <b id="r-apple">0</b></div>
+          <div class="res-item">🥦 Vegetable <b id="r-vegetable">0</b></div>
+          <div class="res-item"><img src="mushroom.png" class="item-icon-svg"> Mushroom <b id="r-mushroom">0</b></div>
+          <div class="res-item"><img src="frog.png" class="item-icon-svg"> Frog <b id="r-frog">0</b></div>
+          <div class="res-item">🥚 Bird Egg <b id="r-egg">0</b></div>
+          <div class="res-item">🥩 Beast Meat <b id="r-beastMeat">0</b></div>
+          <div class="res-item">🦴 Monster Material <b id="r-monsterMaterial">0</b></div>
+          <div class="res-item"><img src="Medicine_red.svg" class="item-icon-svg"> Healing Potion <b id="r-coldPotion">0</b></div>
+          <div class="res-item"><img src="Medicine_yellow.svg" class="item-icon-svg"> Curse-Cure Potion <b id="r-cursePotion">0</b></div>
+          <div class="res-item"><img src="Medicine_blue.svg" class="item-icon-svg"> Oblivion Potion <b id="r-forgetPotion">0</b></div>
+          <div class="res-item"><img src="Medicine_green.svg" class="item-icon-svg"> Stamina Potion <b id="r-staminaPotion">0</b></div>
         </div>
       </div>
 
       <!-- Time -->
       <div id="time-block">
-        <div class="time-title">今日時間</div>
+        <div class="time-title">Today's Time</div>
         <div id="time-clock">07:00</div>
-        <div id="time-remaining">剩餘 13 小時</div>
+        <div id="time-remaining">13 hours left</div>
       </div>
 
       <button id="btn-zone-editor" onclick="toggleZoneEditor()"
@@ -2859,11 +2859,11 @@ body {
       </button>
       <div id="warn-box"></div>
       <div id="research-progress">
-        <div class="research-label">🧪 研究藥水中…</div>
+        <div class="research-label">🧪 Researching potion…</div>
         <div class="research-bar-bg"><div id="research-bar"></div></div>
       </div>
       <div id="cook-progress" style="display:none; background:#120e06; border:1px solid #2e1e08; padding:10px;">
-        <div class="research-label">🍳 烹飪中…</div>
+        <div class="research-label">🍳 Cooking…</div>
         <div class="research-bar-bg"><div id="cook-bar" style="height:100%; background:linear-gradient(90deg,#6a2010,#c04020); width:0%;"></div></div>
       </div>
     </div>
@@ -2873,57 +2873,57 @@ body {
 <!-- ══ TRADE OVERLAY ══ -->
 <div id="trade-overlay">
   <div class="trade-box">
-    <div class="trade-name-big">村鎮市集</div>
-    <div class="trade-money-bar">💰 持有金錢：<b id="trade-money-val">0</b> 金</div>
+    <div class="trade-name-big">Town Market</div>
+    <div class="trade-money-bar">💰 Money: <b id="trade-money-val">0</b> gold</div>
     <div class="trade-tabs">
-      <button class="trade-tab active" id="trade-tab-sell" onclick="switchTradeTab('sell')">賣　出</button>
-      <button class="trade-tab" id="trade-tab-buy"  onclick="switchTradeTab('buy')">買　入</button>
+      <button class="trade-tab active" id="trade-tab-sell" onclick="switchTradeTab('sell')">Sell</button>
+      <button class="trade-tab" id="trade-tab-buy"  onclick="switchTradeTab('buy')">Buy</button>
     </div>
     <div id="trade-page-sell">
       <div id="trade-sell-list"></div>
       <div class="trade-daily-divider"></div>
-      <button class="trade-confirm-btn" id="trade-sell-btn" onclick="confirmSell()" disabled>確認賣出</button>
+      <button class="trade-confirm-btn" id="trade-sell-btn" onclick="confirmSell()" disabled>Confirm Sale</button>
     </div>
     <div id="trade-page-buy" style="display:none">
-      <div class="trade-daily-header"><span>今日商品</span></div>
+      <div class="trade-daily-header"><span>Today's Goods</span></div>
       <div id="trade-buy-list"></div>
       <div class="trade-daily-divider"></div>
-      <button class="trade-confirm-btn" id="trade-buy-btn" onclick="confirmBuy()" disabled>確認購買</button>
+      <button class="trade-confirm-btn" id="trade-buy-btn" onclick="confirmBuy()" disabled>Confirm Purchase</button>
     </div>
-    <button class="trade-close-btn" onclick="closeTrade()">離開市集</button>
+    <button class="trade-close-btn" onclick="closeTrade()">Leave Market</button>
   </div>
 </div>
 
 <!-- ══ SAVE PANEL ══ -->
 <div id="save-panel-overlay">
   <div id="save-panel">
-    <div id="save-panel-title">— 存檔 / 讀檔 —</div>
+    <div id="save-panel-title">— Save / Load —</div>
     <div class="save-tabs" id="save-tabs">
-      <button class="save-tab" id="save-tab-save" onclick="switchSavePanelTab('save')">存檔</button>
-      <button class="save-tab" id="save-tab-load" onclick="switchSavePanelTab('load')">讀檔</button>
+      <button class="save-tab" id="save-tab-save" onclick="switchSavePanelTab('save')">Save</button>
+      <button class="save-tab" id="save-tab-load" onclick="switchSavePanelTab('load')">Load</button>
     </div>
     <div class="save-slots-grid" id="save-slots-grid"></div>
     <div id="old-saves-section" style="display:none;margin-top:14px;border-top:1px solid #3a2810;padding-top:12px;">
-      <div style="font-size:11px;letter-spacing:3px;color:#6a5030;text-align:center;margin-bottom:8px;">— 舊存檔（雷德入侵前）—</div>
+      <div style="font-size:11px;letter-spacing:3px;color:#6a5030;text-align:center;margin-bottom:8px;">— Old Saves (Before Red's Intrusion) —</div>
       <div class="save-slots-grid" id="old-save-slots-grid"></div>
     </div>
-    <button id="save-panel-close" onclick="closeSavePanel()">關　閉</button>
+    <button id="save-panel-close" onclick="closeSavePanel()">Close</button>
   </div>
 </div>
 
 <!-- ══ REID FAKE SAVE OVERLAY ══ -->
 <div id="endings-gallery-overlay" style="display:none;" class="save-panel-overlay-style">
   <div id="endings-gallery-panel">
-    <div class="save-panel-title-style">— 結局圖鑑 —</div>
+    <div class="save-panel-title-style">— Endings Gallery —</div>
     <div class="eg-grid" id="eg-grid"></div>
-    <button class="save-panel-close-style" id="eg-close-btn" onclick="closeEndingsGallery()">關　閉</button>
+    <button class="save-panel-close-style" id="eg-close-btn" onclick="closeEndingsGallery()">Close</button>
   </div>
 </div>
 
 <!-- ══ AUTHOR OVERLAY ══ -->
 <div id="author-overlay" style="display:none;" class="save-panel-overlay-style">
   <div id="author-panel" class="save-panel-style">
-    <div class="save-panel-title-style">— 關於作者 —</div>
+    <div class="save-panel-title-style">— About the Author —</div>
     <div id="author-links">
       <a class="author-link-btn" href="https://www.instagram.com/naturalwind0_art/" target="_blank" rel="noopener" onclick="playTitleButtonSfx()">
         <img class="author-link-icon" src="連結LOGO/Instagram_logo_2016.svg.webp" alt="Instagram"><span class="author-link-label">Instagram</span><span class="author-link-url">@naturalwind0_art</span>
@@ -2938,26 +2938,26 @@ body {
         <img class="author-link-icon" src="連結LOGO/CXC.png" alt="CXC"><span class="author-link-label">CXC</span><span class="author-link-url">@naturalwind</span>
       </a>
     </div>
-    <button class="save-panel-close-style" onclick="closeAuthorPanel()">關　閉</button>
+    <button class="save-panel-close-style" onclick="closeAuthorPanel()">Close</button>
   </div>
 </div>
 
 <div id="reid-save-overlay" style="display:none;" class="save-panel-overlay-style">
   <div id="reid-save-panel" class="save-panel-style">
-    <div class="save-panel-title-style">— 雷德的存檔 —</div>
+    <div class="save-panel-title-style">— Red's Save —</div>
     <div class="save-slots-grid" id="reid-save-slots-grid"></div>
-    <button class="save-panel-close-style" onclick="closeReidSaveScreen()">關　閉</button>
+    <button class="save-panel-close-style" onclick="closeReidSaveScreen()">Close</button>
   </div>
 </div>
 
 <!-- ══ SAVE/LOAD CONFIRM OVERLAY ══ -->
 <div id="save-confirm-overlay">
   <div id="save-confirm-box">
-    <div id="save-confirm-title">確認</div>
+    <div id="save-confirm-title">Confirm</div>
     <div id="save-confirm-text"></div>
     <div id="save-confirm-btns">
-      <button id="save-confirm-yes" onclick="saveConfirmRespond(true)">確　定</button>
-      <button id="save-confirm-no" onclick="saveConfirmRespond(false)">取　消</button>
+      <button id="save-confirm-yes" onclick="saveConfirmRespond(true)">OK</button>
+      <button id="save-confirm-no" onclick="saveConfirmRespond(false)">Cancel</button>
     </div>
   </div>
 </div>
@@ -2965,18 +2965,18 @@ body {
 <!-- ══ COOK INGREDIENT SELECT OVERLAY ══ -->
 <div id="cook-select-overlay">
   <div class="csi-box">
-    <div class="csi-title">選擇行動</div>
-    <div class="csi-name">🍳 選擇食材（可多選）</div>
+    <div class="csi-title">Choose Action</div>
+    <div class="csi-name">🍳 Choose Ingredients (multiple)</div>
     <div class="csi-divider"></div>
     <div class="csi-list" id="cook-select-items"></div>
     <div class="csi-divider"></div>
-    <div class="csi-summary" id="cook-select-summary">未選擇食材——基本料理</div>
+    <div class="csi-summary" id="cook-select-summary">No ingredients — basic dish</div>
     <div class="csi-footer">
-      <button class="csi-start" onclick="confirmCookStart('fast')">🔥🔥🔥 大火快煮（-2木柴）</button>
-      <button class="csi-start" onclick="confirmCookStart('slow')">🔥 細火慢熬（-2樹枝）</button>
+      <button class="csi-start" onclick="confirmCookStart('fast')">🔥🔥🔥 High-heat quick cook (-2 Wood)</button>
+      <button class="csi-start" onclick="confirmCookStart('slow')">🔥 Low-heat simmer (-2 Branches)</button>
     </div>
     <div class="csi-footer" style="margin-top:8px;">
-      <button class="csi-cancel-btn" onclick="closeCookSelect()">取消</button>
+      <button class="csi-cancel-btn" onclick="closeCookSelect()">Cancel</button>
     </div>
   </div>
 </div>
@@ -2984,20 +2984,20 @@ body {
 <!-- ══ ACTION OVERLAY ══ -->
 <div id="action-overlay">
   <div class="act-box">
-    <div class="act-title">選擇行動</div>
+    <div class="act-title">Choose Action</div>
     <div class="act-name" id="act-heading"></div>
     <div class="act-note" id="act-note"></div>
     <div class="act-list" id="act-list"></div>
-    <button class="act-cancel" onclick="closeAction()">取消</button>
+    <button class="act-cancel" onclick="closeAction()">Cancel</button>
   </div>
 </div>
 
 <!-- ══ DIALOGUE OVERLAY ══ -->
 <div id="dialogue-overlay">
   <div class="dlg-box">
-    <div class="dlg-speaker" id="dlg-speaker">— 阿瓦倫 —</div>
+    <div class="dlg-speaker" id="dlg-speaker">— Avaren —</div>
     <div class="dlg-text" id="dlg-text"></div>
-    <button class="dlg-close" onclick="closeDlg()">── 關閉 ──</button>
+    <button class="dlg-close" onclick="closeDlg()">── Close ──</button>
   </div>
 </div>
 
@@ -3007,16 +3007,16 @@ body {
     <div class="ev-icon" id="ev-icon">🌙</div>
     <div class="ev-title" id="ev-title"></div>
     <div class="ev-desc"  id="ev-desc"></div>
-    <button class="ev-btn" id="ev-btn" onclick="closeEvent()">── 繼續 ──</button>
+    <button class="ev-btn" id="ev-btn" onclick="closeEvent()">── Continue ──</button>
   </div>
 </div>
 
 <!-- ══ BAG OVERLAY ══ -->
 <div id="bag-overlay">
   <div class="act-box" style="width:460px;">
-    <div class="act-name">背包</div>
+    <div class="act-name">Backpack</div>
     <div id="bag-grid" style="display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:14px;"></div>
-    <button class="act-cancel" onclick="closeBag()">── 關閉 ──</button>
+    <button class="act-cancel" onclick="closeBag()">── Close ──</button>
   </div>
 </div>
 <div id="bag-desc" style="display:none;position:fixed;width:160px;background:rgba(0,0,0,0.8);border:none;border-radius:8px;padding:10px 12px;z-index:200;pointer-events:none;"></div>
@@ -3033,13 +3033,13 @@ body {
 
 <!-- ══ ENDING ══ -->
 <div id="ending-screen">
-  <div class="end-label">— 結局 —</div>
+  <div class="end-label">— Ending —</div>
   <div class="end-title" id="end-title"></div>
   <div class="end-desc"  id="end-desc"></div>
   <div class="end-stats" id="end-stats"></div>
   <div id="end-btn-row" style="display:flex;flex-direction:column;gap:12px;align-items:center;">
-    <button class="btn-restart" id="btn-ending-action">再玩一次</button>
-    <button class="btn-restart" id="btn-ending-restart" style="display:none" onclick="confirmRestart()">再玩一次</button>
+    <button class="btn-restart" id="btn-ending-action">Play Again</button>
+    <button class="btn-restart" id="btn-ending-restart" style="display:none" onclick="confirmRestart()">Play Again</button>
   </div>
 </div>
 
@@ -3052,7 +3052,7 @@ body {
 <div id="sleep-dim" style="display:none;position:fixed;inset:0;background:#000;z-index:20;opacity:0;pointer-events:none;"></div>
 <div id="death-overlay" style="display:none;position:fixed;inset:0;z-index:110;background:transparent;cursor:pointer;pointer-events:auto;">
   <div id="death-text-box">
-    <div style="font-size:13px;color:#a0a098;letter-spacing:3px;margin-bottom:8px;">― 旁白 ―</div>
+    <div style="font-size:13px;color:#a0a098;letter-spacing:3px;margin-bottom:8px;">― Narrator ―</div>
     <div id="death-text-content" style="font-size:16px;color:#d4d4cc;line-height:1.7;font-weight:500;white-space:pre-line;"></div>
     <div style="position:absolute;bottom:10px;right:16px;color:#c0a060;font-size:16px;animation:arrowBlink 1.2s ease-in-out infinite;">▼</div>
   </div>
@@ -3368,7 +3368,7 @@ function syncOutsideFishingUI() {
     bar.style.width = '100%';
     bar.style.background = 'linear-gradient(90deg,#a07020,#e0b030)';
   } else {
-    label.textContent = '🎣 垂釣中…';
+    label.textContent = '🎣 Fishing…';
     if (!G.fishFishing) bar.style.width = '0%';
     bar.style.background = 'linear-gradient(90deg,#205880,#40a0e0)';
   }
@@ -4153,7 +4153,7 @@ function syncForestFishingUI() {
     bar.style.width = '100%';
     bar.style.background = 'linear-gradient(90deg,#a07020,#e0b030)';
   } else {
-    label.textContent = '🎣 垂釣中…';
+    label.textContent = '🎣 Fishing…';
     if (!G.forestFishFishing) bar.style.width = '0%';
     bar.style.background = 'linear-gradient(90deg,#205880,#40a0e0)';
   }
@@ -4342,64 +4342,64 @@ function sceneCharH() {
 // ══════════════════════════════════════
 const ZONES = {
   outside: [
-    { id:'to_lobby',  x1:290, y1:218, x2:356, y2:262, sceneHint:'→ 進入小屋', isScene:true,
+    { id:'to_lobby',  x1:290, y1:218, x2:356, y2:262, sceneHint:'→ Enter Cabin', isScene:true,
       fn(){ playLoopingAudio('sfx-door-open', 6.0); changeScene('lobby'); } },
-    { id:'farm',      x1:15,  y1:231, x2:181, y2:316, interactHint:'農田',
+    { id:'farm',      x1:15,  y1:231, x2:181, y2:316, interactHint:'Farm',
       fn(){ doAction_FarmMenu(); } },
-    { id:'gate',      x1:257, y1:425, x2:400, y2:467, interactHint:'柵欄門',
+    { id:'gate',      x1:257, y1:425, x2:400, y2:467, interactHint:'Gate',
       fn(){ openGateMenu(); } },
-    { id:'pond',  x1:447, y1:14,  x2:604, y2:122, interactHint:'池塘', fn(){ doAction_PondMenu(); } },
-    { id:'stone', x1:570, y1:258, x2:639, y2:346, interactHint:'礦石', fn(){ doAction_GatherStone(); } },
-    { id:'tree1', x1:6,   y1:7,   x2:186, y2:119, interactHint:'樹木', fn(){ doAction_GatherWood(); } },
-    { id:'tree2', x1:8,   y1:406, x2:58,  y2:469, interactHint:'樹木', fn(){ doAction_GatherWood(); } },
-    { id:'tree3', x1:142, y1:413, x2:197, y2:469, interactHint:'樹木', fn(){ doAction_GatherWood(); } },
-    { id:'tree4', x1:503, y1:408, x2:554, y2:471, interactHint:'樹木', fn(){ doAction_GatherWood(); } },
-    { id:'tree5', x1:582, y1:373, x2:631, y2:429, interactHint:'樹木', fn(){ doAction_GatherWood(); } },
-    { id:'tree6', x1:583, y1:105, x2:627, y2:154, interactHint:'樹木', fn(){ doAction_GatherWood(); } },
-    { id:'tree7', x1:259, y1:17,  x2:282, y2:69,  interactHint:'樹木', fn(){ doAction_GatherWood(); } },
-    { id:'bush1', x1:20,  y1:137, x2:153, y2:203, interactHint:'草叢', fn(){ doAction_GatherBush(); } },
-    { id:'bush2', x1:440, y1:191, x2:528, y2:284, interactHint:'草叢', fn(){ doAction_GatherBush(); } },
+    { id:'pond',  x1:447, y1:14,  x2:604, y2:122, interactHint:'Pond', fn(){ doAction_PondMenu(); } },
+    { id:'stone', x1:570, y1:258, x2:639, y2:346, interactHint:'Ore', fn(){ doAction_GatherStone(); } },
+    { id:'tree1', x1:6,   y1:7,   x2:186, y2:119, interactHint:'Tree', fn(){ doAction_GatherWood(); } },
+    { id:'tree2', x1:8,   y1:406, x2:58,  y2:469, interactHint:'Tree', fn(){ doAction_GatherWood(); } },
+    { id:'tree3', x1:142, y1:413, x2:197, y2:469, interactHint:'Tree', fn(){ doAction_GatherWood(); } },
+    { id:'tree4', x1:503, y1:408, x2:554, y2:471, interactHint:'Tree', fn(){ doAction_GatherWood(); } },
+    { id:'tree5', x1:582, y1:373, x2:631, y2:429, interactHint:'Tree', fn(){ doAction_GatherWood(); } },
+    { id:'tree6', x1:583, y1:105, x2:627, y2:154, interactHint:'Tree', fn(){ doAction_GatherWood(); } },
+    { id:'tree7', x1:259, y1:17,  x2:282, y2:69,  interactHint:'Tree', fn(){ doAction_GatherWood(); } },
+    { id:'bush1', x1:20,  y1:137, x2:153, y2:203, interactHint:'Bush', fn(){ doAction_GatherBush(); } },
+    { id:'bush2', x1:440, y1:191, x2:528, y2:284, interactHint:'Bush', fn(){ doAction_GatherBush(); } },
     { id:'stolen_money', x1:291, y1:49, x2:340, y2:82, interactHint:'?',
       condition(){ return G.avarenStolenMoney && G.day >= 8 && G.day <= 11 && (G.timePeriod === 'morning' || G.timePeriod === 'evening') && (stolenMoneyReleased() - (G.stolenMoneyCollected || 0)) > 0; },
       fn(){ doAction_SearchStolenMoney(); } },
   ],
   lobby: [
-    { id:'to_room',    x1:545, y1:0,   x2:637, y2:108, sceneHint:'→ 前往房間（樓梯）', isScene:true,
+    { id:'to_room',    x1:545, y1:0,   x2:637, y2:108, sceneHint:'→ To Room (Stairs)', isScene:true,
       fn(){ playLoopingAudio('sfx-door-open', 6.0); changeScene('room'); } },
-    { id:'to_outside', x1:198, y1:444, x2:342, y2:477, sceneHint:'→ 前往戶外', isScene:true,
+    { id:'to_outside', x1:198, y1:444, x2:342, y2:477, sceneHint:'→ Go Outside', isScene:true,
       fn(){ playLoopingAudio('sfx-door-open', 6.0); changeScene('outside', {x:319, y:265}); } },
-    { id:'to_kitchen', x1:361, y1:99,  x2:523, y2:161, sceneHint:'→ 前往廚房（布簾）', isScene:true,
+    { id:'to_kitchen', x1:361, y1:99,  x2:523, y2:161, sceneHint:'→ To Kitchen (Curtain)', isScene:true,
       fn(){ playLoopingAudio('sfx-curtain', 6.0); changeScene('kitchen'); } },
     { id:'lobby_potion', x1:114, y1:183, x2:189, y2:309,
       fn(){ doAction_PickupPotion(); } },
-    { id:'save_desk',  x1:222, y1:185, x2:285, y2:230, interactHint:'存檔',
+    { id:'save_desk',  x1:222, y1:185, x2:285, y2:230, interactHint:'Save',
       fn(){ doAction_Save(); } },
-    { id:'cabinet',    x1:8,   y1:91,  x2:323, y2:211, interactHint:'研究',
+    { id:'cabinet',    x1:8,   y1:91,  x2:323, y2:211, interactHint:'Research',
       fn(){ doAction_StartResearch(); } },
   ],
   kitchen: [
-    { id:'to_lobby',   x1:251, y1:453, x2:400, y2:479, sceneHint:'→ 返回大廳', isScene:true,
+    { id:'to_lobby',   x1:251, y1:453, x2:400, y2:479, sceneHint:'→ Back to Lobby', isScene:true,
       fn(){ playLoopingAudio('sfx-curtain', 6.0); changeScene('lobby', {x:454, y:159}); } },
-    { id:'stove',      x1:95,  y1:138, x2:403, y2:275, interactHint:'烹飪',
+    { id:'stove',      x1:95,  y1:138, x2:403, y2:275, interactHint:'Cook',
       fn(){ doAction_Cook(); } },
   ],
   forest: [
-    { id:'to_outside',    x1:286, y1:8,   x2:359, y2:52,  sceneHint:'→ 返回戶外', isScene:true,
+    { id:'to_outside',    x1:286, y1:8,   x2:359, y2:52,  sceneHint:'→ Back Outside', isScene:true,
       fn(){ playLoopingAudio('sfx-outside-door-open', 6.0); changeScene('outside', {x:325, y:426}); } },
-    { id:'forest_pond',   x1:247, y1:232, x2:345, y2:288, interactHint:'垂釣',
+    { id:'forest_pond',   x1:247, y1:232, x2:345, y2:288, interactHint:'Fishing',
       fn(){ doAction_ForestPondMenu(); } },
-    { id:'forest_mushroom_1', x1:35,  y1:137, x2:65,  y2:168, interactHint:'蘑菇', condition(){ return isForestMushroomAvailable(1); }, fn(){ doAction_CollectMushroom(1); } },
-    { id:'forest_mushroom_2', x1:67,  y1:170, x2:104, y2:207, interactHint:'蘑菇', condition(){ return isForestMushroomAvailable(2); }, fn(){ doAction_CollectMushroom(2); } },
-    { id:'forest_mushroom_3', x1:557, y1:36,  x2:594, y2:73,  interactHint:'蘑菇', condition(){ return isForestMushroomAvailable(3); }, fn(){ doAction_CollectMushroom(3); } },
-    { id:'forest_mushroom_4', x1:576, y1:278, x2:606, y2:309, interactHint:'蘑菇', condition(){ return isForestMushroomAvailable(4); }, fn(){ doAction_CollectMushroom(4); } },
-    { id:'forest_tree1',  x1:5,   y1:8,   x2:105, y2:133, interactHint:'樹木', fn(){ doAction_GatherAppleTree('tree1'); } },
-    { id:'forest_tree2',  x1:5,   y1:361, x2:69,  y2:477, interactHint:'樹木', fn(){ doAction_GatherWood(); } },
-    { id:'forest_tree3',  x1:556, y1:195, x2:637, y2:318, interactHint:'樹木', fn(){ doAction_GatherAppleTree('tree3'); } },
-    { id:'forest_tree4',  x1:481, y1:5,   x2:634, y2:102, interactHint:'樹木', fn(){ doAction_GatherWood(); } },
-    { id:'forest_tree5',  x1:155, y1:439, x2:266, y2:477, interactHint:'樹木', fn(){ doAction_GatherWood(); } },
-    { id:'forest_tree6',  x1:516, y1:435, x2:574, y2:475, interactHint:'樹木', fn(){ doAction_GatherWood(); } },
-    { id:'forest_bush1',  x1:113, y1:13,  x2:177, y2:89,  interactHint:'草叢', fn(){ doAction_GatherBush(); } },
-    { id:'forest_bush2',  x1:427, y1:117, x2:491, y2:181, interactHint:'草叢', fn(){ doAction_GatherBush(); } },
+    { id:'forest_mushroom_1', x1:35,  y1:137, x2:65,  y2:168, interactHint:'Mushroom', condition(){ return isForestMushroomAvailable(1); }, fn(){ doAction_CollectMushroom(1); } },
+    { id:'forest_mushroom_2', x1:67,  y1:170, x2:104, y2:207, interactHint:'Mushroom', condition(){ return isForestMushroomAvailable(2); }, fn(){ doAction_CollectMushroom(2); } },
+    { id:'forest_mushroom_3', x1:557, y1:36,  x2:594, y2:73,  interactHint:'Mushroom', condition(){ return isForestMushroomAvailable(3); }, fn(){ doAction_CollectMushroom(3); } },
+    { id:'forest_mushroom_4', x1:576, y1:278, x2:606, y2:309, interactHint:'Mushroom', condition(){ return isForestMushroomAvailable(4); }, fn(){ doAction_CollectMushroom(4); } },
+    { id:'forest_tree1',  x1:5,   y1:8,   x2:105, y2:133, interactHint:'Tree', fn(){ doAction_GatherAppleTree('tree1'); } },
+    { id:'forest_tree2',  x1:5,   y1:361, x2:69,  y2:477, interactHint:'Tree', fn(){ doAction_GatherWood(); } },
+    { id:'forest_tree3',  x1:556, y1:195, x2:637, y2:318, interactHint:'Tree', fn(){ doAction_GatherAppleTree('tree3'); } },
+    { id:'forest_tree4',  x1:481, y1:5,   x2:634, y2:102, interactHint:'Tree', fn(){ doAction_GatherWood(); } },
+    { id:'forest_tree5',  x1:155, y1:439, x2:266, y2:477, interactHint:'Tree', fn(){ doAction_GatherWood(); } },
+    { id:'forest_tree6',  x1:516, y1:435, x2:574, y2:475, interactHint:'Tree', fn(){ doAction_GatherWood(); } },
+    { id:'forest_bush1',  x1:113, y1:13,  x2:177, y2:89,  interactHint:'Bush', fn(){ doAction_GatherBush(); } },
+    { id:'forest_bush2',  x1:427, y1:117, x2:491, y2:181, interactHint:'Bush', fn(){ doAction_GatherBush(); } },
     { id:'forest_flower3', x1:29,  y1:277, x2:102, y2:329, interactHint:'花叢', fn(){ doAction_GatherFlower(); } },
     { id:'forest_flower4', x1:83,  y1:226, x2:155, y2:273, interactHint:'花叢', fn(){ doAction_GatherFlower(); } },
     { id:'forest_flower5', x1:197, y1:193, x2:278, y2:234, interactHint:'花叢', fn(){ doAction_GatherFlower(); } },
@@ -9775,7 +9775,7 @@ function gameLoop() {
       setStoveSprite('bg_kitchen/bg_kitchen_stove.png');
       stopSteam();
       document.getElementById('cook-scene-wrap').style.display = 'none';
-      document.getElementById('cook-scene-label').textContent = '🍳 烹飪中…';
+      document.getElementById('cook-scene-label').textContent = '🍳 Cooking…';
       document.getElementById('cook-scene-bar').style.background = 'linear-gradient(90deg,#6a2010,#c04020)';
       const soupSrc = G.soupIsSpecial ? 'food_02.png' : 'food_01.png';
       document.getElementById('soup-obj-img').src = soupSrc;
@@ -12073,7 +12073,7 @@ function doAction_PickupPotion() {
   document.getElementById('research-scene-wrap').style.display = 'none';
   const potionEl = document.getElementById('lobby-potion');
   if (potionEl) potionEl.style.display = 'none';
-  document.getElementById('research-scene-label').textContent = '🧪 研究藥水中…';
+  document.getElementById('research-scene-label').textContent = '🧪 Researching potion…';
   document.getElementById('research-scene-bar').style.background = 'linear-gradient(90deg,#402080,#8040e0)';
   chg(potionKey, 1);
   G.researchType = null;
