@@ -15507,6 +15507,14 @@ function endGame(type) {
   else if (G.mood >= 70)                          ending = ENDINGS.captivity;
   else                                             ending = ENDINGS.mist;
 
+  // 統計：回報這次玩家拿到的結局（GoatCounter 自訂事件；分析工具未載入時自動略過，不影響遊戲）
+  try {
+    const _endKey = Object.keys(ENDINGS).find(k => ENDINGS[k] === ending) || 'unknown';
+    if (window.goatcounter && window.goatcounter.count) {
+      window.goatcounter.count({ path: 'ending/' + _endKey, title: '結局：' + _endKey, event: true });
+    }
+  } catch (e) {}
+
   // 找出結局對應的旁白（倒下無前置旁白）
   const endingKey = type === 'eldrin_death' ? null
     : Object.keys(ENDINGS).find(k => ENDINGS[k] === ending);
@@ -18514,5 +18522,10 @@ runTipsCycle();
   </div>
   <button id="pause-btn" onclick="togglePause()">⏸ 暫停遊戲</button>
 </div>
+
+<!-- ══ GoatCounter 玩家統計 ══
+     ↓↓↓ 把下面的 YOURCODE 換成你在 goatcounter.com 註冊的代碼（例如 wormwood）↓↓↓ -->
+<script data-goatcounter="https://naturalwind0.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script>
 </body>
 </html>
