@@ -15533,7 +15533,7 @@ function endGame(type) {
 
   // 統計：回報這次玩家拿到的結局
   const _endKey = Object.keys(ENDINGS).find(k => ENDINGS[k] === ending) || 'unknown';
-  gcEvent('ending/' + _endKey, '結局：' + _endKey);
+  gcEvent('ending/' + _endKey, 'Ending: ' + _endKey);
 
   // 找出結局對應的旁白（倒下無前置旁白）
   const endingKey = type === 'eldrin_death' ? null
@@ -15963,8 +15963,8 @@ const SLOT_COUNT = 6;
 function activeSlotKey(n) {
   return hasReidEndTriggered() ? NEW_SLOT_KEY(n) : SLOT_KEY(n);
 }
-const SCENE_LABEL  = { outside:'Outdoors', lobby:'Lobby', room:'房間', kitchen:'Kitchen', forest:'Forest' };
-const PERIOD_LABEL = { morning:'白天', evening:'夜晚' };
+const SCENE_LABEL  = { outside:'Outdoors', lobby:'Lobby', room:'Room', kitchen:'Kitchen', forest:'Forest' };
+const PERIOD_LABEL = { morning:'Day', evening:'Night' };
 
 let _savePanelMode = 'save';
 let _savePanelCanSwitchTabs = true;
@@ -15999,13 +15999,13 @@ function renderSavePanel() {
     el.className = 'save-slot';
     el.id = 'save-slot-' + i;
     const infoHtml = data
-      ? `<div class="save-slot-info">第 ${data.day} 天<br>${PERIOD_LABEL[data.timePeriod] || ''}・${SCENE_LABEL[data.scene] || data.scene}</div>
+      ? `<div class="save-slot-info">Day ${data.day}<br>${PERIOD_LABEL[data.timePeriod] || ''}・${SCENE_LABEL[data.scene] || data.scene}</div>
          <div class="save-slot-date">${data.savedAt || ''}</div>`
-      : `<div class="save-slot-info" style="color:#3a2810;">－ 空檔 －</div>`;
+      : `<div class="save-slot-info" style="color:#3a2810;">－ Empty －</div>`;
     const actionBtn = _savePanelMode === 'save'
-      ? `<button class="btn-save-slot" id="save-btn-${i}" onclick="requestSaveToSlot(${i})">存檔</button>`
-      : `<button class="btn-load-slot" id="load-btn-${i}" onclick="requestLoadFromSlot(${i})"${data ? '' : ' disabled'}>讀檔</button>`;
-    el.innerHTML = `<img class="save-slot-avatar" src="eldrin_avatar.png" alt=""><div class="save-slot-num">艾德林<br>檔案 ${i}</div><div class="save-slot-text">${infoHtml}</div><div class="save-slot-btns">${actionBtn}</div>`;
+      ? `<button class="btn-save-slot" id="save-btn-${i}" onclick="requestSaveToSlot(${i})">Save</button>`
+      : `<button class="btn-load-slot" id="load-btn-${i}" onclick="requestLoadFromSlot(${i})"${data ? '' : ' disabled'}>Load</button>`;
+    el.innerHTML = `<img class="save-slot-avatar" src="eldrin_avatar.png" alt=""><div class="save-slot-num">Eldrin<br>File ${i}</div><div class="save-slot-text">${infoHtml}</div><div class="save-slot-btns">${actionBtn}</div>`;
     grid.appendChild(el);
   }
   // 舊存檔區塊（cheat 開啟 + Reid 結局後才顯示，僅限讀取）
@@ -16021,11 +16021,11 @@ function renderSavePanel() {
       const el = document.createElement('div');
       el.className = 'save-slot';
       const infoHtml = data
-        ? `<div class="save-slot-info">第 ${data.day} 天<br>${PERIOD_LABEL[data.timePeriod] || ''}・${SCENE_LABEL[data.scene] || data.scene}</div>
+        ? `<div class="save-slot-info">Day ${data.day}<br>${PERIOD_LABEL[data.timePeriod] || ''}・${SCENE_LABEL[data.scene] || data.scene}</div>
            <div class="save-slot-date">${data.savedAt || ''}</div>`
-        : `<div class="save-slot-info" style="color:#3a2810;">－ 空檔 －</div>`;
-      const btn = `<button class="btn-load-slot" onclick="requestLoadFromOldSlot(${i})"${data ? '' : ' disabled'}>讀檔</button>`;
-      el.innerHTML = `<img class="save-slot-avatar" src="eldrin_avatar.png" alt=""><div class="save-slot-num">艾德林<br>舊檔 ${i}</div><div class="save-slot-text">${infoHtml}</div><div class="save-slot-btns">${btn}</div>`;
+        : `<div class="save-slot-info" style="color:#3a2810;">－ Empty －</div>`;
+      const btn = `<button class="btn-load-slot" onclick="requestLoadFromOldSlot(${i})"${data ? '' : ' disabled'}>Load</button>`;
+      el.innerHTML = `<img class="save-slot-avatar" src="eldrin_avatar.png" alt=""><div class="save-slot-num">Eldrin<br>Old File ${i}</div><div class="save-slot-text">${infoHtml}</div><div class="save-slot-btns">${btn}</div>`;
       oldGrid.appendChild(el);
     }
   }
@@ -16037,7 +16037,7 @@ function requestLoadFromOldSlot(n) {
   let data = null;
   try { data = JSON.parse(localStorage.getItem(SLOT_KEY(n))); } catch(e) {}
   if (!data) return;
-  showSaveConfirm('讀取舊存檔', `要讀取雷德入侵前的「舊檔 ${n}」嗎？\n目前尚未存檔的進度將會消失。`, () => loadFromOldSlotData(data));
+  showSaveConfirm('Load Old Save', `Load the “Old File ${n}” from before Red’s intrusion?\nAny unsaved progress will be lost.`, () => loadFromOldSlotData(data));
 }
 
 async function loadFromOldSlotData(data) {
@@ -16091,7 +16091,7 @@ function openSavePanel(mode = 'both') {
   _savePanelFocusRow = 0;
   _savePanelFocusCol = _savePanelMode === 'save' ? 0 : 1;
   document.getElementById('save-panel-title').textContent =
-    mode === 'load' ? '— 選擇讀取的檔案 —' : '— 存檔 / 讀檔 —';
+    mode === 'load' ? '— Choose a file to load —' : '— Save / Load —';
   renderSavePanel();
   document.getElementById('save-panel-overlay').style.display = 'flex';
   playLoopingAudio('sfx-page', 4.0);
@@ -16142,7 +16142,7 @@ function saveConfirmRespond(yes) {
 // 存檔：空槽直接存，已有存檔則先詢問是否覆蓋
 function requestSaveToSlot(n) {
   if (getSlot(n)) {
-    showSaveConfirm('覆蓋存檔', `檔案 ${n} 已經有存檔了。\n要覆蓋它嗎？`, () => saveToSlot(n));
+    showSaveConfirm('Overwrite Save', `File ${n} already has a save.\nOverwrite it?`, () => saveToSlot(n));
   } else {
     saveToSlot(n);
   }
@@ -16150,7 +16150,7 @@ function requestSaveToSlot(n) {
 // 讀檔：一律先詢問（避免蓋掉目前未存進度）
 function requestLoadFromSlot(n) {
   if (!getSlot(n)) return;
-  showSaveConfirm('讀取存檔', `要讀取檔案 ${n} 嗎？\n目前尚未存檔的進度將會消失。`, () => loadFromSlot(n));
+  showSaveConfirm('Load Save', `Load File ${n}?\nAny unsaved progress will be lost.`, () => loadFromSlot(n));
 }
 
 function saveToSlot(n) {
@@ -16165,8 +16165,8 @@ function saveToSlot(n) {
     const meta = { day: G.day, timePeriod: G.timePeriod, scene: G.scene, savedAt, dayElapsedSec };
     localStorage.setItem(activeSlotKey(n), JSON.stringify({ ...meta, state: JSON.stringify(G) }));
     renderSavePanel();
-    toast(`💾 已存入檔案 ${n}`);
-  } catch(e) { warn('存檔失敗。'); }
+    toast(`💾 Saved to File ${n}`);
+  } catch(e) { warn('Save failed.'); }
 }
 
 async function loadFromSlot(n) {
@@ -16177,7 +16177,7 @@ async function loadFromSlot(n) {
 
 async function loadFromData(data) {
   if (!data) return;
-  gcEvent('replay/continue', '繼續遊戲');
+  gcEvent('replay/continue', 'Continue');
   await ensureAssetsReady();
   playLoopingAudio('sfx-page', 4.0);
   closeSavePanel();
@@ -17193,7 +17193,7 @@ function openReidSaveScreen() {
         <div class="save-slot-date">${timeStr}</div>
       </div>
       <div class="save-slot-btns">
-        <button class="btn-load-slot" id="reid-load-btn-${i}" onclick="reidSaveDeny(event)">讀檔</button>
+        <button class="btn-load-slot" id="reid-load-btn-${i}" onclick="reidSaveDeny(event)">Load</button>
       </div>`;
     grid.appendChild(el);
   }
@@ -17637,7 +17637,7 @@ function zeRenderAll() {
 }
 
 function zeUpdatePanel() {
-  const sceneNames = { outside:'Outdoors', lobby:'Lobby', room:'房間', kitchen:'Kitchen' };
+  const sceneNames = { outside:'Outdoors', lobby:'Lobby', room:'Room', kitchen:'Kitchen' };
   document.getElementById('ze-scene-label').textContent =
     '場景：' + (sceneNames[G && G.scene] || '—');
   const list = document.getElementById('ze-list');
