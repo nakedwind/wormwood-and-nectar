@@ -13335,7 +13335,7 @@ function changeScene(to, startOverride) {
     // 第0天不能離開：補上門音效（廚房布簾／戶外開門）並以右上角提示擋下
     if (to === 'kitchen') playLoopingAudio('sfx-curtain', 6.0);
     else if (to === 'outside') playLoopingAudio('sfx-door-open', 6.0);
-    toast('今日已經很晚了，先回到房間裡吧。');
+    toast('It’s very late now—best to head back to the room.');
     return;
   }
   if (G.gatherSearchActive) {
@@ -13382,7 +13382,7 @@ function changeScene(to, startOverride) {
       G.red.pose = 'front';
       G.red.walkFrame = 0; G.red.walkTick = 0;
       G.red.walkTimer = 0; G.red.walkDir = {dx:0, dy:0};
-      setTimeout(() => story('Narrator', '森林裡多了一個熟悉的身影。雷德正站在史萊姆原本出沒的地方，四處張望。'), 800);
+      setTimeout(() => story('Narrator', 'A familiar figure has appeared in the forest. Red stands where the slimes used to roam, looking around.'), 800);
     }
     if (G.scene === 'forest' && to !== 'forest' && G.carryingChicken) dropChicken(true);
     if (G.scene === 'forest' && to !== 'forest' && G.carryingChicken2) dropChicken2(true);
@@ -13406,9 +13406,9 @@ function changeScene(to, startOverride) {
       if (fromScene === 'forest' && to === 'outside' && G.avarenWaitedForForest) {
         G.avarenWaitedForForest = false;
         G.bubbleText = pick([
-          '……你去哪裡了？我一直在等你。',
-          '為什麼我不可以跟你一起去？',
-          '不要丟下我一個人。'
+          '...Where did you go? I’ve been waiting for you.',
+          'Why can’t I go with you?',
+          'Don’t leave me all alone.'
         ]);
         G.bubbleTimer = 480;
         G.autoSpeakTimer = 260;
@@ -13462,7 +13462,7 @@ function changeScene(to, startOverride) {
         if (fromScene === 'lobby' && to === 'outside' && G.day === 3 && G.timePeriod === 'morning' && !G.reidIntroNoticeSeen && !G.reidIntroSeen) {
           G.reidIntroNoticeSeen = true;
           setTimeout(() => {
-            storyAuto('Narrator', '小屋外站著一個陌生的青年。\n\n他背著行囊，腰間掛著一把劍，正低頭研究一張皺巴巴的地圖。\n\n你停在門口。\n這裡不該有任何人來。');
+            storyAuto('Narrator', 'A young stranger stands outside the cabin.\n\nA pack on his back and a sword at his waist, he’s bent over a crumpled map, studying it.\n\nYou stop in the doorway.\nNo one should be coming here.');
           }, 400);
         }
         // 血月第4段阿瓦倫已在進入場景前設定好位置
@@ -13484,15 +13484,15 @@ function beginSleepResolution() {
 
 function doAction_Sleep() {
   if (G.paused || G.actionSceneActive) return;
-  if (G.timePeriod !== 'evening') { timeWarn('現在還是早上，先去做些事吧。'); return; }
+  if (G.timePeriod !== 'evening') { timeWarn('It’s still morning—go do something first.'); return; }
   if (G.bloodMoon7Active) { warn('You can’t act right now.'); return; }
-  if (G.carryingSoup) { warn('拿著料理無法入睡'); return; }
+  if (G.carryingSoup) { warn('You can’t sleep while carrying a dish.'); return; }
   G.exhaustedSleepWake = null;
   const shouldNightResearchSleep = G.day <= 2 || (G.day === 11 && !G.usedForgetMagic) || (!G.usedForgetMagic && G.day === 10);
   if (shouldNightResearchSleep) {
-    showActionMenu('今晚要怎麼做？', [
+    showActionMenu('What will you do tonight?', [
       {
-        name: '入睡', fx: '熬夜研究，結束今天',
+        name: 'Sleep', fx: 'Stay up to research, end the day',
         req: () => true,
         run() {
           beginSleepResolution();
@@ -13502,23 +13502,23 @@ function doAction_Sleep() {
     ]);
     return;
   }
-  showActionMenu('今晚要怎麼做？', [
+  showActionMenu('What will you do tonight?', [
     {
-      name: '入睡', fx: '結束今天',
+      name: 'Sleep', fx: 'End the day',
       req: () => true,
       run() {
         G.sleepChoice = 'none'; G.sleepChoiceVal = 0;
         beginSleepResolution();
         const sleepNarrationPool = G.day4AvarenGone
           ? [
-            '燈熄了。這一夜沉默，什麼都沒有發生。',
-            '夜晚悄悄流逝。你躺下，閉上眼睛，疲憊拖著你入睡。',
-            '屋子裡安靜得只剩下你的呼吸聲。',
+            'The lamp goes out. The night is silent; nothing happens.',
+            'The night slips quietly by. You lie down, close your eyes, and exhaustion drags you into sleep.',
+            'The house is so quiet that only your breathing remains.',
           ]
           : [
-            '燈熄了。這一夜沉默，什麼都沒有發生。',
-            '你和阿瓦倫各自沉入夢境，屋子裡只剩下平穩的呼吸聲。',
-            '夜晚悄悄流逝。你躺下，閉上眼睛，疲憊拖著你入睡。',
+            'The lamp goes out. The night is silent; nothing happens.',
+            'You and Avaren each sink into your own dreams; only steady breathing remains in the house.',
+            'The night slips quietly by. You lie down, close your eyes, and exhaustion drags you into sleep.',
           ];
         playSleepAnimation(() => { endDay(); }, [
           { speaker: 'Narrator', text: pick(sleepNarrationPool) },
@@ -13526,7 +13526,7 @@ function doAction_Sleep() {
       }
     },
     {
-      name: '為阿瓦倫去除詛咒', fx: '詛咒 -1～-6',
+      name: 'Cleanse Avaren of the Curse', fx: 'Curse -1～-6',
       req: () => !G.day4AvarenGone,
       run() {
         const val = Math.floor(Math.random() * 6) + 1;
@@ -13534,21 +13534,21 @@ function doAction_Sleep() {
         beginSleepResolution();
         playSleepAnimation(() => { chg('curse', -val); renderHUD(); endDay(); }, [
           { speaker: 'Narrator', text: pick([
-            '燭光在搖曳中漸暗。你坐在阿瓦倫床邊，低聲念出解咒的詠語。\n\n「Aetheris puritas, cadens in cordis lumen, exsisto recondito, accepi in sanguine.」',
-            '你將調配好的藥水輕輕塗在阿瓦倫手背的紋路上，壓低聲音念出咒語。\n\n「Aetheris puritas, cadens in cordis lumen, exsisto recondito, accepi in sanguine.」\n\n黑霧微微收縮。',
-            '阿瓦倫已經睡了。你在他身旁靜靜地施著每晚的解咒儀式。\n\n「Aetheris puritas, cadens in cordis lumen, exsisto recondito, accepi in sanguine.」',
+            'The candlelight dims as it flickers. You sit at Avaren’s bedside and softly recite the curse-removal verse.\n\n‘Aetheris puritas, cadens in cordis lumen, exsisto recondito, accepi in sanguine.’',
+            'You gently apply the prepared potion to the markings on the back of Avaren’s hand and, lowering your voice, recite the incantation.\n\n‘Aetheris puritas, cadens in cordis lumen, exsisto recondito, accepi in sanguine.’\n\nThe black mist shrinks a little.',
+            'Avaren is already asleep. Beside him, you quietly perform the nightly curse-removal ritual.\n\n‘Aetheris puritas, cadens in cordis lumen, exsisto recondito, accepi in sanguine.’',
           ]) },
           { speaker: 'Avaren', text: pick([
-            '……（在夢裡輕輕皺了一下眉，然後舒展開來。）',
-            '……（沉沉睡著，手背的黑色紋路今夜稍微淡了一些。）',
-            '……（沒有說話，只是睡著了，呼吸比平時平穩一點點。）',
+            '...(in his dream, his brow furrows faintly, then smooths out.)',
+            '...(sleeping deeply; the black markings on his hand have faded a little tonight.)',
+            '...(says nothing, just sleeps, his breathing a touch steadier than usual.)',
           ]) },
-          { speaker: 'Narrator', text: '燭光熄滅。這一夜，詛咒沉默了。' },
+          { speaker: 'Narrator', text: 'The candle goes out. Tonight, the curse falls silent.' },
         ]);
       }
     },
     {
-      name: '哄阿瓦倫睡覺', fx: '心情 +1～+6',
+      name: 'Lull Avaren to Sleep', fx: 'Mood +1～+6',
       req: () => !G.day4AvarenGone,
       run() {
         const val = Math.floor(Math.random() * 6) + 1;
@@ -13556,16 +13556,16 @@ function doAction_Sleep() {
         beginSleepResolution();
         playSleepAnimation(() => { chg('mood', val); renderHUD(); endDay(); }, [
           { speaker: 'Narrator', text: pick([
-            '燈光昏黃，你拿著藥用植物圖鑑坐在床邊，輕聲念起夜顏花的介紹。',
-            '你翻開藥用植物圖鑑，把聲音放得很輕，慢慢說著每一種植物的名字和用途。',
-            '你把藥用植物圖鑑攤在膝上，指著書頁上的插圖，低聲告訴阿瓦倫哪些花適合在夜裡採集。',
+            'In the dim lamplight, you sit at the bedside with a guide to medicinal plants and softly read the entry on the Nightface Flower.',
+            'You open the guide to medicinal plants and, keeping your voice very soft, slowly recite the name and use of each one.',
+            'You spread the guide to medicinal plants across your lap, point at the illustrations, and softly tell Avaren which flowers are best gathered at night.',
           ]) },
           { speaker: 'Avaren', text: pick([
-            '……夜顏花……是會睡覺的花嗎。',
-            '……（安靜地聽著，眼皮漸漸沉了下去。）',
-            '……這個……味道很奇怪。（聲音越來越小。）',
+            '...The Nightface Flower... is it a flower that sleeps?',
+            '...(listens quietly, his eyelids slowly growing heavy.)',
+            '...This... smells strange. (his voice fading.)',
           ]) },
-          { speaker: 'Narrator', text: '你念到藥草的葉脈與花期時，阿瓦倫已經睡著了。\n你替他把被子蓋好，悄悄吹熄了燭火。' },
+          { speaker: 'Narrator', text: 'By the time you reach the veins of the leaves and the flowering seasons, Avaren has already fallen asleep.\nYou tuck the blanket around him and quietly blow out the candle.' },
         ]);
       }
     },
@@ -13636,8 +13636,8 @@ function playNightResearchAnimation(onComplete) {
     setTimeout(() => {
       fade.style.display = 'none';
       [
-        '…你拖著一身的疲憊坐下來，翻開一本又一本關於詛咒的古籍，一行一行地看。',
-        '燭火在眼前搖曳。字句開始變得模糊。你的眼皮越來越沉，可是你的手，不願停下來。',
+        '...You sit down, dragging your weariness with you, and open one ancient curse text after another, reading line by line.',
+        'The candle flickers before your eyes. The words begin to blur. Your eyelids grow heavier and heavier, but your hands refuse to stop.',
       ].forEach(text => storyAutoFast('Narrator', text));
       setTimeout(() => {
         dim.style.display = 'block';
@@ -13707,9 +13707,9 @@ function playSleepAnimation(onComplete, lines) {
       }
       if (!isLong) {
         storyAuto('Narrator', pick([
-          '夜深了。燭光在窗邊搖曳，然後靜靜熄滅。',
-          '屋子漸漸安靜下來，只剩下呼吸聲。',
-          '黑暗如水般漫了上來，把今天的一切都淹沒。',
+          'The night deepens. The candlelight wavers by the window, then quietly goes out.',
+          'The house slowly falls quiet, leaving only the sound of breathing.',
+          'Darkness wells up like water, drowning everything of the day.',
         ]));
       }
       // t=5s：sleep-dim 漸暗 7s
@@ -13842,14 +13842,14 @@ function togglePause() {
     G.paused = false;
     refreshActiveBGMVolume();
     document.getElementById('pause-overlay').classList.remove('active');
-    document.getElementById('pause-btn').textContent = '⏸ 暫停遊戲';
+    document.getElementById('pause-btn').textContent = '⏸ Pause Game';
   } else {
     G.pauseStartTime = performance.now();
     G.manualPaused = true;
     G.paused = true;
     refreshActiveBGMVolume();
     document.getElementById('pause-overlay').classList.add('active');
-    document.getElementById('pause-btn').textContent = '▶ 繼續遊戲';
+    document.getElementById('pause-btn').textContent = '▶ Resume Game';
   }
   document.getElementById('settings-panel').classList.remove('open');
 }
@@ -13868,33 +13868,33 @@ function debugHalfCursePain() {
   G.trust  = 50;
   G.hunger = 80;
   renderHUD();
-  story('Narrator', '【除錯】阿瓦倫良好狀態。');
+  story('Narrator', '[Debug] Avaren in good condition.');
 }
 
 const DEBUG_ITEM_LIST = [
-  { key: 'money',           name: '💰 金錢' },
-  { key: 'food',            name: '🍞 食物' },
-  { key: 'herb',            name: '<img src="herbs.png" class="item-icon-svg"> 藥材' },
-  { key: 'wood',            name: '<img src="wood.png" class="item-icon-svg"> 木材' },
-  { key: 'branch',          name: '<img src="Branches.png" class="item-icon-svg"> 樹枝' },
-  { key: 'crystal',         name: '💎 水晶碎片' },
+  { key: 'money',           name: '💰 Money' },
+  { key: 'food',            name: '🍞 Food' },
+  { key: 'herb',            name: '<img src="herbs.png" class="item-icon-svg"> Herbs' },
+  { key: 'wood',            name: '<img src="wood.png" class="item-icon-svg"> Wood' },
+  { key: 'branch',          name: '<img src="Branches.png" class="item-icon-svg"> Branches' },
+  { key: 'crystal',         name: '💎 Crystal Shards' },
   { key: 'bug',             name: '<img src="bug01.png" class="item-icon-svg"> Insect Parts' },
-  { key: 'giftBug',         name: '<img src="bug02.png" class="item-icon-svg"> 小蟲子' },
-  { key: 'fish',            name: '🐟 魚' },
-  { key: 'stone',           name: '<img src="Stone.png" class="item-icon-svg"> 礦石' },
-  { key: 'fairyItem',       name: '🧚 妖精' },
-  { key: 'whiteFlower',     name: WF_ICON + ' 白藥花' },
-  { key: 'apple',           name: '🍎 蘋果' },
-  { key: 'vegetable',       name: '<img src="vegetable.png" class="item-icon-svg"> 蔬菜' },
-  { key: 'mushroom',        name: '🍄 蘑菇' },
-  { key: 'frog',            name: '<img src="frog.png" class="item-icon-svg"> 青蛙' },
-  { key: 'egg',             name: '🥚 鳥蛋' },
-  { key: 'beastMeat',       name: '🥩 獸肉' },
-  { key: 'monsterMaterial', name: '🦴 魔物素材' },
-  { key: 'coldPotion',      name: '💊 治療藥水' },
-  { key: 'cursePotion',     name: '🔮 解咒藥水' },
-  { key: 'forgetPotion',    name: '💙 忘卻藥水' },
-  { key: 'staminaPotion',   name: '💛 體力藥水' },
+  { key: 'giftBug',         name: '<img src="bug02.png" class="item-icon-svg"> Little Bug' },
+  { key: 'fish',            name: '🐟 Fish' },
+  { key: 'stone',           name: '<img src="Stone.png" class="item-icon-svg"> Ore' },
+  { key: 'fairyItem',       name: '🧚 Fairy' },
+  { key: 'whiteFlower',     name: WF_ICON + ' White Medicine Flower' },
+  { key: 'apple',           name: '🍎 Apple' },
+  { key: 'vegetable',       name: '<img src="vegetable.png" class="item-icon-svg"> Vegetable' },
+  { key: 'mushroom',        name: '🍄 Mushroom' },
+  { key: 'frog',            name: '<img src="frog.png" class="item-icon-svg"> Frog' },
+  { key: 'egg',             name: '🥚 Bird Egg' },
+  { key: 'beastMeat',       name: '🥩 Beast Meat' },
+  { key: 'monsterMaterial', name: '🦴 Monster Material' },
+  { key: 'coldPotion',      name: '💊 Healing Potion' },
+  { key: 'cursePotion',     name: '🔮 Curse-Cure Potion' },
+  { key: 'forgetPotion',    name: '💙 Oblivion Potion' },
+  { key: 'staminaPotion',   name: '💛 Stamina Potion' },
 ];
 
 function debugAddAllItems() {
@@ -13903,11 +13903,11 @@ function debugAddAllItems() {
     run() {
       chg(it.key, 10);
       renderHUD();
-      toast(`【除錯】${it.name} +10`);
+      toast(`[Debug] ${it.name} +10`);
       setTimeout(() => debugAddAllItems(), 0);
     }
   }));
-  showActionMenu('📦 選擇要增加的物品（+10）', items);
+  showActionMenu('📦 Choose an item to add (+10)', items);
   document.getElementById('act-list').classList.add('three-col');
 }
 
@@ -13931,7 +13931,7 @@ function jumpToDay7Morning() {
   changeScene('outside', { x: 320, y: 350 });
   renderHUD();
   raf = requestAnimationFrame(gameLoop);
-  toast('第7天早上');
+  toast('Day 7 Morning');
 }
 
 function jumpToBloodMoon() {
@@ -14007,7 +14007,7 @@ function jumpToBloodMoonLake() {
   renderScene();
   renderChars();
   raf = requestAnimationFrame(gameLoop);
-  storyAuto('Narrator', '【測試】血月夜：阿瓦倫已在湖邊，可使用忘卻藥水。');
+  storyAuto('Narrator', '[Test] Blood moon night: Avaren is at the lake; you can use the Oblivion Potion.');
 }
 
 function jumpToDay10ForgetTest(usedForget) {
@@ -14054,7 +14054,7 @@ function jumpToDay10ForgetTest(usedForget) {
   renderScene();
   renderChars();
   fadeInFromBlack();
-  storyAuto('Narrator', usedForget ? '【測試】第10天白天：血月夜使用過忘卻藥水。' : '【測試】第10天白天：血月夜沒有使用忘卻藥水。');
+  storyAuto('Narrator', usedForget ? '[Test] Day 10 daytime: the Oblivion Potion was used on the blood moon night.' : '[Test] Day 10 daytime: the Oblivion Potion was not used on the blood moon night.');
   raf = requestAnimationFrame(gameLoop);
 }
 
@@ -14482,8 +14482,8 @@ function openBedMenu() {
   }
   showActionMenu('Bedside', [
     {
-      name: '入睡',
-      fx: '結束今天',
+      name: 'Sleep',
+      fx: 'End the day',
       req: () => true,
       run() {
         setTimeout(() => doAction_Sleep(), 0);
@@ -16809,7 +16809,7 @@ async function playDay0EldrinStudyScene() {
     { speaker: 'Narrator', text: '你照顧的那個孩子，身上爬滿了詛咒的紋路，此刻昏迷在床鋪上。' },
     { speaker: 'Narrator', text: '呼吸還在，但很微弱。你不敢去想更壞的情況，你認為那是你的錯，你怎麼沒有更早發現。' },
     { speaker: 'Narrator', text: '你拖著一身的疲憊坐下來，翻開一本又一本關於詛咒的古籍，一行一行地看。' },
-    { speaker: 'Narrator', text: '燭火在眼前搖曳。字句開始變得模糊。你的眼皮越來越沉，可是你的手，不願停下來。' },
+    { speaker: 'Narrator', text: 'The candle flickers before your eyes. The words begin to blur. Your eyelids grow heavier and heavier, but your hands refuse to stop.' },
   ], 0, resolve));
 
   // 第3步（之後加入黑幕轉場）
