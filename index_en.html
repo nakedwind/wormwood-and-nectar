@@ -2407,7 +2407,7 @@ body {
 
 <!-- ══ 資源載入畫面 ══ -->
 <div id="asset-loading-overlay">
-  <div class="alo-title">載入中…</div>
+  <div class="alo-title">Loading…</div>
   <div class="alo-bar-bg"><div class="alo-bar" id="alo-bar"></div></div>
   <div class="alo-pct" id="alo-pct">0%</div>
 </div>
@@ -2731,27 +2731,27 @@ body {
 
     <div id="debug-bar" style="display:none;">
       <button id="btn-skip-evening" onclick="skipToEvening()"
-        style="background:#1a1208;border:1px solid #3a2810;color:#a09060;">☀🌙 跳晚上</button>
+        style="background:#1a1208;border:1px solid #3a2810;color:#a09060;">☀🌙 Skip to Night</button>
       <button onclick="debugHalfCursePain()"
-        style="background:#0a0a1a;border:1px solid #3a3a90;color:#8080e0;"><img src="herbs.png" class="item-icon-svg"> 阿瓦倫良好</button>
+        style="background:#0a0a1a;border:1px solid #3a3a90;color:#8080e0;"><img src="herbs.png" class="item-icon-svg"> Avaren Good</button>
       <button onclick="debugAddAllItems()"
-        style="background:#0a1a06;border:1px solid #3a6a10;color:#80d040;">📦 物品+10</button>
+        style="background:#0a1a06;border:1px solid #3a6a10;color:#80d040;">📦 Items +10</button>
       <button id="btn-toggle-rain" onclick="toggleRainWeather()"
-        style="background:#08121a;border:1px solid #304a60;color:#9fc8e8;">☔ 關雨</button>
+        style="background:#08121a;border:1px solid #304a60;color:#9fc8e8;">☔ Rain Off</button>
       <button onclick="jumpToDay10ForgetTest(true)"
-        style="background:#141022;border:1px solid #5a4a90;color:#b8a8ff;">🌀 第10天(忘卻)</button>
+        style="background:#141022;border:1px solid #5a4a90;color:#b8a8ff;">🌀 Day 10 (Forgot)</button>
       <button onclick="jumpToDay10ForgetTest(false)"
-        style="background:#221010;border:1px solid #804040;color:#ffb0b0;">💔 第10天(未忘卻)</button>
+        style="background:#221010;border:1px solid #804040;color:#ffb0b0;">💔 Day 10 (Not Forgot)</button>
       <button id="btn-sleep" onclick="openJumpDayMenu()"
-        style="background:#241a0c;border:1px solid #5a3818;color:#c0a060;">🌙 入睡</button>
+        style="background:#241a0c;border:1px solid #5a3818;color:#c0a060;">🌙 Sleep</button>
       <button onclick="jumpToBloodMoonLake()"
-        style="background:#1a0808;border:1px solid #8a1010;color:#ff6060;">🩸 血月湖邊</button>
+        style="background:#1a0808;border:1px solid #8a1010;color:#ff6060;">🩸 Blood Moon Lake</button>
       <button onclick="debugJumpToGoodEnding()"
-        style="background:#0a1a10;border:1px solid #206040;color:#60e0a0;">✨ 第11天(好結局)</button>
+        style="background:#0a1a10;border:1px solid #206040;color:#60e0a0;">✨ Day 11 (Good End)</button>
       <button onclick="debugJumpToReidEnding()"
-        style="background:#1a100a;border:1px solid #604020;color:#e0a060;">⚔️ 第11天(雷德結局)</button>
+        style="background:#1a100a;border:1px solid #604020;color:#e0a060;">⚔️ Day 11 (Red End)</button>
       <button id="btn-game-speed" onclick="cycleGameSpeed()"
-        style="background:#0a1418;border:1px solid #207090;color:#60c0e0;">⏩ 速度 1x</button>
+        style="background:#0a1418;border:1px solid #207090;color:#60c0e0;">⏩ Speed 1x</button>
     </div>
 
     </div><!-- #left-col -->
@@ -3106,7 +3106,7 @@ function showRainNotice() {
   if (!wrap) return;
   const el = document.createElement('div');
   el.className = 'toast-rain';
-  el.textContent = '下雨了，現在在戶外工作體力下降更快';
+  el.textContent = 'It’s raining—working outdoors now drains stamina faster';
   wrap.appendChild(el);
   setTimeout(() => el.remove(), 5000);
 }
@@ -3116,7 +3116,7 @@ function showRainStopNotice() {
   if (!wrap) return;
   const el = document.createElement('div');
   el.className = 'toast-rain';
-  el.textContent = '雨好像停了';
+  el.textContent = 'The rain seems to have stopped';
   wrap.appendChild(el);
   setTimeout(() => el.remove(), 5000);
 }
@@ -3236,7 +3236,7 @@ function updateWeatherFx() {
 function updateRainButton() {
   const btn = document.getElementById('btn-toggle-rain');
   if (!btn || !G) return;
-  btn.textContent = G.weather === 'rain' ? '☔ 關雨' : '☔ 開雨';
+  btn.textContent = G.weather === 'rain' ? '☔ Rain Off' : '☔ Rain On';
   btn.style.color = G.weather === 'rain' ? '#9fc8e8' : '#6f8798';
 }
 
@@ -3364,7 +3364,7 @@ function syncOutsideFishingUI() {
   const bar = document.getElementById('fish-scene-bar');
   if (!label || !bar) return;
   if (G.fishReady) {
-    label.textContent = '🎣 釣到了！';
+    label.textContent = '🎣 Caught one!';
     bar.style.width = '100%';
     bar.style.background = 'linear-gradient(90deg,#a07020,#e0b030)';
   } else {
@@ -3707,7 +3707,7 @@ function updateOneSlime(slime, elId, homeX, homeY) {
         renderHUD();
         playLoopingAudio('sfx-slime-hit', 4.0);
 
-        toast(`史萊姆攻擊！HP -${SLIME_DAMAGE}`);
+        toast(`Slime attack! HP -${SLIME_DAMAGE}`);
         if ((G.eldrinHp ?? 100) <= 0) { triggerEldrinDeath(); return; }
       }
     }
@@ -3905,7 +3905,7 @@ function doAction_CatchForestFrog() {
   renderHUD();
   const el = document.getElementById('forest-frog');
   if (el) el.style.display = 'none';
-  toast('<img src="frog.png" class="item-icon-svg"> 青蛙 +1');
+  toast('<img src="frog.png" class="item-icon-svg"> Frog +1');
   return true;
 }
 
@@ -4075,7 +4075,7 @@ function doAction_CatchForestFrog2() {
   renderHUD();
   const el = document.getElementById('forest-frog-2');
   if (el) el.style.display = 'none';
-  toast('<img src="frog.png" class="item-icon-svg"> 青蛙 +1');
+  toast('<img src="frog.png" class="item-icon-svg"> Frog +1');
   return true;
 }
 
@@ -4126,7 +4126,7 @@ function doAction_CollectMushroom(id) {
   chg('mushroom', 1);
   renderHUD();
   updateForestMushroomVisuals();
-  toast('<img src="mushroom.png" class="item-icon-svg"> 蘑菇 +1');
+  toast('<img src="mushroom.png" class="item-icon-svg"> Mushroom +1');
 }
 
 function setForestFishingVisual(state) {
@@ -4149,7 +4149,7 @@ function syncForestFishingUI() {
   const bar = document.getElementById('fish-forest-bar');
   if (!label || !bar) return;
   if (G.forestFishReady) {
-    label.textContent = '🎣 釣到了！回來收取';
+    label.textContent = '🎣 Caught one! Come collect it';
     bar.style.width = '100%';
     bar.style.background = 'linear-gradient(90deg,#a07020,#e0b030)';
   } else {
@@ -4400,17 +4400,17 @@ const ZONES = {
     { id:'forest_tree6',  x1:516, y1:435, x2:574, y2:475, interactHint:'Tree', fn(){ doAction_GatherWood(); } },
     { id:'forest_bush1',  x1:113, y1:13,  x2:177, y2:89,  interactHint:'Bush', fn(){ doAction_GatherBush(); } },
     { id:'forest_bush2',  x1:427, y1:117, x2:491, y2:181, interactHint:'Bush', fn(){ doAction_GatherBush(); } },
-    { id:'forest_flower3', x1:29,  y1:277, x2:102, y2:329, interactHint:'花叢', fn(){ doAction_GatherFlower(); } },
-    { id:'forest_flower4', x1:83,  y1:226, x2:155, y2:273, interactHint:'花叢', fn(){ doAction_GatherFlower(); } },
-    { id:'forest_flower5', x1:197, y1:193, x2:278, y2:234, interactHint:'花叢', fn(){ doAction_GatherFlower(); } },
-    { id:'forest_flower6', x1:397, y1:193, x2:446, y2:229, interactHint:'花叢', fn(){ doAction_GatherFlower(); } },
-    { id:'forest_flower7', x1:477, y1:206, x2:539, y2:287, interactHint:'花叢', fn(){ doAction_GatherFlower(); } },
-    { id:'forest_flower8', x1:531, y1:282, x2:612, y2:346, interactHint:'花叢', fn(){ doAction_GatherFlower(); } },
-    { id:'forest_stone1',  x1:586, y1:381, x2:637, y2:474, interactHint:'石頭', fn(){ doAction_GatherStone(); } },
-    { id:'forest_nest',   x1:494, y1:123, x2:541, y2:161, interactHint:'鳥巢', fn(){ doAction_CollectEggs(); } },
+    { id:'forest_flower3', x1:29,  y1:277, x2:102, y2:329, interactHint:'Flowers', fn(){ doAction_GatherFlower(); } },
+    { id:'forest_flower4', x1:83,  y1:226, x2:155, y2:273, interactHint:'Flowers', fn(){ doAction_GatherFlower(); } },
+    { id:'forest_flower5', x1:197, y1:193, x2:278, y2:234, interactHint:'Flowers', fn(){ doAction_GatherFlower(); } },
+    { id:'forest_flower6', x1:397, y1:193, x2:446, y2:229, interactHint:'Flowers', fn(){ doAction_GatherFlower(); } },
+    { id:'forest_flower7', x1:477, y1:206, x2:539, y2:287, interactHint:'Flowers', fn(){ doAction_GatherFlower(); } },
+    { id:'forest_flower8', x1:531, y1:282, x2:612, y2:346, interactHint:'Flowers', fn(){ doAction_GatherFlower(); } },
+    { id:'forest_stone1',  x1:586, y1:381, x2:637, y2:474, interactHint:'Stone', fn(){ doAction_GatherStone(); } },
+    { id:'forest_nest',   x1:494, y1:123, x2:541, y2:161, interactHint:'Nest', fn(){ doAction_CollectEggs(); } },
   ],
   room: [
-    { id:'to_lobby',   x1:109, y1:444, x2:212, y2:476, sceneHint:'→ 前往大廳', isScene:true,
+    { id:'to_lobby',   x1:109, y1:444, x2:212, y2:476, sceneHint:'→ To Lobby', isScene:true,
       fn(){ playLoopingAudio('sfx-door-open', 6.0); changeScene('lobby', {x:591, y:100}); } },
     { id:'bed',        x1:355, y1:289, x2:529, y2:460, interactHint:'Bedside',
       fn(){ openBedMenu(); } },
@@ -4851,7 +4851,7 @@ const RED_SPEAK_DLG = [
   'A hero must be brave. Brave!',
   '...Where’s my map...',
   'Trees, trees, more trees... this forest is way too big.',
-  '史萊姆不是我的對手！',
+  'No slime is any match for me!',
   'Hmm-hmm-hmm~ ...where is this?',
   'If I find the Demon Lord’s castle, what’s the first thing I should do...?',
   'That direction feels right!',
@@ -6008,7 +6008,7 @@ const WINTER_CHAT_DAY4_2 = [
   { speaker: 'Narrator', text: 'Somehow, though Winter is cold, his voice makes you lower your guard without meaning to, and you find yourself blurting out more than you intended.' },
   { speaker: 'Eldrin', text: 'That’s why... my teacher took me in as an apprentice—an orphan with no one to rely on.' },
   { speaker: 'Winter', text: '...' },
-  { speaker: 'Winter', text: '……你也只是個辛苦的孩子而已。' },
+  { speaker: 'Winter', text: '...You’re just a child who’s had it hard, too.' },
   { speaker: 'Narrator', text: 'Winter doesn’t ask further. But you feel that question wasn’t asked idly.' },
 ];
 
@@ -6362,7 +6362,7 @@ function cycleGameSpeed() {
   const next = { 1: 2, 2: 4, 4: 1 };
   G.speedMult = next[G.speedMult] || 1;
   const btn = document.getElementById('btn-game-speed');
-  if (btn) btn.textContent = '⏩ 速度 ' + G.speedMult + 'x';
+  if (btn) btn.textContent = '⏩ Speed ' + G.speedMult + 'x';
 }
 
 function spendFatigue(n) {
@@ -6510,10 +6510,10 @@ const BLOOD_MOON_CALMED_DLG = [
   '...Ngh... ugh... I can’t bear it...',
 ];
 const BLOOD_MOON_MEMORIES = [
-  { icon:'UI_Blood Moon.png', title:'——記憶的碎片——', text:'Avaren staggers in pain, then suddenly stops—\n\n‘...Papa... Mama... why...’\n\nHe curls up in the corner, his head against his knees.\nThose memories have never left him.\nWhen he was very small, before he understood what a ‘curse’ was,\nhis parents said he brought misfortune, and abandoned him in the street.' },
-  { icon:'UI_Blood Moon.png', title:'——記憶的碎片——', text:'Avaren lets out a whimper—\n\n‘...No... don’t hit me...’\n\nIn those days on the streets, he could never sleep properly.\nSome people raised their hands against him simply out of boredom.\nThe curse left him unable to fight back, unable to flee.\nAll he could do was curl into a ball and wait for it to end.' },
-  { icon:'UI_Blood Moon.png', title:'——記憶的碎片——', text:'Avaren suddenly clutches himself and begins to tremble—\n\n‘...Let me go... let go...!’\n\nThe cold examination table presses against his back.\nRopes cut into his wrists; the skin is rubbed raw, then covered with fresh bandages.\n\nThe teacher stands beside the table, his voice calm to the point of cruelty.\n‘You are an excellent vessel.’\n\nWith every experiment, the curse sinks a little deeper, grows a little more tangled.\nHe no longer remembers what day the pain began.' },
-  { icon:'UI_Blood Moon.png', title:'——記憶的碎片——', text:'Avaren whips around to face you, panic and confusion in his eyes—\n\n‘...You... you were there back then...’\n\nHe remembers.\nIn that laboratory, a boy stood off to the side.\nDid not stop it. Did not speak.\nJust stood there, watching him.\n\nIt was you. Eldrin. You were there too.' },
+  { icon:'UI_Blood Moon.png', title:'——Fragment of Memory——', text:'Avaren staggers in pain, then suddenly stops—\n\n‘...Papa... Mama... why...’\n\nHe curls up in the corner, his head against his knees.\nThose memories have never left him.\nWhen he was very small, before he understood what a ‘curse’ was,\nhis parents said he brought misfortune, and abandoned him in the street.' },
+  { icon:'UI_Blood Moon.png', title:'——Fragment of Memory——', text:'Avaren lets out a whimper—\n\n‘...No... don’t hit me...’\n\nIn those days on the streets, he could never sleep properly.\nSome people raised their hands against him simply out of boredom.\nThe curse left him unable to fight back, unable to flee.\nAll he could do was curl into a ball and wait for it to end.' },
+  { icon:'UI_Blood Moon.png', title:'——Fragment of Memory——', text:'Avaren suddenly clutches himself and begins to tremble—\n\n‘...Let me go... let go...!’\n\nThe cold examination table presses against his back.\nRopes cut into his wrists; the skin is rubbed raw, then covered with fresh bandages.\n\nThe teacher stands beside the table, his voice calm to the point of cruelty.\n‘You are an excellent vessel.’\n\nWith every experiment, the curse sinks a little deeper, grows a little more tangled.\nHe no longer remembers what day the pain began.' },
+  { icon:'UI_Blood Moon.png', title:'——Fragment of Memory——', text:'Avaren whips around to face you, panic and confusion in his eyes—\n\n‘...You... you were there back then...’\n\nHe remembers.\nIn that laboratory, a boy stood off to the side.\nDid not stop it. Did not speak.\nJust stood there, watching him.\n\nIt was you. Eldrin. You were there too.' },
 ];
 
 const AVAREN_DAY10_FORGET_TALK_STORY = [
@@ -10861,7 +10861,7 @@ function doAction_GatherFlower() {
   if (G.gatherSearchActive) return;
   spendFatigue(1);
   playLoopingAudio('sfx-gather-bush', 1.5);
-  startGatherSearch(WF_ICON + ' 搜索中…', () => {
+  startGatherSearch(WF_ICON + ' Searching…', () => {
     const roll = Math.random();
     if (roll < 0.10) {
       chg('herb', 1); renderHUD();
@@ -10885,7 +10885,7 @@ function doAction_GatherBush() {
   if (G.gatherSearchActive) return;
   spendFatigue(1);
   playLoopingAudio('sfx-gather-bush', 2.0);
-  startGatherSearch('<img src="herbs.png" class="item-icon-svg"> 搜索中…', () => {
+  startGatherSearch('<img src="herbs.png" class="item-icon-svg"> Searching…', () => {
     const roll = Math.random();
     if (roll < 0.50) {
       chg('branch', 1); renderHUD();
@@ -10917,7 +10917,7 @@ function doAction_SearchStolenMoney() {
   if (amount <= 0) return;
   spendFatigue(1);
   playLoopingAudio('sfx-gather-bush', 2.0);
-  startGatherSearch('搜索中…', () => {
+  startGatherSearch('Searching…', () => {
     G.stolenMoneyCollected = (G.stolenMoneyCollected || 0) + amount;
     G.stolenMoneyFoundDay = G.day;
     chg('money', amount); renderHUD();
@@ -11055,7 +11055,7 @@ function doAction_ForestFish() {
     return;
   }
   if (G.bloodMoon7Active) { warn('You can’t act right now.'); return; }
-  if (G.timePeriod !== 'morning') { timeWarn('釣魚是白天的行動。'); return; }
+  if (G.timePeriod !== 'morning') { timeWarn('Fishing is a daytime activity.'); return; }
   if (G.forestFishFishing) { warn('The line is already cast; please wait.'); return; }
   if (G.bug < 2) { warn('You need 2 Insect Parts for bait.'); return; }
   chg('bug', -2); renderHUD();
@@ -11110,7 +11110,7 @@ function doAction_ForestPondMenu() {
   if (G.actionSceneActive) return;
   // 已釣到 or 垂釣中：維持原本直接互動（收取漁獲 / 提示稍候）
   if (G.forestFishReady || G.forestFishFishing) { doAction_ForestFish(); return; }
-  if (G.timePeriod !== 'morning') { timeWarn('釣魚是白天的行動。'); return; }
+  if (G.timePeriod !== 'morning') { timeWarn('Fishing is a daytime activity.'); return; }
   playLoopingAudio('sfx-menu-open', 4.0);
   showActionMenu('Forest Lakeside', [
     {
@@ -11134,7 +11134,7 @@ function doAction_Fish() {
     return;
   }
   if (G.bloodMoon7Active) { warn('You can’t act right now.'); return; }
-  if (G.timePeriod !== 'morning') { timeWarn('釣魚是白天的行動。'); return; }
+  if (G.timePeriod !== 'morning') { timeWarn('Fishing is a daytime activity.'); return; }
   if (G.fishFishing) { warn('The line is already cast; please wait.'); return; }
   if (G.bug < 1) { warn('You need 1 Insect Part for bait.'); return; }
   chg('bug', -1); renderHUD();
@@ -11171,7 +11171,7 @@ function doAction_GatherStone() {
   if (G.gatherSearchActive) return;
   spendFatigue(1);
   playLoopingAudio('sfx-gather-stone', 4.0);
-  startGatherSearch('<img src="Stone.png" class="item-icon-svg"> 搜索中…', () => {
+  startGatherSearch('<img src="Stone.png" class="item-icon-svg"> Searching…', () => {
     const roll = Math.random();
     if (roll < 0.60) {
       chg('stone', 1); renderHUD();
@@ -12747,8 +12747,8 @@ function showActionMenu(heading, items, noteText = '', noCancel = false) {
       if (!G.sleepAnimActive && !isDlgBlocking()) G.paused = false;
       menuBtns = [];
       if (!isAvarenUnconscious() && !isAvarenBedRest() && G.mood > 50 && G.avarenScene === G.scene) {
-        G.bubbleText = pick(AVAREN_DLG.possess.concat(['……（跟著你）']));
-        if (G.mood <= 80) G.bubbleText = pick(['……（靠近你）', '...Eldrin.', '……（悄悄跟著）']);
+        G.bubbleText = pick(AVAREN_DLG.possess.concat(['...(follows you)']));
+        if (G.mood <= 80) G.bubbleText = pick(['...(comes close to you)', '...Eldrin.', '...(quietly following)']);
         G.bubbleTimer = 300;
         G.autoSpeakTimer = Math.floor(Math.random() * 540) + 360;
       }
@@ -14560,7 +14560,7 @@ function endDay() {
   if (G.day === 10 && !G.usedForgetMagic && !wasBloodMoon) {
     chg('curse', +6);
     renderHUD();
-    if (isCrisis()) { showEvent('💀','危機——', `Avaren’s Pain and Curse have climbed far too high; his body has reached its limit...\nThe black mist devours him.`, () => endGame('crisis'), 'red'); return; }
+    if (isCrisis()) { showEvent('💀','Crisis——', `Avaren’s Pain and Curse have climbed far too high; his body has reached its limit...\nThe black mist devours him.`, () => endGame('crisis'), 'red'); return; }
     const nightText = `You step toward Avaren’s room, wanting to do something for him.\nHe doesn’t turn around.\n\n‘...Don’t touch me.’\n\nYou can only stop outside the door,\nunable to help at all.\n\nCurse +6`;
     G.day++;
     G.slimeCalmed = false;
@@ -14573,7 +14573,7 @@ function endDay() {
     G.bloodMoon7Failed = true;
   }
 
-  if (isCrisis()) { showEvent('💀','危機——', `Avaren’s Pain and Curse have climbed far too high; his body has reached its limit...\nThe black mist devours him.`, () => endGame('crisis'), 'red'); return; }
+  if (isCrisis()) { showEvent('💀','Crisis——', `Avaren’s Pain and Curse have climbed far too high; his body has reached its limit...\nThe black mist devours him.`, () => endGame('crisis'), 'red'); return; }
 
   // 依入睡選擇決定不同的結算事件框
   let nightIcon = '🌙';
@@ -18538,7 +18538,7 @@ runTipsCycle();
 <!-- ══ 設定面板（放在 body 最底層，脫離所有 stacking context）══ -->
 <div id="settings-panel">
   <div class="settings-row">
-    <span class="settings-label">🔊 音量</span>
+    <span class="settings-label">🔊 Volume</span>
     <input type="range" id="settings-vol" min="0" max="100" value="10"
       oninput="refreshActiveBGMVolume();['sfx-day0-rain','sfx-indoor-rain','sfx-day0-walk','sfx-kitchen-stove','sfx-kitchen-boil'].forEach(id=>{const e=document.getElementById(id);if(e&&!e.paused)e.volume=this.value/100;});">
   </div>
