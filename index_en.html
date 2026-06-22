@@ -9750,7 +9750,7 @@ function gameLoop() {
   }
   } // ── 血月之夜暫停飢餓計算結束 ──
 
-  // 飢餓歸零：每5秒持續扣血（阿瓦倫 疼痛+1 詛咒+1／艾德林 HP-1）
+  // 飢餓歸零：每5秒持續扣血（阿瓦倫 疼痛+1 詛咒+1／Eldrin HP-1）
   if (!G.paused && !G.actionSceneActive && !G.bloodMoon7Active && G.day > 0) {
     G._starveTimer = (G._starveTimer || 0) + (G.speedMult || 1) * (G._frameFactor || 1);
     if (G._starveTimer >= 300) {
@@ -13317,7 +13317,7 @@ function chg(stat, d) {
   else if (stat==='wildFlower') G.wildFlower = Math.max(0,(G.wildFlower ?? 0)+d);
   else if (stat==='feather')    G.feather    = Math.max(0,(G.feather   ?? 0)+d);
   else if (stat==='giftBug')    G.giftBug    = Math.max(0,(G.giftBug   ?? 0)+d);
-  // 艾德林 HP 歸零 → 倒下結局（夜間飢餓懲罰已改成淨值計算，不會在此誤觸）
+  // Eldrin HP 歸零 → 倒下結局（夜間飢餓懲罰已改成淨值計算，不會在此誤觸）
   if (stat === 'eldrinHp' && d < 0 && (G.eldrinHp ?? 100) <= 0) triggerEldrinDeath();
 }
 
@@ -14798,24 +14798,24 @@ function showDayStartOpening(redMsg = '') {
       'Day 4\nMorning light falls by the window. The forest is quieter than usual, yet you feel the atmosphere has shifted.',
     ],
     5: [
-      '第 5 天\n清晨的光落在窗邊。\n阿瓦倫的狀態看起來比前幾天穩定，這讓你感覺放鬆了一點。',
+      'Day 5\nMorning light falls by the window.\nAvaren seems more stable than the past few days, which lets you relax a little.',
     ],
     6: [
-      '第 6 天\n清晨的光落在窗邊。新的一天開始了。',
+      'Day 6\nMorning light falls by the window. A new day begins.',
     ],
     7: G.avarenReturnPending ? [
-      '第 7 天\n清晨來得很慢。\n你不知道自己究竟睡著了多久。',
+      'Day 7\nDawn comes slowly.\nYou don’t know how long you actually slept.',
       'Avaren isn’t in bed.\nThe unease left over from last night still weighs on your chest, refusing to lift.',
       'You stand up, your fingers a little cold. No matter what, you have to find him first.',
     ] : [
-      '第 7 天\n清晨的光落在窗邊，新的一天開始了。',
+      'Day 7\nMorning light falls by the window; a new day begins.',
     ],
     8: [
-      '第 8 天\n雨從清晨開始落下。\n屋簷滴著水，森林的顏色被洗得更深。',
+      'Day 8\nRain falls from the early morning.\nWater drips from the eaves, and the forest’s colors are washed deeper.',
       'In the cold, damp air there’s an unspeakable foreboding.',
     ],
     9: [
-      '第 9 天\n早晨明明和平常一樣亮，卻讓人覺得冷。\n你看向窗外，心裡有一種沉下去的感覺。',
+      'Day 9\nThe morning is just as bright as always, yet it feels cold.\nYou look out the window, and something in you sinks.',
     ],
     10: [
       'Day 10\nThe blood moon has set.\nMorning light enters the room, but does not bring warmth right away.',
@@ -14823,7 +14823,7 @@ function showDayStartOpening(redMsg = '') {
       'You look at Avaren, unsure whether you truly managed to protect him.',
     ],
     11: [
-      '第 11 天\n安靜的清晨到了，陽光再次照進房間。',
+      'Day 11\nA quiet morning arrives, and sunlight streams into the room once more.',
       'Everything you’ve done is like a fine thread, slowly drawing toward today.',
       'When today ends, you’ll know where you and Avaren are headed from here.',
     ],
@@ -14857,7 +14857,7 @@ function continueAfterNight(prevText) {
   G.noahGiftToday = false;
   G.winterGiftToday = false;
   // 統計：玩家進入第 N 天（看玩家玩到哪一天、在哪裡流失）
-  if (G.day >= 1 && G.day <= 11) gcEvent('day/' + G.day, '第 ' + G.day + ' 天');
+  if (G.day >= 1 && G.day <= 11) gcEvent('day/' + G.day, 'Day ' + G.day + '');
   G.eldrinFatigue = Math.min(100, (G.eldrinFatigue ?? 80) + 60);
   // 第11天剛開始：存下快照（只存一次，迴圈期間不覆蓋；放在每日重置之後確保快照含正確初始值）
   if (G.day === 11 && !G.day11Snapshot) {
@@ -14937,11 +14937,11 @@ function continueAfterNight(prevText) {
     return;
   }
   if (G.day === 1) {
-    storyAuto('Narrator', '第 1 天。\n\n小屋很舊，門縫透著風。\n你和阿瓦倫昨晚才到這裡——這是你們能找到的最僻靜的地方。');
-    storyAuto('Narrator', '阿瓦倫還昏迷著。\n你蹲在他床邊看了很久，數著他的呼吸，確認他還在。\n\n……他還在。');
-    storyAuto('Narrator', '你站起來，環顧四周。\n食物、藥材、水——這些都得想辦法。\n\n先從能做的開始吧。');
+    storyAuto('Narrator', 'Day 1.\n\nThe cabin is old, wind seeping through the cracks in the door.\nYou and Avaren only arrived last night—this is the most secluded place you could find.');
+    storyAuto('Narrator', 'Avaren is still unconscious.\nYou crouch by his bed for a long time, counting his breaths, confirming he’s still here.\n\n...He’s still here.');
+    storyAuto('Narrator', 'You stand up and look around.\nFood, herbs, water—you’ll have to figure all of these out.\n\nStart with what you can do.');
   } else {
-    storyAuto('Narrator', `第 ${G.day} 天開始了。清晨七點，新的一天。${redMsg}`);
+    storyAuto('Narrator', `Day ${G.day} has begun. Seven in the morning, a new day.${redMsg}`);
   }
   triggerAvarenDay2WakeIntro();
   if (G.day === 10) {
@@ -15076,22 +15076,22 @@ function closeEvent() {
 //  ENDINGS
 // ══════════════════════════════════════
 const ENDINGS = {
-  nectar: { cls:'end-best', type:'True End', title:'甘露',
-    desc:'阿瓦倫的詛咒沒有完全消失。\n\n但是艾德林終於找到了能讓它穩定下來的方法。\n黑霧仍偶爾浮現在阿瓦倫的皮膚下，像一場不肯退去的舊夢。\n\n他們留在森林的小屋裡生活。\n在日復一日的藥草、爐火、雨聲與晨光裡，一點一點長大。\n\n這不是故事的終點，而是另一段故事的起點。\n他們還有好多好多故事，等待著你來閱讀。' },
-  wormwood: { cls:'end-regret', type:'Bad End', title:'苦艾',
-    desc:'阿瓦倫活了下來。\n\n有些裂痕太深了，無法被修補。\n他不再相信艾德林，也不再相信這間小屋能保護他。\n\n某一天，阿瓦倫消失了。\n艾德林循著詛咒留下的漆黑痕跡追進森林，卻看見黑霧已經蔓延過樹木、湖水與遠處的村莊。\n\n最後，艾德林和這片森林一起被詛咒吞沒。\n他們都沒有回來。' },
-  mist: { cls:'end-normal', type:'Bad End', title:'黑霧',
-    desc:'阿瓦倫活了下來。\n\n他遺忘了最深的疼痛，但傷口只是被掩蓋了起來，沒有復原。\n詛咒雖然不再像過去那樣啃咬他的身體，但也還是持續著存在。\n\n他開始思考著把他變成這副樣子的源頭。\n\n幾年後，阿瓦倫離開了小屋。\n\n他沒有告別得很隆重。\n只是把洗乾淨的藥瓶放回架上，把房間整理好，然後在清晨走進森林。\n\n「不要來找我。」\n\n艾德林只在桌上找到一張很短的紙條。\n\n有一天，雷德傳來了消息。\n據說某個村鎮被黑霧掩蓋，成為了詛咒之地，聽說再也沒有人可以活著走出那裡。' },
-  bad_curse: { cls:'end-bad', type:'Bad End', title:'詛咒',
-    desc:'詛咒終究失去了控制。\n那小小的身體，無法承受這麼殘忍的痛苦。\n疼痛與黑霧從阿瓦倫的身體裡溢出，吞掉了呼吸、聲音，以及所有還能被稱為希望的東西。\n\n艾德林伸出手時，但最終什麼也抓不住。\n這間破舊的小屋，從此空蕩蕩的。\n\n（試著將詛咒值和疼痛值保持在80以下吧！）' },
-  avaren_death: { cls:'end-bad', type:'Bad End', title:'血月之後',
-    desc:'血月落下以後，森林恢復了安靜。\n\n可是那份安靜，空得讓人沒辦法呼吸。\n阿瓦倫躺在湖邊的白花之上，沒有再醒來。\n\n湖面、月光、黑霧，還有那一夜來不及說的話。\n所有的痛苦與悔恨，都只能留給自己。' },
-  eldrin_death: { cls:'end-bad', type:'Bad End', title:'倒下',
-    desc:'艾德林倒下了。\n\n長久的奔走、研究、戰鬥與自責，終於壓垮了他的身體。\n\n那個孩子還在小屋等你，\n但是他卻不知道你再也不會回去那間小屋了。' },
-  captivity: { cls:'end-regret', type:'Normal End', title:'囚禁',
-    desc:'阿瓦倫活了下來。\n而你也留了下來。\n\n這不是最好的結局。卻是阿瓦倫最想要的結局。\n\n小屋沒有被詛咒吞沒。但門被關上了。\n\n窗外的世界逐漸變得遙遠。\n\n醒來時能看見你。睡著前也能看見你。\n\n再也不會分離。再也不會失去。\n\n永遠如此。' },
-  reid: { cls:'end-regret', type:"Red's End", title:'覆寫',
-    desc:'SAVE 00\n\n第 11 天　早晨\n勇者雷德\n\n那個總是迷路的勇者，終於找到了路。\n只是他抵達的地方，不是魔王城，也不是森林深處。\n\n而是這個故事之外更遠的地方。\n\n因為勇者不會屈服於世界的規則。\n他決定改寫這整個世界，拯救所有的人。\n\n勇者決定拯救你、拯救阿瓦倫，\n以及拯救那個面冷心善的魔王。' },
+  nectar: { cls:'end-best', type:'True End', title:'Nectar',
+    desc:'Avaren’s curse did not vanish completely.\n\nBut Eldrin finally found a way to keep it stable.\nThe black mist still surfaces now and then beneath Avaren’s skin, like an old dream that refuses to fade.\n\nThey stayed and lived in the cabin in the forest.\nAmid the daily herbs, hearth fire, rain, and morning light, he grew up, little by little.\n\nThis is not the end of the story, but the beginning of another.\nThey still have so many, many stories—waiting for you to read.' },
+  wormwood: { cls:'end-regret', type:'Bad End', title:'Wormwood',
+    desc:'Avaren survived.\n\nSome cracks ran too deep to be mended.\nHe no longer trusted Eldrin, nor believed this cabin could protect him.\n\nOne day, Avaren disappeared.\nEldrin followed the pitch-black traces the curse left behind, deep into the forest—only to find the black mist had already spread across the trees, the lake, and the distant village.\n\nIn the end, Eldrin was swallowed by the curse along with this forest.\nNeither of them ever came back.' },
+  mist: { cls:'end-normal', type:'Bad End', title:'Black Mist',
+    desc:'Avaren survived.\n\nHe forgot the deepest pain, but the wound was only covered over, never healed.\nThough the curse no longer gnawed at his body as it once did, it still lingered on.\n\nHe began to ponder the source of what had made him this way.\n\nYears later, Avaren left the cabin.\n\nHe gave no grand farewell.\nHe simply returned the cleaned potion bottles to their shelf, tidied the room, and walked into the forest at dawn.\n\n‘Don’t come looking for me.’\n\nEldrin found only a very short note on the table.\n\nOne day, word came from Red.\nThey say a certain town was swallowed by black mist and became a cursed land—and that no one has ever walked out of it alive again.' },
+  bad_curse: { cls:'end-bad', type:'Bad End', title:'Curse',
+    desc:'The curse slipped beyond control at last.\nThat small body could not bear such cruel pain.\nPain and black mist spilled out of Avaren’s body, devouring his breath, his voice, and everything that could still be called hope.\n\nEldrin reached out a hand, but in the end grasped nothing.\nFrom that day on, this ramshackle cabin stood empty.\n\n(Try to keep Curse and Pain below 80!)' },
+  avaren_death: { cls:'end-bad', type:'Bad End', title:'After the Blood Moon',
+    desc:'After the blood moon set, the forest grew quiet again.\n\nBut that quiet was so empty it left you unable to breathe.\nAvaren lay upon the white flowers by the lake and never woke again.\n\nThe lake’s surface, the moonlight, the black mist, and the words that night left no time to say.\nAll the pain and regret—there is no one left to give them to but yourself.' },
+  eldrin_death: { cls:'end-bad', type:'Bad End', title:'Collapse',
+    desc:'Eldrin has fallen.\n\nThe endless running, research, struggle, and self-reproach finally crushed his body.\n\nThat child is still waiting for you in the cabin,\nbut he doesn’t know that you will never return to that cabin again.' },
+  captivity: { cls:'end-regret', type:'Normal End', title:'Captivity',
+    desc:'Avaren survived.\nAnd you stayed as well.\n\nThis is not the best ending. But it is the ending Avaren wanted most.\n\nThe cabin was not swallowed by the curse. But the door was shut.\n\nThe world beyond the window slowly grew distant.\n\nWhen he wakes, he can see you. Before he sleeps, he can see you too.\n\nNever to be parted again. Never to lose anyone again.\n\nForever like this.' },
+  reid: { cls:'end-regret', type:"Red's End", title:'Overwrite',
+    desc:'SAVE 00\n\nDay 11　Morning\nHero Red\n\nThe hero who was always getting lost finally found his way.\nOnly, the place he reached was not the Demon Lord’s castle, nor the depths of the forest.\n\nIt was somewhere far beyond this story.\n\nBecause the hero would not bow to the rules of the world.\nHe resolved to rewrite this whole world and save everyone.\n\nThe hero resolved to save you, to save Avaren,\nand to save that cold-faced, kind-hearted Demon Lord as well.' },
 };
 let _eldrinDeathTriggered = false;
 function triggerEldrinDeath() {
@@ -15118,10 +15118,10 @@ function triggerEldrinDeath() {
   setTimeout(() => {
     // 黑幕完成，在上方顯示旁白（death-overlay z-index:110）
     const lines = [
-      '你的腳軟了。',
-      '視野開始模糊，地面的泥土變得很近。',
-      '……阿瓦倫還在等你回去。',
-      '但你的身體，再也撐不住了。',
+      'Your legs give out.',
+      'Your vision blurs, and the earth rushes close.',
+      '...Avaren is still waiting for you to come back.',
+      'But your body can hold on no longer.',
     ];
     const overlay = document.getElementById('death-overlay');
     const content = document.getElementById('death-text-content');
@@ -15145,42 +15145,42 @@ function triggerEldrinDeath() {
 
 const ENDING_NARRATIONS = {
   nectar: [
-    '黑暗沒有把他帶走。\n阿瓦倫還在這裡，他還在。',
-    '艾德林，你成功的守護了那個孩子。',
-    '從今以後的每一天，你繼續陪伴著阿瓦倫生活，\n陪他一點一滴的長大。',
-    '雖然過程有些辛苦，但你覺得這一切都是值得的。',
+    'The darkness didn’t take him away.\nAvaren is still here. He’s still here.',
+    'Eldrin, you succeeded in protecting that child.',
+    'From this day on, you keep living alongside Avaren,\nwatching him grow, little by little.',
+    'Though the road was hard, you feel it was all worth it.',
   ],
   wormwood: [
-    '清晨再度來臨。',
-    '日子一天一天的過去，你以為清晨總會再次來臨。',
-    '你以為裂縫總有一天可以被修補成功，你不斷的努力。\n但沒想到最終還是迎來了一個絕望的早晨。',
+    'Morning comes again.',
+    'Day after day passed, and you thought morning would always come again.',
+    'You thought the cracks could one day be mended, and you tried and tried.\nBut in the end, a morning of despair arrived all the same.',
   ],
   mist: [
-    '阿瓦倫還活著。',
-    '清晨的霧瀰漫在森林裡。',
-    '你們之間似乎也像隔著一層霧，\n雖然他活了下來，但是你卻看不清楚他的心。',
+    'Avaren is still alive.',
+    'Morning mist drifts through the forest.',
+    'Between you, too, there seems to be a veil of mist.\nHe survived, yet you can no longer see clearly into his heart.',
   ],
   bad_curse: [
-    '你沒能撐住。',
-    '阿瓦倫的健康在某個夜晚急遽崩潰。',
-    '詛咒趁虛而入，將他徹底吞噬。',
+    'You couldn’t hold on.',
+    'One night, Avaren’s health collapsed all at once.',
+    'The curse seized the opening and devoured him completely.',
   ],
   avaren_death: [
-    '紅色的夜晚漸漸淡去。',
-    '月亮找回了理智，開始恢復冷靜。',
-    '但是一切都已經來不及了。',
+    'The red night slowly fades.',
+    'The moon regains its senses and begins to calm.',
+    'But it is all too late.',
   ],
   captivity: [
-    '窗外的光灑進了房間。',
-    '這之後，你與阿瓦倫在這裡安穩的生活了好幾年，但是那個孩子變得有點奇怪。',
-    '他把你看得很緊。緊到你不確定，這究竟是信任，還是別的什麼。',
-    '小屋的門沒有壞掉。只是門鎖被加上了好幾道。',
+    'Light from the window spills into the room.',
+    'After this, you and Avaren lived here peacefully for several years—but that child grew a little strange.',
+    'He watches you so closely. So closely that you’re not sure whether it’s trust, or something else.',
+    'The cabin door isn’t broken. It’s just that several more locks have been added.',
   ],
   reid: [
-    '畫面暗了下去。',
-    '你聽見很遠的地方，有人翻開了一頁新的存檔。',
-    '那不是艾德林的手。',
-    '這一次，選擇權落到了勇者雷德手裡。',
+    'The screen goes dark.',
+    'Far away, you hear someone turn to a new save file.',
+    'It is not Eldrin’s hand.',
+    'This time, the choice falls into the hands of Red the hero.',
   ],
 };
 
@@ -15379,15 +15379,15 @@ async function startGoodEndingAnimation() {
 
   // ── 階段三：自動對話 ──
   await playAutoScene([
-    { speaker: 'Noah',   text: '艾德林...抱歉！這麼晚還來找你...但是這件事有點緊急...' },
-    { speaker: 'Eldrin', text: '諾亞！發生了什麼事嗎？' },
-    { speaker: 'Noah',   text: '你記得我上次和你提過那被詛咒的人嗎？她的狀況有點糟糕...' },
-    { speaker: 'Noah',   text: '我怕再晚就來不及了，所以只好直接帶她來找你...' },
-    { speaker: 'Noah',   text: '對不起！我知道這不是你的本業，但是我們除了你，沒有人可以依靠了！' },
-    { speaker: 'Noah',   text: '你可以幫幫她嗎？' },
-    { speaker: 'Noah',   text: '她是希奧妮．哈特，是我認識很久的好友！' },
-    { speaker: 'Theonie', text: '諾亞...這裡不是藥水店嗎？為什麼要帶我來這裡...一般的藥水店可沒辦法解決我的詛咒.....' },
-    { speaker: 'Eldrin', text: '我知道了...！希奧妮小姐，請讓我先看一下你的眼睛...' },
+    { speaker: 'Noah',   text: 'Eldrin... sorry! Coming to you so late... but this is rather urgent...' },
+    { speaker: 'Eldrin', text: 'Noah! Has something happened?' },
+    { speaker: 'Noah',   text: 'Do you remember the cursed person I mentioned to you last time? Her condition is rather bad...' },
+    { speaker: 'Noah',   text: 'I was afraid it would soon be too late, so I had no choice but to bring her straight to you...' },
+    { speaker: 'Noah',   text: 'I’m sorry! I know this isn’t your trade, but apart from you, we have no one to turn to!' },
+    { speaker: 'Noah',   text: 'Can you help her?' },
+    { speaker: 'Noah',   text: 'This is Theonie Hart, a dear friend I’ve known for a long time!' },
+    { speaker: 'Theonie', text: 'Noah... isn’t this a potion shop? Why bring me here... an ordinary potion shop can’t do anything about my curse.....' },
+    { speaker: 'Eldrin', text: 'I understand...! Miss Theonie, please let me take a look at your eyes first...' },
   ], 4000);
 
   // ── 階段四：結尾 ──
@@ -15404,13 +15404,13 @@ async function startGoodEndingAnimation() {
   document.querySelector('.end-label').style.display   = 'none';
   document.getElementById('end-title').style.display   = 'none';
   document.getElementById('end-stats').style.display   = 'none';
-  document.getElementById('end-desc').textContent      = '苦艾與甘露的故事還會繼續進行下去。';
+  document.getElementById('end-desc').textContent      = 'The story of Wormwood & Dew will go on.';
   const epiloguBtn = document.getElementById('btn-ending-action');
   if (_endingReplayMode) {
-    epiloguBtn.textContent = '返回標題';
+    epiloguBtn.textContent = 'Return to Title';
     epiloguBtn.onclick = returnFromGalleryReplay;
   } else {
-    epiloguBtn.textContent = '再玩一次';
+    epiloguBtn.textContent = 'Play Again';
     epiloguBtn.onclick = confirmRestart;
   }
   epiloguBtn.style.display = 'none';
@@ -15431,7 +15431,7 @@ function _showEndingScreen(ending) {
   document.getElementById('game-screen').style.display = 'none';
   const es = document.getElementById('ending-screen');
   es.style.display = 'flex';
-  document.querySelector('.end-label').textContent  = '— ' + (ending.type || '結局') + ' —';
+  document.querySelector('.end-label').textContent  = '— ' + (ending.type || 'Ending') + ' —';
   document.querySelector('.end-label').style.display = '';
   document.getElementById('end-title').textContent  = ending.title;
   document.getElementById('end-title').className    = 'end-title ' + ending.cls;
@@ -15445,38 +15445,38 @@ function _showEndingScreen(ending) {
     const savedStats = getEndingStats(_replayKey);
     if (savedStats) {
       document.getElementById('end-stats').innerHTML = `
-        <div class="end-stat">最終天數 <span>${savedStats.day} 天</span></div>
-        <div class="end-stat">阿瓦倫疼痛 <span>${savedStats.pain}</span></div>
-        <div class="end-stat">詛咒剩餘 <span>${savedStats.curse}</span></div>
-        <div class="end-stat">知識程度 <span>${savedStats.trust}</span></div>
-        <div class="end-stat">心情（好感）<span>${savedStats.mood}</span></div>
-        <div class="end-stat">艾德林 HP <span>${savedStats.eldrinHp}</span></div>
+        <div class="end-stat">Final Day <span>${savedStats.day}</span></div>
+        <div class="end-stat">Avaren’s Pain <span>${savedStats.pain}</span></div>
+        <div class="end-stat">Curse Remaining <span>${savedStats.curse}</span></div>
+        <div class="end-stat">Knowledge Level <span>${savedStats.trust}</span></div>
+        <div class="end-stat">Mood (Affection)<span>${savedStats.mood}</span></div>
+        <div class="end-stat">Eldrin HP <span>${savedStats.eldrinHp}</span></div>
       `;
     }
     if (ending.cls === 'end-best') {
-      btnAction.textContent = '繼續';
+      btnAction.textContent = 'Continue';
       btnAction.onclick = startGoodEndingAnimationReplay;
     } else {
-      btnAction.textContent = '返回標題';
+      btnAction.textContent = 'Return to Title';
       btnAction.onclick = returnFromGalleryReplay;
     }
     btnAction.style.display = 'none';
     btnRestart.style.display = 'none';
   } else {
     document.getElementById('end-stats').innerHTML = `
-      <div class="end-stat">最終天數 <span>${Math.min(G.day, G.maxDays)} 天</span></div>
-      <div class="end-stat">阿瓦倫疼痛 <span>${Math.floor(G.pain)}</span></div>
-      <div class="end-stat">詛咒剩餘 <span>${Math.floor(G.curse)}</span></div>
-      <div class="end-stat">知識程度 <span>${Math.floor(G.trust)}</span></div>
-      <div class="end-stat">心情（好感）<span>${Math.floor(G.mood)}</span></div>
-      <div class="end-stat">艾德林 HP <span>${Math.floor(G.eldrinHp ?? 100)}</span></div>
+      <div class="end-stat">Final Day <span>${Math.min(G.day, G.maxDays)}</span></div>
+      <div class="end-stat">Avaren’s Pain <span>${Math.floor(G.pain)}</span></div>
+      <div class="end-stat">Curse Remaining <span>${Math.floor(G.curse)}</span></div>
+      <div class="end-stat">Knowledge Level <span>${Math.floor(G.trust)}</span></div>
+      <div class="end-stat">Mood (Affection)<span>${Math.floor(G.mood)}</span></div>
+      <div class="end-stat">Eldrin HP <span>${Math.floor(G.eldrinHp ?? 100)}</span></div>
     `;
     if (ending.cls === 'end-best') {
-      btnAction.textContent = '繼續';
+      btnAction.textContent = 'Continue';
       btnAction.onclick = startGoodEndingAnimation;
       btnRestart.style.display = 'none';
     } else {
-      btnAction.textContent = '再玩一次';
+      btnAction.textContent = 'Play Again';
       btnAction.onclick = confirmRestart;
       btnRestart.style.display = 'none';
     }
@@ -15612,10 +15612,10 @@ const ENDINGS_GALLERY_ORDER = [
 ];
 const ENDING_REPLAY_NARRATIONS = {
   eldrin_death: [
-    '你的腳軟了。',
-    '視野開始模糊，地面的泥土變得很近。',
-    '……阿瓦倫還在等你回去。',
-    '但你的身體，再也撐不住了。',
+    'Your legs give out.',
+    'Your vision blurs, and the earth rushes close.',
+    '...Avaren is still waiting for you to come back.',
+    'But your body can hold on no longer.',
   ],
 };
 
@@ -17247,7 +17247,7 @@ function confirmRestart() {
 
 function restartGame() {
   if (!_typewriterDone) { _skipEndingTypewriter(); return; }
-  gcEvent('replay/restart', '再玩一次');
+  gcEvent('replay/restart', 'Play Again');
   document.getElementById('ending-screen').style.display = 'none';
   document.getElementById('title-screen').style.display  = 'flex';
   ['bgm', 'bgm-bloodmoon', 'bgm-sad', 'bgm-day10', 'bgm-good-ending', 'bgm-captivity-ending', 'bgm-mist-ending', 'bgm-reid-ending', 'sfx-indoor-rain'].forEach(id => {
