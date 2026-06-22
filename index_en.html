@@ -12790,30 +12790,30 @@ function showDlg(speaker, text) {
 function closeDlg() {} // 舊 dialogue-overlay 已廢棄，保留空函式避免報錯
 
 const BAG_ITEMS = [
-  { key:'herb',            icon:'<img src="herbs.png" class="item-icon-svg">', name:'Herbs',       desc:'製作藥水的基礎素材。在森林或野外可以採集到。' },
-  { key:'wood',            icon:'<img src="wood.png" class="item-icon-svg">', name:'Wood',       desc:'從樹木砍下的木料，可以用來生火或修繕小屋。' },
-  { key:'branch',          icon:'<img src="Branches.png" class="item-icon-svg">', name:'Branches',       desc:'細小的樹枝，有時候可以入菜，主要是引火用。' },
-  { key:'stone',           icon:'<img src="Stone.png" class="item-icon-svg">', name:'Ore',       desc:'從礦脈敲下的石塊，某些石材對詛咒有抑制效果。' },
-  { key:'crystal',         icon:'<img src="crystal.png" class="item-icon-svg">', name:'水晶',       desc:'蘊含微弱魔力的天然水晶，是高階藥水的材料之一。' },
-  { key:'whiteFlower',     icon:WF_ICON, name:'White Medicine Flower',     desc:'開在森林深處的稀有花卉。對魔物有安撫效果。' },
-  { key:'apple',           icon:'🍎', name:'Apple',       desc:'酸甜好吃的蘋果，煮成料理很好吃。' },
-  { key:'vegetable',       icon:'<img src="vegetable.png" class="item-icon-svg">', name:'Vegetable',       desc:'從田裡收穫的新鮮蔬菜，烹飪時不可或缺。' },
-  { key:'mushroom',        icon:'<img src="mushroom.png" class="item-icon-svg">', name:'Mushroom',       desc:'森林裡的野生菇類。種類繁多，有些能入藥，有些……不能。' },
-  { key:'fish',            icon:'🐟', name:'Fish',         desc:'從池塘或溪流裡釣到的魚。富含蛋白質，是很好的食材。' },
-  { key:'frog',            icon:'<img src="frog.png" class="item-icon-svg">', name:'Frog',       desc:'在潮濕草叢裡抓到的青蛙。某些藥方需要用到牠。' },
-  { key:'bug',             icon:'<img src="bug01.png" class="item-icon-svg">', name:'Insect Parts',       desc:'從樹皮或落葉下翻出來的小蟲。製作特殊藥水的材料。' },
-  { key:'giftBug',         icon:'<img src="bug02.png" class="item-icon-svg">', name:'小蟲子',     desc:'阿瓦倫帶回來的小蟲，已經半死不活了。但他大概以為你會喜歡，所以小心地捧著帶了回來。' },
-  { key:'egg',             icon:'🥚', name:'蛋',         desc:'鳥巢裡撿到的蛋。質地細緻，可以用來製作料理。' },
-  { key:'beastMeat',       icon:'🥩', name:'Beast Meat',       desc:'從野獸身上取得的肉塊。熱量高，能補充體力。' },
-  { key:'monsterMaterial', icon:'🦴', name:'Monster Material',   desc:'從魔物身上取得的材料。蘊含異常的能量，用途特殊。' },
-  { key:'fairyItem',       icon:'<img src="Fairy.png" class="item-icon-svg">', name:'妖精物品',   desc:'神秘又不祥的妖精，似乎是非常好的煉藥材料。' },
-  { key:'coldPotion',      icon:'<img src="Medicine_red.svg" class="item-icon-svg">',   name:'Healing Potion',   desc:'能緩解阿瓦倫身體疼痛的藥水（疼痛-5）。\n艾德林自己喝下時，則能恢復 HP（+5）。需要時間研製。' },
-  { key:'cursePotion',     icon:'<img src="Medicine_yellow.svg" class="item-icon-svg">', name:'Curse-Cure Potion',   desc:'針對詛咒調配的特殊藥水，可以暫時壓制黑霧擴散。' },
-  { key:'forgetPotion',    icon:'<img src="Medicine_blue.svg" class="item-icon-svg">', name:'Oblivion Potion',   desc:'能抹去特定記憶的危險藥水。一旦使用，無法回頭。' },
-  { key:'staminaPotion',   icon:'<img src="Medicine_green.svg" class="item-icon-svg">', name:'Stamina Potion',   desc:'能恢復體力的營養藥水。疲憊的時候喝一瓶，精神會好很多。' },
-  { key:'pebble',          icon:'🪨', name:'小石頭',       desc:'完全沒有用的小石頭。但阿瓦倫走了很遠才撿來，覺得你可能會喜歡。' },
-  { key:'wildFlower',      icon:'🍂', name:'漂亮的樹葉',   desc:'有點皺掉了的落葉。他好像很認真地撿過來，包在手心裡帶回來的。' },
-  { key:'feather',         icon:'🪶', name:'奇怪的羽毛',   desc:'顏色很特別的羽毛。他把羽毛遞給你的時候，表情有一點點期待。' },
+  { key:'herb',            icon:'<img src="herbs.png" class="item-icon-svg">', name:'Herbs',       desc:'A basic material for making potions. Can be gathered in the forest or the wild.' },
+  { key:'wood',            icon:'<img src="wood.png" class="item-icon-svg">', name:'Wood',       desc:'Timber cut from trees. Used to make fire or repair the cabin.' },
+  { key:'branch',          icon:'<img src="Branches.png" class="item-icon-svg">', name:'Branches',       desc:'Thin twigs. Occasionally used in cooking, but mainly for kindling.' },
+  { key:'stone',           icon:'<img src="Stone.png" class="item-icon-svg">', name:'Ore',       desc:'Stone chipped from a vein. Some kinds suppress the curse.' },
+  { key:'crystal',         icon:'<img src="crystal.png" class="item-icon-svg">', name:'Crystal',       desc:'A natural crystal holding faint magic—one of the materials for higher potions.' },
+  { key:'whiteFlower',     icon:WF_ICON, name:'White Medicine Flower',     desc:'A rare flower that blooms deep in the forest. It has a calming effect on monsters.' },
+  { key:'apple',           icon:'🍎', name:'Apple',       desc:'A sweet-and-tart apple, delicious when cooked into a dish.' },
+  { key:'vegetable',       icon:'<img src="vegetable.png" class="item-icon-svg">', name:'Vegetable',       desc:'Fresh vegetables harvested from the field—indispensable in cooking.' },
+  { key:'mushroom',        icon:'<img src="mushroom.png" class="item-icon-svg">', name:'Mushroom',       desc:'Wild mushrooms from the forest. There are many kinds—some are medicinal, some... are not.' },
+  { key:'fish',            icon:'🐟', name:'Fish',         desc:'A fish caught from a pond or stream. Rich in protein, a fine ingredient.' },
+  { key:'frog',            icon:'<img src="frog.png" class="item-icon-svg">', name:'Frog',       desc:'A frog caught in damp grass. Certain recipes call for it.' },
+  { key:'bug',             icon:'<img src="bug01.png" class="item-icon-svg">', name:'Insect Parts',       desc:'Small bugs turned up from under bark or fallen leaves. A material for special potions.' },
+  { key:'giftBug',         icon:'<img src="bug02.png" class="item-icon-svg">', name:'Little Bug',     desc:'A little bug Avaren brought back, already half-dead. But he probably thought you’d like it, so he carried it home cupped carefully in his hands.' },
+  { key:'egg',             icon:'🥚', name:'Egg',         desc:'An egg found in a nest. Fine in texture, good for cooking.' },
+  { key:'beastMeat',       icon:'🥩', name:'Beast Meat',       desc:'A cut of meat taken from a beast. High in calories, restores stamina.' },
+  { key:'monsterMaterial', icon:'🦴', name:'Monster Material',   desc:'A material taken from a monster. It holds an abnormal energy and has special uses.' },
+  { key:'fairyItem',       icon:'<img src="Fairy.png" class="item-icon-svg">', name:'Fairy',   desc:'A mysterious, ominous fairy. It seems to make an excellent potion ingredient.' },
+  { key:'coldPotion',      icon:'<img src="Medicine_red.svg" class="item-icon-svg">',   name:'Healing Potion',   desc:'A potion that eases Avaren’s pain (Pain-5).\nWhen Eldrin drinks it himself, it restores HP (+5). It takes time to brew.' },
+  { key:'cursePotion',     icon:'<img src="Medicine_yellow.svg" class="item-icon-svg">', name:'Curse-Cure Potion',   desc:'A special potion formulated against the curse; it can temporarily suppress the spread of the black mist.' },
+  { key:'forgetPotion',    icon:'<img src="Medicine_blue.svg" class="item-icon-svg">', name:'Oblivion Potion',   desc:'A dangerous potion that erases specific memories. Once used, there is no going back.' },
+  { key:'staminaPotion',   icon:'<img src="Medicine_green.svg" class="item-icon-svg">', name:'Stamina Potion',   desc:'A nourishing potion that restores stamina. Drink one when weary, and you’ll feel much refreshed.' },
+  { key:'pebble',          icon:'🪨', name:'Little Pebble',       desc:'A completely useless little pebble. But Avaren walked a long way to pick it up, thinking you might like it.' },
+  { key:'wildFlower',      icon:'🍂', name:'Pretty Leaf',   desc:'A slightly crumpled fallen leaf. He seems to have picked it up very earnestly, carrying it home cupped in his palm.' },
+  { key:'feather',         icon:'🪶', name:'Strange Feather',   desc:'A feather of an unusual color. When he held it out to you, there was a hint of expectation on his face.' },
 ];
 const BAG_SLOTS = 18;
 const BAG_MAX_STACK = 10;
@@ -12947,16 +12947,16 @@ function openBagDiscardMenu(key) {
   const usable = BAG_USABLE_POTIONS[key];
   if (usable) {
     const bu = document.createElement('button');
-    bu.className = 'bdp-btn bdp-use'; bu.textContent = `使用 ×1（${usable.label}+${usable.amt}）`;
+    bu.className = 'bdp-btn bdp-use'; bu.textContent = `Use ×1 (${usable.label}+${usable.amt})`;
     bu.onclick = () => { bdpUsePotionN(); };
     btns.append(bu);
   }
   const b1 = document.createElement('button');
-  b1.className = 'bdp-btn'; b1.textContent = `確認丟棄 ×1`; b1.onclick = () => { playLoopingAudio('sfx-button', 4.0); bdpConfirmN(); };
+  b1.className = 'bdp-btn'; b1.textContent = `Discard ×1`; b1.onclick = () => { playLoopingAudio('sfx-button', 4.0); bdpConfirmN(); };
   const b2 = document.createElement('button');
-  b2.className = 'bdp-btn'; b2.textContent = '丟棄全部'; b2.onclick = () => { playLoopingAudio('sfx-button', 4.0); bdpConfirmAll(); };
+  b2.className = 'bdp-btn'; b2.textContent = 'Discard All'; b2.onclick = () => { playLoopingAudio('sfx-button', 4.0); bdpConfirmAll(); };
   const b3 = document.createElement('button');
-  b3.className = 'bdp-btn cancel'; b3.textContent = '取消'; b3.onclick = () => { playLoopingAudio('sfx-button', 4.0); closeBagDiscardMenu(); };
+  b3.className = 'bdp-btn cancel'; b3.textContent = 'Cancel'; b3.onclick = () => { playLoopingAudio('sfx-button', 4.0); closeBagDiscardMenu(); };
   btns.append(b1, b2, b3);
   bdpUpdateCursor();
   // 定位在說明卡片旁邊
@@ -12977,16 +12977,16 @@ function bdpAdjust(d) {
   const max = _bdpSlotQty || (G[_bdpKey] ?? 0);
   _bdpQty = Math.max(1, Math.min(max, _bdpQty + d));
   document.getElementById('bdp-qty-val').textContent = _bdpQty;
-  const discardBtn = [...document.getElementById('bdp-btns').querySelectorAll('.bdp-btn')].find(b => b.textContent.startsWith('確認丟棄'));
-  if (discardBtn) discardBtn.textContent = `確認丟棄 ×${_bdpQty}`;
+  const discardBtn = [...document.getElementById('bdp-btns').querySelectorAll('.bdp-btn')].find(b => b.textContent.startsWith('Discard'));
+  if (discardBtn) discardBtn.textContent = `Discard ×${_bdpQty}`;
   const useBtn = document.querySelector('#bdp-btns .bdp-use');
   const u = BAG_USABLE_POTIONS[_bdpKey];
-  if (useBtn && u) useBtn.textContent = `使用 ×${_bdpQty}（${u.label}+${u.amt * _bdpQty}）`;
+  if (useBtn && u) useBtn.textContent = `Use ×${_bdpQty} (${u.label}+${u.amt * _bdpQty})`;
   playLoopingAudio('sfx-dialogue-next', 2.5);
 }
 
 const BAG_USABLE_POTIONS = {
-  staminaPotion: { name:'Stamina Potion', stat:'eldrinFatigue', amt:45, label:'體力', emoji:'💚' },
+  staminaPotion: { name:'Stamina Potion', stat:'eldrinFatigue', amt:45, label:'Stamina', emoji:'💚' },
   coldPotion:    { name:'Healing Potion', stat:'eldrinHp',      amt:5,  label:'HP',   emoji:'🔴' },
 };
 
@@ -13004,7 +13004,7 @@ function bdpUsePotionN() {
     chg(u.stat, total);
   }
   renderHUD();
-  toast(`${u.emoji} ${u.name}發揮了效果  ${u.label} +${total}`);
+  toast(`${u.emoji} ${u.name} took effect  ${u.label} +${total}`);
   closeBagDiscardMenu();
   _afterDiscard();
 }
@@ -13015,7 +13015,7 @@ const AVAREN_GIFT_KEYS = new Set(['pebble', 'wildFlower', 'feather', 'giftBug'])
 function _checkAvarenGiftDiscard() {
   if (AVAREN_GIFT_KEYS.has(_bdpKey) && G.avarenScene === G.scene) {
     chg('mood', -3);
-    story('Narrator', '阿瓦倫看見你把他帶來的東西丟掉了。他沒有說話，只是悄悄地把頭轉開。');
+    story('Narrator', 'Avaren sees you throw away the thing he brought you. He says nothing—he just quietly turns his head away.');
   }
 }
 
@@ -13225,7 +13225,7 @@ function toastBagFull() {
   if (!wrap) return;
   const el = document.createElement('div');
   el.className = 'toast-bagfull';
-  el.textContent = '背包已滿！';
+  el.textContent = 'Backpack full!';
   wrap.appendChild(el);
   setTimeout(() => el.remove(), 4000);
 }
@@ -13277,7 +13277,7 @@ function pingStatEl(stat) {
 }
 
 function chg(stat, d) {
-  if (d > 0 && isBagFull(stat, d)) { warn('背包已滿，無法取得新物品！'); toastBagFull(); return; }
+  if (d > 0 && isBagFull(stat, d)) { warn('Backpack full—can’t pick up new items!'); toastBagFull(); return; }
   if (stat === 'mood' && d > 0 && G.moodLocked) return; // 血月壞結局後心情鎖定
   if (stat === 'mood' && d !== 0) showHeart(d > 0 ? '❤' : '💔');
   if (d > 0 && STAT_EL_MAP[stat]) pingStatEl(stat); // 取得物品時彈跳提示
@@ -14461,7 +14461,7 @@ function openJumpDayMenu() {
       }
     });
   }
-  items.push({ name: '取消', fx: '', req: () => true, run() {} });
+  items.push({ name: 'Cancel', fx: '', req: () => true, run() {} });
   showActionMenu('🌙 跳到哪一天？', items);
 }
 
