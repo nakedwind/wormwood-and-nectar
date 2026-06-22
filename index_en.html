@@ -9815,7 +9815,7 @@ function gameLoop() {
         if (pb) { pb.currentTime = 0; pb.volume = Math.max(0, Math.min(1, settingsVolume() * 0.8)); pb.play().catch(() => {}); } }
       G.researchActive = false;
       G.researchReady = true;
-      document.getElementById('research-scene-label').textContent = '🧪 研究完成';
+      document.getElementById('research-scene-label').textContent = '🧪 Research complete';
       document.getElementById('research-scene-bar').style.background = 'linear-gradient(90deg,#a07020,#e0b030)';
       const potionEl  = document.getElementById('lobby-potion');
       const potionImg = document.getElementById('lobby-potion-img');
@@ -9824,9 +9824,9 @@ function gameLoop() {
         potionImg.src = src;
         potionEl.style.display = 'block';
       }
-      toast('🧪 藥水研究完成');
+      toast('🧪 Potion research complete');
       // 統計：玩家製作了哪種藥水（cold治療／curse解咒／stamina體力／forget忘卻）
-      gcEvent('potion/' + (G.researchType || 'unknown'), '製作藥水：' + (G.researchType || 'unknown'));
+      gcEvent('potion/' + (G.researchType || 'unknown'), 'Made potion: ' + (G.researchType || 'unknown'));
     }
   }
 
@@ -9847,7 +9847,7 @@ function gameLoop() {
       syncForestFishingUI();
       // 血月期間阿瓦倫站在湖邊，提示會蓋到他的臉，先隱藏（血月結束後 renderScene 會再顯示）
       if (G.bloodMoon7Active) document.getElementById('fish-forest-wrap').style.display = 'none';
-      toast('🎣 漁獲完成！回湖邊收取');
+      toast('🎣 Catch ready! Collect it at the lake');
     }
   }
 
@@ -9862,7 +9862,7 @@ function gameLoop() {
       G.fishReady = true;
       setOutsideFishingVisual('ready');
       syncOutsideFishingUI();
-      toast('🎣 漁獲完成！回池塘收取');
+      toast('🎣 Catch ready! Collect it at the pond');
     }
   }
 
@@ -9881,8 +9881,8 @@ function gameLoop() {
     const farmBar = document.getElementById('farm-growth-bar');
     const farmLabel = document.getElementById('farm-growth-label');
     if (farmBar) farmBar.style.width = growPct + '%';
-    const stageNames2 = ['','','🌱 發芽期','<img src="herbs.png" class="item-icon-svg"> 幼苗期','🌾 成長期'];
-    const stageName = stageNames2[G.farmStage] || `第${G.farmStage}階段`;
+    const stageNames2 = ['','','🌱 Sprouting','<img src="herbs.png" class="item-icon-svg"> Seedling','🌾 Growing'];
+    const stageName = stageNames2[G.farmStage] || `Stage ${G.farmStage}`;
     if (farmLabel) farmLabel.innerHTML = stageName + (G.farmWatered ? ' 💧' : '');
     if (G.farmGrowthTimer >= stageMax) {
       G.farmStage++;
@@ -9895,15 +9895,15 @@ function gameLoop() {
         G.herbReady = true;
         if (farmBar) farmBar.style.width = '100%';
         if (farmBar) farmBar.style.background = 'linear-gradient(90deg,#a07020,#e0b030)';
-        if (farmLabel) farmLabel.innerHTML = '<img src="herbs.png" class="item-icon-svg">成熟期(可收成!)';
+        if (farmLabel) farmLabel.innerHTML = '<img src="herbs.png" class="item-icon-svg">Mature (ready to harvest!)';
         const hBar = document.getElementById('herb-harvest-bar');
         const hLabel = document.querySelector('#herb-harvest-wrap .herb-harvest-label');
         if (hBar) { hBar.style.width = '100%'; hBar.style.background = 'linear-gradient(90deg,#a07020,#e0b030)'; }
         if (hLabel) hLabel.innerHTML = '<img src="herbs.png" class="item-icon-svg"> Ready to harvest!';
-        if (G.scene === 'outside') toast('<img src="herbs.png" class="item-icon-svg"> 農田收成了！回藥草田收取');
+        if (G.scene === 'outside') toast('<img src="herbs.png" class="item-icon-svg"> The crops are ready! Collect at the herb field');
       } else {
         if (farmBar) farmBar.style.background = 'linear-gradient(90deg,#206020,#60c040)';
-        if (G.scene === 'outside') toast(`🌱 農田成長到第 ${G.farmStage} 階段`);
+        if (G.scene === 'outside') toast(`🌱 Farm grew to Stage ${G.farmStage}`);
       }
     }
   }
@@ -10261,8 +10261,8 @@ document.addEventListener('keydown', e => {
     } else if (isAvarenUnconscious() && near) {
       if (G.day === 1 && !G.avarenDay1FirstLookSeen) {
         G.avarenDay1FirstLookSeen = true;
-        storyAuto('Narrator', '你靠近他，蹲下來。\n\n他的臉很蒼白。睫毛輕輕顫著，像是在做夢，又像是在忍著什麼。\n詛咒的紋路從手腕蔓延到頸側，黑色的、細細的，像會動。');
-        storyAuto('Narrator', '你伸手，停在半空中。\n\n……先換藥吧。能做的，一件一件來。');
+        storyAuto('Narrator', 'You approach him and crouch down.\n\nHis face is so pale. His lashes tremble faintly, as if he’s dreaming, or enduring something.\nThe curse markings spread from his wrist up the side of his neck—black, thin, and seeming to move.');
+        storyAuto('Narrator', 'You reach out your hand, and it stops in midair.\n\n...Let’s change the dressing first. Whatever you can do, one thing at a time.');
         storyThen(() => openAvarenMenu());
       } else {
         openAvarenMenu();
@@ -10299,7 +10299,7 @@ document.addEventListener('keydown', e => {
       G.fairyItem++;
       renderHUD();
       playLoopingAudio('sfx-fairy', 3.0);
-      toast('✨ 妖精 +1');
+      toast('✨ Fairy +1');
       const appEl = document.getElementById('app');
       if (appEl) { appEl.classList.remove('shake'); void appEl.offsetWidth; appEl.classList.add('shake'); setTimeout(() => appEl.classList.remove('shake'), 500); }
       const flickerEl = document.getElementById('fairy-flicker-overlay');
@@ -10312,11 +10312,11 @@ document.addEventListener('keydown', e => {
       }
       setTimeout(() => {
         if (G.winterChat8Seen) {
-          storyAuto('Fairy', '那個傢伙……也想要違抗命運嗎？……嘻嘻……真愚蠢。');
-          storyAuto('Fairy', '世界的規則沒那麼簡單可以改變……告訴你一個好消息吧？');
-          storyAuto('Fairy', '魔王的心臟……可以實現你的願望。');
+          storyAuto('Fairy', 'That one... wants to defy fate too? ...Hehe... how foolish.');
+          storyAuto('Fairy', 'The rules of the world aren’t so easily changed... but shall I tell you some good news?');
+          storyAuto('Fairy', 'The Demon Lord’s heart... can grant your wish.');
         } else {
-          storyAuto('Fairy', '嘻嘻……你就算做再多，那孩子也不會原諒你的……');
+          storyAuto('Fairy', 'Hehe... no matter how much you do, that child will never forgive you...');
         }
       }, 1000);
     } else if (zone && zone.isScene) {
@@ -10360,7 +10360,7 @@ document.addEventListener('keydown', e => {
     G.fairy.y = 235 + Math.random() * 20;
     G.fairy.vx = (Math.random() < 0.5 ? 1 : -1) * (0.3 + Math.random() * 0.3);
     G.fairy.vy = 0;
-    toast('✨ 妖精召喚');
+    toast('✨ Fairy summoned');
   }
   // P 鍵：開關場景物件編輯器
   if (e.key === 'p' || e.key === 'P') { toggleSceneObjEditor(); }
@@ -10404,16 +10404,16 @@ document.getElementById('cw-noah').addEventListener('click', () => {
 // ══════════════════════════════════════
 function rejectDay10AvarenCare(kind) {
   const lines = {
-    soup: '你把料理端到床邊。\n阿瓦倫看了一眼，慢慢把臉轉開。\n\n「……不要。」',
-    cold: '你拿出治療藥水，想讓阿瓦倫喝下。\n他的手指抓緊被單，聲音很輕。\n\n「……不要靠近我。」',
-    curse: '你拿出解咒藥水，瓶中的光晃了一下。\n阿瓦倫沒有伸手，只是閉上眼。\n\n「……我不要。」',
-    bandage: '你拿起乾淨的藥草敷料，想替他換藥。\n阿瓦倫往被子裡縮了一點。\n\n「……不要碰我。」',
-    ritual: '你低聲念起除咒的咒文。\n還沒碰到他，阿瓦倫就顫了一下。\n\n「……停下來。」',
-    talk: '你想和阿瓦倫說話。\n他沒有看你，只是把自己縮得更小。\n\n房間裡只剩下很輕的呼吸聲。',
-    read: '你翻開書，想念給阿瓦倫聽。\n他沒有回應，只是把臉轉向牆壁。\n\n「……不要。」'
+    soup: 'You carry the dish to the bedside.\nAvaren glances at it and slowly turns his face away.\n\n‘...No.’',
+    cold: 'You take out the Healing Potion, meaning to have Avaren drink it.\nHis fingers clutch the bedsheet, his voice faint.\n\n‘...Don’t come near me.’',
+    curse: 'You take out the Curse-Cure Potion; the light in the vial wavers.\nAvaren doesn’t reach for it—he only closes his eyes.\n\n‘...I don’t want it.’',
+    bandage: 'You pick up the clean herbal dressing, meaning to change his bandage.\nAvaren shrinks a little further under the covers.\n\n‘...Don’t touch me.’',
+    ritual: 'You softly begin to recite the curse-removal incantation.\nBefore you even touch him, Avaren flinches.\n\n‘...Stop.’',
+    talk: 'You try to talk to Avaren.\nHe doesn’t look at you—he just curls himself smaller.\n\nOnly faint breathing remains in the room.',
+    read: 'You open a book, meaning to read to Avaren.\nHe doesn’t respond—he just turns his face to the wall.\n\n‘...No.’'
   };
-  story('Narrator', lines[kind] || '阿瓦倫拒絕了你。');
-  toast('阿瓦倫拒絕了');
+  story('Narrator', lines[kind] || 'Avaren refused you.');
+  toast('Avaren refused');
 }
 
 function openAvarenMenu() {
@@ -10425,25 +10425,25 @@ function openAvarenMenu() {
   if (G.bloodMoon7Active) {
     if (!canInteractBloodMoonAvaren()) return;
     SFX.interact();
-    showActionMenu('阿瓦倫——', [
+    showActionMenu('Avaren——', [
     {
-      name: '給治療藥水', fx: () => `疼痛-5  剩餘×${G.coldPotion}`,
+      name: 'Give Healing Potion', fx: () => `Pain-5  Left ×${G.coldPotion}`,
       req: () => G.coldPotion > 0 && !G.actionSceneActive,
       run() {
         chg('coldPotion', -1); chg('pain', -5); renderHUD();
-        toast('💊 治療藥水發揮了效果  疼痛 -5');
+        toast('💊 The Healing Potion took effect  Pain -5');
       }
     },
     {
-      name: '給解咒藥水', fx: () => `詛咒-5  剩餘×${G.cursePotion}`,
+      name: 'Give Curse-Cure Potion', fx: () => `Curse-5  Left ×${G.cursePotion}`,
       req: () => G.cursePotion > 0 && !G.actionSceneActive,
       run() {
         chg('cursePotion', -1); chg('curse', -5); renderHUD();
-        toast('🔮 解咒藥水發揮了效果  詛咒 -5');
+        toast('🔮 The Curse-Cure Potion took effect  Curse -5');
       }
     },
     {
-      name: '使用忘卻藥水', fx: () => `剩餘×${G.forgetPotion}`,
+      name: 'Use Oblivion Potion', fx: () => `Left ×${G.forgetPotion}`,
       req: () => G.forgetPotion > 0 && !G.actionSceneActive,
       run() {
         const potions = G.forgetPotion;
@@ -10463,14 +10463,14 @@ function openAvarenMenu() {
           renderHUD();
           finishForgetMagicNight();
         };
-        showEvent('', '——遺忘——',
-          '你一邊走近他一邊使用魔法——\n\n「……別……別靠近我！」\n\n阿瓦倫猛地轉身，雙手用力推開你。\n你踉蹌著往後退了幾步。',
-          () => showEvent('', '——遺忘——',
-            '「……走開！走開！我不需要你！」\n\n但你沒有停下。\n你再次走近，緊緊的將他抱住。\n\n「……放開我！放開！你跟他們一樣……你也是一樣的人……！」',
-            () => showEvent('', '——遺忘——',
-              '阿瓦倫低吼一聲，他狠狠咬住你的右肩，牙齒刺進你的皮膚裡\n詛咒的黑霧開始侵蝕你的身體。\n\n「……」\n\n四周的草木開始枯萎，葉片捲縮發黑，詛咒的氣息向四面蔓延。\n但你只是忍住疼痛，把他抱得更緊。\n\n「對不起...對不起。」',
-              () => showEvent('', '——遺忘——',
-                '你一次又一次的施展忘卻魔法，一次又一次的輕聲重複那句話。\n\n直到阿瓦倫的掙扎慢慢變輕……\n直到他的呼吸漸漸平穩……\n直到他的身體沉沉靠向你——失去了意識。\n\n……夜就這樣過去了。',
+        showEvent('', '——Forgetting——',
+          'You cast the magic as you draw closer to him——\n\n‘...Don’t... don’t come near me!’\n\nAvaren whirls around and shoves you hard with both hands.\nYou stagger back a few steps.',
+          () => showEvent('', '——Forgetting——',
+            '‘...Go away! Go away! I don’t need you!’\n\nBut you don’t stop.\nYou draw close again and hold him tight.\n\n‘...Let go of me! Let go! You’re just like them... you’re the same as them...!’',
+            () => showEvent('', '——Forgetting——',
+              'Avaren lets out a low snarl and bites down hard on your right shoulder, his teeth sinking into your skin.\nThe curse’s black mist begins to eat away at your body.\n\n‘...’\n\nThe grass and trees around you start to wither, leaves curling and blackening as the curse’s aura spreads in every direction.\nBut you only endure the pain and hold him tighter.\n\n‘I’m sorry... I’m sorry.’',
+              () => showEvent('', '——Forgetting——',
+                'Again and again you cast the magic of forgetting, again and again softly repeating those words.\n\nUntil Avaren’s struggling slowly grows weaker...\nUntil his breathing gradually steadies...\nUntil his body slumps heavily against you—losing consciousness.\n\n...And so the night passed.',
                 afterForget, 'forget'
               ), 'forget'
             ), 'forget'
@@ -10500,17 +10500,17 @@ function openAvarenMenu() {
     placeAvarenBedRest();
     showActionMenu('Care for Avaren', [
       {
-        name: '確認狀態', fx: '',
+        name: 'Check Status', fx: '',
         req: () => true,
         run() {
           const text = G.day === 10
-            ? '阿瓦倫躺在床上，眼睛半睜著。\n血月留下的疲憊還沒有完全退去，他的呼吸很輕，但已經比昨夜平穩。'
-            : '阿瓦倫躺在床上，眼睛半睜著。\n他看起來仍然很虛弱，但已經能聽見你的聲音。\n今天最好將詛咒值和疼痛值降到90以下會比較安全。';
+            ? 'Avaren lies in bed, his eyes half-open.\nThe weariness the blood moon left behind hasn’t fully faded; his breathing is faint, but steadier than last night.'
+            : 'Avaren lies in bed, his eyes half-open.\nHe still looks very weak, but he can hear your voice now.\nToday it would be safer to bring his Curse and Pain values below 90.';
           story('Narrator', text);
         }
       },
       {
-        name: 'Hand him a dish', fx: '餵食阿瓦倫',
+        name: 'Hand him a dish', fx: 'Feed Avaren',
         req: () => G.carryingSoup,
         run() {
           if (G.day === 10 && !G.usedForgetMagic) { rejectDay10AvarenCare('soup'); return; }
@@ -10518,40 +10518,40 @@ function openAvarenMenu() {
         }
       },
       {
-        name: '給治療藥水', fx: () => `疼痛-5  剩餘×${G.coldPotion}`,
+        name: 'Give Healing Potion', fx: () => `Pain-5  Left ×${G.coldPotion}`,
         req: () => G.coldPotion > 0 && !G.actionSceneActive,
         run() {
           if (G.day === 10 && !G.usedForgetMagic) { rejectDay10AvarenCare('cold'); return; }
           chg('coldPotion', -1); chg('pain', -5); renderHUD(); showHealEffect();
-          story('Avaren', pick(['……（慢慢喝下藥水。）', '……苦。（但他還是把藥喝完了。）', '……好一點了。']));
-          toast('💊 治療藥水發揮了效果  疼痛 -5');
+          story('Avaren', pick(['...(slowly drinks the potion.)', '...Bitter. (but he finishes the medicine anyway.)', '...A little better.']));
+          toast('💊 The Healing Potion took effect  Pain -5');
         }
       },
       {
-        name: '給解咒藥水', fx: () => `詛咒-5  剩餘×${G.cursePotion}`,
+        name: 'Give Curse-Cure Potion', fx: () => `Curse-5  Left ×${G.cursePotion}`,
         req: () => G.cursePotion > 0 && !G.actionSceneActive,
         run() {
           if (G.day === 10 && !G.usedForgetMagic) { rejectDay10AvarenCare('curse'); return; }
           chg('cursePotion', -1); chg('curse', -5); renderHUD(); showHealEffect();
-          story('Avaren', pick(['……（身上的黑霧微微淡了一點。）', '……沒那麼冷了。', '……（他閉上眼，安靜地呼吸。）']));
-          toast('🔮 解咒藥水發揮了效果  詛咒 -5');
+          story('Avaren', pick(['...(the black mist around him fades slightly.)', '...Not as cold now.', '...(he closes his eyes and breathes quietly.)']));
+          toast('🔮 The Curse-Cure Potion took effect  Curse -5');
         }
       },
       {
-        name: '包紮換藥', fx: () => G.bandagedToday ? '今天已使用過' : '藥材-1  疼痛-3',
+        name: 'Bandage & Redress', fx: () => G.bandagedToday ? 'Already used today' : 'Herbs-1  Pain-3',
         req: () => G.herb > 0 && !G.actionSceneActive,
         run() {
           if (G.day === 10 && !G.usedForgetMagic) { rejectDay10AvarenCare('bandage'); return; }
-          if (G.bandagedToday) { warn('今天已經幫阿瓦倫換過藥了。'); return; }
+          if (G.bandagedToday) { warn('You’ve already changed Avaren’s dressing today.'); return; }
           spendFatigue(5);
           G.bandagedToday = true;
           chg('herb', -1); chg('pain', -3); renderHUD(); showHealEffect();
-          story('Narrator', '你替阿瓦倫重新換上乾淨的藥草敷料。\n他的眉頭慢慢鬆開了一點。');
-          toast('<img src="herbs.png" class="item-icon-svg"> 包紮換藥  藥材 -1 / 疼痛 -3');
+          story('Narrator', 'You re-dress Avaren with a clean herbal poultice.\nHis furrowed brow slowly eases a little.');
+          toast('<img src="herbs.png" class="item-icon-svg"> Bandaged & redressed  Herbs -1 / Pain -3');
         }
       },
       {
-        name: '除咒儀式', fx: () => G.exorcismToday ? '今天已使用過' : '艾德林HP-5  詛咒-3',
+        name: '除咒儀式', fx: () => G.exorcismToday ? 'Already used today' : '艾德林HP-5  詛咒-3',
         req: () => (G.eldrinHp ?? 100) > 5 && !G.actionSceneActive,
         run() {
           if (G.day === 10 && !G.usedForgetMagic) { rejectDay10AvarenCare('ritual'); return; }
@@ -10584,45 +10584,45 @@ function openAvarenMenu() {
     }
     showActionMenu('Care for Avaren', [
       {
-        name: '確認狀態', fx: '',
+        name: 'Check Status', fx: '',
         req: () => true,
         run() {
           story('Narrator', '阿瓦倫躺在床上，雙眼緊閉，呼吸很淺。狀況不太樂觀。\n今天最好將詛咒值和疼痛值降到95以下會比較安全。');
         }
       },
       {
-        name: '給治療藥水', fx: () => `疼痛-5  剩餘×${G.coldPotion}`,
+        name: 'Give Healing Potion', fx: () => `Pain-5  Left ×${G.coldPotion}`,
         req: () => G.coldPotion > 0 && !G.actionSceneActive,
         run() {
           chg('coldPotion', -1); chg('pain', -5); renderHUD(); showHealEffect();
           story('Narrator', '你小心地讓阿瓦倫喝下治療藥水。\n他的呼吸稍微平穩了一點。');
-          toast('💊 治療藥水發揮了效果  疼痛 -5');
+          toast('💊 The Healing Potion took effect  Pain -5');
         }
       },
       {
-        name: '給解咒藥水', fx: () => `詛咒-5  剩餘×${G.cursePotion}`,
+        name: 'Give Curse-Cure Potion', fx: () => `Curse-5  Left ×${G.cursePotion}`,
         req: () => G.cursePotion > 0 && !G.actionSceneActive,
         run() {
           chg('cursePotion', -1); chg('curse', -5); renderHUD(); showHealEffect();
           story('Narrator', '你把解咒藥水餵給阿瓦倫。\n纏在他身上的黑霧輕輕顫動，淡去了一些。');
-          toast('🔮 解咒藥水發揮了效果  詛咒 -5');
+          toast('🔮 The Curse-Cure Potion took effect  Curse -5');
         }
       },
       {
-        name: '包紮換藥', fx: () => G.bandagedToday ? '今天已使用過' : '藥材-1  疼痛-3',
+        name: 'Bandage & Redress', fx: () => G.bandagedToday ? 'Already used today' : 'Herbs-1  Pain-3',
         req: () => G.herb > 0 && !G.actionSceneActive,
         run() {
-          if (G.bandagedToday) { warn('今天已經幫阿瓦倫換過藥了。'); return; }
+          if (G.bandagedToday) { warn('You’ve already changed Avaren’s dressing today.'); return; }
           spendFatigue(5);
           G.bandagedToday = true;
           chg('herb', -1); chg('pain', -3); renderHUD(); showHealEffect();
           markAvarenDay1Bandaged();
           story('Narrator', '你替阿瓦倫重新包紮傷口，換上乾淨的藥草敷料。\n他的眉頭似乎鬆開了一點。');
-          toast('<img src="herbs.png" class="item-icon-svg"> 包紮換藥  藥材 -1 / 疼痛 -3');
+          toast('<img src="herbs.png" class="item-icon-svg"> Bandaged & redressed  Herbs -1 / Pain -3');
         }
       },
       {
-        name: '除咒儀式', fx: () => G.exorcismToday ? '今天已使用過' : '艾德林HP-5  詛咒-3',
+        name: '除咒儀式', fx: () => G.exorcismToday ? 'Already used today' : '艾德林HP-5  詛咒-3',
         req: () => (G.eldrinHp ?? 100) > 5 && !G.actionSceneActive,
         run() {
           if (G.exorcismToday) { warn('今天已經進行過除咒儀式了。'); return; }
@@ -10637,7 +10637,7 @@ function openAvarenMenu() {
     return;
   }
   if (G.moodLocked) {
-    showActionMenu('阿瓦倫——', [
+    showActionMenu('Avaren——', [
       {
         name: '……（靠近他）', fx: '',
         req: () => true,
@@ -10653,7 +10653,7 @@ function openAvarenMenu() {
   const avarenMenuItems = [];
   if (G.carryingSoup) {
     avarenMenuItems.push({
-      name: 'Hand him a dish', fx: '餵食阿瓦倫',
+      name: 'Hand him a dish', fx: 'Feed Avaren',
       req: () => !isAvarenUnconscious(),
       run() {
         giveSoupToAvaren();
@@ -10678,21 +10678,21 @@ function openAvarenMenu() {
       }
     },
     {
-      name: '包紮換藥', fx: () => G.bandagedToday ? '今天已使用過' : '藥材-1  疼痛-3',
+      name: 'Bandage & Redress', fx: () => G.bandagedToday ? 'Already used today' : 'Herbs-1  Pain-3',
       req: () => G.herb > 0 && !G.actionSceneActive,
       run() {
-        if (G.bandagedToday) { warn('今天已經幫阿瓦倫換過藥了。'); return; }
+        if (G.bandagedToday) { warn('You’ve already changed Avaren’s dressing today.'); return; }
         spendFatigue(5);
         G.bandagedToday = true;
         chg('herb', -1); chg('pain', -3); renderHUD(); showHealEffect();
         markAvarenDay1Bandaged();
         story('Narrator', '你替阿瓦倫重新包紮傷口，換上乾淨的藥草敷料。');
-        story('Avaren', pick(['……謝謝。', '……好一點了。', '……（安靜地低下頭）']));
-        toast('<img src="herbs.png" class="item-icon-svg"> 包紮換藥  藥材 -1 / 疼痛 -3');
+        story('Avaren', pick(['……謝謝。', '...A little better.', '……（安靜地低下頭）']));
+        toast('<img src="herbs.png" class="item-icon-svg"> Bandaged & redressed  Herbs -1 / Pain -3');
       }
     },
     {
-      name: '除咒儀式', fx: () => G.exorcismToday ? '今天已使用過' : '艾德林HP-5  詛咒-3',
+      name: '除咒儀式', fx: () => G.exorcismToday ? 'Already used today' : '艾德林HP-5  詛咒-3',
       req: () => (G.eldrinHp ?? 100) > 5 && !G.actionSceneActive,
       run() {
         if (G.exorcismToday) { warn('今天已經進行過除咒儀式了。'); return; }
@@ -10711,26 +10711,26 @@ function openAvarenMenu() {
 function showGivePotionMenu() {
         const potionItems = [];
         potionItems.push({
-          name: '治療藥水', fx: () => `疼痛-5  剩餘×${G.coldPotion}`,
+          name: '治療藥水', fx: () => `Pain-5  Left ×${G.coldPotion}`,
           req: () => G.coldPotion > 0,
           run() {
             chg('coldPotion', -1); chg('pain', -5); renderHUD(); showHealEffect();
             story('Avaren', pick(['……（把藥水一口喝掉，皺了皺眉。）', '……苦。（但還是喝完了。）', '（沒有說話，只是喝完後微微鬆了口氣。）']));
-            toast('💊 治療藥水發揮了效果  疼痛 -5');
+            toast('💊 The Healing Potion took effect  Pain -5');
           }
         });
         potionItems.push({
-          name: '解咒藥水', fx: () => `詛咒-5  剩餘×${G.cursePotion}`,
+          name: '解咒藥水', fx: () => `Curse-5  Left ×${G.cursePotion}`,
           req: () => G.cursePotion > 0,
           run() {
             chg('cursePotion', -1); chg('curse', -5); renderHUD(); showHealEffect();
             story('Avaren', pick(['……（慢慢喝下，身上的黑霧輕輕顫了一下。）', '……（閉著眼睛喝完，沉默了幾秒。）「……沒那麼痛了。」', '（沒有抗拒，靜靜地把藥水喝完。）']));
-            toast('🔮 解咒藥水發揮了效果  詛咒 -5');
+            toast('🔮 The Curse-Cure Potion took effect  Curse -5');
           }
         });
         if (G.forgetPotion > 0) {
           potionItems.push({
-            name: 'Oblivion Potion', fx: () => `疼痛-25  詛咒-25  剩餘×${G.forgetPotion}`,
+            name: 'Oblivion Potion', fx: () => `Pain-25  Curse-25  Left ×${G.forgetPotion}`,
             req: () => G.forgetPotion > 0,
             run() {
               chg('forgetPotion', -1); chg('pain', -25); chg('curse', -25);
