@@ -14101,7 +14101,7 @@ function debugJumpToGoodEnding() {
   renderScene();
   renderChars();
   fadeInFromBlack();
-  storyAuto('Narrator', '【測試】第11天：好結局條件已設定。可直接入睡觸發好結局。');
+  storyAuto('Narrator', '[Test] Day 11: good-ending conditions set. Sleep directly to trigger the good ending.');
   raf = requestAnimationFrame(gameLoop);
 }
 
@@ -14155,7 +14155,7 @@ function debugJumpToReidEnding() {
   renderScene();
   renderChars();
   fadeInFromBlack();
-  storyAuto('Narrator', '【測試】第11天：雷德在戶外，可委託討伐魔王觸發雷德結局。');
+  storyAuto('Narrator', '[Test] Day 11: Red is outdoors; commission slaying the Demon Lord to trigger Red’s ending.');
   raf = requestAnimationFrame(gameLoop);
 }
 
@@ -14207,7 +14207,7 @@ function showFadeNarration(text, holdMs, fadeDurationMs, cb) {
   const speakerEl = document.getElementById('asc-speaker');
   const arrow    = document.getElementById('asc-arrow');
   const btn      = document.getElementById('asc-btn');
-  speakerEl.textContent = '— 旁白 —';
+  speakerEl.textContent = '— Narrator —';
   applySpeakerPortrait('Narrator', document.getElementById('asc-portrait'));
   textEl.textContent = '';
   textEl.className = 'asc-text narr-text';
@@ -14244,7 +14244,7 @@ function doAction_KillTime() {
   if (shouldFadeBeforeEveningBGM()) fadeOutCurrentBGM(2000);
   G.dayStartMs = performance.now() - MORNING_SECONDS * 1000;
   showFadeNarration(
-    '你握著釣竿坐在池塘邊，盯著水裡的魚游來游去。不知不覺時間就這樣悄悄溜走了。',
+    'You sit at the pond holding the rod, watching the fish swim. Before you know it, the time has quietly slipped away.',
     1200, 900,
     () => {
     startFishingCast();
@@ -14451,8 +14451,8 @@ function openJumpDayMenu() {
   for (let d = 2; d <= 10; d++) {
     const target = d;
     items.push({
-      name: `跳到第 ${target} 天`,
-      fx: target === G.day + 1 ? '（下一天）' : `（目前第 ${G.day} 天）`,
+      name: `Skip to Day ${target}`,
+      fx: target === G.day + 1 ? '(next day)' : `(currently Day ${G.day})`,
       req: () => target > G.day,
       run() {
         const skip = target - G.day - 1;
@@ -14462,14 +14462,14 @@ function openJumpDayMenu() {
     });
   }
   items.push({ name: 'Cancel', fx: '', req: () => true, run() {} });
-  showActionMenu('🌙 跳到哪一天？', items);
+  showActionMenu('🌙 Skip to which day?', items);
 }
 
 function showAvarenNoEatPopup() {
   playLoopingAudio('sfx-button', 3.0);
   showActionMenu(
-    '<div style="font-size:20px;font-weight:900;color:#e7c98c;letter-spacing:2px;">無法進食</div>'
-    + '<div style="font-size:14px;font-weight:600;color:#c9b48c;margin-top:12px;line-height:1.7;letter-spacing:1px;">阿瓦倫還在昏迷中，無法進食。<br>還是先製作治療藥水和解咒藥水吧。</div>',
+    '<div style="font-size:20px;font-weight:900;color:#e7c98c;letter-spacing:2px;">Can’t Eat</div>'
+    + '<div style="font-size:14px;font-weight:600;color:#c9b48c;margin-top:12px;line-height:1.7;letter-spacing:1px;">Avaren is still unconscious and can’t eat.<br>Better to make Healing and Curse-Cure potions first.</div>',
     []
   );
 }
@@ -14491,7 +14491,7 @@ function openBedMenu() {
     },
     {
       name: 'Care for Avaren',
-      fx: '開啟照顧選單',
+      fx: 'Open care menu',
       req: () => G.avarenScene === 'room' && !G.day4AvarenGone,
       run() {
         setTimeout(() => openAvarenMenu(), 0);
@@ -14560,11 +14560,11 @@ function endDay() {
   if (G.day === 10 && !G.usedForgetMagic && !wasBloodMoon) {
     chg('curse', +6);
     renderHUD();
-    if (isCrisis()) { showEvent('💀','危機——', `阿瓦倫的疼痛與詛咒值實在太高了，他的身體達到極限……\n黑霧將他吞噬。`, () => endGame('crisis'), 'red'); return; }
-    const nightText = `你走近阿瓦倫的房間，想為他做些什麼。\n他沒有轉過來。\n\n「……別碰我。」\n\n你只能停在房門外，\n什麼也幫不上。\n\n詛咒 +6`;
+    if (isCrisis()) { showEvent('💀','危機——', `Avaren’s Pain and Curse have climbed far too high; his body has reached its limit...\nThe black mist devours him.`, () => endGame('crisis'), 'red'); return; }
+    const nightText = `You step toward Avaren’s room, wanting to do something for him.\nHe doesn’t turn around.\n\n‘...Don’t touch me.’\n\nYou can only stop outside the door,\nunable to help at all.\n\nCurse +6`;
     G.day++;
     G.slimeCalmed = false;
-    showEvent('🌑', '一天結束', nightText, () => afterNight(''), 'red', 0);
+    showEvent('🌑', 'Day’s End', nightText, () => afterNight(''), 'red', 0);
     return;
   }
 
@@ -14573,27 +14573,27 @@ function endDay() {
     G.bloodMoon7Failed = true;
   }
 
-  if (isCrisis()) { showEvent('💀','危機——', `阿瓦倫的疼痛與詛咒值實在太高了，他的身體達到極限……\n黑霧將他吞噬。`, () => endGame('crisis'), 'red'); return; }
+  if (isCrisis()) { showEvent('💀','危機——', `Avaren’s Pain and Curse have climbed far too high; his body has reached its limit...\nThe black mist devours him.`, () => endGame('crisis'), 'red'); return; }
 
   // 依入睡選擇決定不同的結算事件框
   let nightIcon = '🌙';
-  let nightTitle = '一天結束';
+  let nightTitle = 'Day’s End';
   let nightText;
   if (G.day4AvarenGone) {
-    nightText = `夜晚悄然降臨。\n小屋裡安靜得讓人不安。\n你躺下，卻一直聽見窗外的風聲。\n這一夜很長。`;
+    nightText = `Night quietly falls.\nThe cabin is unsettlingly silent.\nYou lie down, but you keep hearing the wind outside the window.\nThe night is long.`;
   } else if (exhaustedNight) {
-    nightText = `夜晚在疲憊中斷裂。\n你沒有回到阿瓦倫身邊，\n也沒能完成平時的照護。\n等你再次睜開眼時，已經是隔天早晨。`;
+    nightText = `The night fractures in exhaustion.\nYou didn’t return to Avaren’s side,\nnor could you finish your usual care.\nWhen you open your eyes again, it’s already the next morning.`;
     G.exhaustedNight = false;
   } else if (G.sleepChoice === 'curse') {
     nightIcon = '✨';
-    nightTitle = '一天結束・解咒之夜';
-    nightText = `你在阿瓦倫床邊完成了今晚的解咒儀式。\n黑霧在低聲的詠唱中悄悄退去，他的呼吸漸漸平穩。\n\n今晚的解咒：詛咒 -${G.sleepChoiceVal}`;
+    nightTitle = 'Day’s End · Night of Cleansing';
+    nightText = `At Avaren’s bedside you complete tonight’s curse-removal ritual.\nThe black mist quietly recedes amid the low chanting, and his breathing gradually steadies.\n\nTonight’s cleansing: Curse -${G.sleepChoiceVal}`;
   } else if (G.sleepChoice === 'mood') {
     nightIcon = '📖';
-    nightTitle = '一天結束・安眠之夜';
-    nightText = `你念著藥草圖鑑，把聲音放得很輕，直到阿瓦倫沉沉睡去。\n他的眉頭比白天舒展了一些。\n\n今晚的陪伴：心情 +${G.sleepChoiceVal}`;
+    nightTitle = 'Day’s End · Night of Peaceful Sleep';
+    nightText = `You read from the herb guide, keeping your voice soft, until Avaren falls fast asleep.\nHis brow is a little more relaxed than during the day.\n\nTonight’s company: Mood +${G.sleepChoiceVal}`;
   } else {
-    nightText = `夜晚悄然降臨。\n你和阿瓦倫各自沉入夢境，屋子裡只剩下平穩的呼吸聲。`;
+    nightText = `Night quietly falls.\nYou and Avaren each sink into your own dreams; only steady breathing remains in the house.`;
   }
 
   G.day++;
@@ -14640,14 +14640,14 @@ function afterNight(prevText) {
       setTimeout(() => { continueAfterNight(prevText); }, 2500);
     };
     if (G.usedForgetMagic) {
-      showEvent('herbs.png', 'Day 10, Morning', '血月夜終於過去了。\n\n你走進房間，阿瓦倫縮在床角，眼神空洞，但還是抬頭看了你一眼。\n\n那瓶忘卻藥水讓最深的痛苦沉入了黑暗。\n他可能不記得那一夜最壞的部分了。\n\n他還在這裡。',
+      showEvent('herbs.png', 'Day 10, Morning', 'The blood moon night is finally over.\n\nYou step into the room. Avaren is huddled in the corner of the bed, his eyes hollow—but he still lifts his head to look at you.\n\nThe Oblivion Potion sank the deepest pain into darkness.\nHe may not remember the worst part of that night.\n\nHe’s still here.',
         goToDay10, 'blue', 0, true, 80);
       return;
     } else {
       G.mood = 5;
       G.moodLocked = true;
       renderHUD();
-      showEvent('💔', 'Day 10, Morning', '血月夜終於過去了。\n\n你走進房間，阿瓦倫縮在最遠的角落，背對著你。\n他沒有說話，但你感覺到了。\n\n那一夜他一個人撐過去的，沒有人能替他擋下。\n\n他記得你在那裡。\n他也記得你做了什麼、沒有做什麼。\n\n「……走開。」\n\n他沒有再說別的話。',
+      showEvent('💔', 'Day 10, Morning', 'The blood moon night is finally over.\n\nYou step into the room. Avaren is curled in the farthest corner, his back to you.\nHe says nothing, but you can feel it.\n\nHe endured that night alone—no one could shield him from it.\n\nHe remembers that you were there.\nAnd he remembers what you did, and what you did not do.\n\n‘...Go away.’\n\nHe says nothing more.',
         goToDay10, 'red', 0, true, 80);
       return;
     }
@@ -14660,69 +14660,69 @@ function triggerAvarenReturnEvent() {
   if (!G.avarenReturnPending) return false;
   G.avarenReturnPending = false;
   if (G.trust >= 60) {
-    showEvent('🐰', '——清晨，他回來了——',
-      '阿瓦倫靜靜地站在房間角落。\n\n他懷裡抱著兩隻小動物的屍體——一隻兔子，一隻松鼠。毛色還算完整，是今晚獵的。\n\n「……這些....給你。」\n\n他垂著眼睛，手心沾著草葉和泥土。\n昨晚他一個人去打獵了。\n這是他知道的，能給你的東西。',
+    showEvent('🐰', '——Dawn, He Returned——',
+      'Avaren stands quietly in the corner of the room.\n\nIn his arms he cradles the bodies of two small animals—a rabbit and a squirrel. Their fur is still mostly intact; he hunted them tonight.\n\n‘...These.... are for you.’\n\nHis eyes are downcast, his palms stained with grass and dirt.\nLast night he went hunting alone.\nThis is the thing he knows how to give you.',
       () => {
         const gotMeat = !isBagFull('beastMeat', 2);
-        if (gotMeat) { chg('beastMeat', 2); renderHUD(); toast('🥩 獸肉 +2'); }
-        else { toast('背包已滿，無法收下獸肉。'); }
+        if (gotMeat) { chg('beastMeat', 2); renderHUD(); toast('🥩 Beast Meat +2'); }
+        else { toast('Backpack full—can’t accept the Beast Meat.'); }
         startActionScene([
-          { speaker: 'Narrator',   text: '你看見他的一瞬間，胸口先是一鬆。\n緊接著，整夜壓著你的恐懼才慢慢變成怒意。' },
-          { speaker: 'Eldrin', text: '阿瓦倫！\n\n你昨晚去哪裡了？\n你知道我找了你多久嗎？' },
-          { speaker: 'Avaren', text: '……附近的森林。' },
-          { speaker: 'Eldrin', text: '一個人？' },
+          { speaker: 'Narrator',   text: 'The instant you see him, your chest loosens with relief.\nThen the fear that pressed on you all night slowly turns to anger.' },
+          { speaker: 'Eldrin', text: 'Avaren!\n\nWhere did you go last night?\nDo you know how long I searched for you?' },
+          { speaker: 'Avaren', text: '...The forest nearby.' },
+          { speaker: 'Eldrin', text: 'Alone?' },
           { speaker: 'Avaren', text: '...Mm.' },
-          { speaker: 'Narrator',   text: '他把懷裡的獵物往前遞了一點。\n像是想證明自己不是毫無理由地離開。' },
-          { speaker: 'Avaren', text: '你說食物快不夠了。' },
+          { speaker: 'Narrator',   text: 'He holds the prey in his arms out a little.\nAs if to prove he didn’t leave for no reason.' },
+          { speaker: 'Avaren', text: 'You said we were running low on food.' },
           { speaker: 'Eldrin', text: '...' },
-          { speaker: 'Narrator',   text: '你沉默下來。\n那句話你確實說過。\n你只是疲憊地抱怨了一句，卻沒想到他會牢牢記住。' },
-          { speaker: 'Eldrin', text: '可是你不能這樣突然消失。\n你要去哪裡，要先告訴我。' },
-          { speaker: 'Avaren', text: '……我可以自己回來。' },
-          { speaker: 'Eldrin', text: '你在說什麼！你還只是個小孩子！外面很危險你不知道嗎？' },
-          { speaker: 'Narrator',   text: '阿瓦倫愣了一下。\n像是不太明白，為什麼你還會露出這樣的表情。' },
-          { speaker: 'Eldrin', text: '你這樣我會很擔心你！我擔心你會出事！' },
-          { speaker: 'Avaren', text: '……擔心？' },
-          { speaker: 'Eldrin', text: '嗯。\n所以以後不要讓我一整夜都不知道你在哪裡了！聽到了嗎？' },
-          { speaker: 'Narrator',   text: '他低下頭。\n耳朵慢慢紅了起來。' },
-          { speaker: 'Avaren', text: '……我只是想幫你。' },
-          { speaker: 'Eldrin', text: '我知道。\n我也很高興你想幫我。\n\n但是下次，要先跟我說。\n我們可以一起想辦法，好嗎？' },
-          { speaker: 'Avaren', text: '……一起？' },
-          { speaker: 'Eldrin', text: '一起。' },
-          { speaker: 'Narrator',   text: '阿瓦倫沒有立刻回答。\n他只是把獵物又往你懷裡塞了一點，聲音很小。' },
-          { speaker: 'Avaren', text: '……那這個，還要嗎？' },
-          { speaker: 'Eldrin', text: '要。' },
-          { speaker: 'Narrator',   text: '你嘆了口氣，接過他帶回來的獵物。\n然後空出一隻手，輕輕摸了摸他的頭。' },
-          { speaker: 'Eldrin', text: '謝謝你，阿瓦倫。\n但是下次真的不能再自己跑出去，知道嗎？' },
+          { speaker: 'Narrator',   text: 'You fall silent.\nYou really did say that.\nYou only grumbled it once in your exhaustion, never imagining he’d hold on to it so tightly.' },
+          { speaker: 'Eldrin', text: 'But you can’t just suddenly disappear.\nWherever you go, you have to tell me first.' },
+          { speaker: 'Avaren', text: '...I can come back on my own.' },
+          { speaker: 'Eldrin', text: 'What are you saying! You’re still just a child! Don’t you know how dangerous it is out there?' },
+          { speaker: 'Narrator',   text: 'Avaren freezes for a moment.\nAs if he doesn’t quite understand why you’d wear such an expression.' },
+          { speaker: 'Eldrin', text: 'When you do this, I worry so much! I’m afraid something will happen to you!' },
+          { speaker: 'Avaren', text: '...Worried?' },
+          { speaker: 'Eldrin', text: 'Yes.\nSo from now on, don’t leave me not knowing where you are all night! Do you hear me?' },
+          { speaker: 'Narrator',   text: 'He lowers his head.\nHis ears slowly turn red.' },
+          { speaker: 'Avaren', text: '...I just wanted to help you.' },
+          { speaker: 'Eldrin', text: 'I know.\nAnd I’m glad you wanted to help me.\n\nBut next time, tell me first.\nWe can figure it out together, okay?' },
+          { speaker: 'Avaren', text: '...Together?' },
+          { speaker: 'Eldrin', text: 'Together.' },
+          { speaker: 'Narrator',   text: 'Avaren doesn’t answer right away.\nHe just pushes the prey a little further into your arms, his voice small.' },
+          { speaker: 'Avaren', text: '...So, do you still want these?' },
+          { speaker: 'Eldrin', text: 'Yes.' },
+          { speaker: 'Narrator',   text: 'You let out a sigh and take the prey he brought back.\nThen you free a hand and gently pat his head.' },
+          { speaker: 'Eldrin', text: 'Thank you, Avaren.\nBut next time you really can’t run off on your own, all right?' },
           { speaker: 'Avaren', text: '...Mm.' },
         ], 400, () => {});
       });
   } else {
     chg('money', 50); renderHUD();
     G.avarenStolenMoney = true;
-    showEvent('', '——清晨，他回來了——',
-      '阿瓦倫站在門邊，衣角沾著泥土。\n他的呼吸很輕，像是已經在那裡站了很久。\n\n你一看見他，胸口緊繃了一整夜的東西終於斷開。',
+    showEvent('', '——Dawn, He Returned——',
+      'Avaren stands by the door, the hem of his clothes stained with dirt.\nHis breathing is faint, as if he’s been standing there a long time.\n\nThe moment you see him, the thing that clenched your chest all night finally snaps loose.',
       () => {
         startActionScene([
-          { speaker: 'Eldrin', text: '阿瓦倫！\n\n你昨晚去哪裡了！\n你知道我找了你多久嗎？\n你一個人晚上跑出去，到底在想什麼！' },
+          { speaker: 'Eldrin', text: 'Avaren!\n\nWhere did you go last night!\nDo you know how long I searched for you?\nRunning off alone at night—what were you even thinking!' },
           { speaker: 'Avaren', text: '...' },
-          { speaker: 'Eldrin', text: '你知不知道外面有多危險？\n你要是出了什麼事……' },
-          { speaker: 'Narrator',   text: '你的聲音停住了。\n\n阿瓦倫低著頭，手裡緊緊攥著一個布袋。\n布料被他的手指抓得皺起來。\n袋口的一側，染著暗紅色的痕跡。' },
-          { speaker: 'Eldrin', text: '……那是什麼？' },
-          { speaker: 'Avaren', text: '……給你的。' },
-          { speaker: 'Narrator',   text: '他把布袋遞過來。\n很重。\n\n你接住的瞬間，裡面傳來金屬碰撞的聲音。\n金幣。\n很多很多金幣。' },
-          { speaker: 'Eldrin', text: '……阿瓦倫。' },
-          { speaker: 'Narrator',   text: '你忽然想起自己曾經說過的話。\n食物不夠。\n錢也不夠。\n還要買藥材，還要想辦法撐過下一天。\n\n你只是說出口了。\n可是他記住了。' },
-          { speaker: 'Eldrin', text: '你是因為我……才去偷這些的嗎？' },
-          { speaker: 'Avaren', text: '……你需要。' },
-          { speaker: 'Eldrin', text: '我不需要你做這種事！' },
-          { speaker: 'Narrator',   text: '你的聲音又高了起來。\n可這一次，很快就顫抖著低下去。\n\n你看見他縮了一下肩膀。\n像是已經準備好被責罵、被推開、被討厭。' },
-          { speaker: 'Eldrin', text: '……對不起…不是你的錯。\n是我讓你覺得，你必須替我做這種事。' },
-          { speaker: 'Narrator',   text: '你往前一步，把他抱進懷裡。\n\n阿瓦倫的身體僵住了。' },
-          { speaker: 'Eldrin', text: '以後不要再這樣了。\n不要一個人半夜出去。\n不要為了我做這種危險的事。\n\n我想要你平安健康。\n比起錢、食物、藥材，那些重要多了。' },
+          { speaker: 'Eldrin', text: 'Do you have any idea how dangerous it is out there?\nIf something had happened to you...' },
+          { speaker: 'Narrator',   text: 'Your voice cuts off.\n\nAvaren keeps his head down, clutching a cloth pouch tightly.\nThe fabric is crumpled in his grip.\nOne side of the opening is stained dark red.' },
+          { speaker: 'Eldrin', text: '...What is that?' },
+          { speaker: 'Avaren', text: '...It’s for you.' },
+          { speaker: 'Narrator',   text: 'He holds the pouch out.\nIt’s heavy.\n\nThe moment you take it, metal clinks inside.\nGold coins.\nSo, so many gold coins.' },
+          { speaker: 'Eldrin', text: '...Avaren.' },
+          { speaker: 'Narrator',   text: 'You suddenly recall the words you once said.\nNot enough food.\nNot enough money.\nStill need to buy herbs, still need to find a way to make it through another day.\n\nYou only said it out loud.\nBut he remembered.' },
+          { speaker: 'Eldrin', text: 'Did you... steal these because of me?' },
+          { speaker: 'Avaren', text: '...You needed it.' },
+          { speaker: 'Eldrin', text: 'I don’t need you to do this kind of thing!' },
+          { speaker: 'Narrator',   text: 'Your voice rises again.\nBut this time, it quickly trembles and falls.\n\nYou see his shoulders flinch.\nAs if he’s already braced to be scolded, pushed away, hated.' },
+          { speaker: 'Eldrin', text: '...I’m sorry... it’s not your fault.\nI’m the one who made you feel you had to do this for me.' },
+          { speaker: 'Narrator',   text: 'You step forward and pull him into your arms.\n\nAvaren’s body goes rigid.' },
+          { speaker: 'Eldrin', text: 'Don’t ever do this again.\nDon’t go out alone in the middle of the night.\nDon’t do dangerous things for my sake.\n\nI want you safe and healthy.\nThat matters far more than money, food, or herbs.' },
           { speaker: 'Avaren', text: '...' },
-          { speaker: 'Narrator',   text: '過了很久，他的手很輕很輕地抓住你的衣服。' },
+          { speaker: 'Narrator',   text: 'After a long while, ever so gently, his hand grips your clothes.' },
           { speaker: 'Avaren', text: '...Understood.' },
-          { speaker: 'Eldrin', text: '答應我。' },
+          { speaker: 'Eldrin', text: 'Promise me.' },
           { speaker: 'Avaren', text: '...Mm.' },
         ], 400, () => {});
       });
@@ -14733,44 +14733,44 @@ function triggerAvarenReturnEvent() {
 function showDayStartOpening(redMsg = '') {
   const openings = {
     1: [
-      '第 1 天\n\n小屋很舊，門縫透著風。\n你和阿瓦倫昨晚才逃到這裡，身後的一切都還像夢一樣追著你。',
-      '阿瓦倫還昏迷著。\n你數著他的呼吸，確認他還在。\n\n……他還在。',
-      '食物、藥材、物資。\n你得讓這間小屋撐過今天，也得讓他撐過今天。',
+      'Day 1\n\nThe cabin is old, wind seeping through the cracks in the door.\nYou and Avaren only fled here last night, and everything behind you still chases you like a dream.',
+      'Avaren is still unconscious.\nYou count his breaths, confirming he’s still here.\n\n...He’s still here.',
+      'Food, herbs, supplies.\nYou have to get this cabin through today—and get him through today too.',
     ],
     2: [
-      '第 2 天\n\n清晨的光落在窗邊。\n屋子裡仍然很安靜，但阿瓦倫的呼吸似乎比昨天平穩了一點。',
-      '你不知道這算不算好轉。\n可只要還有一點變好的可能，你就不能停下來。',
+      'Day 2\n\nMorning light falls by the window.\nThe house is still very quiet, but Avaren’s breathing seems a little steadier than yesterday.',
+      'You don’t know if this counts as improvement.\nBut as long as there’s even a sliver of a chance things get better, you can’t stop.',
     ],
     3: [
-      '第 3 天\n\n清晨的光落在窗邊。你突然聽見小屋外的森林傳來陌生的腳步聲。\n你站在門邊，握緊了手。',
+      'Day 3\n\nMorning light falls by the window. Suddenly you hear unfamiliar footsteps from the forest outside the cabin.\nYou stand by the door, your hand clenched.',
     ],
     4: [
-      '第 4 天\n\n清晨的光落在窗邊。森林比平常更安靜，但你卻覺得氛圍變得不太一樣。',
+      'Day 4\n\nMorning light falls by the window. The forest is quieter than usual, yet you feel the atmosphere has shifted.',
     ],
     5: [
-      '第 5 天\n\n清晨的光落在窗邊。\n阿瓦倫的狀態看起來比前幾天穩定，這讓你感覺放鬆了一點。',
+      'Day 5\n\nMorning light falls by the window.\nAvaren seems more stable than the past few days, which lets you relax a little.',
     ],
     6: [
-      '第 6 天\n\n清晨的光落在窗邊。新的一天開始了。',
+      'Day 6\n\nMorning light falls by the window. A new day begins.',
     ],
     7: G.avarenReturnPending ? [
-      '第 7 天\n\n清晨來得很慢。\n你不知道自己究竟睡著了多久。',
-      '阿瓦倫不在床上。\n昨夜留下的不安還壓在胸口，沒有散去。',
-      '你站起來，手指有些發冷，無論如何，得先找到他。',
+      'Day 7\n\nDawn comes slowly.\nYou don’t know how long you actually slept.',
+      'Avaren isn’t in bed.\nThe unease left over from last night still weighs on your chest, refusing to lift.',
+      'You stand up, your fingers a little cold. No matter what, you have to find him first.',
     ] : [
-      '第 7 天\n\n清晨的光落在窗邊，新的一天開始了。',
+      'Day 7\n\nMorning light falls by the window; a new day begins.',
     ],
     8: [
-      '第 8 天\n\n雨從清晨開始落下。\n屋簷滴著水，森林的顏色被洗得更深。',
-      '濕冷的空氣裡，有一種說不出的預感。',
+      'Day 8\n\nRain falls from the early morning.\nWater drips from the eaves, and the forest’s colors are washed deeper.',
+      'In the cold, damp air there’s an unspeakable foreboding.',
     ],
     9: [
-      '第 9 天\n\n早晨明明和平常一樣亮，卻讓人覺得冷。\n你看向窗外，心裡有一種沉下去的感覺。',
+      'Day 9\n\nThe morning is just as bright as always, yet it feels cold.\nYou look out the window, and something in you sinks.',
     ],
     11: [
-      '第 11 天\n\n安靜的清晨到了，陽光再次照進房間。',
-      '你做過的每一件事，都像細小的線，慢慢牽到了今天。',
-      '今天結束後，你將會知道自己與阿瓦倫以後會走向何處。',
+      'Day 11\n\nA quiet morning arrives, and sunlight streams into the room once more.',
+      'Everything you’ve done is like a fine thread, slowly drawing toward today.',
+      'When today ends, you’ll know where you and Avaren are headed from here.',
     ],
   };
   const lines = openings[G.day];
@@ -14783,19 +14783,19 @@ function showDayStartOpening(redMsg = '') {
 function showDayStartOpening(redMsg = '') {
   const openings = {
     1: [
-      '第 1 天\n小屋很舊，門縫透著風。\n你和阿瓦倫昨晚才逃到這裡，身後的一切都還像夢一樣追著你。',
-      '阿瓦倫還昏迷著。\n你數著他的呼吸，確認他還在。\n\n……他還在。',
-      '食物、藥材、物資。\n你得讓這間小屋撐過今天，也得讓他撐過今天。',
+      'Day 1\nThe cabin is old, wind seeping through the cracks in the door.\nYou and Avaren only fled here last night, and everything behind you still chases you like a dream.',
+      'Avaren is still unconscious.\nYou count his breaths, confirming he’s still here.\n\n...He’s still here.',
+      'Food, herbs, supplies.\nYou have to get this cabin through today—and get him through today too.',
     ],
     2: [
-      '第 2 天\n清晨的光落在窗邊。\n屋子裡仍然很安靜，但阿瓦倫的呼吸似乎比昨天平穩了一點。',
-      '你不知道這算不算好轉。\n可只要還有一點變好的可能，你就不能停下來。',
+      'Day 2\nMorning light falls by the window.\nThe house is still very quiet, but Avaren’s breathing seems a little steadier than yesterday.',
+      'You don’t know if this counts as improvement.\nBut as long as there’s even a sliver of a chance things get better, you can’t stop.',
     ],
     3: [
-      '第 3 天\n清晨的光落在窗邊。你突然聽見小屋外的森林傳來陌生的腳步聲。\n你站在門邊，握緊了手。',
+      'Day 3\nMorning light falls by the window. Suddenly you hear unfamiliar footsteps from the forest outside the cabin.\nYou stand by the door, your hand clenched.',
     ],
     4: [
-      '第 4 天\n清晨的光落在窗邊。森林比平常更安靜，但你卻覺得氛圍變得不太一樣。',
+      'Day 4\nMorning light falls by the window. The forest is quieter than usual, yet you feel the atmosphere has shifted.',
     ],
     5: [
       '第 5 天\n清晨的光落在窗邊。\n阿瓦倫的狀態看起來比前幾天穩定，這讓你感覺放鬆了一點。',
@@ -14805,14 +14805,14 @@ function showDayStartOpening(redMsg = '') {
     ],
     7: G.avarenReturnPending ? [
       '第 7 天\n清晨來得很慢。\n你不知道自己究竟睡著了多久。',
-      '阿瓦倫不在床上。\n昨夜留下的不安還壓在胸口，沒有散去。',
-      '你站起來，手指有些發冷，無論如何，得先找到他。',
+      'Avaren isn’t in bed.\nThe unease left over from last night still weighs on your chest, refusing to lift.',
+      'You stand up, your fingers a little cold. No matter what, you have to find him first.',
     ] : [
       '第 7 天\n清晨的光落在窗邊，新的一天開始了。',
     ],
     8: [
       '第 8 天\n雨從清晨開始落下。\n屋簷滴著水，森林的顏色被洗得更深。',
-      '濕冷的空氣裡，有一種說不出的預感。',
+      'In the cold, damp air there’s an unspeakable foreboding.',
     ],
     9: [
       '第 9 天\n早晨明明和平常一樣亮，卻讓人覺得冷。\n你看向窗外，心裡有一種沉下去的感覺。',
@@ -14824,8 +14824,8 @@ function showDayStartOpening(redMsg = '') {
     ],
     11: [
       '第 11 天\n安靜的清晨到了，陽光再次照進房間。',
-      '你做過的每一件事，都像細小的線，慢慢牽到了今天。',
-      '今天結束後，你將會知道自己與阿瓦倫以後會走向何處。',
+      'Everything you’ve done is like a fine thread, slowly drawing toward today.',
+      'When today ends, you’ll know where you and Avaren are headed from here.',
     ],
   };
   const lines = openings[G.day];
