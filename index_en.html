@@ -17234,14 +17234,14 @@ function reidSaveDeny(e) {
   playTitleButtonSfx();
   closeReidSaveScreen();
   showActionMenu(
-    '<div style="font-size:20px;font-weight:900;color:#e7c98c;letter-spacing:2px;">存檔鎖定</div>'
-    + '<div style="font-size:14px;font-weight:600;color:#c9b48c;margin-top:12px;line-height:1.7;letter-spacing:1px;">這份存檔由雷德擁有，無法使用。</div>',
+    '<div style="font-size:20px;font-weight:900;color:#e7c98c;letter-spacing:2px;">Save Locked</div>'
+    + '<div style="font-size:14px;font-weight:600;color:#c9b48c;margin-top:12px;line-height:1.7;letter-spacing:1px;">This save belongs to Red and cannot be used.</div>',
     []
   );
 }
 
 function confirmRestart() {
-  if (!confirm('確定要回到遊戲初始頁嗎？\n目前的進度將不會被保留。')) return;
+  if (!confirm('Are you sure you want to return to the title screen?\nYour current progress will not be saved.')) return;
   restartGame();
 }
 
@@ -18475,17 +18475,17 @@ applyCheatVisibility();
 //  TIPS 輪播系統
 // ══════════════════════════════════════
 const TIPS_LIST = [
-  'Tips：每次行動都會減少體力，每次的行動都需要深思熟慮。',
-  'Tips：[Esc] 可以暫停遊戲和退出選單。',
-  'Tips：詛咒值和疼痛值最好降低的越低越好。',
-  'Tips：夜晚到森林也許會有不錯的食材。',
-  'Tips：體力耗盡會強制入睡，錯過當天的照護機會。',
-  'Tips：飽食度歸零時，將會扣除HP。',
-  'Tips：在戶外垂釣可以選擇直接跳到晚上的時間。',
-  'Tips：多備幾瓶藥水在身上很重要。',
-  'Tips：每天的市集商品價格都不一樣，精打細算很重要。',
-  'Tips：每天的詛咒和疼痛值維持在80以下比較安全。',
-  'Tips：多多和前來的朋友互動吧，也許會對你有幫助。',
+  'Tip: Every action drains stamina—think each one through carefully.',
+  'Tip: [Esc] pauses the game and exits menus.',
+  'Tip: It’s best to keep Curse and Pain as low as you can.',
+  'Tip: The forest at night may hold some good ingredients.',
+  'Tip: Running out of stamina forces you to sleep, costing you that day’s chance to give care.',
+  'Tip: When Satiety hits zero, you’ll start losing HP.',
+  'Tip: While fishing outdoors, you can choose to skip straight to evening.',
+  'Tip: Keeping a few extra potions on hand is important.',
+  'Tip: Market prices change daily—shopping shrewdly matters.',
+  'Tip: Keeping the daily Curse and Pain values below 80 is safer.',
+  'Tip: Interact often with the friends who visit—it may help you.',
 ];
 const TIPS_DAY1_WEIGHTS = [4, 1, 4, 4, 1, 1, 1, 1, 1, 1, 1]; // 第1天高機率的三條權重為4
 let _tipsIndex = 0;
@@ -18542,7 +18542,7 @@ runTipsCycle();
     <input type="range" id="settings-vol" min="0" max="100" value="10"
       oninput="refreshActiveBGMVolume();['sfx-day0-rain','sfx-indoor-rain','sfx-day0-walk','sfx-kitchen-stove','sfx-kitchen-boil'].forEach(id=>{const e=document.getElementById(id);if(e&&!e.paused)e.volume=this.value/100;});">
   </div>
-  <button id="pause-btn" onclick="togglePause()">⏸ 暫停遊戲</button>
+  <button id="pause-btn" onclick="togglePause()">⏸ Pause Game</button>
   <button id="bag-btn" onclick="openBag();document.getElementById('settings-panel').classList.remove('open');" style="width:100%;background:#1a1208;border:1px solid #3a2810;color:#c0a060;padding:7px;font-family:inherit;font-size:13px;cursor:pointer;letter-spacing:2px;transition:all 0.2s;margin-top:6px;">🎒 開啟背包</button>
 </div>
 
