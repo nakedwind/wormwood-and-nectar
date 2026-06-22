@@ -4414,9 +4414,9 @@ const ZONES = {
       fn(){ playLoopingAudio('sfx-door-open', 6.0); changeScene('lobby', {x:591, y:100}); } },
     { id:'bed',        x1:355, y1:289, x2:529, y2:460, interactHint:'Bedside',
       fn(){ openBedMenu(); } },
-    { id:'bookshelf',  x1:431, y1:42,  x2:536, y2:209, interactHint:'書櫃',
+    { id:'bookshelf',  x1:431, y1:42,  x2:536, y2:209, interactHint:'Bookshelf',
       fn(){ doAction_BookshelfMenu(); } },
-    { id:'notes',      x1:265, y1:129, x2:353, y2:191, interactHint:'艾德林的筆記',
+    { id:'notes',      x1:265, y1:129, x2:353, y2:191, interactHint:'Eldrin’s Notes',
       fn(){ doAction_NotesMenu(); } },
   ],
 };
@@ -11904,69 +11904,69 @@ function giveSoupToAvaren() {
   if (G.soupIsSpecial) {
     // 黑暗料理：遲疑→吃→抱怨→謝謝
     story('Avaren', pick([
-      '……這是什麼？（盯著碗看了很久，還是端起來了。）',
-      '……（湊近聞了一下，表情有點微妙。）',
-      '……（沉默地看著你，又低頭看著碗，深吸一口氣。）',
+      '...What is this? (stares at the bowl a long while, but picks it up anyway.)',
+      '...(leans in for a sniff, his expression uncertain.)',
+      '...(looks at you in silence, then down at the bowl, and takes a deep breath.)',
     ]));
     storyThen(() => {
       storyAuto('Narrator', pick([
-        '他閉著眼喝完了，很長時間沒有說話。',
-        '他一口一口喝掉，每一口都像在做某種心理建設。',
-        '他把碗裡的東西全部吃完，動作很慢，臉色有點複雜。',
+        'He finishes it with his eyes closed, saying nothing for a long while.',
+        'He drinks it sip by sip, each one like he’s steeling himself.',
+        'He eats everything in the bowl, slowly, a complicated look on his face.',
       ]));
       storyThen(() => {
         story('Avaren', pick([
-          '……味道很奇怪。謝謝你做給我吃。',
-          '下次……可以不要放這個嗎。但…謝謝…',
-          '……味道很奇怪。不過……謝謝。',
-          '好奇怪的東西。……但是謝謝你。',
+          '...It tastes strange. Thank you for making it for me.',
+          'Next time... could you leave this out? But... thank you...',
+          '...It tastes strange. But... thank you.',
+          'What a strange thing. ...But thank you.',
         ]));
       });
     });
   } else {
     // 一般料理：彆扭地感謝
     story('Avaren', pick([
-      '……這是你做的嗎……謝謝。',
-      '……你自己不吃嗎？……謝謝。',
-      '…謝謝…不難吃。',
-      '……熱熱的…謝謝…。',
+      '...Did you make this... thank you.',
+      '...Aren’t you going to eat too? ...Thank you.',
+      '...Thank you... it’s not bad.',
+      '...It’s warm... thank you...',
     ]));
   }
   G.soupIsSpecial = false;
 }
 
 function giveSoupToWinter() {
-  if (G.winterGiftToday) { warn('今天已經送過溫特了。'); return; }
+  if (G.winterGiftToday) { warn('You’ve already given something to Winter today.'); return; }
   spendFatigue(1);
   G.winterGiftToday = true;
   SFX.interact();
   if (G.soupIsSpecial) {
     story('Winter', pick([
-      '……這個味道有些特殊。抱歉，我沒有毒物免疫的體質。',
-      '謝謝你的好意，但...我好像對這個過敏。',
-      '……我無法接受這個，我很感激...但是我的身體沒辦法。',
+      '...This flavor is rather unusual. Sorry, I don’t have immunity to poison.',
+      'Thank you for the thought, but... I think I’m allergic to this.',
+      '...I can’t accept this. I’m grateful... but my body can’t take it.',
     ]));
     storyThen(() => {
       chg('money', 10);
       renderHUD();
-      storyAuto('Narrator', '溫特塞給你10金，並且對你說：拿去買些好的食材吧，不然我怕那孩子撐不住……。');
+      storyAuto('Narrator', 'Winter presses 10 gold into your hand and says: Go buy some decent ingredients, or I fear that child won’t hold on...');
       storyThen(() => {
-        G.winter.bubbleText = '原來人類能吃有毒的食物嗎？';
+        G.winter.bubbleText = 'So humans can eat poisonous food?';
         G.winter.bubbleTimer = 300;
       });
     });
   } else {
     story('Winter', pick([
-      '……謝謝你。但這個留給那孩子吃比較好。',
-      '你帶著這個走了這麼遠嗎？營養留給那孩子比較重要。',
-      '我不需要，你還是多留給那孩子吧。',
+      '...Thank you. But it’s better to save this for the child.',
+      'You carried this all this way? The nourishment matters more for the child.',
+      'I don’t need it—save more for the child.',
     ]));
     storyThen(() => {
       chg('money', 10);
       renderHUD();
-      storyAuto('Narrator', '溫特塞給你10金，並且對你說：拿著去買點好吃的東西給孩子吧……。');
+      storyAuto('Narrator', 'Winter presses 10 gold into your hand and says: Take this and buy something good for the child to eat...');
       storyThen(() => {
-        G.winter.bubbleText = '……魔物們吃的東西還好像比較美味。';
+        G.winter.bubbleText = '...Even what the monsters eat seems tastier than this.';
         G.winter.bubbleTimer = 300;
       });
     });
@@ -11984,32 +11984,32 @@ function sellSoupToReid() {
   renderHUD();
   if (G.soupIsSpecial) {
     // 黑暗料理：雷德喝了一口，整個人崩潰，但還是感謝並塞錢
-    story('Red', '哦！你特地來請我吃飯？太好了！讓我嚐嚐——');
+    story('Red', 'Oh! You came all this way to treat me to a meal? Wonderful! Let me have a taste—');
     storyThen(() => {
-      story('Narrator', '雷德的表情僵住了。他沉默了非常非常長的時間。');
+      story('Narrator', 'Red’s expression freezes. He stays silent for a very, very long time.');
       storyThen(() => {
         story('Red', pick([
-          '……你……親手做的？（眼眶有點紅）謝謝你。真的。你的心意我收到了。',
-          '這個味道……我在地下城喝過比這個好喝的毒藥。……但你特地做給我，我很感動。收下這個。',
-          '……（深呼吸）身為勇者，沒什麼是我承受不了的。你的心意我明白了。謝謝你。',
-          '……我以為我見過世面了………謝謝你請客。',
+          '...You... made this by hand? (his eyes redden a little) Thank you. Truly. Your kindness reaches me.',
+          'This flavor... I’ve drunk better-tasting poison down in a dungeon. ...But you made it just for me—I’m moved. Take this.',
+          '...(takes a deep breath) As a hero, there’s nothing I can’t endure. I understand your kindness. Thank you.',
+          '...I thought I’d seen it all......... thank you for the meal.',
         ]));
-        storyThen(() => { toast('💰 雷德感謝你請他吃飯，塞給你5金'); });
+        storyThen(() => { toast('💰 Red thanks you for the meal and presses 5 gold into your hand'); });
       });
     });
   } else {
     // 一般湯：不怎麼好喝，但雷德感謝後主動付錢
-    story('Red', '哦！你特地來請我吃飯？謝謝！');
+    story('Red', 'Oh! You came all this way to treat me? Thank you!');
     storyThen(() => {
-      story('Narrator', '雷德的表情有些微妙，但他努力維持著笑容。');
+      story('Narrator', 'Red’s expression is a little awkward, but he forces a smile.');
       storyThen(() => {
         story('Red', pick([
-          '……嗯！有……獨特的風味！你特地做來請我，我很高興。',
-          '挺……有個性的味道！你走這麼遠來請我，真的很感謝。這個給你！',
-          '……謝謝你請客！你的心意讓我很感動！',
-          '……（沉默片刻）你特地帶來給我的嗎。謝謝你。',
+          '...Mm! It has... a distinctive flavor! I’m glad you made it for me.',
+          'Quite... a bold flavor! You came all this way to treat me—I’m really grateful. Here, this is for you!',
+          '...Thank you for the meal! Your thoughtfulness really moves me!',
+          '...(silent for a moment) You brought this just for me? Thank you.',
         ]));
-        storyThen(() => { toast('💰 雷德感謝你請他吃飯，塞給你5金'); });
+        storyThen(() => { toast('💰 Red thanks you for the meal and presses 5 gold into your hand'); });
       });
     });
   }
@@ -12017,7 +12017,7 @@ function sellSoupToReid() {
 }
 
 function giveSoupToNoah() {
-  if (G.noahGiftToday) { warn('今天已經送過諾亞了。'); return; }
+  if (G.noahGiftToday) { warn('You’ve already given something to Noah today.'); return; }
   spendFatigue(1);
   G.noahGiftToday = true;
   // 諾亞婉拒料理，食物繼續留在艾德林身上，只收下他給的金錢
@@ -12025,22 +12025,22 @@ function giveSoupToNoah() {
   chg('money', 7);
   renderHUD();
   if (G.soupIsSpecial) {
-    story('Noah', '……這個是？啊！這是你煮的嗎？我第一次看見這種顏色…！\n\n謝謝你的好意，但你們現在更需要，還是留著自己吃吧！\n\n這些不多…但希望能夠幫你們度過難關。');
+    story('Noah', '...What’s this? Ah! Did you cook this? It’s the first time I’ve seen this color...!\n\nThank you for the thought, but you need it more right now—keep it for yourselves!\n\nIt isn’t much... but I hope it helps you through the hard times.');
   } else {
-    story('Noah', '謝謝你的好意，但你們現在更需要，還是留著自己吃吧！\n\n這些不多…但希望能夠幫你們度過難關。');
+    story('Noah', 'Thank you for the thought, but you need it more right now—keep it for yourselves!\n\nIt isn’t much... but I hope it helps you through the hard times.');
   }
-  storyThen(() => { toast('💰 諾亞給了你7金'); });
+  storyThen(() => { toast('💰 Noah gave you 7 gold'); });
   G.soupIsSpecial = false;
 }
 
 function doAction_CollectEggs() {
   if (G.scene === 'forest' && G.timePeriod === 'evening') {
     playLoopingAudio('sfx-chicken-1', 3.0);
-    storyAuto('Narrator', '你靠近鳥巢時，裡面傳來一聲小小的雞叫。');
+    storyAuto('Narrator', 'As you approach the nest, a tiny chirp comes from inside.');
     return;
   }
   if (G.nestEggs <= 0) {
-    storyAuto('Narrator', '巢裡空空的，今天已經沒有蛋了。');
+    storyAuto('Narrator', 'The nest is empty—there are no more eggs today.');
     return;
   }
   spendFatigue(1);
@@ -12050,15 +12050,15 @@ function doAction_CollectEggs() {
   chg('egg', count);
   renderHUD();
   renderScene();
-  toast('🥚 鳥蛋 +' + count);
-  storyAuto('Narrator', `你輕輕從鳥巢裡取出了 ${count} 顆蛋。`);
+  toast('🥚 Bird Egg +' + count);
+  storyAuto('Narrator', `You gently take ${count} eggs from the nest.`);
 }
 
 function doAction_Cook() {
   if (G.bloodMoon7Active) { warn('You can’t act right now.'); return; }
-  if (G.cookActive) { warn('已經在烹飪了，請稍候。'); return; }
-  if (G.soupReady) { warn('廚房裡已有一碗湯，先取用再烹飪。'); return; }
-  if (G.carryingSoup) { warn('你手上還拿著湯，先處理完再說。'); return; }
+  if (G.cookActive) { warn('You’re already cooking; please wait.'); return; }
+  if (G.soupReady) { warn('There’s already a bowl of soup in the kitchen—take it before cooking again.'); return; }
+  if (G.carryingSoup) { warn('You’re still carrying soup—deal with that first.'); return; }
   spendFatigue(3);
   openCookSelectPanel();
 }
@@ -12066,9 +12066,9 @@ function doAction_Cook() {
 function doAction_PickupPotion() {
   if (!G.researchReady) return;
   const potionKey = G.researchType === 'cold' ? 'coldPotion' : G.researchType === 'curse' ? 'cursePotion' : G.researchType === 'stamina' ? 'staminaPotion' : 'forgetPotion';
-  if (isBagFull(potionKey, 1)) { toastBagFull(); warn('背包已滿，無法取回藥水。請先清出空間。'); return; }
+  if (isBagFull(potionKey, 1)) { toastBagFull(); warn('Your backpack is full; you can’t retrieve the potion. Please clear some space first.'); return; }
   playLoopingAudio('sfx-plant-pop', 3.0);
-  const label = G.researchType === 'cold' ? 'Healing Potion' : G.researchType === 'curse' ? 'Curse-Cure Potion' : G.researchType === 'stamina' ? '體力藥水' : 'Oblivion Potion';
+  const label = G.researchType === 'cold' ? 'Healing Potion' : G.researchType === 'curse' ? 'Curse-Cure Potion' : G.researchType === 'stamina' ? 'Stamina Potion' : 'Oblivion Potion';
   G.researchReady = false;
   document.getElementById('research-scene-wrap').style.display = 'none';
   const potionEl = document.getElementById('lobby-potion');
@@ -12078,22 +12078,22 @@ function doAction_PickupPotion() {
   chg(potionKey, 1);
   G.researchType = null;
   renderHUD();
-  storyQueue.push({ speaker: 'Narrator', text: `你取回配製好的${label}，小心地收進背包。` });
+  storyQueue.push({ speaker: 'Narrator', text: `You retrieve the finished ${label}, carefully tucking it into your backpack.` });
   if (storyQueue.length === 1) _showStory();
 }
 
 function doAction_StartResearch() {
-  if (G.researchReady) { warn('藥水已完成，請先靠近藥水取回。'); return; }
-  if (G.researchActive) { warn('已經在研究藥水了，請稍候。'); return; }
+  if (G.researchReady) { warn('The potion is ready—approach it to retrieve it first.'); return; }
+  if (G.researchActive) { warn('You’re already researching a potion; please wait.'); return; }
   const isEvening = G.timePeriod === 'evening';
-  if (!isEvening) timeWarn('晚上才能研究藥水。');
+  if (!isEvening) timeWarn('You can only research potions at night.');
   playLoopingAudio('sfx-menu-open', 4.0);
-  showActionMenu('選擇研究的藥水', [
+  showActionMenu('Choose a potion to research', [
     {
-      name: 'Healing Potion', fx: '藥材-2　白藥花-1',
+      name: 'Healing Potion', fx: 'Herbs-2　White Flower-1',
       req: () => isEvening && G.herb >= 2 && G.whiteFlower >= 1,
       run() {
-        showSaveConfirm('製作藥水', '確定要製作\n疼痛-5（使用後）\n（自己喝可恢復HP5）\n的藥水嗎？', () => {
+        showSaveConfirm('Make Potion', 'Make a potion that gives\nPain-5 (when used)\n(drinking it yourself restores 5 HP)?', () => {
           playLoopingAudio('sfx-potion-bottle', 0.8);
           spendFatigue(2);
           chg('herb', -2); chg('whiteFlower', -1);
@@ -12101,16 +12101,16 @@ function doAction_StartResearch() {
           renderHUD();
           document.getElementById('research-scene-wrap').style.display = 'block';
           document.getElementById('research-scene-bar').style.width = '0%';
-          document.getElementById('research-scene-label').textContent = '🧪 研究治療藥水中…';
+          document.getElementById('research-scene-label').textContent = '🧪 Researching Healing Potion…';
           story('Narrator', pick(NARR_RESEARCH));
         });
       }
     },
     {
-      name: 'Curse-Cure Potion', fx: '白藥花-2　礦石-2　HP-2',
+      name: 'Curse-Cure Potion', fx: 'White Flower-2　Ore-2　HP-2',
       req: () => isEvening && G.whiteFlower >= 2 && G.stone >= 2,
       run() {
-        showSaveConfirm('製作藥水', '確定要製作\n詛咒-5（使用後）\n的藥水嗎？', () => {
+        showSaveConfirm('Make Potion', 'Make a potion that gives\nCurse-5 (when used)?', () => {
           playLoopingAudio('sfx-potion-bottle', 0.8);
           spendFatigue(2);
           chg('eldrinHp', -2);
@@ -12119,16 +12119,16 @@ function doAction_StartResearch() {
           renderHUD();
           document.getElementById('research-scene-wrap').style.display = 'block';
           document.getElementById('research-scene-bar').style.width = '0%';
-          document.getElementById('research-scene-label').textContent = '🧪 研究解咒藥水中…';
+          document.getElementById('research-scene-label').textContent = '🧪 Researching Curse-Cure Potion…';
           story('Narrator', pick(NARR_RESEARCH));
         });
       }
     },
     {
-      name: '體力藥水', fx: '藥材-2　蘑菇-1　蟲材-2',
+      name: 'Stamina Potion', fx: 'Herbs-2　Mushroom-1　Insect Parts-2',
       req: () => isEvening && G.herb >= 2 && G.mushroom >= 1 && G.bug >= 2,
       run() {
-        showSaveConfirm('製作藥水', '確定要製作\n體力+45（使用後）\n的藥水嗎？', () => {
+        showSaveConfirm('Make Potion', 'Make a potion that gives\nStamina+45 (when used)?', () => {
           playLoopingAudio('sfx-potion-bottle', 0.8);
           spendFatigue(2);
           chg('herb', -2); chg('mushroom', -1); chg('bug', -2);
@@ -12136,16 +12136,16 @@ function doAction_StartResearch() {
           renderHUD();
           document.getElementById('research-scene-wrap').style.display = 'block';
           document.getElementById('research-scene-bar').style.width = '0%';
-          document.getElementById('research-scene-label').textContent = '🧪 研究體力藥水中…';
+          document.getElementById('research-scene-label').textContent = '🧪 Researching Stamina Potion…';
           story('Narrator', pick(NARR_RESEARCH));
         });
       }
     },
     {
-      name: 'Oblivion Potion', fx: '藥材-10　白藥花-10　蟲材-5<br>水晶碎片-8　妖精-1　魔物素材-5',
+      name: 'Oblivion Potion', fx: 'Herbs-10　White Flower-10　Insect Parts-5<br>Crystal Shards-8　Fairy-1　Monster Material-5',
       req: () => isEvening && G.herb >= 10 && G.whiteFlower >= 10 && G.bug >= 5 && G.crystal >= 8 && G.fairyItem >= 1 && G.monsterMaterial >= 5 && G.forgetPotion === 0,
       run() {
-        showSaveConfirm('製作藥水', '確定要製作\n忘卻藥水（血月夜使用）\n嗎？', () => {
+        showSaveConfirm('Make Potion', 'Make the Oblivion Potion (for use on a blood moon night)?', () => {
           playLoopingAudio('sfx-potion-bottle', 0.8);
           spendFatigue(2);
           chg('herb', -10); chg('whiteFlower', -10); chg('bug', -5); chg('crystal', -8); chg('fairyItem', -1); chg('monsterMaterial', -5);
@@ -12153,175 +12153,175 @@ function doAction_StartResearch() {
           renderHUD();
           document.getElementById('research-scene-wrap').style.display = 'block';
           document.getElementById('research-scene-bar').style.width = '0%';
-          document.getElementById('research-scene-label').innerHTML = '<img src="Medicine_blue.svg" class="item-icon-svg"> 研究忘卻藥水中…';
-          story('Narrator', '你翻出最晦澀的古卷，嘗試配製一種能消除記憶的魔法藥劑……\n材料罕見，過程繁瑣，但你知道這可能是血月夜唯一能用的東西。');
+          document.getElementById('research-scene-label').innerHTML = '<img src="Medicine_blue.svg" class="item-icon-svg"> Researching Oblivion Potion…';
+          story('Narrator', 'You dig out the most obscure of old scrolls and attempt to brew a magical draught that can erase memories...\nThe materials are rare and the process painstaking, but you know this may be the only thing that can be used on a blood moon night.');
         });
       }
     },
-  ], isEvening ? '' : '晚上才能研究藥水');
+  ], isEvening ? '' : 'You can only research potions at night');
 }
 
 // ── 一、艾德林的日記（每天早上可回顧昨天）──
 // 索引 = 天數，內容是「那一天」發生的事，隔天早上才讀得到
 const ELDRIN_DIARY = {
   0: [
-    '我帶著阿瓦倫逃出來了。',
-    '諾亞替我們處理了路上的痕跡，又把這間林中的小屋借給我。門關上的那一刻，我才終於意識到自己還在發抖。',
-    '阿瓦倫還沒有醒，我不知道自己能不能救他。可是我已經沒有退路了。',
-    '明天開始，我必須想辦法讓他活下去……。',
+    'I escaped with Avaren.',
+    'Noah covered our tracks along the road and lent us this cabin in the woods. The moment the door closed, I finally realized I was still trembling.',
+    'Avaren hasn’t woken. I don’t know if I can save him. But there’s no turning back for me now.',
+    'Starting tomorrow, I have to find a way to keep him alive...',
   ],
   1: [
-    '阿瓦倫今天昏睡了一整天……怎麼辦，我已經盡力的去做各種嘗試了……。',
-    '要是他再也醒不過來的話……我……這都是我的錯……',
-    '昨夜坐在書桌前翻了整夜的咒術典籍，但還是找不到方法。',
-    '對不起，阿瓦倫……拜託你要撐過今晚。',
+    'Avaren slept unconscious all day... what do I do? I’ve already tried everything I can...',
+    'If he never wakes again... I... it’s all my fault...',
+    'Last night I sat at the desk and pored over sorcery tomes all night, but still found no answer.',
+    'I’m sorry, Avaren... please, hold on through tonight.',
   ],
   2: () => G.avarenAwake ? [
-    '他醒了！雖然還虛弱得下不了床，但他睜開眼睛看了我一眼——那一刻我差點掉下淚來。',
-    '諾亞白天來看過我們，傍晚還在湖邊和我聊了很多…。他真是個好人。',
-    '森林那片湖很美，但是也很危險，我要叮囑阿瓦倫以後不可以靠近那裡。',
+    'He woke up! Still too weak to leave the bed, but he opened his eyes and looked at me—in that moment I nearly wept.',
+    'Noah came to see us during the day, and in the evening we talked a long while by the lake... He really is a good person.',
+    'That lake in the forest is beautiful, but dangerous too. I must warn Avaren never to go near it.',
   ] : [
-    '他還是沒有醒。詛咒實在太深入他的身體了…連睜開眼睛的力氣都沒有。',
-    '諾亞白天來看過我們，傍晚還在湖邊和我聊了很多…。他是個好人…。',
-    '我必須再快一點…快點找到解咒的方法……',
+    'He still hasn’t woken. The curse has sunk too deep into his body... he doesn’t even have the strength to open his eyes.',
+    'Noah came to see us during the day, and in the evening we talked a long while by the lake... He’s a good person...',
+    'I have to be faster... I have to find a way to break the curse soon...',
   ],
   3: [
-    '今天來了個自稱勇者的人，雷德。他似乎……有點迷糊。',
-    '一開始我對他還充滿警戒，但是跟他聊了幾句之後，覺得他應該不是壞人。',
-    '而且他能夠替我解決森林裡的史萊姆，這真的能幫上很大的忙！',
-    '勇者嗎……？原本只會在傳說或是民間故事裡聽到，沒想到真的有這樣的人出現。',
+    'Today someone calling himself a hero showed up—Red. He seems... a bit scatterbrained.',
+    'At first I was wary of him, but after a few words I felt he probably isn’t a bad person.',
+    'And he can deal with the slimes in the forest for me—that’s a real help!',
+    'A hero...? I’d only ever heard of them in legends and folktales. I never imagined such a person would actually appear.',
   ],
   4: [
-    '空氣裡有種說不上來的沉重。也許是我多心了。',
-    '森林裡出現了一個披著黑色斗篷的旅人，他知道這裡有詛咒…也知道詛咒的源頭…。',
-    '他到底是誰？為什麼他知道這些東西？ 但至少幸好…他對阿瓦倫似乎沒有敵意。',
-    '他的容貌很好看，遠遠看時我還以為是漂亮的女性。總覺得他有股神秘的氣質。',
+    'There’s an unspeakable heaviness in the air. Maybe I’m imagining it.',
+    'A traveler in a black cloak appeared in the forest. He knows there’s a curse here... and he knows its source...',
+    'Who is he? How does he know these things? But at least, thankfully... he seems to bear no ill will toward Avaren.',
+    'His features are striking—from afar I mistook him for a beautiful woman. There’s a mysterious air about him.',
   ],
   5: [
-    '他今天氣色好很多了，幸好……我的努力沒有白費。',
-    '雷德和那個叫溫特的旅人在森林裡碰上了，兩個人之間氣氛微妙。',
-    '一點一點地，總會好起來的吧。我這樣告訴自己。',
+    'He looks much better today. Thank goodness... my efforts weren’t in vain.',
+    'Red ran into that traveler named Winter in the forest. The air between them was strained.',
+    'Little by little, things will surely get better. That’s what I tell myself.',
   ],
   6: () => G.day4EventTriggered ? [
-    '出事了。傍晚回到房間，床是空的——阿瓦倫不見了。',
-    '我找遍了小屋的每一個角落，又衝進夜色裡喊他的名字，卻怎麼也找不到。',
-    '怎麼會……他到底跑去哪裡了，都是我不好…我沒有看好他……',
-    '要是他怎麼了……我該怎麼辦…',
-    '夜已經太深了，我沒辦法再待在外面找他了，我只能先回到這裡……明天一早我就要立刻出門去找他！',
+    'Something happened. When I returned to the room at dusk, the bed was empty—Avaren was gone.',
+    'I searched every corner of the cabin, then rushed into the night calling his name, but couldn’t find him anywhere.',
+    'How could this... where did he go? It’s my fault... I didn’t watch over him...',
+    'If something happened to him... what would I do...',
+    'The night is too deep now; I can’t keep searching outside. I have to come back here for now... First thing tomorrow, I’ll go out to find him!',
   ] : [
-    '傍晚回房時，總覺得哪裡不對勁。',
-    '阿瓦倫好像有自己的心事，安靜得讓我擔心。',
-    '夜晚很長。我一直注意著窗外發生的任何動靜。',
+    'When I returned to the room at dusk, something felt off.',
+    'Avaren seems to have something on his mind—so quiet it worries me.',
+    'The night is long. I keep watching for any movement outside the window.',
   ],
   7: () => {
     if (!G.day4EventTriggered) return [
-      '平靜的一天。他乖乖待在屋裡，我也鬆了口氣。',
-      '能這樣安穩地陪著他，已經是我奢求的幸福了。',
+      'A peaceful day. He stayed obediently indoors, and I could breathe easier.',
+      'Just being able to stay quietly by his side—that’s already more happiness than I dared ask for.',
     ];
     if (G.avarenStolenMoney) return [
-      '清晨，他自己回來了。我太急迫了，忍不住對他發了脾氣。',
-      '他低著頭不說話，手裡握著一個布袋——裡頭，有很多的錢，那是他偷來的嗎？他去哪裡偷的？',
-      '我不知道他經歷了什麼。我只知道，我不該讓他一個人面對這些…。',
-      '是我的錯，錢這種事情怎麼可以讓一個小孩子擔心呢？',
+      'At dawn, he came back on his own. I was so frantic that I lost my temper at him.',
+      'He lowered his head and said nothing, clutching a cloth pouch—full of money. Did he steal it? Where did he steal it from?',
+      'I don’t know what he went through. I only know I shouldn’t have let him face all this alone...',
+      'It’s my fault—how could I let a child worry about money?',
     ];
     return [
-      '他回來了。懷裡抱著親手獵來的小動物，笨拙地遞到我面前，說「這些給你」。',
-      '我先是鬆了口氣，接著才忍不住罵他不該自己跑出去。他卻只是說，因為我提過食物快不夠了。',
-      '原來那句隨口的抱怨，他一直記著……。',
-      '原來他也把我放在心裡了，雖然這次的事情真的讓我很擔心，但是我也很開心他會這麼替我著想。',
+      'He came back, cradling small animals he’d hunted himself, and clumsily held them out to me, saying, ‘These are for you.’',
+      'First I was relieved, then I couldn’t help scolding him for running off alone. But he just said it was because I’d mentioned we were running low on food.',
+      'So he’d been holding on to that offhand complaint all along...',
+      'So he keeps me in his heart too. This really did frighten me, but I’m also glad he cares for me so much.',
     ];
   },
   8: [
-    '下了一整天的雨。雖然農田不需要澆水，但是雨天在戶外工作真的太累了。',
-    '今天的水氣充足，一整天都很潮濕……我感覺森林裡的氛圍變的怪怪的。',
-    '那片安靜的湖似乎會出現東西。',
+    'It rained all day. The field needs no watering, but working outdoors in the rain is exhausting.',
+    'The air was thick with moisture all day... I feel the atmosphere in the forest has turned strange.',
+    'It feels like something will appear at that quiet lake.',
   ],
   9: () => G.usedForgetMagic ? [
-    '因為急迫而尚未寫下內容。',
+    'Too urgent to write anything down yet.',
   ] : [
-    '因為急迫而尚未寫下內容。',
+    'Too urgent to write anything down yet.',
   ],
   10: () => G.usedForgetMagic ? [
-    '我的手時不時地還在顫抖…。',
-    '雖然血月過去了但我還是非常不安…這次撐過來了，但未來呢？',
-    '如果血月再次來臨，那時候爆發的詛咒更嚴重的話…說不定我真的會失去他……。',
-    '我得在下一次血月時做好更多的準備……不管是什麼，只要有一線希望，我都必須去嘗試……。',
+    'My hands still tremble now and then...',
+    'The blood moon has passed, but I’m still deeply uneasy... We made it through this time, but what about the future?',
+    'If the blood moon comes again and the curse that erupts is even worse... I might truly lose him...',
+    'I must prepare far more for the next blood moon... Whatever it takes, as long as there’s a sliver of hope, I have to try...',
   ] : [
-    '我的手時不時地還在顫抖…。',
-    '血月過去了，阿瓦倫想起來所有的事情，包括那時候在實驗室……。',
-    '我真的好後悔，為什麼我沒有早點發現老師會把他拿來當實驗品……',
-    '為什麼我當下動彈不得？我什麼事情都做不了…我是懦弱又可悲的人…。',
-    '我從一開始就不該將他從那個巷子裡帶回來…',
-    '如果沒有我的話，他根本不用經歷這些事情……',
-    '我現在唯一能做的事情，就是用我的一輩子去彌補我犯的錯……拜託…請原諒我……。',
-    '拜託你，阿瓦倫……請你活下來…。',
+    'My hands still tremble now and then...',
+    'The blood moon has passed, and Avaren has remembered everything—including that time in the laboratory...',
+    'I regret it so much—why didn’t I realize sooner that the teacher would use him as an experiment...',
+    'Why couldn’t I move back then? I could do nothing... I am a cowardly, pitiful person...',
+    'I never should have brought him back from that alley in the first place...',
+    'If not for me, he never would have had to endure any of this...',
+    'The only thing I can do now is spend my whole life atoning for the wrong I’ve done... please... forgive me...',
+    'Please, Avaren... please, live...',
   ],
 };
 
 // ── 二、生活筆記（玩法提示）──
 const ELDRIN_LIFE_NOTES = [
-  { name: '📖 關於照顧阿瓦倫',
+  { name: '📖 On Caring for Avaren',
     lines: [
-      '他身上的疼痛和黑霧，越淡越好。我得想辦法一點一點把它們從他身上拿走。',
-      '白天去採些藥草，晚上回房間替他換藥、再為他唸一段除咒的咒文——這些每天都該做。',
-      '若還有餘力，就煉些治療和解咒的藥水給他。一點一滴，總會有用的。',
+      'The pain and black mist on him—the fainter the better. I must find a way to take them from him, bit by bit.',
+      'Gather herbs by day; at night, return to the room to change his dressings and recite a curse-removal chant for him—these should be done every day.',
+      'If I have strength to spare, brew him some healing and curse-cure potions. Drop by drop, it will all add up.',
     ] },
-  { name: '⏳ 該怎麼過一天',
+  { name: '⏳ How to Spend a Day',
     lines: [
-      '採集、釣魚、種田、上市集，這些都得趁白天。天一暗，就該回屋裡了。',
-      '入夜以後，是煮飯、煉藥、守著他的時間。',
-      '……也別忘了我自己。要是累垮了昏睡過去，那一夜就什麼都做不成了。',
-      '如果早上的事情都做完了，也可以去垂釣放鬆一下。',
-      '看著水裡的魚游來游去，時間很快的就過去了。',
-      '另外——下雨天在外頭幹活格外耗神，淋著雨採集、釣魚都會比平常更累。若非必要，雨天還是少往外跑為好。',
+      'Gathering, fishing, farming, going to market—all of these must be done by day. Once it darkens, it’s time to head back inside.',
+      'After nightfall is the time for cooking, brewing potions, and watching over him.',
+      '...And don’t forget about myself. If I collapse from exhaustion, that whole night is wasted.',
+      'If the morning’s tasks are all done, I can go fishing to relax a little.',
+      'Watching the fish swim about, the time passes quickly.',
+      'Also—working outside on rainy days is especially draining; gathering and fishing in the rain tire me out more than usual. Unless it’s necessary, best to stay in when it rains.',
     ] },
-  { name: '🍲 關於吃飯',
+  { name: '🍲 On Meals',
     lines: [
-      '廚房可以熬湯，丟進去的食材不同，效果也不一樣。煮好以後，記得親手端去他床邊。',
-      '不能讓他餓著——肚子空了，疼痛會更難熬；我自己餓過頭，也是會撐不住的。',
-      '多備些食物吧，總沒壞處。',
+      'I can simmer soup in the kitchen; different ingredients give different effects. Once it’s done, remember to carry it to his bedside myself.',
+      'I can’t let him go hungry—on an empty stomach the pain is harder to bear; and if I starve myself, I won’t hold up either.',
+      'Best to keep extra food on hand—it never hurts.',
     ] },
-  { name: '🏪 鎮上的市集',
+  { name: '🏪 The Town Market',
     lines: [
-      '從柵欄門出去就能到鎮上的市集，不過只有白天開門。',
-      '每天上架的貨和折扣都不一樣，而且每樣東西數量有限，手腳要快，賣完就沒了。',
-      '用不到的素材也能拿去換錢，有時候某些東西當天還收得特別高。',
+      'Go out through the gate to reach the town market—but it’s only open during the day.',
+      'The goods and discounts change every day, and everything is limited in stock—be quick, for once it’s sold out, it’s gone.',
+      'Materials I don’t need can be sold for money, and some days certain things fetch an especially high price.',
     ] },
 ];
 
 // ── 三、藥草筆記（素材與配方）──
 const ELDRIN_HERB_NOTES = [
-  { name: '<img src="herbs.png" class="item-icon-svg"> 藥草',
+  { name: '<img src="herbs.png" class="item-icon-svg"> Herbs',
     lines: [
-      '最基本、卻也最要緊的東西。森林的草叢和花叢裡都採得到。',
-      '幾乎每一種藥水都離不開它，包紮傷口也要用上。手邊永遠別讓它見底。',
+      'The most basic thing, yet the most vital. Found in the forest’s bushes and flower patches.',
+      'Almost every potion depends on it, and it’s needed to dress wounds too. Never let my supply run dry.',
     ] },
-  { name: '<img src="Stone.png" class="item-icon-svg"> 礦石與水晶碎片',
+  { name: '<img src="Stone.png" class="item-icon-svg"> Ore & Crystal Shards',
     lines: [
-      '敲鑿岩壁就能取得礦石，運氣好還會敲出蘊著微光的水晶碎片。',
-      '水晶碎片裡封著淡淡的魔力，是高階藥水不可或缺的材料。別小看那一點微光。',
+      'Chip away at the rock face for ore; with luck you’ll knock loose a faintly glowing crystal shard.',
+      'A faint magic is sealed within crystal shards—an indispensable material for higher potions. Don’t underestimate that little glimmer.',
     ] },
-  { name: '<img src="bug01.png" class="item-icon-svg"> 蟲材',
+  { name: '<img src="bug01.png" class="item-icon-svg"> Insect Parts',
     lines: [
-      '翻開樹皮、撥開落葉，總能找到些小蟲子。看著不起眼，卻是某些藥方的關鍵。',
-      '別和阿瓦倫撿回來的那隻搞混了——他那隻，是要留著的。',
+      'Lift the bark, brush aside the fallen leaves, and you’ll always find some small bugs. They look unremarkable, but they’re key to certain recipes.',
+      'Don’t mix them up with the one Avaren brought back—that one is to be kept.',
     ] },
-  { name: '<img src="mushroom.png" class="item-icon-svg"> 藍色蘑菇',
+  { name: '<img src="mushroom.png" class="item-icon-svg"> Blue Mushroom',
     lines: [
-      '夜晚的森林裡偶爾會長出帶著藍色斑紋的蘑菇。直接吃有毒，疼痛加劇，最好不要碰。',
-      '但若經過處理，毒性反而能轉成溫和的藥力。做成藥劑以後，是很適合補充體力的材料。',
+      'Mushrooms with blue markings sometimes grow in the night forest. Eaten raw they’re poisonous and worsen pain—best not to touch them.',
+      'But once processed, their toxicity turns into a gentle medicinal power. Brewed into a potion, they’re well suited to restoring stamina.',
     ] },
-  { name: '🧚 妖精與白藥花',
+  { name: '🧚 Fairies & White Medicine Flowers',
     lines: [
-      '據說妖精喜歡潮濕的環境，在特定的夜晚，森林深處會有妖精現身，不過據說見過的人再也沒有回來。',
-      '白藥花擁有安撫魔物的力量，是煉製忘卻藥水的珍貴材料。',
+      'They say fairies favor damp places; on certain nights, fairies appear deep in the forest—though those who’ve seen them are said never to return.',
+      'The White Medicine Flower has the power to soothe monsters, and is a precious material for brewing the Oblivion Potion.',
     ] },
-  { name: '🧪 藥水配方',
+  { name: '🧪 Potion Recipes',
     lines: [
-      '治療藥水——藥草，緩解疼痛。',
-      '解咒藥水——藥草，壓下黑霧。',
-      '體力藥水——藥草，留給累壞的自己。',
-      '忘卻藥水——藥草、蟲材、水晶碎片、妖精。抹去最深的痛苦，材料卻得來不易。',
+      'Healing Potion—herbs, to ease pain.',
+      'Curse-Cure Potion—herbs, to suppress the black mist.',
+      'Stamina Potion—herbs, for my own exhausted self.',
+      'Oblivion Potion—herbs, insect parts, crystal shards, fairy. It erases the deepest pain, but the materials are hard to come by.',
     ] },
 ];
 
@@ -12329,12 +12329,12 @@ function doAction_NotesMenu(isReopen = false) {
   if (G.bloodMoon7Active) { warn('You can’t act right now.'); return; }
   if (G.paused || G.actionSceneActive || G.sleepAnimActive) return;
   if (!isReopen) playLoopingAudio('sfx-page', 4.0);
-  showActionMenu('艾德林的筆記', [
-    { name: '📔 艾德林的日記', fx: '回顧過去幾天', req: () => true,
+  showActionMenu('Eldrin’s Notes', [
+    { name: '📔 Eldrin’s Diary', fx: 'Look back on the past few days', req: () => true,
       run() { setTimeout(() => doAction_DiaryMenu(), 0); } },
-    { name: '📒 生活筆記', fx: '生活中的提醒', req: () => true,
+    { name: '📒 Life Notes', fx: 'Reminders for daily life', req: () => true,
       run() { setTimeout(() => doAction_LifeNotesMenu(), 0); } },
-    { name: '<img src="herbs.png" class="item-icon-svg"> 藥草筆記', fx: '素材與配方', req: () => true,
+    { name: '<img src="herbs.png" class="item-icon-svg"> Herb Notes', fx: 'Materials and recipes', req: () => true,
       run() { setTimeout(() => doAction_HerbNotesMenu(), 0); } },
   ]);
 }
@@ -12352,7 +12352,7 @@ function doAction_DiaryMenu() {
   for (let d = 0; d <= lastDay; d++) {
     if (!ELDRIN_DIARY[d]) continue;
     items.push({
-      name: `第 ${d} 天`, fx: '', req: () => true,
+      name: `Day ${d}`, fx: '', req: () => true,
       run() {
         const entry = typeof ELDRIN_DIARY[d] === 'function' ? ELDRIN_DIARY[d]() : ELDRIN_DIARY[d];
         _showNoteLines(entry, () => doAction_DiaryMenu());
@@ -12360,9 +12360,9 @@ function doAction_DiaryMenu() {
     });
   }
   if (items.length === 0) {
-    items.push({ name: '（還沒有可以回顧的日記）', fx: '', req: () => false, run() {} });
+    items.push({ name: '(no diary to look back on yet)', fx: '', req: () => false, run() {} });
   }
-  showActionMenu('📔 艾德林的日記', items);
+  showActionMenu('📔 Eldrin’s Diary', items);
 }
 
 function doAction_LifeNotesMenu() {
@@ -12370,7 +12370,7 @@ function doAction_LifeNotesMenu() {
     name: tip.name, fx: '', req: () => true,
     run() { _showNoteLines(tip.lines, () => doAction_LifeNotesMenu()); }
   }));
-  showActionMenu('📒 生活筆記', items);
+  showActionMenu('📒 Life Notes', items);
 }
 
 function doAction_HerbNotesMenu() {
@@ -12378,27 +12378,27 @@ function doAction_HerbNotesMenu() {
     name: tip.name, fx: '', req: () => true,
     run() { _showNoteLines(tip.lines, () => doAction_HerbNotesMenu()); }
   }));
-  showActionMenu('<img src="herbs.png" class="item-icon-svg"> 藥草筆記', items);
+  showActionMenu('<img src="herbs.png" class="item-icon-svg"> Herb Notes', items);
 }
 
 function doAction_BookshelfMenu() {
   if (G.bloodMoon7Active) { warn('You can’t act right now.'); return; }
   if (G.paused || G.actionSceneActive) return;
-  showActionMenu('書櫃', [
+  showActionMenu('Bookshelf', [
     {
-      name: '自己讀書',
+      name: 'Read by yourself',
       fx: () => {
         const todayRead = (G.eldrinBookReadDays || []).includes(G.day);
-        if (todayRead) return '重讀今天的內容';
-        if (G.day < 0 || G.day > 11) return '沒有新的內容';
-        if (G.day === 11 && !hasReadAllEldrinBookBeforeFinal()) return '缺少前面的閱讀紀錄';
+        if (todayRead) return 'Reread today’s entry';
+        if (G.day < 0 || G.day > 11) return 'No new content';
+        if (G.day === 11 && !hasReadAllEldrinBookBeforeFinal()) return 'Missing earlier reading records';
         return ELDRIN_BOOK_DAILY[G.day]?.title ?? '';
       },
       run() { doAction_ReadAlone(); }
     },
     {
-      name: '唸書給阿瓦倫聽',
-      fx: '信任+10  心情+3',
+      name: 'Read to Avaren',
+      fx: 'Trust+10  Mood+3',
       req() { return G.day >= 3; },
       run() { doAction_ReadBook(); }
     },
@@ -12406,12 +12406,12 @@ function doAction_BookshelfMenu() {
 }
 
 function doAction_ReadAlone() {
-  if (G.timePeriod !== 'evening') { timeWarn('讀書是晚上的行動。'); return; }
-  if (G.day < 0 || G.day > 11) { warn('今天沒有新的內容可以讀。'); return; }
+  if (G.timePeriod !== 'evening') { timeWarn('Reading is a nighttime activity.'); return; }
+  if (G.day < 0 || G.day > 11) { warn('There’s no new content to read today.'); return; }
   spendFatigue(1);
   if (!Array.isArray(G.eldrinBookReadDays)) G.eldrinBookReadDays = [];
   if (G.day === 11 && !hasReadAllEldrinBookBeforeFinal()) {
-    story('Narrator', '你翻到關於記憶的那一頁，卻發現許多前面的註記都還沒有讀完。\n\n缺少那些線索，你無法理解這一頁真正想說的事情。');
+    story('Narrator', 'You turn to the page about memory, only to find many earlier notes still unread.\n\nWithout those clues, you can’t understand what this page is truly trying to say.');
     return;
   }
   const book = ELDRIN_BOOK_DAILY[G.day];
@@ -12435,24 +12435,24 @@ function hasReadAllEldrinBookBeforeFinal() {
 }
 
 function doAction_BookshelfMenu() {
-  if (G.bloodMoon7Active) { warn('血月夜無法閱讀。'); return; }
+  if (G.bloodMoon7Active) { warn('You can’t read on a blood moon night.'); return; }
   if (G.paused || G.actionSceneActive) return;
   playLoopingAudio('sfx-bookshelf', 4.0);
-  showActionMenu('書櫃', [
+  showActionMenu('Bookshelf', [
     {
-      name: '自己讀書',
+      name: 'Read by yourself',
       fx: () => {
         const todayRead = (G.eldrinBookReadDays || []).includes(G.day);
-        if (todayRead) return '可重讀今天的內容';
-        if (G.day < 0 || G.day > 11) return '沒有可閱讀的內容';
-        if (G.day === 11 && !hasReadAllEldrinBookBeforeFinal()) return '缺少前面的閱讀紀錄';
+        if (todayRead) return 'You can reread today’s entry';
+        if (G.day < 0 || G.day > 11) return 'Nothing to read';
+        if (G.day === 11 && !hasReadAllEldrinBookBeforeFinal()) return 'Missing earlier reading records';
         return ELDRIN_BOOK_DAILY[G.day]?.title ?? '';
       },
       run() { doAction_ReadAlone(); }
     },
     {
-      name: '唸書給阿瓦倫聽',
-      fx: '（每天2次）',
+      name: 'Read to Avaren',
+      fx: '(twice per day)',
       req() { return G.day >= 3; },
       run() { doAction_ReadBook(); }
     },
@@ -12460,10 +12460,10 @@ function doAction_BookshelfMenu() {
 }
 
 function doAction_ReadBook() {
-  if (G.day4AvarenGone) { warn('阿瓦倫不在這裡。'); return; }
-  if (G.timePeriod !== 'evening') { timeWarn('讀書是晚上的行動。'); return; }
+  if (G.day4AvarenGone) { warn('Avaren isn’t here.'); return; }
+  if (G.timePeriod !== 'evening') { timeWarn('Reading is a nighttime activity.'); return; }
   if (G.day === 10 && !G.usedForgetMagic) { rejectDay10AvarenCare('read'); return; }
-  if ((G.avarenReadToday ?? 0) >= 2) { warn('今天已經念過兩次書了。'); return; }
+  if ((G.avarenReadToday ?? 0) >= 2) { warn('You’ve already read twice today.'); return; }
   spendFatigue(1);
   G.avarenReadToday = (G.avarenReadToday ?? 0) + 1;
   if (!Array.isArray(G.avarenReadPool) || G.avarenReadPool.length < 1) {
@@ -12497,7 +12497,7 @@ function startActionScene(lines, max, onDone, pageSfx = false) {
   document.getElementById('action-scene-overlay').style.display = 'flex';
 }
 
-const NPC_SPEAKERS = new Set(['Narrator', 'You', 'Eldrin', 'Avaren', 'Red', 'Stranger', 'Winter', 'Mysterious Traveler', 'Noah', 'Fairy', '希奧妮']);
+const NPC_SPEAKERS = new Set(['Narrator', 'You', 'Eldrin', 'Avaren', 'Red', 'Stranger', 'Winter', 'Mysterious Traveler', 'Noah', 'Fairy', 'Theonie']);
 const SPEAKER_AVATARS = {
   'You': 'eldrin_avatar.png',
   'Eldrin': 'eldrin_avatar.png',
@@ -12507,7 +12507,7 @@ const SPEAKER_AVATARS = {
   'Winter': 'winter_avatar.png',
   'Mysterious Traveler': 'winter_avatar.png',
   'Noah': 'noah_avatar.png',
-  '希奧妮': 'Theonie_avatar.png',
+  'Theonie': 'Theonie_avatar.png',
 };
 // 預先載入所有對話頭像，避免首次顯示時還要向伺服器抓圖造成閃爍
 const _preloadedAvatars = [];
@@ -12525,7 +12525,7 @@ const SPEAKER_TEXT_CLASS = {
   'Winter': 'asc-text-winter',
   'Mysterious Traveler': 'asc-text-winter',
   'Noah': 'asc-text-noah',
-  '希奧妮': 'asc-text-theonie',
+  'Theonie': 'asc-text-theonie',
   'Fairy': 'asc-text-fairy',
 };
 const DIALOGUE_TYPE_SPEED = 24;
@@ -12810,7 +12810,7 @@ const BAG_ITEMS = [
   { key:'coldPotion',      icon:'<img src="Medicine_red.svg" class="item-icon-svg">',   name:'Healing Potion',   desc:'能緩解阿瓦倫身體疼痛的藥水（疼痛-5）。\n艾德林自己喝下時，則能恢復 HP（+5）。需要時間研製。' },
   { key:'cursePotion',     icon:'<img src="Medicine_yellow.svg" class="item-icon-svg">', name:'Curse-Cure Potion',   desc:'針對詛咒調配的特殊藥水，可以暫時壓制黑霧擴散。' },
   { key:'forgetPotion',    icon:'<img src="Medicine_blue.svg" class="item-icon-svg">', name:'Oblivion Potion',   desc:'能抹去特定記憶的危險藥水。一旦使用，無法回頭。' },
-  { key:'staminaPotion',   icon:'<img src="Medicine_green.svg" class="item-icon-svg">', name:'體力藥水',   desc:'能恢復體力的營養藥水。疲憊的時候喝一瓶，精神會好很多。' },
+  { key:'staminaPotion',   icon:'<img src="Medicine_green.svg" class="item-icon-svg">', name:'Stamina Potion',   desc:'能恢復體力的營養藥水。疲憊的時候喝一瓶，精神會好很多。' },
   { key:'pebble',          icon:'🪨', name:'小石頭',       desc:'完全沒有用的小石頭。但阿瓦倫走了很遠才撿來，覺得你可能會喜歡。' },
   { key:'wildFlower',      icon:'🍂', name:'漂亮的樹葉',   desc:'有點皺掉了的落葉。他好像很認真地撿過來，包在手心裡帶回來的。' },
   { key:'feather',         icon:'🪶', name:'奇怪的羽毛',   desc:'顏色很特別的羽毛。他把羽毛遞給你的時候，表情有一點點期待。' },
@@ -12986,7 +12986,7 @@ function bdpAdjust(d) {
 }
 
 const BAG_USABLE_POTIONS = {
-  staminaPotion: { name:'體力藥水', stat:'eldrinFatigue', amt:45, label:'體力', emoji:'💚' },
+  staminaPotion: { name:'Stamina Potion', stat:'eldrinFatigue', amt:45, label:'體力', emoji:'💚' },
   coldPotion:    { name:'Healing Potion', stat:'eldrinHp',      amt:5,  label:'HP',   emoji:'🔴' },
 };
 
@@ -13878,7 +13878,7 @@ const DEBUG_ITEM_LIST = [
   { key: 'wood',            name: '<img src="wood.png" class="item-icon-svg"> 木材' },
   { key: 'branch',          name: '<img src="Branches.png" class="item-icon-svg"> 樹枝' },
   { key: 'crystal',         name: '💎 水晶碎片' },
-  { key: 'bug',             name: '<img src="bug01.png" class="item-icon-svg"> 蟲材' },
+  { key: 'bug',             name: '<img src="bug01.png" class="item-icon-svg"> Insect Parts' },
   { key: 'giftBug',         name: '<img src="bug02.png" class="item-icon-svg"> 小蟲子' },
   { key: 'fish',            name: '🐟 魚' },
   { key: 'stone',           name: '<img src="Stone.png" class="item-icon-svg"> 礦石' },
@@ -15386,7 +15386,7 @@ async function startGoodEndingAnimation() {
     { speaker: 'Noah',   text: '對不起！我知道這不是你的本業，但是我們除了你，沒有人可以依靠了！' },
     { speaker: 'Noah',   text: '你可以幫幫她嗎？' },
     { speaker: 'Noah',   text: '她是希奧妮．哈特，是我認識很久的好友！' },
-    { speaker: '希奧妮', text: '諾亞...這裡不是藥水店嗎？為什麼要帶我來這裡...一般的藥水店可沒辦法解決我的詛咒.....' },
+    { speaker: 'Theonie', text: '諾亞...這裡不是藥水店嗎？為什麼要帶我來這裡...一般的藥水店可沒辦法解決我的詛咒.....' },
     { speaker: 'Eldrin', text: '我知道了...！希奧妮小姐，請讓我先看一下你的眼睛...' },
   ], 4000);
 
