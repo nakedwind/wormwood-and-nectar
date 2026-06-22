@@ -11198,13 +11198,13 @@ const TRADE_SELL = [
   { id:'crystal',         icon:'<img src="crystal.png" class="item-icon-svg">', name:'Crystal Shards', price:8  },
   { id:'apple',           icon:'🍎', name:'Apple',     price:2  },
   { id:'vegetable',       icon:'<img src="vegetable.png" class="item-icon-svg">', name:'Vegetable',     price:2  },
-  { id:'mushroom',        icon:'<img src="mushroom.png" class="item-icon-svg">', name:'蘑菇',     price:3  },
-  { id:'egg',             icon:'🥚', name:'鳥蛋',     price:3  },
-  { id:'frog',            icon:'<img src="frog.png" class="item-icon-svg">', name:'青蛙',     price:3  },
-  { id:'whiteFlower',     icon:WF_ICON, name:'白藥花',   price:4  },
+  { id:'mushroom',        icon:'<img src="mushroom.png" class="item-icon-svg">', name:'Mushroom',     price:3  },
+  { id:'egg',             icon:'🥚', name:'Bird Egg',     price:3  },
+  { id:'frog',            icon:'<img src="frog.png" class="item-icon-svg">', name:'Frog',     price:3  },
+  { id:'whiteFlower',     icon:WF_ICON, name:'White Medicine Flower',   price:4  },
   { id:'fairyItem',       icon:'<img src="Fairy.png" class="item-icon-svg">', name:'Fairy',     price:10 },
-  { id:'beastMeat',       icon:'🥩', name:'獸肉',     price:5  },
-  { id:'monsterMaterial', icon:'🦴', name:'魔物素材', price:8  },
+  { id:'beastMeat',       icon:'🥩', name:'Beast Meat',     price:5  },
+  { id:'monsterMaterial', icon:'🦴', name:'Monster Material', price:8  },
   { id:'coldPotion',      icon:'<img src="Medicine_red.svg" class="item-icon-svg">',   name:'Healing Potion', price:6  },
   { id:'cursePotion',     icon:'<img src="Medicine_yellow.svg" class="item-icon-svg">', name:'Curse-Cure Potion', price:8  },
   { id:'forgetPotion',    icon:'<img src="Medicine_blue.svg" class="item-icon-svg">', name:'Oblivion Potion', price:12 },
@@ -11219,11 +11219,11 @@ const TRADE_BUY = [
   { id:'crystal',     icon:'<img src="crystal.png" class="item-icon-svg">', name:'Crystal Shards', price:14 },
   { id:'apple',       icon:'🍎', name:'Apple',     price:3  },
   { id:'vegetable',   icon:'<img src="vegetable.png" class="item-icon-svg">', name:'Vegetable',     price:3  },
-  { id:'mushroom',    icon:'<img src="mushroom.png" class="item-icon-svg">', name:'蘑菇',     price:5  },
-  { id:'egg',         icon:'🥚', name:'鳥蛋',     price:5  },
-  { id:'frog',        icon:'<img src="frog.png" class="item-icon-svg">', name:'青蛙',     price:5  },
-  { id:'whiteFlower', icon:WF_ICON, name:'白藥花',   price:7  },
-  { id:'beastMeat',   icon:'🥩', name:'獸肉',     price:8  },
+  { id:'mushroom',    icon:'<img src="mushroom.png" class="item-icon-svg">', name:'Mushroom',     price:5  },
+  { id:'egg',         icon:'🥚', name:'Bird Egg',     price:5  },
+  { id:'frog',        icon:'<img src="frog.png" class="item-icon-svg">', name:'Frog',     price:5  },
+  { id:'whiteFlower', icon:WF_ICON, name:'White Medicine Flower',   price:7  },
+  { id:'beastMeat',   icon:'🥩', name:'Beast Meat',     price:8  },
 ];
 
 function generateDailyBuyList() {
@@ -11252,14 +11252,14 @@ function generateDailyBuyList() {
 
 function openGateMenu() {
   playLoopingAudio('sfx-menu-open', 3.0);
-  showActionMenu('柵欄門', [
+  showActionMenu('Gate', [
     {
-      name: '前往村鎮市集', fx: '（僅早上開放）',
+      name: 'Go to Town Market', fx: '(open mornings only)',
       req: () => true,
       run() { openTrade(); }
     },
     {
-      name: '前往森林', fx: '',
+      name: 'Go to Forest', fx: '',
       req: () => true,
       run() { playLoopingAudio('sfx-outside-door-open', 6.0); changeScene('forest'); }
     },
@@ -11267,7 +11267,7 @@ function openGateMenu() {
 }
 
 function openTrade() {
-  if (G.timePeriod !== 'morning') { timeWarn('市集是早上才開門的。'); return; }
+  if (G.timePeriod !== 'morning') { timeWarn('The market only opens in the morning.'); return; }
   if (!G.dailyBuyList) generateDailyBuyList();
   G.paused = true;
   _tradeTab = 'buy';
@@ -11407,7 +11407,7 @@ function renderTradeMenu() {
     row.className = 'trade-row' + (isBonus ? ' trade-row-sell-bonus' : '');
     row.innerHTML =
       `<span class="tr-name">${item.icon} ${item.name}</span>` +
-      `<span class="tr-qty">持有 ${owned}</span>` +
+      `<span class="tr-qty">Owned ${owned}</span>` +
       (isBonus
         ? `<span class="tr-price tr-price-bonus"><s class="tr-orig-price">$${item.price}</s> $${sellPrice}</span>`
         : `<span class="tr-price">$${sellPrice}</span>`) +
@@ -11425,7 +11425,7 @@ function renderTradeMenu() {
     return s + ((_tradeSelSell[i.id]||0) * p);
   }, 0);
   const sellBtn = document.getElementById('trade-sell-btn');
-  sellBtn.textContent = totalSell > 0 ? `確認賣出（+${totalSell} 金）` : '確認賣出';
+  sellBtn.textContent = totalSell > 0 ? `Confirm Sale (+${totalSell} gold)` : 'Confirm Sale';
   sellBtn.disabled = totalSell <= 0;
 
   // ── 買入 ──
@@ -11445,7 +11445,7 @@ function renderTradeMenu() {
       : `<span class="tr-price">$${item.salePrice}</span>`;
     row.innerHTML =
       `<span class="tr-name">${item.icon} ${item.name}</span>` +
-      `<span class="tr-qty">${soldOut ? '售完' : '庫存 '+(item.stock ?? 0)}</span>` +
+      `<span class="tr-qty">${soldOut ? 'Sold out' : 'Stock '+(item.stock ?? 0)}</span>` +
       priceHtml +
       `<div class="tr-qty-ctrl">` +
         `<button class="tr-qty-btn" ${sel<=0?'disabled':''} onclick="tradeAdj('buy','${item.id}',-1)">−</button>` +
@@ -11458,7 +11458,7 @@ function renderTradeMenu() {
   });
   const totalBuy = dailyList.reduce((s,i) => s + ((_tradeSelBuy[i.id]||0)*i.salePrice), 0);
   const buyBtn = document.getElementById('trade-buy-btn');
-  buyBtn.textContent = totalBuy > 0 ? `確認購買（-${totalBuy} 金）` : '確認購買';
+  buyBtn.textContent = totalBuy > 0 ? `Confirm Purchase (-${totalBuy} gold)` : 'Confirm Purchase';
   buyBtn.disabled = totalBuy <= 0 || totalBuy > G.money;
   _tradeApplyFocus();
 }
@@ -11501,8 +11501,8 @@ function confirmBuy() {
       if (q > 0) usedSlots += Math.ceil(q / BAG_MAX_STACK);
     });
     if (usedSlots > BAG_SLOTS) {
-      showEvent('🎒', '背包已滿',
-        '背包空間不足，沒辦法買下這些東西。\n先回去清出一些空間再來吧。',
+      showEvent('🎒', 'Backpack Full',
+        'There isn’t enough space in your backpack to buy these.\nGo clear out some room first, then come back.',
         () => { G.paused = true; }, 'blue'); // 關掉彈窗後維持商店暫停
       return; // 不扣錢、不購買
     }
@@ -11537,21 +11537,21 @@ const SOUP_POS = { x: 306, y: 199 };
 // 食材資料表
 // effects = 餵阿瓦倫時的效果；stam = 艾德林自己吃時恢復的體力
 const COOK_INGREDIENTS_LIST = [
-  { key: 'herb',            name: 'Herbs',   icon: '<img src="herbs.png" class="item-icon-svg">', fx: '飽食度+2  疼痛-3',          effects: { avarenHunger: 2, pain: -3 },           stam: 8 },
-  { key: 'fish',            name: 'Fish',     icon: '🐟', fx: '飽食度+15',                 effects: { avarenHunger: 15 },                     stam: 15 },
-  { key: 'bug',             name: 'Insect Parts',   icon: '<img src="bug01.png" class="item-icon-svg">', fx: '飽食度+2  疼痛-2  心情-2', effects: { avarenHunger: 2, pain: -2, mood: -2 }, stam: 3 },
-  { key: 'whiteFlower',     name: '白藥花', icon: WF_ICON, fx: '飽食度+2  詛咒-2',         effects: { avarenHunger: 2, curse: -2 },          stam: 6 },
-  { key: 'apple',           name: 'Apple',   icon: '🍎', fx: '飽食度+5  心情+1',         effects: { avarenHunger: 5, mood: 1 },            stam: 5 },
-  { key: 'fairyItem',       name: 'Fairy',   icon: '<img src="Fairy.png" class="item-icon-svg">', fx: '飽食度+2  詛咒-40',        effects: { avarenHunger: 2, curse: -40 },         stam: 30 },
-  { key: 'vegetable',       name: 'Vegetable',   icon: '<img src="vegetable.png" class="item-icon-svg">', fx: '飽食度+10  心情+1',        effects: { avarenHunger: 10, mood: 1 },           stam: 15 },
-  { key: 'mushroom',        name: '蘑菇',   icon: '🍄', fx: '飽食度+2  疼痛+3  心情-2', effects: { avarenHunger: 2, pain: 3, mood: -2 },  stam: 10 },
-  { key: 'egg',             name: '鳥蛋',   icon: '🥚', fx: '飽食度+5  心情+1',         effects: { avarenHunger: 5, mood: 1 },            stam: 6 },
-  { key: 'frog',            name: '青蛙',   icon: '<img src="frog.png" class="item-icon-svg">', fx: '飽食度+10  心情-3',        effects: { avarenHunger: 10, mood: -3 },          stam: 10 },
-  { key: 'beastMeat',       name: '獸肉',   icon: '🥩', fx: '飽食度+30  心情+3',        effects: { avarenHunger: 30, mood: 3 },           stam: 30 },
-  { key: 'stone',           name: 'Ore',   icon: '<img src="Stone.png" class="item-icon-svg">', fx: '心情-5',                   effects: { mood: -5 },                            stam: 0 },
-  { key: 'monsterMaterial', name: '魔物素材', icon: '🦴', fx: '飽食度+5  詛咒-4  心情-3', effects: { avarenHunger: 5, curse: -4, mood: -3 }, stam: 5 },
-  { key: 'branch',          name: 'Branches',   icon: '<img src="Branches.png" class="item-icon-svg">', fx: '飽食度+5  心情-3',         effects: { avarenHunger: 5, mood: -3 },           stam: 1 },
-  { key: 'crystal',         name: 'Crystal Shards', icon: '💎', fx: '詛咒-4  心情-3',          effects: { curse: -4, mood: -3 },                 stam: 0 },
+  { key: 'herb',            name: 'Herbs',   icon: '<img src="herbs.png" class="item-icon-svg">', fx: 'Satiety+2  Pain-3',          effects: { avarenHunger: 2, pain: -3 },           stam: 8 },
+  { key: 'fish',            name: 'Fish',     icon: '🐟', fx: 'Satiety+15',                 effects: { avarenHunger: 15 },                     stam: 15 },
+  { key: 'bug',             name: 'Insect Parts',   icon: '<img src="bug01.png" class="item-icon-svg">', fx: 'Satiety+2  Pain-2  Mood-2', effects: { avarenHunger: 2, pain: -2, mood: -2 }, stam: 3 },
+  { key: 'whiteFlower',     name: 'White Medicine Flower', icon: WF_ICON, fx: 'Satiety+2  Curse-2',         effects: { avarenHunger: 2, curse: -2 },          stam: 6 },
+  { key: 'apple',           name: 'Apple',   icon: '🍎', fx: 'Satiety+5  Mood+1',         effects: { avarenHunger: 5, mood: 1 },            stam: 5 },
+  { key: 'fairyItem',       name: 'Fairy',   icon: '<img src="Fairy.png" class="item-icon-svg">', fx: 'Satiety+2  Curse-40',        effects: { avarenHunger: 2, curse: -40 },         stam: 30 },
+  { key: 'vegetable',       name: 'Vegetable',   icon: '<img src="vegetable.png" class="item-icon-svg">', fx: 'Satiety+10  Mood+1',        effects: { avarenHunger: 10, mood: 1 },           stam: 15 },
+  { key: 'mushroom',        name: 'Mushroom',   icon: '🍄', fx: 'Satiety+2  Pain+3  Mood-2', effects: { avarenHunger: 2, pain: 3, mood: -2 },  stam: 10 },
+  { key: 'egg',             name: 'Bird Egg',   icon: '🥚', fx: 'Satiety+5  Mood+1',         effects: { avarenHunger: 5, mood: 1 },            stam: 6 },
+  { key: 'frog',            name: 'Frog',   icon: '<img src="frog.png" class="item-icon-svg">', fx: 'Satiety+10  Mood-3',        effects: { avarenHunger: 10, mood: -3 },          stam: 10 },
+  { key: 'beastMeat',       name: 'Beast Meat',   icon: '🥩', fx: 'Satiety+30  Mood+3',        effects: { avarenHunger: 30, mood: 3 },           stam: 30 },
+  { key: 'stone',           name: 'Ore',   icon: '<img src="Stone.png" class="item-icon-svg">', fx: 'Mood-5',                   effects: { mood: -5 },                            stam: 0 },
+  { key: 'monsterMaterial', name: 'Monster Material', icon: '🦴', fx: 'Satiety+5  Curse-4  Mood-3', effects: { avarenHunger: 5, curse: -4, mood: -3 }, stam: 5 },
+  { key: 'branch',          name: 'Branches',   icon: '<img src="Branches.png" class="item-icon-svg">', fx: 'Satiety+5  Mood-3',         effects: { avarenHunger: 5, mood: -3 },           stam: 1 },
+  { key: 'crystal',         name: 'Crystal Shards', icon: '💎', fx: 'Curse-4  Mood-3',          effects: { curse: -4, mood: -3 },                 stam: 0 },
 ];
 
 let cookSelectCursor = 0;
@@ -11643,7 +11643,7 @@ function pickUpKettle() {
   const img  = document.getElementById('kettle-carry-img');
   if (img) img.src = G.kettleFull ? 'bg_outside/kettle_water.png' : 'bg_outside/kettle.png';
   if (icon) icon.style.display = 'block';
-  toast(G.kettleFull ? '🫖 拿起裝滿水的水壺' : '🫖 拿起水壺');
+  toast(G.kettleFull ? '🫖 Pick up the filled kettle' : '🫖 Pick up the kettle');
 }
 
 function putDownKettle() {
@@ -11673,7 +11673,7 @@ function fillKettle() {
   playLoopingAudio('sfx-fill-water', 3.0);
   const img = document.getElementById('kettle-carry-img');
   if (img) img.src = 'bg_outside/kettle_water.png';
-  toast('🫧 裝滿水了！');
+  toast('🫧 Filled with water!');
 }
 
 function isNearSoup() {
@@ -11700,7 +11700,7 @@ function putBackSoup() {
     obj.style.display = 'block';
   }
   if (carry) carry.style.display = 'none';
-  toast('🍲 已把料理放回桌上');
+  toast('🍲 Put the dish back on the table');
 }
 
 function openCookSelectPanel() {
@@ -11737,7 +11737,7 @@ function renderCookSelectItems() {
     const selected = G.cookSelectedKeys.includes(ing.key);
     const btn = document.createElement('button');
     btn.className = 'csi-item' + (selected ? ' selected' : '');
-    const stamHtml = ing.stam > 0 ? `<span class="ci-fx ci-fx-stam">體力+${ing.stam}</span>` : '';
+    const stamHtml = ing.stam > 0 ? `<span class="ci-fx ci-fx-stam">Stamina+${ing.stam}</span>` : '';
     btn.innerHTML = `<span class="ci-name">${ing.icon} ${ing.name}（${qty}）${selected ? ' ✓' : ''}</span><span class="ci-fx">${ing.fx}</span>${stamHtml}`;
     btn.onclick = () => toggleCookIngredient(ing.key);
     container.appendChild(btn);
@@ -11745,7 +11745,7 @@ function renderCookSelectItems() {
   if (!hasAny) {
     const p = document.createElement('div');
     p.style.cssText = 'color:#6a5020;font-size:14px;padding:10px 0;text-align:center;';
-    p.textContent = '（身上沒有可用的食材）';
+    p.textContent = '(no usable ingredients on hand)';
     container.appendChild(p);
     cookSelectCursor = 0; // 沒有食材時游標跳到開始烹飪
   }
@@ -11762,7 +11762,7 @@ function updateCookSelectSummary() {
   const summary = document.getElementById('cook-select-summary');
   if (!summary) return;
   if (!G.cookSelectedKeys || G.cookSelectedKeys.length === 0) {
-    summary.textContent = '未選擇食材——基本料理';
+    summary.textContent = 'No ingredients — basic dish';
     return;
   }
   const total = { avarenHunger: 0, pain: 0, curse: 0, mood: 0 };
@@ -11775,20 +11775,20 @@ function updateCookSelectSummary() {
     }
   });
   const parts = [];
-  if (total.avarenHunger !== 0) parts.push(`飽食度${total.avarenHunger > 0 ? '+' : ''}${total.avarenHunger}`);
-  if (total.pain !== 0)         parts.push(`疼痛${total.pain > 0 ? '+' : ''}${total.pain}`);
-  if (total.curse !== 0)        parts.push(`詛咒${total.curse > 0 ? '+' : ''}${total.curse}`);
-  if (total.mood !== 0)         parts.push(`心情${total.mood > 0 ? '+' : ''}${total.mood}`);
-  if (stamTotal !== 0)          parts.push(`體力+${stamTotal}`);
-  summary.textContent = '合計效果：' + parts.join('  ');
+  if (total.avarenHunger !== 0) parts.push(`Satiety${total.avarenHunger > 0 ? '+' : ''}${total.avarenHunger}`);
+  if (total.pain !== 0)         parts.push(`Pain${total.pain > 0 ? '+' : ''}${total.pain}`);
+  if (total.curse !== 0)        parts.push(`Curse${total.curse > 0 ? '+' : ''}${total.curse}`);
+  if (total.mood !== 0)         parts.push(`Mood${total.mood > 0 ? '+' : ''}${total.mood}`);
+  if (stamTotal !== 0)          parts.push(`Stamina+${stamTotal}`);
+  summary.textContent = 'Total effect: ' + parts.join('  ');
 }
 
 function confirmCookStart(mode) {
   // mode: 'fast' 大火快煮（木柴-2，10秒）／'slow' 細火慢熬（樹枝-2，25秒）
   if (mode === 'fast') {
-    if ((G.wood || 0) < 2) { warn('木柴不足（需要2木柴）！'); return; }
+    if ((G.wood || 0) < 2) { warn('Not enough firewood (2 needed)!'); return; }
   } else if (mode === 'slow') {
-    if ((G.branch || 0) < 2) { warn('樹枝不足（需要2樹枝）！'); return; }
+    if ((G.branch || 0) < 2) { warn('Not enough branches (2 needed)!'); return; }
   } else {
     return;
   }
@@ -11818,7 +11818,7 @@ function confirmCookStart(mode) {
   closeCookSelect();
   document.getElementById('cook-scene-wrap').style.display = 'block';
   document.getElementById('cook-scene-bar').style.width = '0%';
-  storyAuto('Narrator', '你在廚房裡點起爐火，鍋子開始咕嚕咕嚕地響。熱氣從廚房飄出來。');
+  storyAuto('Narrator', 'You light the stove in the kitchen, and the pot begins to bubble and gurgle. Steam drifts out of the kitchen.');
 }
 
 function doSoupInteract() {
@@ -11827,28 +11827,28 @@ function doSoupInteract() {
   const selfHunger = (G.cookIngredient && G.cookIngredient.avarenHunger) || 0;
   const selfStam   = G.cookStamina || 0;
   const selfFxParts = [];
-  if (selfHunger > 0) selfFxParts.push('飽食度+' + selfHunger);
-  if (selfStam > 0)   selfFxParts.push('體力+' + selfStam);
+  if (selfHunger > 0) selfFxParts.push('Satiety+' + selfHunger);
+  if (selfStam > 0)   selfFxParts.push('Stamina+' + selfStam);
   // 計算這道料理餵給阿瓦倫的全部功效（無食材的基本料理＝飽食度+10）
   const ci = G.cookIngredient;
   const avParts = [];
   if (ci) {
-    if (ci.avarenHunger) avParts.push(`飽食度${ci.avarenHunger > 0 ? '+' : ''}${ci.avarenHunger}`);
-    if (ci.pain)         avParts.push(`疼痛${ci.pain > 0 ? '+' : ''}${ci.pain}`);
-    if (ci.curse)        avParts.push(`詛咒${ci.curse > 0 ? '+' : ''}${ci.curse}`);
-    if (ci.mood)         avParts.push(`心情${ci.mood > 0 ? '+' : ''}${ci.mood}`);
+    if (ci.avarenHunger) avParts.push(`Satiety${ci.avarenHunger > 0 ? '+' : ''}${ci.avarenHunger}`);
+    if (ci.pain)         avParts.push(`Pain${ci.pain > 0 ? '+' : ''}${ci.pain}`);
+    if (ci.curse)        avParts.push(`Curse${ci.curse > 0 ? '+' : ''}${ci.curse}`);
+    if (ci.mood)         avParts.push(`Mood${ci.mood > 0 ? '+' : ''}${ci.mood}`);
   } else {
-    avParts.push('飽食度+10');
+    avParts.push('Satiety+10');
   }
-  const avEffectStr = avParts.length ? avParts.join('　') : '沒什麼效果';
+  const avEffectStr = avParts.length ? avParts.join('　') : 'no real effect';
   const carryFx =
     '<div class="fx-stack">'
-    + '<span>拿起料理，可以拿去給別人或放回桌上</span>'
+    + '<span>Pick up the dish to give to someone or put it back on the table</span>'
     + '<span style="color:#5a4818;font-weight:800;">' + avEffectStr + '</span>'
     + '</div>';
-  showActionMenu('桌上的料理——', [
+  showActionMenu('The dish on the table——', [
     {
-      name: '自己吃', fx: '艾德林 ' + (selfFxParts.length ? selfFxParts.join('  ') : '沒什麼效果'),
+      name: 'Eat it yourself', fx: 'Eldrin ' + (selfFxParts.length ? selfFxParts.join('  ') : 'no real effect'),
       req: () => true,
       run() {
         G.soupReady = false;
@@ -11862,22 +11862,22 @@ function doSoupInteract() {
         // 阿瓦倫在旁邊時，不講「一個人吃飯」那句
         const avarenNearby = !isAvarenUnconscious() && G.avarenScene === G.scene && !G.day4AvarenGone;
         const eatLines = [
-          '你獨自吃完了這碗湯。味道不錯，肚子暖了起來。',
-          '湯還是熱的。你一口一口喝完，覺得好一些了。',
+          'You finish the soup alone. It tastes good, and your stomach warms.',
+          'The soup is still hot. You sip it down and feel a little better.',
         ];
-        if (!avarenNearby) eatLines.push('你坐下來把湯喝完。一個人吃飯，安靜得有點奇怪。');
+        if (!avarenNearby) eatLines.push('You sit down and finish the soup. Eating alone, the quiet feels a little strange.');
         storyAuto('Narrator', pick(eatLines));
       }
     },
     {
-      name: '端起食物', fx: carryFx,
+      name: 'Pick up the food', fx: carryFx,
       req: () => true,
       run() {
         G.carryingSoup = true;
         G.soupReady = false;
         document.getElementById('soup-obj').style.display = 'none';
-        storyAuto('Narrator', '你小心地端起料理。');
-        toast('🍲 端著料理，可以放回桌上或拿去給別人');
+        storyAuto('Narrator', 'You carefully pick up the dish.');
+        toast('🍲 Carrying the dish—you can set it back down or give it to someone');
       }
     },
   ]);
@@ -12795,17 +12795,17 @@ const BAG_ITEMS = [
   { key:'branch',          icon:'<img src="Branches.png" class="item-icon-svg">', name:'Branches',       desc:'細小的樹枝，有時候可以入菜，主要是引火用。' },
   { key:'stone',           icon:'<img src="Stone.png" class="item-icon-svg">', name:'Ore',       desc:'從礦脈敲下的石塊，某些石材對詛咒有抑制效果。' },
   { key:'crystal',         icon:'<img src="crystal.png" class="item-icon-svg">', name:'水晶',       desc:'蘊含微弱魔力的天然水晶，是高階藥水的材料之一。' },
-  { key:'whiteFlower',     icon:WF_ICON, name:'白藥花',     desc:'開在森林深處的稀有花卉。對魔物有安撫效果。' },
+  { key:'whiteFlower',     icon:WF_ICON, name:'White Medicine Flower',     desc:'開在森林深處的稀有花卉。對魔物有安撫效果。' },
   { key:'apple',           icon:'🍎', name:'Apple',       desc:'酸甜好吃的蘋果，煮成料理很好吃。' },
   { key:'vegetable',       icon:'<img src="vegetable.png" class="item-icon-svg">', name:'Vegetable',       desc:'從田裡收穫的新鮮蔬菜，烹飪時不可或缺。' },
-  { key:'mushroom',        icon:'<img src="mushroom.png" class="item-icon-svg">', name:'蘑菇',       desc:'森林裡的野生菇類。種類繁多，有些能入藥，有些……不能。' },
+  { key:'mushroom',        icon:'<img src="mushroom.png" class="item-icon-svg">', name:'Mushroom',       desc:'森林裡的野生菇類。種類繁多，有些能入藥，有些……不能。' },
   { key:'fish',            icon:'🐟', name:'Fish',         desc:'從池塘或溪流裡釣到的魚。富含蛋白質，是很好的食材。' },
-  { key:'frog',            icon:'<img src="frog.png" class="item-icon-svg">', name:'青蛙',       desc:'在潮濕草叢裡抓到的青蛙。某些藥方需要用到牠。' },
+  { key:'frog',            icon:'<img src="frog.png" class="item-icon-svg">', name:'Frog',       desc:'在潮濕草叢裡抓到的青蛙。某些藥方需要用到牠。' },
   { key:'bug',             icon:'<img src="bug01.png" class="item-icon-svg">', name:'Insect Parts',       desc:'從樹皮或落葉下翻出來的小蟲。製作特殊藥水的材料。' },
   { key:'giftBug',         icon:'<img src="bug02.png" class="item-icon-svg">', name:'小蟲子',     desc:'阿瓦倫帶回來的小蟲，已經半死不活了。但他大概以為你會喜歡，所以小心地捧著帶了回來。' },
   { key:'egg',             icon:'🥚', name:'蛋',         desc:'鳥巢裡撿到的蛋。質地細緻，可以用來製作料理。' },
-  { key:'beastMeat',       icon:'🥩', name:'獸肉',       desc:'從野獸身上取得的肉塊。熱量高，能補充體力。' },
-  { key:'monsterMaterial', icon:'🦴', name:'魔物素材',   desc:'從魔物身上取得的材料。蘊含異常的能量，用途特殊。' },
+  { key:'beastMeat',       icon:'🥩', name:'Beast Meat',       desc:'從野獸身上取得的肉塊。熱量高，能補充體力。' },
+  { key:'monsterMaterial', icon:'🦴', name:'Monster Material',   desc:'從魔物身上取得的材料。蘊含異常的能量，用途特殊。' },
   { key:'fairyItem',       icon:'<img src="Fairy.png" class="item-icon-svg">', name:'妖精物品',   desc:'神秘又不祥的妖精，似乎是非常好的煉藥材料。' },
   { key:'coldPotion',      icon:'<img src="Medicine_red.svg" class="item-icon-svg">',   name:'Healing Potion',   desc:'能緩解阿瓦倫身體疼痛的藥水（疼痛-5）。\n艾德林自己喝下時，則能恢復 HP（+5）。需要時間研製。' },
   { key:'cursePotion',     icon:'<img src="Medicine_yellow.svg" class="item-icon-svg">', name:'Curse-Cure Potion',   desc:'針對詛咒調配的特殊藥水，可以暫時壓制黑霧擴散。' },
