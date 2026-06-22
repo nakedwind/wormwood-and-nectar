@@ -430,11 +430,12 @@ body {
 .zone-hint {
   position: absolute; background: rgba(14,10,4,0.88); border: 1px solid #6a4820;
   color: #f0d060; font-size: 10px; font-weight: 400; padding: 3px 10px;
-  border-radius: 5px; pointer-events: none; z-index: 30; letter-spacing: 1px; white-space: nowrap;
+  border-radius: 5px; pointer-events: none; z-index: 30; letter-spacing: 1px; white-space: nowrap; transition: background 0.1s;
   transform: translateX(-50%);
 }
-#hint-interact { display: none; }
-#hint-scene    { display: none; }
+#hint-interact { display: none; pointer-events: auto; cursor: pointer; }
+#hint-scene    { display: none; pointer-events: auto; cursor: pointer; }
+#hint-interact:hover, #hint-scene:hover { background: rgba(80,50,10,0.95); }
 #room-label {
   position: absolute; top: 8px; left: 8px;
   background: rgba(8,5,2,0.80); border: 1px solid #3a2810;
@@ -8837,10 +8838,29 @@ function gameLoop() {
   const bagOpen = document.getElementById('bag-overlay').style.display === 'flex';
   if (!isDlgBlocking() && !cookPanelOpen && !G.gatherSearchActive && !G.fishCastLock && !tradeOpen && !bagOpen) {
     const _sp = SPEED * (G._frameFactor || 1); // 依幀率校正，避免高刷新率螢幕走太快
+    const _anyKey = k['ArrowLeft']||k['a']||k['A']||k['ArrowRight']||k['d']||k['D']||k['ArrowUp']||k['w']||k['W']||k['ArrowDown']||k['s']||k['S'];
     if (k['ArrowLeft'] ||k['a']||k['A']) dx = -_sp;
     if (k['ArrowRight']||k['d']||k['D']) dx = +_sp;
     if (k['ArrowUp']   ||k['w']||k['W']) dy = -_sp;
     if (k['ArrowDown'] ||k['s']||k['S']) dy = +_sp;
+    // 點擊移動（平板/滑鼠）：鍵盤優先，有按鍵時取消點擊目標
+    if (_anyKey) {
+      G.touchTarget = null;
+    } else if (G.touchTarget) {
+      const _tdx = G.touchTarget.x - el.x;
+      const _tdy = G.touchTarget.y - el.y;
+      const _dist = Math.sqrt(_tdx * _tdx + _tdy * _tdy);
+      if (_dist < _sp * 1.5) {
+        G.touchTarget = null;
+      } else {
+        dx = (_tdx / _dist) * _sp;
+        dy = (_tdy / _dist) * _sp;
+        G._touchMovePreX = el.x;
+        G._touchMovePreY = el.y;
+      }
+    }
+  } else {
+    G.touchTarget = null;
   }
 
   const nx = Math.max(30, Math.min(SCENE_W-30, el.x + dx));
@@ -8864,6 +8884,14 @@ function gameLoop() {
     const nudge = 4;
     if      (!isPlayerObstacleAt(el.x - nudge, ny, -nudge, dy)) { el.x -= nudge; el.y = ny; }
     else if (!isPlayerObstacleAt(el.x + nudge, ny, nudge, dy)) { el.x += nudge; el.y = ny; }
+  }
+
+  // 點擊移動：若這幀完全沒移動（被障礙擋住），清除目標
+  if (G.touchTarget && G._touchMovePreX != null) {
+    if (Math.abs(el.x - G._touchMovePreX) < 0.1 && Math.abs(el.y - G._touchMovePreY) < 0.1) {
+      G.touchTarget = null;
+    }
+    G._touchMovePreX = null; G._touchMovePreY = null;
   }
 
   // ── 防卡死自救：若玩家錨點落在硬障礙內，自動推往最近的可行走位置 ──
@@ -10367,6 +10395,24 @@ document.addEventListener('keydown', e => {
 });
 document.addEventListener('keyup', e => { if (G.keys) G.keys[e.key] = false; });
 
+// 點擊移動（平板 / 滑鼠左鍵）
+document.getElementById('scene-wrap').addEventListener('click', e => {
+  if (!G || G.paused || G.actionSceneActive || G.fishCastLock || G.gatherSearchActive) return;
+  if (isDlgBlocking()) return;
+  if (document.getElementById('bag-overlay').style.display === 'flex') return;
+  if (document.getElementById('trade-overlay').style.display === 'flex') return;
+  if (document.getElementById('cook-select-overlay').style.display === 'flex') return;
+  // 忽略點到 UI 元素或可互動角色
+  if (e.target !== e.currentTarget && e.target.closest('button, .dlg-box, #hud, #story-box, #interact-hint, #bag-overlay, #trade-overlay, #cw-avaren, #cw-noah')) return;
+  // 不在範圍內 → 走過去
+  const rect = e.currentTarget.getBoundingClientRect();
+  const scaleX = 640 / rect.width;
+  const scaleY = 480 / rect.height;
+  const gx = (e.clientX - rect.left) * scaleX;
+  const gy = (e.clientY - rect.top)  * scaleY;
+  G.touchTarget = { x: gx, y: gy };
+});
+
 // 除錯模式：滑鼠座標顯示
 document.getElementById('scene-wrap').addEventListener('mousemove', e => {
   if (!G || !G.debugMode) return;
@@ -10383,6 +10429,16 @@ document.getElementById('scene-wrap').addEventListener('mouseleave', () => {
 });
 
 // Click on Avaren
+// 點擊互動提示框 = 等同按空白鍵
+document.getElementById('hint-interact').addEventListener('click', e => {
+  e.stopPropagation();
+  document.dispatchEvent(new KeyboardEvent('keydown', { key: ' ', bubbles: true }));
+});
+document.getElementById('hint-scene').addEventListener('click', e => {
+  e.stopPropagation();
+  document.dispatchEvent(new KeyboardEvent('keydown', { key: ' ', bubbles: true }));
+});
+
 document.getElementById('cw-avaren').addEventListener('click', () => {
   if (!G || G.paused) return;
   if (G.day === 0 && G.scene === 'room' && isNearAvaren()) {
@@ -15874,6 +15930,23 @@ function updateSceneScale() {
   document.getElementById('scene-wrap').style.transform = `scale(${scale})`;
   outer.style.width  = dispW + 'px';
   outer.style.height = dispH + 'px';
+
+  // ── 整頁縮放：螢幕比 #app 窄時，縮小置中 ──
+  const APP_W = 1180;
+  const app = document.getElementById('app');
+  const vw = window.innerWidth;
+  if (app && vw < APP_W) {
+    const s = vw / APP_W;
+    app.style.transform = `scale(${s})`;
+    app.style.transformOrigin = 'top center';
+    app.style.marginBottom = `-${Math.round(app.offsetHeight * (1 - s))}px`;
+    document.body.style.overflowX = 'hidden';
+  } else if (app) {
+    app.style.transform = '';
+    app.style.transformOrigin = '';
+    app.style.marginBottom = '';
+    document.body.style.overflowX = '';
+  }
 }
 window.addEventListener('load',   updateSceneScale);
 window.addEventListener('resize', updateSceneScale);
