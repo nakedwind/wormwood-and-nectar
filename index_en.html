@@ -12066,7 +12066,7 @@ function doAction_Cook() {
 function doAction_PickupPotion() {
   if (!G.researchReady) return;
   const potionKey = G.researchType === 'cold' ? 'coldPotion' : G.researchType === 'curse' ? 'cursePotion' : G.researchType === 'stamina' ? 'staminaPotion' : 'forgetPotion';
-  if (isBagFull(potionKey, 1)) { toastBagFull(); warn('背包已滿，無法Retrieve 藥水。請先清出空間。'); return; }
+  if (isBagFull(potionKey, 1)) { toastBagFull(); warn('背包已滿，無法取回藥水。請先清出空間。'); return; }
   playLoopingAudio('sfx-plant-pop', 3.0);
   const label = G.researchType === 'cold' ? '治療藥水' : G.researchType === 'curse' ? '解咒藥水' : G.researchType === 'stamina' ? '體力藥水' : 'Oblivion Potion';
   G.researchReady = false;
@@ -12078,12 +12078,12 @@ function doAction_PickupPotion() {
   chg(potionKey, 1);
   G.researchType = null;
   renderHUD();
-  storyQueue.push({ speaker: 'Narrator', text: `你Retrieve 配製好的${label}，小心地收進背包。` });
+  storyQueue.push({ speaker: 'Narrator', text: `你取回配製好的${label}，小心地收進背包。` });
   if (storyQueue.length === 1) _showStory();
 }
 
 function doAction_StartResearch() {
-  if (G.researchReady) { warn('藥水已完成，請先靠近藥水Retrieve 。'); return; }
+  if (G.researchReady) { warn('藥水已完成，請先靠近藥水取回。'); return; }
   if (G.researchActive) { warn('已經在研究藥水了，請稍候。'); return; }
   const isEvening = G.timePeriod === 'evening';
   if (!isEvening) timeWarn('晚上才能研究藥水。');
