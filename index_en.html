@@ -9060,18 +9060,18 @@ function gameLoop() {
             G.avarenScene = 'lobby';
             G.avaren.x = 320; G.avaren.y = 280;
             G.avaren.wanderTimer = 0;
-            story('Narrator', '阿瓦倫踉蹌著衝出了房間……你追了過去。');
+            story('Narrator', 'Avaren staggers out of the room... you chase after him.');
           } else if (idx === 1) {
             G.avarenScene = 'outside';
             G.avaren.x = 320; G.avaren.y = 350;
             G.avaren.wanderTimer = 0;
-            story('Narrator', '阿瓦倫衝出了小屋，跑進了夜色之中……');
+            story('Narrator', 'Avaren bursts out of the cabin and into the night...');
           } else if (idx === 2) {
             G.avarenScene = 'gone';
             renderChars();
-            story('Narrator', '阿瓦倫的身影忽然被夜色吞沒。\n你只看見他踉蹌著越過樹影，消失在森林的方向。');
+            story('Narrator', 'Avaren’s figure is suddenly swallowed by the darkness.\nYou only see him stumble past the tree shadows and vanish toward the forest.');
           } else if (idx === 3) {
-            story('Narrator', '湖面泛著血色的月光。\n阿瓦倫站在岸邊，像是聽見了什麼不存在的呼喚。');
+            story('Narrator', 'The lake shimmers with blood-colored moonlight.\nAvaren stands at the shore, as if hearing a call that isn’t there.');
           }
         }, 'red', 0, true, 80);
       }
@@ -9081,8 +9081,8 @@ function gameLoop() {
     if (!G.bloodMoon7Calmed && G.curse < 50 && G.pain < 50) {
       G.bloodMoon7Calmed = true;
       // 統計：玩家成功安撫血月（撐過血月夜）。失敗的情況會由 ending/avaren_death 記錄
-      gcEvent('bloodmoon/calmed', '血月：成功安撫');
-      story('Narrator', '阿瓦倫的顫抖稍微緩和了一些……\n他還是茫然的，但似乎沒有剛才那麼痛了。');
+      gcEvent('bloodmoon/calmed', 'Blood Moon: Calmed Successfully');
+      story('Narrator', 'Avaren’s trembling eases a little...\nHe’s still dazed, but he no longer seems in as much pain as before.');
     }
   }
 
@@ -9786,7 +9786,7 @@ function gameLoop() {
         sobj.style.top  = (SOUP_POS.y - 48) + 'px';
         sobj.style.display = 'block';
       }
-      toast('🍲 料理完成！回廚房取用');
+      toast('🍲 Dish ready! Return to the kitchen to collect it');
     }
   }
 
