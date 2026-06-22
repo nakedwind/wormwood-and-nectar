@@ -4412,7 +4412,7 @@ const ZONES = {
   room: [
     { id:'to_lobby',   x1:109, y1:444, x2:212, y2:476, sceneHint:'→ 前往大廳', isScene:true,
       fn(){ playLoopingAudio('sfx-door-open', 6.0); changeScene('lobby', {x:591, y:100}); } },
-    { id:'bed',        x1:355, y1:289, x2:529, y2:460, interactHint:'床邊',
+    { id:'bed',        x1:355, y1:289, x2:529, y2:460, interactHint:'Bedside',
       fn(){ openBedMenu(); } },
     { id:'bookshelf',  x1:431, y1:42,  x2:536, y2:209, interactHint:'書櫃',
       fn(){ doAction_BookshelfMenu(); } },
@@ -7945,7 +7945,7 @@ function renderScene() {
     const hBar = document.getElementById('herb-harvest-bar');
     const hLabel = document.querySelector('#herb-harvest-wrap .herb-harvest-label');
     if (hBar) { hBar.style.width = '100%'; hBar.style.background = 'linear-gradient(90deg,#a07020,#e0b030)'; }
-    if (hLabel) hLabel.innerHTML = '<img src="herbs.png" class="item-icon-svg"> 可以收穫囉！';
+    if (hLabel) hLabel.innerHTML = '<img src="herbs.png" class="item-icon-svg"> Ready to harvest!';
   }
   document.getElementById('fish-scene-wrap').style.display =
     (G.scene === 'outside' && (G.fishFishing || G.fishReady)) ? 'block' : 'none';
@@ -8554,75 +8554,75 @@ function updateHints() {
     hi.style.display = 'block'; hs.style.display = 'none'; return;
   }
   if (zone && zone.id === 'bed') {
-    hi.textContent = '床邊';
+    hi.textContent = 'Bedside';
     hi.style.display = 'block'; hs.style.display = 'none'; return;
   }
   if (isAvarenUnconscious() && near) {
-    hi.textContent = '照顧阿瓦倫';
+    hi.textContent = 'Care for Avaren';
     hi.style.display = 'block'; hs.style.display = 'none'; return;
   }
   // 收取提示（完成待領取）
   if (zone && zone.id === 'farm' && G.farmStage >= 5) {
-    hi.textContent = '收取藥草';
+    hi.textContent = 'Collect Herbs';
     hi.style.display = 'block'; hs.style.display = 'none'; return;
   }
   if (zone && zone.id === 'farm' && G.farmStage === 1) {
-    hi.textContent = '種植';
+    hi.textContent = 'Plant';
     hi.style.display = 'block'; hs.style.display = 'none'; return;
   }
   if (zone && zone.id === 'farm' && G.carryingKettle && G.kettleFull && G.farmStage >= 2 && G.farmStage < 5 && !G.farmWatered) {
-    hi.textContent = '💧 澆水';
+    hi.textContent = '💧 Water';
     hi.style.display = 'block'; hs.style.display = 'none'; return;
   }
   if (zone && zone.id === 'pond' && G.fishReady) {
-    hi.textContent = '收取漁獲';
+    hi.textContent = 'Collect Catch';
     hi.style.display = 'block'; hs.style.display = 'none'; return;
   }
   if (zone && zone.id === 'pond' && G.fishFishing) {
-    hi.textContent = '🎣 垂釣中，請稍候…';
+    hi.textContent = '🎣 Fishing, please wait…';
     hi.style.display = 'block'; hs.style.display = 'none'; return;
   }
   if (zone && zone.id === 'forest_pond' && G.forestFishReady) {
-    hi.textContent = '收取漁獲';
+    hi.textContent = 'Collect Catch';
     hi.style.display = 'block'; hs.style.display = 'none'; return;
   }
   if (zone && zone.id === 'forest_pond' && G.forestFishFishing) {
-    hi.textContent = '🎣 垂釣中，請稍候…';
+    hi.textContent = '🎣 Fishing, please wait…';
     hi.style.display = 'block'; hs.style.display = 'none'; return;
   }
   if (isNearForestFrog() || isNearForestFrog2()) {
-    hi.textContent = '抓住';
+    hi.textContent = 'Catch';
     hi.style.display = 'block'; hs.style.display = 'none'; return;
   }
   if (zone && zone.id === 'lobby_potion' && G.researchReady) {
-    const rLabel = G.researchType === 'cold' ? '治療藥水（疼痛-5）' : G.researchType === 'curse' ? '解咒藥水（詛咒-5）' : G.researchType === 'stamina' ? '體力藥水（體力+45）' : '忘卻藥水（疼痛-25 詛咒-25）';
-    hi.textContent = `取回${rLabel}`;
+    const rLabel = G.researchType === 'cold' ? 'Healing Potion (Pain-5)' : G.researchType === 'curse' ? 'Curse-Cure Potion (Curse-5)' : G.researchType === 'stamina' ? 'Stamina Potion (Stamina+45)' : 'Oblivion Potion (Pain-25 Curse-25)';
+    hi.textContent = `Retrieve ${rLabel}`;
     hi.style.display = 'block'; hs.style.display = 'none'; return;
   }
   // 水壺提示
   if (isNearKettle()) {
-    hi.textContent = G.kettleFull ? '拿起水壺（已裝水）' : '拿起水壺';
+    hi.textContent = G.kettleFull ? 'Pick up kettle (filled)' : 'Pick up kettle';
     hi.style.display = 'block'; hs.style.display = 'none'; return;
   }
   if (G.carryingKettle && isNearOutsidePond() && !G.kettleFull) {
-    hi.textContent = '裝水';
+    hi.textContent = 'Fill with water';
     hi.style.display = 'block'; hs.style.display = 'none'; return;
   }
   if (G.carryingKettle) {
-    hi.textContent = '放下水壺';
+    hi.textContent = 'Put down kettle';
     hi.style.display = 'block'; hs.style.display = 'none'; return;
   }
   if (G.carryingSoup && G.scene === 'kitchen' && isNearSoupSpot()) {
-    hi.textContent = '放回料理';
+    hi.textContent = 'Put dish back';
     hi.style.display = 'block'; hs.style.display = 'none'; return;
   }
   if (G.scene === 'kitchen' && G.soupReady && isNearSoup()) {
-    hi.textContent = '料理';
+    hi.textContent = 'Cook';
     hi.style.display = 'block'; hs.style.display = 'none'; return;
   }
   // 藥草田採收中：在田地區域時顯示進度提示
   if (zone && zone.id === 'farm' && G.herbHarvesting) {
-    hi.innerHTML = '<img src="herbs.png" class="item-icon-svg"> 採收中，請稍候…';
+    hi.innerHTML = '<img src="herbs.png" class="item-icon-svg"> Harvesting, please wait…';
     hi.style.display = 'block';
     hs.style.display = 'none';
     return;
@@ -8632,7 +8632,7 @@ function updateHints() {
     hi.style.display = 'block'; hs.style.display = 'none'; return;
   }
   if (isNearFairy()) {
-    hi.textContent = '妖精';
+    hi.textContent = 'Fairy';
     hi.style.display = 'block'; hs.style.display = 'none'; return;
   }
   if (G.carryingChicken || G.carryingChicken2) {
@@ -8648,7 +8648,7 @@ function updateHints() {
     hi.style.display = 'block'; hs.style.display = 'none'; return;
   }
   if (near && !zone && (!G.bloodMoon7Active || canInteractBloodMoonAvaren())) {
-    hi.textContent = G.bloodMoon7Active ? '忘卻藥水' : 'Avaren';
+    hi.textContent = G.bloodMoon7Active ? 'Oblivion Potion' : 'Avaren';
     hi.style.display = 'block';
     hs.style.display = 'none';
   } else if (nearRed && !zone && !near) {
@@ -8664,7 +8664,7 @@ function updateHints() {
     if (zone.id === 'forest_tree1' || zone.id === 'forest_tree3') {
       const key = zone.id === 'forest_tree1' ? 'tree1' : 'tree3';
       const apples = (G.forestApples || {})[key] ?? APPLE_TREE_MAX[key];
-      hi.textContent = apples > 0 ? '🍎 蘋果樹' : '樹木';
+      hi.textContent = apples > 0 ? '🍎 Apple Tree' : 'Tree';
     } else {
       hi.textContent = zone.interactHint;
     }
@@ -8738,14 +8738,14 @@ function gameLoop() {
         G.bloodMoon7MemoryIndex = 0;
         applyBGMForState({ fade: true, duration: 2400 });
         setTimeout(() => {
-          showEvent('UI_Blood Moon.png', '血月夜——',
-            '第九天的夜晚，月亮染成了血紅色。\n\n阿瓦倫的詛咒被血月激發，疼痛與黑霧同時暴漲——\n房間裡傳來他壓抑的哀號。',
-            () => { storyAuto('Narrator', '夜幕低垂，血月升起，發狂的月亮使所有生物的詛咒加劇'); }, 'red');
+          showEvent('UI_Blood Moon.png', 'Blood Moon Night——',
+            'On the night of the ninth day, the moon turned blood-red.\n\nAvaren’s curse was stirred by the blood moon, his pain and the black mist surging at once——\nfrom the room came his stifled cries of agony.',
+            () => { storyAuto('Narrator', 'Night falls and the blood moon rises; the maddened moon intensifies the curse in every living thing.'); }, 'red');
         }, 500);
       } else {
         applyBGMForState({ fade: true, duration: 2400 });
         setTimeout(() => {
-          storyAuto('Narrator', '夜幕低垂。太陽沉入山後，晚上的時間開始了。\n現在可以進屋照顧阿瓦倫了。');
+          storyAuto('Narrator', 'Night falls. The sun sinks behind the mountains, and the evening hours begin.\nYou can go inside now to care for Avaren.');
         }, 400);
       }
       // 第6天夜晚：阿瓦倫消失事件（旁白在玩家進房間時才觸發）
@@ -8788,7 +8788,7 @@ function gameLoop() {
     setTimeout(() => {
       chg('eldrinHp', -5); renderHUD();
       if ((G.eldrinHp ?? 100) <= 0) return; // HP 歸零，已觸發倒下結局，不再顯示力竭事件
-      showEvent('😴', '力竭而眠', '夜已深了。\n\n你沒有意識到時間就這樣流逝，\n直到疲憊將你壓倒，\n就這樣不知不覺地昏睡過去。\n\n體力 -5', () => {
+      showEvent('😴', 'Asleep from Exhaustion', 'The night has grown late.\n\nYou didn’t notice the time slipping away,\nuntil exhaustion overcame you,\nand you drifted off into sleep without realizing.\n\nStamina -5', () => {
         fade.style.transition = 'none'; fade.style.opacity = '0'; fade.style.display = 'none';
         G.paused = false;
         G.exhaustedSleepWake = {
@@ -9899,7 +9899,7 @@ function gameLoop() {
         const hBar = document.getElementById('herb-harvest-bar');
         const hLabel = document.querySelector('#herb-harvest-wrap .herb-harvest-label');
         if (hBar) { hBar.style.width = '100%'; hBar.style.background = 'linear-gradient(90deg,#a07020,#e0b030)'; }
-        if (hLabel) hLabel.innerHTML = '<img src="herbs.png" class="item-icon-svg"> 可以收穫囉！';
+        if (hLabel) hLabel.innerHTML = '<img src="herbs.png" class="item-icon-svg"> Ready to harvest!';
         if (G.scene === 'outside') toast('<img src="herbs.png" class="item-icon-svg"> 農田收成了！回藥草田收取');
       } else {
         if (farmBar) farmBar.style.background = 'linear-gradient(90deg,#206020,#60c040)';
@@ -10312,11 +10312,11 @@ document.addEventListener('keydown', e => {
       }
       setTimeout(() => {
         if (G.winterChat8Seen) {
-          storyAuto('妖精', '那個傢伙……也想要違抗命運嗎？……嘻嘻……真愚蠢。');
-          storyAuto('妖精', '世界的規則沒那麼簡單可以改變……告訴你一個好消息吧？');
-          storyAuto('妖精', '魔王的心臟……可以實現你的願望。');
+          storyAuto('Fairy', '那個傢伙……也想要違抗命運嗎？……嘻嘻……真愚蠢。');
+          storyAuto('Fairy', '世界的規則沒那麼簡單可以改變……告訴你一個好消息吧？');
+          storyAuto('Fairy', '魔王的心臟……可以實現你的願望。');
         } else {
-          storyAuto('妖精', '嘻嘻……你就算做再多，那孩子也不會原諒你的……');
+          storyAuto('Fairy', '嘻嘻……你就算做再多，那孩子也不會原諒你的……');
         }
       }, 1000);
     } else if (zone && zone.isScene) {
@@ -10498,7 +10498,7 @@ function openAvarenMenu() {
   }
   if (isAvarenBedRest()) {
     placeAvarenBedRest();
-    showActionMenu('照顧阿瓦倫', [
+    showActionMenu('Care for Avaren', [
       {
         name: '確認狀態', fx: '',
         req: () => true,
@@ -10582,7 +10582,7 @@ function openAvarenMenu() {
       showAvarenNoEatPopup();
       return;
     }
-    showActionMenu('照顧阿瓦倫', [
+    showActionMenu('Care for Avaren', [
       {
         name: '確認狀態', fx: '',
         req: () => true,
@@ -10730,7 +10730,7 @@ function showGivePotionMenu() {
         });
         if (G.forgetPotion > 0) {
           potionItems.push({
-            name: '忘卻藥水', fx: () => `疼痛-25  詛咒-25  剩餘×${G.forgetPotion}`,
+            name: 'Oblivion Potion', fx: () => `疼痛-25  詛咒-25  剩餘×${G.forgetPotion}`,
             req: () => G.forgetPotion > 0,
             run() {
               chg('forgetPotion', -1); chg('pain', -25); chg('curse', -25);
@@ -11091,7 +11091,7 @@ function doAction_PondMenu() {
   playLoopingAudio('sfx-menu-open', 4.0);
   showActionMenu('池塘', [
     {
-      name: G.fishReady ? '收取漁獲' : '釣魚',
+      name: G.fishReady ? 'Collect Catch' : '釣魚',
       fx: G.fishReady ? '魚+1' : '魚+1（-1蟲材）',
       req: () => G.fishReady || G.bug >= 1,
       run() { setTimeout(() => doAction_Fish(), 0); }
@@ -11202,12 +11202,12 @@ const TRADE_SELL = [
   { id:'egg',             icon:'🥚', name:'鳥蛋',     price:3  },
   { id:'frog',            icon:'<img src="frog.png" class="item-icon-svg">', name:'青蛙',     price:3  },
   { id:'whiteFlower',     icon:WF_ICON, name:'白藥花',   price:4  },
-  { id:'fairyItem',       icon:'<img src="Fairy.png" class="item-icon-svg">', name:'妖精',     price:10 },
+  { id:'fairyItem',       icon:'<img src="Fairy.png" class="item-icon-svg">', name:'Fairy',     price:10 },
   { id:'beastMeat',       icon:'🥩', name:'獸肉',     price:5  },
   { id:'monsterMaterial', icon:'🦴', name:'魔物素材', price:8  },
   { id:'coldPotion',      icon:'<img src="Medicine_red.svg" class="item-icon-svg">',   name:'治療藥水', price:6  },
   { id:'cursePotion',     icon:'<img src="Medicine_yellow.svg" class="item-icon-svg">', name:'解咒藥水', price:8  },
-  { id:'forgetPotion',    icon:'<img src="Medicine_blue.svg" class="item-icon-svg">', name:'忘卻藥水', price:12 },
+  { id:'forgetPotion',    icon:'<img src="Medicine_blue.svg" class="item-icon-svg">', name:'Oblivion Potion', price:12 },
 ];
 const TRADE_BUY = [
   { id:'herb',        icon:'<img src="herbs.png" class="item-icon-svg">', name:'藥材',     price:5  },
@@ -11542,7 +11542,7 @@ const COOK_INGREDIENTS_LIST = [
   { key: 'bug',             name: '蟲材',   icon: '<img src="bug01.png" class="item-icon-svg">', fx: '飽食度+2  疼痛-2  心情-2', effects: { avarenHunger: 2, pain: -2, mood: -2 }, stam: 3 },
   { key: 'whiteFlower',     name: '白藥花', icon: WF_ICON, fx: '飽食度+2  詛咒-2',         effects: { avarenHunger: 2, curse: -2 },          stam: 6 },
   { key: 'apple',           name: '蘋果',   icon: '🍎', fx: '飽食度+5  心情+1',         effects: { avarenHunger: 5, mood: 1 },            stam: 5 },
-  { key: 'fairyItem',       name: '妖精',   icon: '<img src="Fairy.png" class="item-icon-svg">', fx: '飽食度+2  詛咒-40',        effects: { avarenHunger: 2, curse: -40 },         stam: 30 },
+  { key: 'fairyItem',       name: 'Fairy',   icon: '<img src="Fairy.png" class="item-icon-svg">', fx: '飽食度+2  詛咒-40',        effects: { avarenHunger: 2, curse: -40 },         stam: 30 },
   { key: 'vegetable',       name: '蔬菜',   icon: '<img src="vegetable.png" class="item-icon-svg">', fx: '飽食度+10  心情+1',        effects: { avarenHunger: 10, mood: 1 },           stam: 15 },
   { key: 'mushroom',        name: '蘑菇',   icon: '🍄', fx: '飽食度+2  疼痛+3  心情-2', effects: { avarenHunger: 2, pain: 3, mood: -2 },  stam: 10 },
   { key: 'egg',             name: '鳥蛋',   icon: '🥚', fx: '飽食度+5  心情+1',         effects: { avarenHunger: 5, mood: 1 },            stam: 6 },
@@ -11661,7 +11661,7 @@ function putDownKettle() {
   KETTLE_POS.x = Math.round(G.eldrin.x);
   KETTLE_POS.y = Math.round(G.eldrin.y);
   document.getElementById('kettle-carry-icon').style.display = 'none';
-  toast('放下水壺');
+  toast('Put down kettle');
 }
 
 function fillKettle() {
@@ -12066,9 +12066,9 @@ function doAction_Cook() {
 function doAction_PickupPotion() {
   if (!G.researchReady) return;
   const potionKey = G.researchType === 'cold' ? 'coldPotion' : G.researchType === 'curse' ? 'cursePotion' : G.researchType === 'stamina' ? 'staminaPotion' : 'forgetPotion';
-  if (isBagFull(potionKey, 1)) { toastBagFull(); warn('背包已滿，無法取回藥水。請先清出空間。'); return; }
+  if (isBagFull(potionKey, 1)) { toastBagFull(); warn('背包已滿，無法Retrieve 藥水。請先清出空間。'); return; }
   playLoopingAudio('sfx-plant-pop', 3.0);
-  const label = G.researchType === 'cold' ? '治療藥水' : G.researchType === 'curse' ? '解咒藥水' : G.researchType === 'stamina' ? '體力藥水' : '忘卻藥水';
+  const label = G.researchType === 'cold' ? '治療藥水' : G.researchType === 'curse' ? '解咒藥水' : G.researchType === 'stamina' ? '體力藥水' : 'Oblivion Potion';
   G.researchReady = false;
   document.getElementById('research-scene-wrap').style.display = 'none';
   const potionEl = document.getElementById('lobby-potion');
@@ -12078,12 +12078,12 @@ function doAction_PickupPotion() {
   chg(potionKey, 1);
   G.researchType = null;
   renderHUD();
-  storyQueue.push({ speaker: 'Narrator', text: `你取回配製好的${label}，小心地收進背包。` });
+  storyQueue.push({ speaker: 'Narrator', text: `你Retrieve 配製好的${label}，小心地收進背包。` });
   if (storyQueue.length === 1) _showStory();
 }
 
 function doAction_StartResearch() {
-  if (G.researchReady) { warn('藥水已完成，請先靠近藥水取回。'); return; }
+  if (G.researchReady) { warn('藥水已完成，請先靠近藥水Retrieve 。'); return; }
   if (G.researchActive) { warn('已經在研究藥水了，請稍候。'); return; }
   const isEvening = G.timePeriod === 'evening';
   if (!isEvening) timeWarn('晚上才能研究藥水。');
@@ -12142,7 +12142,7 @@ function doAction_StartResearch() {
       }
     },
     {
-      name: '忘卻藥水', fx: '藥材-10　白藥花-10　蟲材-5<br>水晶碎片-8　妖精-1　魔物素材-5',
+      name: 'Oblivion Potion', fx: '藥材-10　白藥花-10　蟲材-5<br>水晶碎片-8　妖精-1　魔物素材-5',
       req: () => isEvening && G.herb >= 10 && G.whiteFlower >= 10 && G.bug >= 5 && G.crystal >= 8 && G.fairyItem >= 1 && G.monsterMaterial >= 5 && G.forgetPotion === 0,
       run() {
         showSaveConfirm('製作藥水', '確定要製作\n忘卻藥水（血月夜使用）\n嗎？', () => {
@@ -12497,7 +12497,7 @@ function startActionScene(lines, max, onDone, pageSfx = false) {
   document.getElementById('action-scene-overlay').style.display = 'flex';
 }
 
-const NPC_SPEAKERS = new Set(['Narrator', '你', 'Eldrin', 'Avaren', 'Red', 'Stranger', 'Winter', 'Mysterious Traveler', 'Noah', '妖精', '希奧妮']);
+const NPC_SPEAKERS = new Set(['Narrator', '你', 'Eldrin', 'Avaren', 'Red', 'Stranger', 'Winter', 'Mysterious Traveler', 'Noah', 'Fairy', '希奧妮']);
 const SPEAKER_AVATARS = {
   '你': 'eldrin_avatar.png',
   'Eldrin': 'eldrin_avatar.png',
@@ -12526,7 +12526,7 @@ const SPEAKER_TEXT_CLASS = {
   'Mysterious Traveler': 'asc-text-winter',
   'Noah': 'asc-text-noah',
   '希奧妮': 'asc-text-theonie',
-  '妖精': 'asc-text-fairy',
+  'Fairy': 'asc-text-fairy',
 };
 const DIALOGUE_TYPE_SPEED = 24;
 let _dialogueTypeTimer = null;
@@ -12809,7 +12809,7 @@ const BAG_ITEMS = [
   { key:'fairyItem',       icon:'<img src="Fairy.png" class="item-icon-svg">', name:'妖精物品',   desc:'神秘又不祥的妖精，似乎是非常好的煉藥材料。' },
   { key:'coldPotion',      icon:'<img src="Medicine_red.svg" class="item-icon-svg">',   name:'治療藥水',   desc:'能緩解阿瓦倫身體疼痛的藥水（疼痛-5）。\n艾德林自己喝下時，則能恢復 HP（+5）。需要時間研製。' },
   { key:'cursePotion',     icon:'<img src="Medicine_yellow.svg" class="item-icon-svg">', name:'解咒藥水',   desc:'針對詛咒調配的特殊藥水，可以暫時壓制黑霧擴散。' },
-  { key:'forgetPotion',    icon:'<img src="Medicine_blue.svg" class="item-icon-svg">', name:'忘卻藥水',   desc:'能抹去特定記憶的危險藥水。一旦使用，無法回頭。' },
+  { key:'forgetPotion',    icon:'<img src="Medicine_blue.svg" class="item-icon-svg">', name:'Oblivion Potion',   desc:'能抹去特定記憶的危險藥水。一旦使用，無法回頭。' },
   { key:'staminaPotion',   icon:'<img src="Medicine_green.svg" class="item-icon-svg">', name:'體力藥水',   desc:'能恢復體力的營養藥水。疲憊的時候喝一瓶，精神會好很多。' },
   { key:'pebble',          icon:'🪨', name:'小石頭',       desc:'完全沒有用的小石頭。但阿瓦倫走了很遠才撿來，覺得你可能會喜歡。' },
   { key:'wildFlower',      icon:'🍂', name:'漂亮的樹葉',   desc:'有點皺掉了的落葉。他好像很認真地撿過來，包在手心裡帶回來的。' },
@@ -13966,9 +13966,9 @@ function jumpToBloodMoon() {
   G.bloodMoon7MemoryTimer = 900;
   G.bloodMoon7MemoryIndex = 0;
   applyBGMForState();
-  showEvent('UI_Blood Moon.png', '血月夜——',
-    '第九天的夜晚，月亮染成了血紅色。\n\n阿瓦倫的詛咒被血月激發，疼痛與黑霧同時暴漲——\n房間裡傳來他壓抑的哀號。',
-    () => { storyAuto('Narrator', '夜幕低垂，血月升起，發狂的月亮使所有生物的詛咒加劇'); }, 'red');
+  showEvent('UI_Blood Moon.png', 'Blood Moon Night——',
+    'On the night of the ninth day, the moon turned blood-red.\n\nAvaren’s curse was stirred by the blood moon, his pain and the black mist surging at once——\nfrom the room came his stifled cries of agony.',
+    () => { storyAuto('Narrator', 'Night falls and the blood moon rises; the maddened moon intensifies the curse in every living thing.'); }, 'red');
   raf = requestAnimationFrame(gameLoop);
 }
 
@@ -14273,9 +14273,9 @@ function doAction_KillTime() {
           G.bloodMoon7MemoryIndex = 0;
           applyBGMForState({ fade: true, duration: 2400 });
           setTimeout(() => {
-            showEvent('UI_Blood Moon.png', '血月夜——',
-              '第九天的夜晚，月亮染成了血紅色。\n\n阿瓦倫的詛咒被血月激發，疼痛與黑霧同時暴漲——\n房間裡傳來他壓抑的哀號。',
-              () => { storyAuto('Narrator', '夜幕低垂，血月升起，發狂的月亮使所有生物的詛咒加劇'); }, 'red');
+            showEvent('UI_Blood Moon.png', 'Blood Moon Night——',
+              'On the night of the ninth day, the moon turned blood-red.\n\nAvaren’s curse was stirred by the blood moon, his pain and the black mist surging at once——\nfrom the room came his stifled cries of agony.',
+              () => { storyAuto('Narrator', 'Night falls and the blood moon rises; the maddened moon intensifies the curse in every living thing.'); }, 'red');
           }, 500);
         } else {
           applyBGMForState();
@@ -14319,14 +14319,14 @@ function skipToEvening() {
       G.bloodMoon7MemoryIndex = 0;
       applyBGMForState({ fade: true, duration: 2400 });
       setTimeout(() => {
-        showEvent('UI_Blood Moon.png', '血月夜——',
-          '第九天的夜晚，月亮染成了血紅色。\n\n阿瓦倫的詛咒被血月激發，疼痛與黑霧同時暴漲——\n房間裡傳來他壓抑的哀號。',
-          () => { storyAuto('Narrator', '夜幕低垂，血月升起，發狂的月亮使所有生物的詛咒加劇'); }, 'red');
+        showEvent('UI_Blood Moon.png', 'Blood Moon Night——',
+          'On the night of the ninth day, the moon turned blood-red.\n\nAvaren’s curse was stirred by the blood moon, his pain and the black mist surging at once——\nfrom the room came his stifled cries of agony.',
+          () => { storyAuto('Narrator', 'Night falls and the blood moon rises; the maddened moon intensifies the curse in every living thing.'); }, 'red');
       }, 500);
     } else {
       applyBGMForState({ fade: true, duration: 2400 });
       setTimeout(() => {
-        storyAuto('Narrator', '夜幕低垂。太陽沉入山後，晚上的時間開始了。\n現在可以進屋照顧阿瓦倫了。');
+        storyAuto('Narrator', 'Night falls. The sun sinks behind the mountains, and the evening hours begin.\nYou can go inside now to care for Avaren.');
       }, 400);
     }
     // 第6天夜晚：阿瓦倫消失事件（旁白在玩家進房間時才觸發）
@@ -14480,7 +14480,7 @@ function openBedMenu() {
     showAvarenNoEatPopup();
     return;
   }
-  showActionMenu('床邊', [
+  showActionMenu('Bedside', [
     {
       name: '入睡',
       fx: '結束今天',
@@ -14490,7 +14490,7 @@ function openBedMenu() {
       }
     },
     {
-      name: '照顧阿瓦倫',
+      name: 'Care for Avaren',
       fx: '開啟照顧選單',
       req: () => G.avarenScene === 'room' && !G.day4AvarenGone,
       run() {
