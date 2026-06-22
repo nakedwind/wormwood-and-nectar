@@ -2591,7 +2591,7 @@ body {
       </div>
       <div id="nest-egg-1" style="display:none;position:absolute;left:462px;top:101px;width:14px;height:13px;z-index:12;pointer-events:none;"><img src="egg.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
       <div id="nest-egg-2" style="display:none;position:absolute;left:470px;top:101px;width:14px;height:13px;z-index:12;pointer-events:none;"><img src="egg.png" style="width:100%;height:100%;object-fit:contain;image-rendering:pixelated;"></div>
-      <div id="day0-room-hint" style="display:none;position:absolute;left:541px;top:6px;z-index:601;pointer-events:none;padding:5px 10px;background:rgba(8,5,2,0.88);border:1px solid #4a3214;border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,0.4);font-size:12px;color:#f0e8c0;letter-spacing:1px;white-space:nowrap;animation:day0HintPulse 1.8s infinite;">↑ 前往房間</div>
+      <div id="day0-room-hint" style="display:none;position:absolute;left:541px;top:6px;z-index:601;pointer-events:none;padding:5px 10px;background:rgba(8,5,2,0.88);border:1px solid #4a3214;border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,0.4);font-size:12px;color:#f0e8c0;letter-spacing:1px;white-space:nowrap;animation:day0HintPulse 1.8s infinite;">↑ Go to Room</div>
       <div id="rain-tint-overlay"></div>
       <canvas id="rain-canvas" width="640" height="480"></canvas>
       <canvas id="debug-canvas" width="640" height="480" style="position:absolute;inset:0;pointer-events:none;z-index:700;"></canvas>
@@ -18543,7 +18543,7 @@ runTipsCycle();
       oninput="refreshActiveBGMVolume();['sfx-day0-rain','sfx-indoor-rain','sfx-day0-walk','sfx-kitchen-stove','sfx-kitchen-boil'].forEach(id=>{const e=document.getElementById(id);if(e&&!e.paused)e.volume=this.value/100;});">
   </div>
   <button id="pause-btn" onclick="togglePause()">⏸ Pause Game</button>
-  <button id="bag-btn" onclick="openBag();document.getElementById('settings-panel').classList.remove('open');" style="width:100%;background:#1a1208;border:1px solid #3a2810;color:#c0a060;padding:7px;font-family:inherit;font-size:13px;cursor:pointer;letter-spacing:2px;transition:all 0.2s;margin-top:6px;">🎒 開啟背包</button>
+  <button id="bag-btn" onclick="openBag();document.getElementById('settings-panel').classList.remove('open');" style="width:100%;background:#1a1208;border:1px solid #3a2810;color:#c0a060;padding:7px;font-family:inherit;font-size:13px;cursor:pointer;letter-spacing:2px;transition:all 0.2s;margin-top:6px;">🎒 Open Backpack</button>
 </div>
 
 <!-- ══ GoatCounter 玩家統計 ══
