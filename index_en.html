@@ -2446,7 +2446,7 @@ body {
     </div>
     <span id="period-badge" style="font-size:12px;color:#c0a060;letter-spacing:1px;white-space:nowrap;">☀ Morning</span>
     <div class="hud-right">
-      <div id="blood-moon-badge">🌕 Blood Moon Night</div>
+      <div id="blood-moon-badge">🌕 Blood Moon</div>
       <div style="position:relative;">
         <button id="settings-btn" onclick="toggleSettings()">⚙</button>
       </div>
@@ -2823,7 +2823,7 @@ body {
           <div class="res-item">🐟 Fish   <b id="r-fish">0</b></div>
           <div class="res-item"><img src="Stone.png" class="item-icon-svg"> Ore <b id="r-stone">0</b></div>
           <div class="res-item"><img src="Fairy.png" class="item-icon-svg"> Fairy <b id="r-fairy">0</b></div>
-          <div class="res-item"><img src="white-flower.svg" class="wf-icon" alt=""> White Medicine Flower <b id="r-white-flower">0</b></div>
+          <div class="res-item"><img src="white-flower.svg" class="wf-icon" alt=""> White Remedy Flower <b id="r-white-flower">0</b></div>
           <div class="res-item">🍎 Apple <b id="r-apple">0</b></div>
           <div class="res-item">🥦 Vegetable <b id="r-vegetable">0</b></div>
           <div class="res-item"><img src="mushroom.png" class="item-icon-svg"> Mushroom <b id="r-mushroom">0</b></div>
@@ -2832,7 +2832,7 @@ body {
           <div class="res-item">🥩 Beast Meat <b id="r-beastMeat">0</b></div>
           <div class="res-item">🦴 Monster Material <b id="r-monsterMaterial">0</b></div>
           <div class="res-item"><img src="Medicine_red.svg" class="item-icon-svg"> Healing Potion <b id="r-coldPotion">0</b></div>
-          <div class="res-item"><img src="Medicine_yellow.svg" class="item-icon-svg"> Curse-Cure Potion <b id="r-cursePotion">0</b></div>
+          <div class="res-item"><img src="Medicine_yellow.svg" class="item-icon-svg"> Curse-Suppressing Potion <b id="r-cursePotion">0</b></div>
           <div class="res-item"><img src="Medicine_blue.svg" class="item-icon-svg"> Oblivion Potion <b id="r-forgetPotion">0</b></div>
           <div class="res-item"><img src="Medicine_green.svg" class="item-icon-svg"> Stamina Potion <b id="r-staminaPotion">0</b></div>
         </div>
@@ -3062,7 +3062,7 @@ body {
 //  CONSTANTS
 // ══════════════════════════════════════
 // 白藥花自訂圖示（取代 🌼 emoji），用於各 innerHTML 渲染處
-const WF_ICON = '<img src="white-flower.svg" class="wf-icon" alt="White Medicine Flower">';
+const WF_ICON = '<img src="white-flower.svg" class="wf-icon" alt="White Remedy Flower">';
 const SCENE_W = 640, SCENE_H = 480;
 const CHAR_H  = 90;
 const SPEED   = 3;
@@ -4668,7 +4668,7 @@ const AVAREN_DLG = {
   cold: [
     '...',
     '...Don’t come near me.',
-    '…….......',
+    '...',
     '...What do you want?',
     '...Are you going to hit me too?',
     '...I don’t need you.',
@@ -4686,7 +4686,7 @@ const AVAREN_DLG = {
     '...You don’t have to be kind to me.',
     '...I don’t know how to say thank you.',
     '...Don’t look at me.',
-    '......I can’t sleep.',
+    '...I can’t sleep.',
     '...Don’t pay attention to me.',
     '...Someday you’ll leave too. Everyone does.',
     '...My stomach hurts so much...',
@@ -4702,24 +4702,24 @@ const AVAREN_DLG = {
     '...Where did you go today?',
     '...Your eyes... did you not sleep last night?',
     '...You always come back so late.',
-    '......Will you... come to see me again tomorrow?',
+    '...Will you... come to see me again tomorrow?',
     '...I had a dream... but I can’t remember what it was.',
     '...The trees outside are so tall.',
     '...There’s a wound on your hand... did I cause it?',
-    '......Don’t suddenly disappear.',
+    '...Don’t suddenly disappear.',
     '...Everyone who gets close to me suffers... are you okay?',
-    '......You look so tired...',
+    '...You look so tired...',
     '...Your sleeve is torn.',
     '...You’ll... come back every day, right?',
     '...Everyone who gets close to me suffers.',
     '...Today... it’s a little cold.',
     '...The things you brought back... I put them away carefully.',
-    '......Can I ask you something?',
+    '...Can I ask you something?',
     '...I don’t know where I used to live. Those memories... it’s like they were cut away.',
-    '......That birdsong outside—what kind of bird is it?',
+    '...That birdsong outside—what kind of bird is it?',
     '...That place you talked about... what is it like?',
-    '......Am I a lot of trouble?',
-    '......You were gone for a long time just now.',
+    '...Am I a lot of trouble?',
+    '...You were gone for a long time just now.',
     '...I feel a little better than yesterday.',
   ],
   open: [
@@ -4758,10 +4758,10 @@ const AVAREN_DLG = {
     '...Eldrin.',
     '...If you leave, I’ll find you and bring you back.',
     '...You don’t need to go outside. This is enough. Having me is enough.',
-    '......Don’t leave me.',
+    '...Don’t leave me.',
     '...You stayed up late again last night. ...You mustn’t.',
     '...Those people don’t matter. I’m the one who matters.',
-    '......Don’t go.',
+    '...Don’t go.',
     '...I don’t like waiting at home alone for you.',
     '...You can’t think about anyone else. Only me.',
     '...The curse hurts so much. But when you’re here... it hurts less.',
@@ -4769,15 +4769,15 @@ const AVAREN_DLG = {
     '...If you disappeared... I don’t know what I would do.',
     '...Let’s just stay here forever.',
     '...You went somewhere far today. ...I counted every step until you came back.',
-    '...As long as you’re here, the curse doesn’t hurt as much. So you can’t not be here. That’s your responsibility.',
+    '...As long as you’re here, the curse doesn’t hurt as much. So you have to stay. That’s your responsibility.',
     '...You said you’d take responsibility for me...',
-    '......Don’t go out today. Just today.',
+    '...Don’t go out today. Just today.',
     '...Yesterday you said a name. Who is he?',
-    '......The sound of your heartbeat makes the curse quieter.',
+    '...The sound of your heartbeat makes the curse quieter.',
     '...You were out a long time today. Come back sooner next time.',
-    '......I want to grow up soon.',
+    '...I want to grow up soon.',
     '...Just keep your eyes on me, that’s all.',
-    '......Your hands are so warm.',
+    '...Your hands are so warm.',
     '...You’re the first person... I’ve ever not wanted to let go.',
     '...If anyone makes you leave... I won’t let them off easy.',
   ],
@@ -4795,13 +4795,13 @@ const RED_DLG_GENERAL = [
   'You know, I’m not actually afraid of curses. What I’m afraid of is not finding my way back.',
   'I met an old woman who said monsters appear more easily where the curse runs thick. You’d better be careful!',
   'Once I got lost in the forest for three days and survived on bugs and grass. Impressive, right?',
-  'Eldrin, you’re truly amazing. I mean it—not just saying it.',
+  'Eldrin, you’re truly amazing. I mean it—I’m not just saying that.',
 ];
 const RED_DLG_AVAREN = [
   'I feel like Avaren is slowly getting used to having me around!',
   'Have you ever thought about what Avaren will do when he grows up? I bet he’d be really skilled!',
   'Is Avaren doing any better today? Just tell me he’s fine and I’ll feel relieved.',
-  'Once I’ve beaten the Demon Lord, I’m definitely taking you and Avaren to the best place I’ve ever eaten!',
+  'Once I’ve beaten the Demon Lord, I’m definitely taking you and Avaren to the best restaurant I’ve ever been to!',
   'Every time I get near Avaren, my sword gets really noisy. I think it wants to be his friend too.',
   'Avaren glared at me last time, but I swear that look was just a tiny bit gentler than before!',
   'Isn’t it hard taking care of Avaren all on your own? If you ever need help, you have to tell me!',
@@ -4815,7 +4815,7 @@ const RED_DLG_DAY3_EXCLUDE = new Set([
   'You look tired today. Why don’t you go rest? I’ll keep an eye out here for any monsters nearby.',
   'Curses are harder to deal with than the Demon Lord, don’t you think? At least with him you can see where he is.',
   'You know, I’m not actually afraid of curses. What I’m afraid of is not finding my way back.',
-  'Eldrin, you’re truly amazing. I mean it—not just saying it.',
+  'Eldrin, you’re truly amazing. I mean it—I’m not just saying that.',
 ]);
 
 function getReidIdlePool() {
@@ -4975,7 +4975,7 @@ const RED_WINTER_MEET_DAY7_STORY = [
   { speaker:'Eldrin', text:'...Does Winter say that too?' },
   { speaker:'Red', text:'He said, ‘Don’t go counting me as part of your social circle without permission.’' },
   { speaker:'Eldrin', text:'That probably doesn’t mean ‘friend.’' },
-  { speaker:'Red', text:'But he didn’t walk away!\nAnd when I asked him where in the forest is more dangerous, he answered me.' },
+  { speaker:'Red', text:'But he didn’t walk away!\nAnd when I asked him which parts of the forest were the most dangerous, he answered me.' },
   { speaker:'Eldrin', text:'What did he say?' },
   { speaker:'Red', text:'He said, ‘Wherever you are is dangerous.’' },
   { speaker:'Eldrin', text:'...' },
@@ -5018,7 +5018,7 @@ const REID_DEMON_HEART_STORIES = [
     { speaker: 'Eldrin', text: 'Red...' },
     { speaker: 'Red', text: 'I know you want to save Avaren.\nBut this isn’t right. This is wrong.' },
     { speaker: 'Narrator', text: 'Red rests his hand on the sword’s hilt.\nThe blade lets out a faint hum, as if pleased.' },
-    { speaker: 'Red', text: 'Well... the Demon Lord is actually a decent guy......\nHe’s smart... even if he usually seems cold... and has a sharp tongue...\nbut when you’re truly in danger, he’ll still pull you to safety......' },
+    { speaker: 'Red', text: 'Well... the Demon Lord is actually a decent guy.\nHe’s smart—even if he usually seems cold and has a sharp tongue...\nBut when you’re truly in danger, he’ll still pull you to safety.' },
     { speaker: 'Narrator', text: '‘He said it was the rule of the world, so he didn’t even resist.’\nRed says this very quietly.' },
     { speaker: 'Red', text: 'Do you really still want me to go?' },
     { speaker: 'Eldrin', text: '...Please.\nI really have no other choice...!' },
@@ -5489,7 +5489,7 @@ const REID_CHAT_DAY11_1 = [
   { speaker:'Eldrin', text:'Red...' },
   { speaker:'Narrator', text:'You stay silent for a moment, then answer with difficulty.' },
   { speaker:'Eldrin', text:'He... he’s okay... he made it through...' },
-  { speaker:'Red', text:'Thank goodness——! I knew that kid was tough—I knew he could pull through!' },
+  { speaker:'Red', text:'Thank goodness! I knew that kid was tough—I knew he could pull through!' },
   { speaker:'Eldrin', text:'Mm...' },
 ];
 const REID_CHAT_DAY11_2 = [
@@ -6082,7 +6082,7 @@ const WINTER_CHAT_DAY8 = [
   { speaker: 'Eldrin', text: 'Mm...! I need to gather herbs.' },
   { speaker: 'Winter', text: 'And yet you’re only a child yourself...' },
   { speaker: 'Narrator', text: 'Winter keeps staring at you, as if he wants to say something but keeps hesitating.' },
-  { speaker: 'Eldrin', text: '？' },
+  { speaker: 'Eldrin', text: '?' },
   { speaker: 'Winter', text: '...Tomorrow will be dangerous.' },
   { speaker: 'Eldrin', text: 'Tomorrow?' },
   { speaker: 'Winter', text: 'Tonight... go take a look by the lake. Something you need will appear.' },
@@ -6316,14 +6316,14 @@ function openWinterMenu() {
           { speaker:'Winter', text:'...' },
           { speaker:'Winter', text:'Are those little ones troubling you? There’s a way to calm them down.' },
           { speaker:'Eldrin', text:'How?' },
-          { speaker:'Winter', text:'Give me three White Medicine Flowers, and I can make you Monster-Calming Incense.' },
+          { speaker:'Winter', text:'Give me three White Remedy Flowers, and I can make you Monster-Calming Incense.' },
           { speaker:'Eldrin', text:'Really? Thank you!' },
         ], 400, () => {});
       }
     });
   } else if (!G.slimeCalmed) {
     items.push({
-      name:'Monster-Calming Incense', fx:'White Flower-3　Slimes harmless for the day', req:() => G.whiteFlower >= 3,
+      name:'Monster-Calming Incense', fx:'White Remedy Flower-3　Slimes harmless for the day', req:() => G.whiteFlower >= 3,
       run() { chg('whiteFlower', -3); G.slimeCalmed = true; renderHUD(); story('Winter', '...Keep this with you. The little ones won’t come near you today.'); }
     });
   }
@@ -6461,14 +6461,14 @@ function triggerAvarenGather() {
 // ── 血月夜（第7天晚上）──
 const BLOOD_MOON_DLG = [
   '...It hurts... it hurts...!',
-  '......Make it stop...!',
+  '...Make it stop...!',
   '...Why... why is it happening again...!',
   '...Let me be free... please, let me be free...',
   '...It’s unbearable... my whole body is burning...',
   '...I don’t want this... I can’t take it anymore...',
-  '......No... don’t touch me...',
+  '...No... don’t touch me...',
   '...I don’t want... I don’t want to live...!',
-  '......Just let me disappear...',
+  '...Just let me disappear...',
   '...What do I do... what do I do...',
   '...The curse is devouring me...',
   '...Ngh... ugh... I can’t bear it...',
@@ -6479,10 +6479,10 @@ const AVAREN_DAY7_DLG = [
   '...My head... it’s like something is pounding inside...',
   '...I’m fine... it’s just a little...',
   '...Just go do what you need to do...',
-  '…………',
+  '...',
   '...Today... I don’t really want to move...',
   '...I feel a little dizzy...',
-  '......Don’t mind me...',
+  '...Don’t mind me...',
 ];
 const BLOOD_MOON_FAIRY_DLG = [
   '...If I just go there, will it be okay...',
@@ -6497,23 +6497,23 @@ const BLOOD_MOON_FAIRY_DLG = [
 ];
 const BLOOD_MOON_CALMED_DLG = [
   '...It hurts... it hurts...!',
-  '......Make it stop...!',
+  '...Make it stop...!',
   '...Why... why is it happening again...!',
   '...Let me be free... please, let me be free...',
   '...It’s unbearable... my whole body is burning...',
   '...I don’t want this... I can’t take it anymore...',
-  '......No... don’t touch me...',
+  '...No... don’t touch me...',
   '...I don’t want... I don’t want to live...!',
-  '......Just let me disappear...',
+  '...Just let me disappear...',
   '...What do I do... what do I do...',
   '...The curse is devouring me...',
   '...Ngh... ugh... I can’t bear it...',
 ];
 const BLOOD_MOON_MEMORIES = [
-  { icon:'UI_Blood Moon.png', title:'——Fragment of Memory——', text:'Avaren staggers in pain, then suddenly stops—\n\n‘...Papa... Mama... why...’\n\nHe curls up in the corner, his head against his knees.\nThose memories have never left him.\nWhen he was very small, before he understood what a ‘curse’ was,\nhis parents said he brought misfortune, and abandoned him in the street.' },
-  { icon:'UI_Blood Moon.png', title:'——Fragment of Memory——', text:'Avaren lets out a whimper—\n\n‘...No... don’t hit me...’\n\nIn those days on the streets, he could never sleep properly.\nSome people raised their hands against him simply out of boredom.\nThe curse left him unable to fight back, unable to flee.\nAll he could do was curl into a ball and wait for it to end.' },
-  { icon:'UI_Blood Moon.png', title:'——Fragment of Memory——', text:'Avaren suddenly clutches himself and begins to tremble—\n\n‘...Let me go... let go...!’\n\nThe cold examination table presses against his back.\nRopes cut into his wrists; the skin is rubbed raw, then covered with fresh bandages.\n\nThe teacher stands beside the table, his voice calm to the point of cruelty.\n‘You are an excellent vessel.’\n\nWith every experiment, the curse sinks a little deeper, grows a little more tangled.\nHe no longer remembers what day the pain began.' },
-  { icon:'UI_Blood Moon.png', title:'——Fragment of Memory——', text:'Avaren whips around to face you, panic and confusion in his eyes—\n\n‘...You... you were there back then...’\n\nHe remembers.\nIn that laboratory, a boy stood off to the side.\nDid not stop it. Did not speak.\nJust stood there, watching him.\n\nIt was you. Eldrin. You were there too.' },
+  { icon:'UI_Blood Moon.png', title:'— Fragment of Memory —', text:'Avaren staggers in pain, then suddenly stops—\n\n‘...Papa... Mama... why...’\n\nHe curls up in the corner, his head against his knees.\nThose memories have never left him.\nWhen he was very small, before he understood what a ‘curse’ was,\nhis parents said he brought misfortune, and abandoned him in the street.' },
+  { icon:'UI_Blood Moon.png', title:'— Fragment of Memory —', text:'Avaren lets out a whimper—\n\n‘...No... don’t hit me...’\n\nIn those days on the streets, he could never sleep properly.\nSome people raised their hands against him simply out of boredom.\nThe curse left him unable to fight back, unable to flee.\nAll he could do was curl into a ball and wait for it to end.' },
+  { icon:'UI_Blood Moon.png', title:'— Fragment of Memory —', text:'Avaren suddenly clutches himself and begins to tremble—\n\n‘...Let me go... let go...!’\n\nThe cold examination table presses against his back.\nRopes cut into his wrists; the skin is rubbed raw, then covered with fresh bandages.\n\nThe teacher stands beside the table, his voice calm to the point of cruelty.\n‘You are an excellent vessel.’\n\nWith every experiment, the curse sinks a little deeper, grows a little more tangled.\nHe no longer remembers what day the pain began.' },
+  { icon:'UI_Blood Moon.png', title:'— Fragment of Memory —', text:'Avaren whips around to face you, panic and confusion in his eyes—\n\n‘...You... you were there back then...’\n\nHe remembers.\nIn that laboratory, a boy stood off to the side.\nDid not stop it. Did not speak.\nJust stood there, watching him.\n\nIt was you. Eldrin. You were there too.' },
 ];
 
 const AVAREN_DAY10_FORGET_TALK_STORY = [
@@ -6542,7 +6542,7 @@ const AVAREN_DAY10_FORGET_TALK_STORY = [
 const AVAREN_DAY10_NO_FORGET_TALK_STORY = [
   { speaker: 'Narrator', text: 'Morning light streams into the room.\nAvaren lies in bed and slowly opens his eyes.\nYou hurry to his bedside, but he doesn’t look at you right away.' },
   { speaker: 'Eldrin', text: 'Avaren...! You’re awake! Are you okay...?' },
-  { speaker: 'Avaren', text: '......' },
+  { speaker: 'Avaren', text: '...' },
   { speaker: 'Narrator', text: 'Avaren doesn’t respond, and the room falls quiet for a moment.\nYou hear your own breathing, heavy as a weight on your chest.' },
   { speaker: 'Avaren', text: 'Last night...\nI remembered.' },
   { speaker: 'Eldrin', text: '...' },
@@ -6593,12 +6593,12 @@ const AVAREN_DAY2_WAKE_STORY = [
   { speaker: 'Eldrin', text: 'Avaren...?' },
   { speaker: 'Avaren', text: '...' },
   { speaker: 'Avaren', text: '...El... drin.' },
-  { speaker: 'Eldrin', text: 'You’re awake.... you’re really awake...... thank goodness.... I was so afraid you’d........' },
+  { speaker: 'Eldrin', text: 'You’re awake... you’re really awake. Thank goodness... I was so afraid you’d...' },
   { speaker: 'Avaren', text: '...Mm.' },
   { speaker: 'Eldrin', text: 'Does anything hurt? Can you still see me clearly?' },
-  { speaker: 'Avaren', text: '.....everything aches a little...... and my vision...... seems a bit blurry.' },
+  { speaker: 'Avaren', text: '...Everything aches a little... and my vision seems a bit blurry.' },
   { speaker: 'Eldrin', text: 'I’ll keep trying to find a way. Don’t force yourself to talk—just stay awake, that’s enough.' },
-  { speaker: 'Avaren', text: '...Have you... been here the whole time....?' },
+  { speaker: 'Avaren', text: '...Have you... been here the whole time?' },
   { speaker: 'Eldrin', text: 'Mm, I’ll always be by your side!' },
   { speaker: 'Avaren', text: '...Really?' },
   { speaker: 'Eldrin', text: 'Lie down and rest. I’ll go cook something for you to eat!' },
@@ -6764,7 +6764,7 @@ function getAvarenMoodTier() {
 const AVAREN_RED_DLG = {
   first_cold: [
     'Who is that person?',
-    '....There’s a stranger.',
+    '...There’s a stranger.',
     'That person... is he an enemy?',
     '...Who.',
   ],
@@ -6796,7 +6796,7 @@ const AVAREN_RED_DLG = {
     '(quietly retreats behind you)',
     '(turns his face away, pretending not to see)',
     '(flinches and takes a few steps the other way)',
-    '.......',
+    '...',
     '(tucks himself a little further behind you.)',
   ],
   near_warm: [
@@ -6808,12 +6808,12 @@ const AVAREN_RED_DLG = {
     'I don’t like it when he comes near.',
   ],
   near_open: [
-    '......He’s so loud.',
+    '...He’s so loud.',
     'He talks nonstop. Isn’t he tired?',
     'Can we move a little farther away?',
-    '....Do you like talking to him?',
-    '....Does he have a curse?',
-    '....Could you ask him to leave soon?',
+    '...Do you like talking to him?',
+    '...Does he have a curse?',
+    '...Could you ask him to leave soon?',
   ],
   near_possess: [
     'Don’t tell him too much.',
@@ -6821,7 +6821,7 @@ const AVAREN_RED_DLG = {
     'You’re mine. Not his.',
     '...Is he getting close to you on purpose?',
     '...Don’t go off with him.',
-    '.....I hate it.',
+    '...I hate it.',
   ],
   jealous_cold: [
     '(stares at the red-haired person)',
@@ -6876,7 +6876,7 @@ const AVAREN_CHAT_GROUPS = {
     [
       { speaker:'Avaren', text:'...Don’t come near me.' },
       { speaker:'Eldrin', text:'Okay, I won’t come close.' },
-      { speaker:'Avaren', text:'……。' },
+      { speaker:'Avaren', text:'...' },
       { speaker:'Eldrin', text:'Tell me whenever you feel unwell, okay?' },
     ],
     [
@@ -6893,14 +6893,14 @@ const AVAREN_CHAT_GROUPS = {
     [
       { speaker:'Avaren', text:'I don’t like the smell of that medicine.' },
       { speaker:'Eldrin', text:'But you have to take medicine to get well.' },
-      { speaker:'Avaren', text:'......I hate it.' },
+      { speaker:'Avaren', text:'...I hate it.' },
     ],
     [
       { speaker:'Avaren', text:'...Don’t keep staring at me.' },
       { speaker:'Eldrin', text:'Sorry, I’m just a little worried.' },
       { speaker:'Avaren', text:'Why worry about me?' },
       { speaker:'Eldrin', text:'Because you matter to me.' },
-      { speaker:'Avaren', text:'......？' },
+      { speaker:'Avaren', text:'...?' },
     ],
     [
       { speaker:'Avaren', text:'...Why are you still here?' },
@@ -6932,9 +6932,9 @@ const AVAREN_CHAT_GROUPS = {
     [
       { speaker:'Avaren', text:'Why are you so busy every day?' },
       { speaker:'Eldrin', text:'Because I have to work hard and earn money!' },
-      { speaker:'Avaren', text:'But you look so tired......' },
+      { speaker:'Avaren', text:'But you look so tired...' },
       { speaker:'Eldrin', text:'It’s fine! It’s all so we can live together.' },
-      { speaker:'Avaren', text:'......' },
+      { speaker:'Avaren', text:'...' },
     ],
     [
       { speaker:'Avaren', text:'...There’s a wound on your hand.' },
@@ -6970,9 +6970,9 @@ const AVAREN_CHAT_GROUPS = {
     [
       { speaker:'Avaren', text:'...Is taking care of me a lot of trouble?' },
       { speaker:'Eldrin', text:'How could it be? Not at all!' },
-      { speaker:'Avaren', text:'......Really?' },
+      { speaker:'Avaren', text:'...Really?' },
       { speaker:'Eldrin', text:'Of course!' },
-      { speaker:'Avaren', text:'......When I grow up, will I be able to help you?' },
+      { speaker:'Avaren', text:'...When I grow up, will I be able to help you?' },
       { speaker:'Eldrin', text:'Mm! By then it’ll be my turn to lean on you!' },
     ],
     [
@@ -7006,7 +7006,7 @@ const AVAREN_CHAT_GROUPS = {
     [
       { speaker:'Avaren', text:'I wish there were only the two of us in the whole world.' },
       { speaker:'Eldrin', text:'Why? There are so many good people in this world!' },
-      { speaker:'Avaren', text:'......I don’t need them.' },
+      { speaker:'Avaren', text:'...I don’t need them.' },
       { speaker:'Eldrin', text:'You should get to know more people and make good friends!' },
       { speaker:'Avaren', text:'Having you is all I need.' },
       { speaker:'Eldrin', text:'You’re so shy~\nIt’s okay, I’ll help you get to know more friends, little by little.' },
@@ -7014,9 +7014,9 @@ const AVAREN_CHAT_GROUPS = {
     [
       { speaker:'Avaren', text:'Don’t keep chatting with other people.' },
       { speaker:'Eldrin', text:'But living here means people have to help and talk to one another.' },
-      { speaker:'Avaren', text:'But......' },
+      { speaker:'Avaren', text:'But...' },
       { speaker:'Eldrin', text:'You’re still too young—you’ll understand when you grow up~' },
-      { speaker:'Avaren', text:'Stop treating me like a child all the time......' },
+      { speaker:'Avaren', text:'Stop treating me like a child all the time...' },
     ],
   ],
 };
@@ -7219,7 +7219,7 @@ const AVAREN_CHAT_EXTRA = {
     [
       { speaker:'Avaren', text:'...The sounds outside are so noisy.' },
       { speaker:'Eldrin', text:'That’s the sound of wind through the leaves.' },
-      { speaker:'Avaren', text:'……。' },
+      { speaker:'Avaren', text:'...' },
       { speaker:'Eldrin', text:'Don’t you like it?' },
       { speaker:'Avaren', text:'...I don’t know.' },
     ],
@@ -7312,7 +7312,7 @@ const AVAREN_CHAT_EXTRA = {
       { speaker:'Eldrin', text:'Mm... probably? Then we could spend whole days doing nothing but having fun~' },
       { speaker:'Avaren', text:'...Really?' },
       { speaker:'Avaren', text:'(in a very small voice) Then how much money would that take...?' },
-      { speaker:'Eldrin', text:'？' },
+      { speaker:'Eldrin', text:'?' },
       { speaker:'Avaren', text:'I should be able to earn the money soon.' },
     ],
     [
@@ -7519,7 +7519,7 @@ function finishBloodMoonNightWithoutForget() {
   document.getElementById('blood-moon-7-overlay').style.display = 'none';
   setTimeout(() => {
     if (G.pain >= 80 && G.curse >= 80) {
-      showEvent('💀', '——Avaren Did Not Survive——',
+      showEvent('💀', '— Avaren Did Not Survive —',
         'The torment of the blood moon night was too deep.\n\nBefore the darkness lifted, Avaren collapsed in the flowers by the lake, and you heard his breathing grow fainter and fainter.\n\nNo matter how you cried out, your voice could not reach his ears.\n\nYou watched him walk step by step toward death, powerless to do anything for him.',
         () => endGame('avaren_death'), 'red');
       return;
@@ -8595,7 +8595,7 @@ function updateHints() {
     hi.style.display = 'block'; hs.style.display = 'none'; return;
   }
   if (zone && zone.id === 'lobby_potion' && G.researchReady) {
-    const rLabel = G.researchType === 'cold' ? 'Healing Potion (Pain-5)' : G.researchType === 'curse' ? 'Curse-Cure Potion (Curse-5)' : G.researchType === 'stamina' ? 'Stamina Potion (Stamina+45)' : 'Oblivion Potion (Pain-25 Curse-25)';
+    const rLabel = G.researchType === 'cold' ? 'Healing Potion (Pain −5)' : G.researchType === 'curse' ? 'Curse-Suppressing Potion (Curse −5)' : G.researchType === 'stamina' ? 'Stamina Potion (Stamina +45)' : 'Oblivion Potion (Pain −25 · Curse −25)';
     hi.textContent = `Retrieve ${rLabel}`;
     hi.style.display = 'block'; hs.style.display = 'none'; return;
   }
@@ -8738,8 +8738,8 @@ function gameLoop() {
         G.bloodMoon7MemoryIndex = 0;
         applyBGMForState({ fade: true, duration: 2400 });
         setTimeout(() => {
-          showEvent('UI_Blood Moon.png', 'Blood Moon Night——',
-            'On the night of the ninth day, the moon turned blood-red.\n\nAvaren’s curse was stirred by the blood moon, his pain and the black mist surging at once——\nfrom the room came his stifled cries of agony.',
+          showEvent('UI_Blood Moon.png', 'Night of the Blood Moon',
+            'On the night of the ninth day, the moon turned blood-red.\n\nAvaren’s curse was stirred by the blood moon, his pain and the black mist surging all at once—\nfrom the room came his stifled cries of agony.',
             () => { storyAuto('Narrator', 'Night falls and the blood moon rises; the maddened moon intensifies the curse in every living thing.'); }, 'red');
         }, 500);
       } else {
@@ -10406,7 +10406,7 @@ function rejectDay10AvarenCare(kind) {
   const lines = {
     soup: 'You carry the dish to the bedside.\nAvaren glances at it and slowly turns his face away.\n\n‘...No.’',
     cold: 'You take out the Healing Potion, meaning to have Avaren drink it.\nHis fingers clutch the bedsheet, his voice faint.\n\n‘...Don’t come near me.’',
-    curse: 'You take out the Curse-Cure Potion; the light in the vial wavers.\nAvaren doesn’t reach for it—he only closes his eyes.\n\n‘...I don’t want it.’',
+    curse: 'You take out the Curse-Suppressing Potion; the light in the vial wavers.\nAvaren doesn’t reach for it—he only closes his eyes.\n\n‘...I don’t want it.’',
     bandage: 'You pick up the clean herbal dressing, meaning to change his bandage.\nAvaren shrinks a little further under the covers.\n\n‘...Don’t touch me.’',
     ritual: 'You softly begin to recite the curse-removal incantation.\nBefore you even touch him, Avaren flinches.\n\n‘...Stop.’',
     talk: 'You try to talk to Avaren.\nHe doesn’t look at you—he just curls himself smaller.\n\nOnly faint breathing remains in the room.',
@@ -10425,9 +10425,9 @@ function openAvarenMenu() {
   if (G.bloodMoon7Active) {
     if (!canInteractBloodMoonAvaren()) return;
     SFX.interact();
-    showActionMenu('Avaren——', [
+    showActionMenu('Avaren', [
     {
-      name: 'Give Healing Potion', fx: () => `Pain-5  Left ×${G.coldPotion}`,
+      name: 'Give Healing Potion', fx: () => `Pain −5 · Remaining: ${G.coldPotion}`,
       req: () => G.coldPotion > 0 && !G.actionSceneActive,
       run() {
         chg('coldPotion', -1); chg('pain', -5); renderHUD();
@@ -10435,15 +10435,15 @@ function openAvarenMenu() {
       }
     },
     {
-      name: 'Give Curse-Cure Potion', fx: () => `Curse-5  Left ×${G.cursePotion}`,
+      name: 'Give Curse-Suppressing Potion', fx: () => `Curse −5 · Remaining: ${G.cursePotion}`,
       req: () => G.cursePotion > 0 && !G.actionSceneActive,
       run() {
         chg('cursePotion', -1); chg('curse', -5); renderHUD();
-        toast('🔮 The Curse-Cure Potion took effect  Curse -5');
+        toast('🔮 The Curse-Suppressing Potion took effect  Curse -5');
       }
     },
     {
-      name: 'Use Oblivion Potion', fx: () => `Left ×${G.forgetPotion}`,
+      name: 'Use Oblivion Potion', fx: () => `Remaining: ${G.forgetPotion}`,
       req: () => G.forgetPotion > 0 && !G.actionSceneActive,
       run() {
         const potions = G.forgetPotion;
@@ -10463,13 +10463,13 @@ function openAvarenMenu() {
           renderHUD();
           finishForgetMagicNight();
         };
-        showEvent('', '——Forgetting——',
-          'You cast the magic as you draw closer to him——\n\n‘...Don’t... don’t come near me!’\n\nAvaren whirls around and shoves you hard with both hands.\nYou stagger back a few steps.',
-          () => showEvent('', '——Forgetting——',
+        showEvent('', '— Forgetting —',
+          'You cast the magic as you draw closer to him—\n\n‘...Don’t... don’t come near me!’\n\nAvaren whirls around and shoves you hard with both hands.\nYou stagger back a few steps.',
+          () => showEvent('', '— Forgetting —',
             '‘...Go away! Go away! I don’t need you!’\n\nBut you don’t stop.\nYou draw close again and hold him tight.\n\n‘...Let go of me! Let go! You’re just like them... you’re the same as them...!’',
-            () => showEvent('', '——Forgetting——',
+            () => showEvent('', '— Forgetting —',
               'Avaren lets out a low snarl and bites down hard on your right shoulder, his teeth sinking into your skin.\nThe curse’s black mist begins to eat away at your body.\n\n‘...’\n\nThe grass and trees around you start to wither, leaves curling and blackening as the curse’s aura spreads in every direction.\nBut you only endure the pain and hold him tighter.\n\n‘I’m sorry... I’m sorry.’',
-              () => showEvent('', '——Forgetting——',
+              () => showEvent('', '— Forgetting —',
                 'Again and again you cast the magic of forgetting, again and again softly repeating those words.\n\nUntil Avaren’s struggling slowly grows weaker...\nUntil his breathing gradually steadies...\nUntil his body slumps heavily against you—losing consciousness.\n\n...And so the night passed.',
                 afterForget, 'forget'
               ), 'forget'
@@ -10518,7 +10518,7 @@ function openAvarenMenu() {
         }
       },
       {
-        name: 'Give Healing Potion', fx: () => `Pain-5  Left ×${G.coldPotion}`,
+        name: 'Give Healing Potion', fx: () => `Pain −5 · Remaining: ${G.coldPotion}`,
         req: () => G.coldPotion > 0 && !G.actionSceneActive,
         run() {
           if (G.day === 10 && !G.usedForgetMagic) { rejectDay10AvarenCare('cold'); return; }
@@ -10528,13 +10528,13 @@ function openAvarenMenu() {
         }
       },
       {
-        name: 'Give Curse-Cure Potion', fx: () => `Curse-5  Left ×${G.cursePotion}`,
+        name: 'Give Curse-Suppressing Potion', fx: () => `Curse −5 · Remaining: ${G.cursePotion}`,
         req: () => G.cursePotion > 0 && !G.actionSceneActive,
         run() {
           if (G.day === 10 && !G.usedForgetMagic) { rejectDay10AvarenCare('curse'); return; }
           chg('cursePotion', -1); chg('curse', -5); renderHUD(); showHealEffect();
           story('Avaren', pick(['...(the black mist around him fades slightly.)', '...Not as cold now.', '...(he closes his eyes and breathes quietly.)']));
-          toast('🔮 The Curse-Cure Potion took effect  Curse -5');
+          toast('🔮 The Curse-Suppressing Potion took effect  Curse -5');
         }
       },
       {
@@ -10591,7 +10591,7 @@ function openAvarenMenu() {
         }
       },
       {
-        name: 'Give Healing Potion', fx: () => `Pain-5  Left ×${G.coldPotion}`,
+        name: 'Give Healing Potion', fx: () => `Pain −5 · Remaining: ${G.coldPotion}`,
         req: () => G.coldPotion > 0 && !G.actionSceneActive,
         run() {
           chg('coldPotion', -1); chg('pain', -5); renderHUD(); showHealEffect();
@@ -10600,12 +10600,12 @@ function openAvarenMenu() {
         }
       },
       {
-        name: 'Give Curse-Cure Potion', fx: () => `Curse-5  Left ×${G.cursePotion}`,
+        name: 'Give Curse-Suppressing Potion', fx: () => `Curse −5 · Remaining: ${G.cursePotion}`,
         req: () => G.cursePotion > 0 && !G.actionSceneActive,
         run() {
           chg('cursePotion', -1); chg('curse', -5); renderHUD(); showHealEffect();
-          story('Narrator', 'You feed the Curse-Cure Potion to Avaren.\nThe black mist coiled around him trembles faintly and fades a little.');
-          toast('🔮 The Curse-Cure Potion took effect  Curse -5');
+          story('Narrator', 'You give Avaren the Curse-Suppressing Potion.\nThe black mist coiled around him trembles faintly and fades a little.');
+          toast('🔮 The Curse-Suppressing Potion took effect  Curse -5');
         }
       },
       {
@@ -10637,7 +10637,7 @@ function openAvarenMenu() {
     return;
   }
   if (G.moodLocked) {
-    showActionMenu('Avaren——', [
+    showActionMenu('Avaren', [
       {
         name: '...(approach him)', fx: '',
         req: () => true,
@@ -10711,7 +10711,7 @@ function openAvarenMenu() {
 function showGivePotionMenu() {
         const potionItems = [];
         potionItems.push({
-          name: 'Healing Potion', fx: () => `Pain-5  Left ×${G.coldPotion}`,
+          name: 'Healing Potion', fx: () => `Pain −5 · Remaining: ${G.coldPotion}`,
           req: () => G.coldPotion > 0,
           run() {
             chg('coldPotion', -1); chg('pain', -5); renderHUD(); showHealEffect();
@@ -10720,17 +10720,17 @@ function showGivePotionMenu() {
           }
         });
         potionItems.push({
-          name: 'Curse-Cure Potion', fx: () => `Curse-5  Left ×${G.cursePotion}`,
+          name: 'Curse-Suppressing Potion', fx: () => `Curse −5 · Remaining: ${G.cursePotion}`,
           req: () => G.cursePotion > 0,
           run() {
             chg('cursePotion', -1); chg('curse', -5); renderHUD(); showHealEffect();
             story('Avaren', pick(['...(drinks it slowly; the black mist around him shivers faintly.)', '...(finishes it with his eyes closed, silent for a few seconds.) ‘...It doesn’t hurt as much.’', '(doesn’t resist, quietly finishing the potion.)']));
-            toast('🔮 The Curse-Cure Potion took effect  Curse -5');
+            toast('🔮 The Curse-Suppressing Potion took effect  Curse -5');
           }
         });
         if (G.forgetPotion > 0) {
           potionItems.push({
-            name: 'Oblivion Potion', fx: () => `Pain-25  Curse-25  Left ×${G.forgetPotion}`,
+            name: 'Oblivion Potion', fx: () => `Pain −25 · Curse −25 · Remaining: ${G.forgetPotion}`,
             req: () => G.forgetPotion > 0,
             run() {
               chg('forgetPotion', -1); chg('pain', -25); chg('curse', -25);
@@ -10868,7 +10868,7 @@ function doAction_GatherFlower() {
       playLoopingAudio('sfx-item-get', 3.0); toast('<img src="herbs.png" class="item-icon-svg"> Herbs +1');
     } else if (roll < 0.60) {
       chg('whiteFlower', 1); renderHUD();
-      playLoopingAudio('sfx-item-get', 3.0); toast(WF_ICON + ' White Medicine Flower +1');
+      playLoopingAudio('sfx-item-get', 3.0); toast(WF_ICON + ' White Remedy Flower +1');
     } else if (roll < 0.95) {
       chg('bug', 1); renderHUD();
       playLoopingAudio('sfx-item-get', 3.0); toast('<img src="bug01.png" class="item-icon-svg"> Insect Parts +1');
@@ -10923,7 +10923,7 @@ function doAction_SearchStolenMoney() {
     chg('money', amount); renderHUD();
     playLoopingAudio('sfx-item-get', 3.0); toast('💰 Money +' + amount);
     startActionScene([
-      { speaker: 'Eldrin', text: '......？' },
+      { speaker: 'Eldrin', text: '...?' },
       { speaker: 'Narrator', text: 'Behind the cabin you notice a small, unnaturally raised mound of earth. When you dig it open, you find a little cloth pouch stained dark red, holding a few scattered gold coins. You’re certain this isn’t the same pouch you were given...' },
     ], 0, () => {});
   });
@@ -11201,12 +11201,12 @@ const TRADE_SELL = [
   { id:'mushroom',        icon:'<img src="mushroom.png" class="item-icon-svg">', name:'Mushroom',     price:3  },
   { id:'egg',             icon:'🥚', name:'Bird Egg',     price:3  },
   { id:'frog',            icon:'<img src="frog.png" class="item-icon-svg">', name:'Frog',     price:3  },
-  { id:'whiteFlower',     icon:WF_ICON, name:'White Medicine Flower',   price:4  },
+  { id:'whiteFlower',     icon:WF_ICON, name:'White Remedy Flower',   price:4  },
   { id:'fairyItem',       icon:'<img src="Fairy.png" class="item-icon-svg">', name:'Fairy',     price:10 },
   { id:'beastMeat',       icon:'🥩', name:'Beast Meat',     price:5  },
   { id:'monsterMaterial', icon:'🦴', name:'Monster Material', price:8  },
   { id:'coldPotion',      icon:'<img src="Medicine_red.svg" class="item-icon-svg">',   name:'Healing Potion', price:6  },
-  { id:'cursePotion',     icon:'<img src="Medicine_yellow.svg" class="item-icon-svg">', name:'Curse-Cure Potion', price:8  },
+  { id:'cursePotion',     icon:'<img src="Medicine_yellow.svg" class="item-icon-svg">', name:'Curse-Suppressing Potion', price:8  },
   { id:'forgetPotion',    icon:'<img src="Medicine_blue.svg" class="item-icon-svg">', name:'Oblivion Potion', price:12 },
 ];
 const TRADE_BUY = [
@@ -11222,7 +11222,7 @@ const TRADE_BUY = [
   { id:'mushroom',    icon:'<img src="mushroom.png" class="item-icon-svg">', name:'Mushroom',     price:5  },
   { id:'egg',         icon:'🥚', name:'Bird Egg',     price:5  },
   { id:'frog',        icon:'<img src="frog.png" class="item-icon-svg">', name:'Frog',     price:5  },
-  { id:'whiteFlower', icon:WF_ICON, name:'White Medicine Flower',   price:7  },
+  { id:'whiteFlower', icon:WF_ICON, name:'White Remedy Flower',   price:7  },
   { id:'beastMeat',   icon:'🥩', name:'Beast Meat',     price:8  },
 ];
 
@@ -11540,7 +11540,7 @@ const COOK_INGREDIENTS_LIST = [
   { key: 'herb',            name: 'Herbs',   icon: '<img src="herbs.png" class="item-icon-svg">', fx: 'Satiety+2  Pain-3',          effects: { avarenHunger: 2, pain: -3 },           stam: 8 },
   { key: 'fish',            name: 'Fish',     icon: '🐟', fx: 'Satiety+15',                 effects: { avarenHunger: 15 },                     stam: 15 },
   { key: 'bug',             name: 'Insect Parts',   icon: '<img src="bug01.png" class="item-icon-svg">', fx: 'Satiety+2  Pain-2  Mood-2', effects: { avarenHunger: 2, pain: -2, mood: -2 }, stam: 3 },
-  { key: 'whiteFlower',     name: 'White Medicine Flower', icon: WF_ICON, fx: 'Satiety+2  Curse-2',         effects: { avarenHunger: 2, curse: -2 },          stam: 6 },
+  { key: 'whiteFlower',     name: 'White Remedy Flower', icon: WF_ICON, fx: 'Satiety+2  Curse-2',         effects: { avarenHunger: 2, curse: -2 },          stam: 6 },
   { key: 'apple',           name: 'Apple',   icon: '🍎', fx: 'Satiety+5  Mood+1',         effects: { avarenHunger: 5, mood: 1 },            stam: 5 },
   { key: 'fairyItem',       name: 'Fairy',   icon: '<img src="Fairy.png" class="item-icon-svg">', fx: 'Satiety+2  Curse-40',        effects: { avarenHunger: 2, curse: -40 },         stam: 30 },
   { key: 'vegetable',       name: 'Vegetable',   icon: '<img src="vegetable.png" class="item-icon-svg">', fx: 'Satiety+10  Mood+1',        effects: { avarenHunger: 10, mood: 1 },           stam: 15 },
@@ -11846,7 +11846,7 @@ function doSoupInteract() {
     + '<span>Pick up the dish to give to someone or put it back on the table</span>'
     + '<span style="color:#5a4818;font-weight:800;">' + avEffectStr + '</span>'
     + '</div>';
-  showActionMenu('The dish on the table——', [
+  showActionMenu('The Dish on the Table', [
     {
       name: 'Eat it yourself', fx: 'Eldrin ' + (selfFxParts.length ? selfFxParts.join('  ') : 'no real effect'),
       req: () => true,
@@ -11992,7 +11992,7 @@ function sellSoupToReid() {
           '...You... made this by hand? (his eyes redden a little) Thank you. Truly. Your kindness reaches me.',
           'This flavor... I’ve drunk better-tasting poison down in a dungeon. ...But you made it just for me—I’m moved. Take this.',
           '...(takes a deep breath) As a hero, there’s nothing I can’t endure. I understand your kindness. Thank you.',
-          '...I thought I’d seen it all......... thank you for the meal.',
+          '...I thought I’d seen it all. Thank you for the meal.',
         ]));
         storyThen(() => { toast('💰 Red thanks you for the meal and presses 5 gold into your hand'); });
       });
@@ -12068,7 +12068,7 @@ function doAction_PickupPotion() {
   const potionKey = G.researchType === 'cold' ? 'coldPotion' : G.researchType === 'curse' ? 'cursePotion' : G.researchType === 'stamina' ? 'staminaPotion' : 'forgetPotion';
   if (isBagFull(potionKey, 1)) { toastBagFull(); warn('Your backpack is full; you can’t retrieve the potion. Please clear some space first.'); return; }
   playLoopingAudio('sfx-plant-pop', 3.0);
-  const label = G.researchType === 'cold' ? 'Healing Potion' : G.researchType === 'curse' ? 'Curse-Cure Potion' : G.researchType === 'stamina' ? 'Stamina Potion' : 'Oblivion Potion';
+  const label = G.researchType === 'cold' ? 'Healing Potion' : G.researchType === 'curse' ? 'Curse-Suppressing Potion' : G.researchType === 'stamina' ? 'Stamina Potion' : 'Oblivion Potion';
   G.researchReady = false;
   document.getElementById('research-scene-wrap').style.display = 'none';
   const potionEl = document.getElementById('lobby-potion');
@@ -12090,10 +12090,10 @@ function doAction_StartResearch() {
   playLoopingAudio('sfx-menu-open', 4.0);
   showActionMenu('Choose a potion to research', [
     {
-      name: 'Healing Potion', fx: 'Herbs-2　White Flower-1',
+      name: 'Healing Potion', fx: 'Herbs-2　White Remedy Flower-1',
       req: () => isEvening && G.herb >= 2 && G.whiteFlower >= 1,
       run() {
-        showSaveConfirm('Make Potion', 'Make a potion that gives\nPain-5 (when used)\n(drinking it yourself restores 5 HP)?', () => {
+        showSaveConfirm('Make Potion', 'Brew a potion that reduces Pain by 5?\nIf Eldrin drinks it, it restores 5 HP.', () => {
           playLoopingAudio('sfx-potion-bottle', 0.8);
           spendFatigue(2);
           chg('herb', -2); chg('whiteFlower', -1);
@@ -12107,10 +12107,10 @@ function doAction_StartResearch() {
       }
     },
     {
-      name: 'Curse-Cure Potion', fx: 'White Flower-2　Ore-2　HP-2',
+      name: 'Curse-Suppressing Potion', fx: 'White Remedy Flower-2　Ore-2　HP-2',
       req: () => isEvening && G.whiteFlower >= 2 && G.stone >= 2,
       run() {
-        showSaveConfirm('Make Potion', 'Make a potion that gives\nCurse-5 (when used)?', () => {
+        showSaveConfirm('Make Potion', 'Brew a potion that reduces Curse by 5?', () => {
           playLoopingAudio('sfx-potion-bottle', 0.8);
           spendFatigue(2);
           chg('eldrinHp', -2);
@@ -12119,7 +12119,7 @@ function doAction_StartResearch() {
           renderHUD();
           document.getElementById('research-scene-wrap').style.display = 'block';
           document.getElementById('research-scene-bar').style.width = '0%';
-          document.getElementById('research-scene-label').textContent = '🧪 Researching Curse-Cure Potion…';
+          document.getElementById('research-scene-label').textContent = '🧪 Researching Curse-Suppressing Potion…';
           story('Narrator', pick(NARR_RESEARCH));
         });
       }
@@ -12128,7 +12128,7 @@ function doAction_StartResearch() {
       name: 'Stamina Potion', fx: 'Herbs-2　Mushroom-1　Insect Parts-2',
       req: () => isEvening && G.herb >= 2 && G.mushroom >= 1 && G.bug >= 2,
       run() {
-        showSaveConfirm('Make Potion', 'Make a potion that gives\nStamina+45 (when used)?', () => {
+        showSaveConfirm('Make Potion', 'Brew a potion that restores 45 Stamina?', () => {
           playLoopingAudio('sfx-potion-bottle', 0.8);
           spendFatigue(2);
           chg('herb', -2); chg('mushroom', -1); chg('bug', -2);
@@ -12142,7 +12142,7 @@ function doAction_StartResearch() {
       }
     },
     {
-      name: 'Oblivion Potion', fx: 'Herbs-10　White Flower-10　Insect Parts-5<br>Crystal Shards-8　Fairy-1　Monster Material-5',
+      name: 'Oblivion Potion', fx: 'Herbs-10　White Remedy Flower-10　Insect Parts-5<br>Crystal Shards-8　Fairy-1　Monster Material-5',
       req: () => isEvening && G.herb >= 10 && G.whiteFlower >= 10 && G.bug >= 5 && G.crystal >= 8 && G.fairyItem >= 1 && G.monsterMaterial >= 5 && G.forgetPotion === 0,
       run() {
         showSaveConfirm('Make Potion', 'Make the Oblivion Potion (for use on a blood moon night)?', () => {
@@ -12299,7 +12299,7 @@ const ELDRIN_HERB_NOTES = [
   { name: '<img src="Stone.png" class="item-icon-svg"> Ore & Crystal Shards',
     lines: [
       'Chip away at the rock face for ore; with luck you’ll knock loose a faintly glowing crystal shard.',
-      'A faint magic is sealed within crystal shards—an indispensable material for higher potions. Don’t underestimate that little glimmer.',
+      'A faint magic is sealed within crystal shards—an indispensable material for advanced potions. Don’t underestimate that little glimmer.',
     ] },
   { name: '<img src="bug01.png" class="item-icon-svg"> Insect Parts',
     lines: [
@@ -12311,15 +12311,15 @@ const ELDRIN_HERB_NOTES = [
       'Mushrooms with blue markings sometimes grow in the night forest. Eaten raw they’re poisonous and worsen pain—best not to touch them.',
       'But once processed, their toxicity turns into a gentle medicinal power. Brewed into a potion, they’re well suited to restoring stamina.',
     ] },
-  { name: '🧚 Fairies & White Medicine Flowers',
+  { name: '🧚 Fairies & White Remedy Flowers',
     lines: [
       'They say fairies favor damp places; on certain nights, fairies appear deep in the forest—though those who’ve seen them are said never to return.',
-      'The White Medicine Flower has the power to soothe monsters, and is a precious material for brewing the Oblivion Potion.',
+      'The White Remedy Flower has the power to soothe monsters and is a precious material for brewing the Oblivion Potion.',
     ] },
   { name: '🧪 Potion Recipes',
     lines: [
       'Healing Potion—herbs, to ease pain.',
-      'Curse-Cure Potion—herbs, to suppress the black mist.',
+      'Curse-Suppressing Potion—herbs, to suppress the black mist.',
       'Stamina Potion—herbs, for my own exhausted self.',
       'Oblivion Potion—herbs, insect parts, crystal shards, fairy. It erases the deepest pain, but the materials are hard to come by.',
     ] },
@@ -12794,8 +12794,8 @@ const BAG_ITEMS = [
   { key:'wood',            icon:'<img src="wood.png" class="item-icon-svg">', name:'Wood',       desc:'Timber cut from trees. Used to make fire or repair the cabin.' },
   { key:'branch',          icon:'<img src="Branches.png" class="item-icon-svg">', name:'Branches',       desc:'Thin twigs. Occasionally used in cooking, but mainly for kindling.' },
   { key:'stone',           icon:'<img src="Stone.png" class="item-icon-svg">', name:'Ore',       desc:'Stone chipped from a vein. Some kinds suppress the curse.' },
-  { key:'crystal',         icon:'<img src="crystal.png" class="item-icon-svg">', name:'Crystal',       desc:'A natural crystal holding faint magic—one of the materials for higher potions.' },
-  { key:'whiteFlower',     icon:WF_ICON, name:'White Medicine Flower',     desc:'A rare flower that blooms deep in the forest. It has a calming effect on monsters.' },
+  { key:'crystal',         icon:'<img src="crystal.png" class="item-icon-svg">', name:'Crystal',       desc:'A natural crystal holding faint magic—one of the materials for advanced potions.' },
+  { key:'whiteFlower',     icon:WF_ICON, name:'White Remedy Flower',     desc:'A rare flower that blooms deep in the forest. It has a calming effect on monsters.' },
   { key:'apple',           icon:'🍎', name:'Apple',       desc:'A sweet-and-tart apple, delicious when cooked into a dish.' },
   { key:'vegetable',       icon:'<img src="vegetable.png" class="item-icon-svg">', name:'Vegetable',       desc:'Fresh vegetables harvested from the field—indispensable in cooking.' },
   { key:'mushroom',        icon:'<img src="mushroom.png" class="item-icon-svg">', name:'Mushroom',       desc:'Wild mushrooms from the forest. There are many kinds—some are medicinal, some... are not.' },
@@ -12803,14 +12803,14 @@ const BAG_ITEMS = [
   { key:'frog',            icon:'<img src="frog.png" class="item-icon-svg">', name:'Frog',       desc:'A frog caught in damp grass. Certain recipes call for it.' },
   { key:'bug',             icon:'<img src="bug01.png" class="item-icon-svg">', name:'Insect Parts',       desc:'Small bugs turned up from under bark or fallen leaves. A material for special potions.' },
   { key:'giftBug',         icon:'<img src="bug02.png" class="item-icon-svg">', name:'Little Bug',     desc:'A little bug Avaren brought back, already half-dead. But he probably thought you’d like it, so he carried it home cupped carefully in his hands.' },
-  { key:'egg',             icon:'🥚', name:'Egg',         desc:'An egg found in a nest. Fine in texture, good for cooking.' },
+  { key:'egg',             icon:'🥚', name:'Egg',         desc:'An egg found in a nest. Fresh and useful in all kinds of dishes.' },
   { key:'beastMeat',       icon:'🥩', name:'Beast Meat',       desc:'A cut of meat taken from a beast. High in calories, restores stamina.' },
   { key:'monsterMaterial', icon:'🦴', name:'Monster Material',   desc:'A material taken from a monster. It holds an abnormal energy and has special uses.' },
   { key:'fairyItem',       icon:'<img src="Fairy.png" class="item-icon-svg">', name:'Fairy',   desc:'A mysterious, ominous fairy. It seems to make an excellent potion ingredient.' },
-  { key:'coldPotion',      icon:'<img src="Medicine_red.svg" class="item-icon-svg">',   name:'Healing Potion',   desc:'A potion that eases Avaren’s pain (Pain-5).\nWhen Eldrin drinks it himself, it restores HP (+5). It takes time to brew.' },
-  { key:'cursePotion',     icon:'<img src="Medicine_yellow.svg" class="item-icon-svg">', name:'Curse-Cure Potion',   desc:'A special potion formulated against the curse; it can temporarily suppress the spread of the black mist.' },
+  { key:'coldPotion',      icon:'<img src="Medicine_red.svg" class="item-icon-svg">',   name:'Healing Potion',   desc:'A potion that eases Avaren’s pain (Pain −5).\nWhen Eldrin drinks it, it restores 5 HP. It takes time to brew.' },
+  { key:'cursePotion',     icon:'<img src="Medicine_yellow.svg" class="item-icon-svg">', name:'Curse-Suppressing Potion',   desc:'A special potion formulated to combat the curse. It can temporarily suppress the spread of the black mist.' },
   { key:'forgetPotion',    icon:'<img src="Medicine_blue.svg" class="item-icon-svg">', name:'Oblivion Potion',   desc:'A dangerous potion that erases specific memories. Once used, there is no going back.' },
-  { key:'staminaPotion',   icon:'<img src="Medicine_green.svg" class="item-icon-svg">', name:'Stamina Potion',   desc:'A nourishing potion that restores stamina. Drink one when weary, and you’ll feel much refreshed.' },
+  { key:'staminaPotion',   icon:'<img src="Medicine_green.svg" class="item-icon-svg">', name:'Stamina Potion',   desc:'A nourishing potion that restores stamina. Drink one when weary, and you’ll feel revitalized.' },
   { key:'pebble',          icon:'🪨', name:'Little Pebble',       desc:'A completely useless little pebble. But Avaren walked a long way to pick it up, thinking you might like it.' },
   { key:'wildFlower',      icon:'🍂', name:'Pretty Leaf',   desc:'A slightly crumpled fallen leaf. He seems to have picked it up very earnestly, carrying it home cupped in his palm.' },
   { key:'feather',         icon:'🪶', name:'Strange Feather',   desc:'A feather of an unusual color. When he held it out to you, there was a hint of expectation on his face.' },
@@ -13883,7 +13883,7 @@ const DEBUG_ITEM_LIST = [
   { key: 'fish',            name: '🐟 Fish' },
   { key: 'stone',           name: '<img src="Stone.png" class="item-icon-svg"> Ore' },
   { key: 'fairyItem',       name: '🧚 Fairy' },
-  { key: 'whiteFlower',     name: WF_ICON + ' White Medicine Flower' },
+  { key: 'whiteFlower',     name: WF_ICON + ' White Remedy Flower' },
   { key: 'apple',           name: '🍎 Apple' },
   { key: 'vegetable',       name: '<img src="vegetable.png" class="item-icon-svg"> Vegetable' },
   { key: 'mushroom',        name: '🍄 Mushroom' },
@@ -13892,7 +13892,7 @@ const DEBUG_ITEM_LIST = [
   { key: 'beastMeat',       name: '🥩 Beast Meat' },
   { key: 'monsterMaterial', name: '🦴 Monster Material' },
   { key: 'coldPotion',      name: '💊 Healing Potion' },
-  { key: 'cursePotion',     name: '🔮 Curse-Cure Potion' },
+  { key: 'cursePotion',     name: '🔮 Curse-Suppressing Potion' },
   { key: 'forgetPotion',    name: '💙 Oblivion Potion' },
   { key: 'staminaPotion',   name: '💛 Stamina Potion' },
 ];
@@ -13966,8 +13966,8 @@ function jumpToBloodMoon() {
   G.bloodMoon7MemoryTimer = 900;
   G.bloodMoon7MemoryIndex = 0;
   applyBGMForState();
-  showEvent('UI_Blood Moon.png', 'Blood Moon Night——',
-    'On the night of the ninth day, the moon turned blood-red.\n\nAvaren’s curse was stirred by the blood moon, his pain and the black mist surging at once——\nfrom the room came his stifled cries of agony.',
+  showEvent('UI_Blood Moon.png', 'Night of the Blood Moon',
+    'On the night of the ninth day, the moon turned blood-red.\n\nAvaren’s curse was stirred by the blood moon, his pain and the black mist surging all at once—\nfrom the room came his stifled cries of agony.',
     () => { storyAuto('Narrator', 'Night falls and the blood moon rises; the maddened moon intensifies the curse in every living thing.'); }, 'red');
   raf = requestAnimationFrame(gameLoop);
 }
@@ -14273,8 +14273,8 @@ function doAction_KillTime() {
           G.bloodMoon7MemoryIndex = 0;
           applyBGMForState({ fade: true, duration: 2400 });
           setTimeout(() => {
-            showEvent('UI_Blood Moon.png', 'Blood Moon Night——',
-              'On the night of the ninth day, the moon turned blood-red.\n\nAvaren’s curse was stirred by the blood moon, his pain and the black mist surging at once——\nfrom the room came his stifled cries of agony.',
+            showEvent('UI_Blood Moon.png', 'Night of the Blood Moon',
+              'On the night of the ninth day, the moon turned blood-red.\n\nAvaren’s curse was stirred by the blood moon, his pain and the black mist surging all at once—\nfrom the room came his stifled cries of agony.',
               () => { storyAuto('Narrator', 'Night falls and the blood moon rises; the maddened moon intensifies the curse in every living thing.'); }, 'red');
           }, 500);
         } else {
@@ -14319,8 +14319,8 @@ function skipToEvening() {
       G.bloodMoon7MemoryIndex = 0;
       applyBGMForState({ fade: true, duration: 2400 });
       setTimeout(() => {
-        showEvent('UI_Blood Moon.png', 'Blood Moon Night——',
-          'On the night of the ninth day, the moon turned blood-red.\n\nAvaren’s curse was stirred by the blood moon, his pain and the black mist surging at once——\nfrom the room came his stifled cries of agony.',
+        showEvent('UI_Blood Moon.png', 'Night of the Blood Moon',
+          'On the night of the ninth day, the moon turned blood-red.\n\nAvaren’s curse was stirred by the blood moon, his pain and the black mist surging all at once—\nfrom the room came his stifled cries of agony.',
           () => { storyAuto('Narrator', 'Night falls and the blood moon rises; the maddened moon intensifies the curse in every living thing.'); }, 'red');
       }, 500);
     } else {
@@ -14560,7 +14560,7 @@ function endDay() {
   if (G.day === 10 && !G.usedForgetMagic && !wasBloodMoon) {
     chg('curse', +6);
     renderHUD();
-    if (isCrisis()) { showEvent('💀','Crisis——', `Avaren’s Pain and Curse have climbed far too high; his body has reached its limit...\nThe black mist devours him.`, () => endGame('crisis'), 'red'); return; }
+    if (isCrisis()) { showEvent('💀','Crisis', `Avaren’s Pain and Curse have climbed far too high; his body has reached its limit...\nThe black mist devours him.`, () => endGame('crisis'), 'red'); return; }
     const nightText = `You step toward Avaren’s room, wanting to do something for him.\nHe doesn’t turn around.\n\n‘...Don’t touch me.’\n\nYou can only stop outside the door,\nunable to help at all.\n\nCurse +6`;
     G.day++;
     G.slimeCalmed = false;
@@ -14573,7 +14573,7 @@ function endDay() {
     G.bloodMoon7Failed = true;
   }
 
-  if (isCrisis()) { showEvent('💀','Crisis——', `Avaren’s Pain and Curse have climbed far too high; his body has reached its limit...\nThe black mist devours him.`, () => endGame('crisis'), 'red'); return; }
+  if (isCrisis()) { showEvent('💀','Crisis', `Avaren’s Pain and Curse have climbed far too high; his body has reached its limit...\nThe black mist devours him.`, () => endGame('crisis'), 'red'); return; }
 
   // 依入睡選擇決定不同的結算事件框
   let nightIcon = '🌙';
@@ -14614,7 +14614,7 @@ function afterNight(prevText) {
   if (G.day > G.maxDays) { endGame('time_up'); return; }
   if (G.bloodMoon7Failed) {
     G.bloodMoon7Failed = false;
-    showEvent('💀', '——Avaren Did Not Survive——',
+    showEvent('💀', '— Avaren Did Not Survive —',
       'The torment of the blood moon night was too deep.\n\nBefore the darkness lifted, Avaren collapsed in the flowers by the lake, and you heard his breathing grow fainter and fainter.\n\nNo matter how you cried out, your voice could not reach his ears.\n\nYou watched him walk step by step toward death, powerless to do anything for him.',
       () => endGame('avaren_death'), 'red');
     return;
@@ -14660,8 +14660,8 @@ function triggerAvarenReturnEvent() {
   if (!G.avarenReturnPending) return false;
   G.avarenReturnPending = false;
   if (G.trust >= 60) {
-    showEvent('🐰', '——Dawn, He Returned——',
-      'Avaren stands quietly in the corner of the room.\n\nIn his arms he cradles the bodies of two small animals—a rabbit and a squirrel. Their fur is still mostly intact; he hunted them tonight.\n\n‘...These.... are for you.’\n\nHis eyes are downcast, his palms stained with grass and dirt.\nLast night he went hunting alone.\nThis is the thing he knows how to give you.',
+    showEvent('🐰', '— He Returned at Dawn —',
+      'Avaren stands quietly in the corner of the room.\n\nIn his arms he cradles the bodies of two small animals—a rabbit and a squirrel. Their fur is still mostly intact; he hunted them tonight.\n\n‘...These... are for you.’\n\nHis eyes are downcast, his palms stained with grass and dirt.\nLast night he went hunting alone.\nThis is the thing he knows how to give you.',
       () => {
         const gotMeat = !isBagFull('beastMeat', 2);
         if (gotMeat) { chg('beastMeat', 2); renderHUD(); toast('🥩 Beast Meat +2'); }
@@ -14699,7 +14699,7 @@ function triggerAvarenReturnEvent() {
   } else {
     chg('money', 50); renderHUD();
     G.avarenStolenMoney = true;
-    showEvent('', '——Dawn, He Returned——',
+    showEvent('', '— He Returned at Dawn —',
       'Avaren stands by the door, the hem of his clothes stained with dirt.\nHis breathing is faint, as if he’s been standing there a long time.\n\nThe moment you see him, the thing that clenched your chest all night finally snaps loose.',
       () => {
         startActionScene([
@@ -15076,7 +15076,7 @@ function closeEvent() {
 //  ENDINGS
 // ══════════════════════════════════════
 const ENDINGS = {
-  nectar: { cls:'end-best', type:'True End', title:'Nectar',
+  nectar: { cls:'end-best', type:'True End', title:'Dew',
     desc:'Avaren’s curse did not vanish completely.\n\nBut Eldrin finally found a way to keep it stable.\nThe black mist still surfaces now and then beneath Avaren’s skin, like an old dream that refuses to fade.\n\nThey stayed and lived in the cabin in the forest.\nAmid the daily herbs, hearth fire, rain, and morning light, he grew up, little by little.\n\nThis is not the end of the story, but the beginning of another.\nThey still have so many, many stories—waiting for you to read.' },
   wormwood: { cls:'end-regret', type:'Bad End', title:'Wormwood',
     desc:'Avaren survived.\n\nSome cracks ran too deep to be mended.\nHe no longer trusted Eldrin, nor believed this cabin could protect him.\n\nOne day, Avaren disappeared.\nEldrin followed the pitch-black traces the curse left behind, deep into the forest—only to find the black mist had already spread across the trees, the lake, and the distant village.\n\nIn the end, Eldrin was swallowed by the curse along with this forest.\nNeither of them ever came back.' },
@@ -15379,14 +15379,14 @@ async function startGoodEndingAnimation() {
 
   // ── 階段三：自動對話 ──
   await playAutoScene([
-    { speaker: 'Noah',   text: 'Eldrin... sorry! Coming to you so late... but this is rather urgent...' },
+    { speaker: 'Noah',   text: 'Eldrin... I’m sorry to come so late, but it’s urgent.' },
     { speaker: 'Eldrin', text: 'Noah! Has something happened?' },
-    { speaker: 'Noah',   text: 'Do you remember the cursed person I mentioned to you last time? Her condition is rather bad...' },
+    { speaker: 'Noah',   text: 'Do you remember the cursed person I mentioned before? Her condition has gotten much worse...' },
     { speaker: 'Noah',   text: 'I was afraid it would soon be too late, so I had no choice but to bring her straight to you...' },
     { speaker: 'Noah',   text: 'I’m sorry! I know this isn’t your trade, but apart from you, we have no one to turn to!' },
     { speaker: 'Noah',   text: 'Can you help her?' },
     { speaker: 'Noah',   text: 'This is Theonie Hart, a dear friend I’ve known for a long time!' },
-    { speaker: 'Theonie', text: 'Noah... isn’t this a potion shop? Why bring me here... an ordinary potion shop can’t do anything about my curse.....' },
+    { speaker: 'Theonie', text: 'Noah... isn’t this a potion shop? Why did you bring me here...? A normal potion shop can’t treat a curse like mine.' },
     { speaker: 'Eldrin', text: 'I understand...! Miss Theonie, please let me take a look at your eyes first...' },
   ], 4000);
 
@@ -15703,7 +15703,7 @@ function renderEndingsGallery() {
          <div class="eg-card-title">${ending.title}</div>
          <div class="eg-card-type ${entry.typeClass}">${entry.typeLbl}</div>`
       : `<div class="eg-card-num">——</div>
-         <div class="eg-card-title" style="font-size:13px;letter-spacing:2px;">？？？</div>
+         <div class="eg-card-title" style="font-size:13px;letter-spacing:2px;">???</div>
          <div class="eg-card-type">——</div>`;
     if (unlocked) {
       card.onclick = () => replayEnding(entry.key);
@@ -15964,7 +15964,7 @@ function activeSlotKey(n) {
   return hasReidEndTriggered() ? NEW_SLOT_KEY(n) : SLOT_KEY(n);
 }
 const SCENE_LABEL  = { outside:'Outdoors', lobby:'Lobby', room:'Room', kitchen:'Kitchen', forest:'Forest' };
-const PERIOD_LABEL = { morning:'Day', evening:'Night' };
+const PERIOD_LABEL = { morning:'Daytime', evening:'Night' };
 
 let _savePanelMode = 'save';
 let _savePanelCanSwitchTabs = true;
