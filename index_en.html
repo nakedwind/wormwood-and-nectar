@@ -16633,37 +16633,37 @@ function setupDay0IntroState() {
 }
 
 const DAY0_STATIC_INTRO_LINES = [
-  { speaker: 'Narrator', text: '諾亞推門進來時，艾德林正站在大廳的樓梯旁。\n他的臉色比夜色還要蒼白。' },
-  { speaker: 'Noah', text: '艾德林，我把附近的痕跡都處理掉了。至少今晚，這裡是安全的。' },
-  { speaker: 'Eldrin', text: '謝謝你……諾亞。' },
-  { speaker: 'Noah', text: '不用跟我道謝。這間小屋本來就很久沒有人來了，用來躲藏正好。' },
-  { speaker: 'Noah', text: '阿瓦倫呢？那孩子的狀況怎麼樣？' },
-  { speaker: 'Eldrin', text: '還沒有醒。\n他的呼吸很弱，詛咒也還在擴散。\n我不知道我能不能救他。' },
-  { speaker: 'Noah', text: '艾德林。' },
-  { speaker: 'Noah', text: '你已經把他帶出來了。這不是誰都做得到的事。' },
-  { speaker: 'Eldrin', text: '可是如果他死了，我做的事情就沒有意義了。' },
-  { speaker: 'Noah', text: '所以你才會留在這裡，不是嗎？' },
-  { speaker: 'Noah', text: '你會想辦法救他。你一直都是這樣的人。' },
-  { speaker: 'Noah', text: '今晚先讓他休息。你也一樣。我之後會再過來看你們。' },
+  { speaker: 'Narrator', text: 'When Noah pushes the door open, Eldrin is standing by the stairs in the lobby.\nHis face is paler than the night itself.' },
+  { speaker: 'Noah', text: 'Eldrin, I’ve cleared away all the traces nearby. At least for tonight, this place is safe.' },
+  { speaker: 'Eldrin', text: 'Thank you... Noah.' },
+  { speaker: 'Noah', text: 'No need to thank me. No one’s come to this cabin in ages—it’s perfect for hiding.' },
+  { speaker: 'Noah', text: 'And Avaren? How is the boy doing?' },
+  { speaker: 'Eldrin', text: 'He hasn’t woken yet.\nHis breathing is weak, and the curse is still spreading.\nI don’t know if I can save him.' },
+  { speaker: 'Noah', text: 'Eldrin.' },
+  { speaker: 'Noah', text: 'You already got him out. That’s not something just anyone could do.' },
+  { speaker: 'Eldrin', text: 'But if he dies, everything I’ve done will mean nothing.' },
+  { speaker: 'Noah', text: 'That’s why you’re staying here, isn’t it?' },
+  { speaker: 'Noah', text: 'You’ll find a way to save him. You’ve always been that kind of person.' },
+  { speaker: 'Noah', text: 'Let him rest tonight. You too. I’ll come back to check on you later.' },
   { speaker: 'Eldrin', text: '...Mm.' },
-  { speaker: 'Noah', text: '不要一個人把所有事情都扛起來。至少在這裡，你們不是孤身一人。' },
-  { speaker: 'Narrator', text: '諾亞留下這句話後，輕輕關上了門。\n小屋重新安靜下來。' }
+  { speaker: 'Noah', text: 'Don’t shoulder everything alone. At least here, you’re not on your own.' },
+  { speaker: 'Narrator', text: 'With those words, Noah gently closes the door.\nThe cabin falls silent once more.' }
 ];
 
 const DAY0_AVAREN_MONOLOGUE_LINES = [
-  { speaker: 'Narrator', text: '房間裡很安靜。\n阿瓦倫躺在床上，呼吸輕得像隨時會被夜色帶走。' },
+  { speaker: 'Narrator', text: 'The room is very quiet.\nAvaren lies in bed, his breathing so faint it seems the night could carry it away at any moment.' },
   { speaker: 'Eldrin', text: 'Avaren...' },
-  { speaker: 'Eldrin', text: '對不起。' },
-  { speaker: 'Eldrin', text: '我沒有想到會發生這些事…。' },
-  { speaker: 'Eldrin', text: '你不該變成這樣。\n不該由你來承受這些。' },
-  { speaker: 'Narrator', text: '艾德林伸出手，又在碰到阿瓦倫之前停住。' },
-  { speaker: 'Eldrin', text: '我會想辦法。' },
-  { speaker: 'Eldrin', text: '不管要花多少時間，我都會把你救回來。' },
-  { speaker: 'Narrator', text: '窗外的夜色慢慢淡去。\n小屋裡只剩下微弱的呼吸聲，和一個無聲的決定。' }
+  { speaker: 'Eldrin', text: 'I’m sorry.' },
+  { speaker: 'Eldrin', text: 'I never thought all this would happen...' },
+  { speaker: 'Eldrin', text: 'You shouldn’t have ended up like this.\nYou shouldn’t be the one to bear all this.' },
+  { speaker: 'Narrator', text: 'Eldrin reaches out a hand, then stops just before touching Avaren.' },
+  { speaker: 'Eldrin', text: 'I’ll find a way.' },
+  { speaker: 'Eldrin', text: 'No matter how long it takes, I will bring you back.' },
+  { speaker: 'Narrator', text: 'The night outside slowly fades.\nIn the cabin, only faint breathing remains—and a silent resolve.' }
 ];
 
 const DAY0_NOAH_EXIT_LINES = [
-  { speaker: 'Narrator', text: '諾亞輕輕關上門。\n小屋重新安靜下來。' }
+  { speaker: 'Narrator', text: 'Noah gently closes the door.\nThe cabin falls silent once more.' }
 ];
 
 function setupDay0StaticIntroState() {
@@ -16805,10 +16805,10 @@ async function playDay0EldrinStudyScene() {
 
   // 第2步：旁白
   await new Promise(resolve => startActionScene([
-    { speaker: 'Narrator', text: '你帶著阿瓦倫逃離了那棟宅子。可惜你慢了一步。' },
-    { speaker: 'Narrator', text: '你照顧的那個孩子，身上爬滿了詛咒的紋路，此刻昏迷在床鋪上。' },
-    { speaker: 'Narrator', text: '呼吸還在，但很微弱。你不敢去想更壞的情況，你認為那是你的錯，你怎麼沒有更早發現。' },
-    { speaker: 'Narrator', text: '你拖著一身的疲憊坐下來，翻開一本又一本關於詛咒的古籍，一行一行地看。' },
+    { speaker: 'Narrator', text: 'You fled that mansion with Avaren. Sadly, you were a step too late.' },
+    { speaker: 'Narrator', text: 'The child you care for, his body crawling with curse markings, now lies unconscious on the bed.' },
+    { speaker: 'Narrator', text: 'He’s still breathing, but faintly. You dare not imagine anything worse. You believe it’s your fault—why didn’t you notice sooner?' },
+    { speaker: 'Narrator', text: 'You sit down, dragging your weariness with you, and open one ancient curse text after another, reading line by line.' },
     { speaker: 'Narrator', text: 'The candle flickers before your eyes. The words begin to blur. Your eyelids grow heavier and heavier, but your hands refuse to stop.' },
   ], 0, resolve));
 
@@ -16853,7 +16853,7 @@ async function beginDay1AfterStaticIntro() {
   applyBGMForState({ fade: true, duration: 5000 });
   await waitMs(3000); // 黑幕多停留 3 秒
   await fadeFromBlack(2500);
-  story('Narrator', '第一天。屋子是舊的，食物是空的，阿瓦倫還在昏迷，現在你急需製作能夠拯救他的藥水。\n你雖然還感到不安，但你決定先去看看附近有什麼——藥草、食材、能用的東西。今天能做多少就做多少。');
+  story('Narrator', 'Day one. The house is old, the food is gone, Avaren is still unconscious, and now you urgently need to brew a potion that can save him.\nUneasy as you are, you decide to first see what’s nearby—herbs, ingredients, anything usable. Do as much as you can today.');
 }
 
 async function finishDay0IntroToDay1() {
@@ -16879,7 +16879,7 @@ async function finishDay0IntroToDay1() {
   applyBGMForState({ fade: true, duration: 2000 });
   await waitMs(3000); // 黑幕多停留 3 秒
   await fadeFromBlack(1600);
-  story('Narrator', '第一天。屋子是舊的，食物是空的，阿瓦倫還在昏迷，現在你急需製作能夠拯救他的藥水。\n你雖然還感到不安，但你決定先去看看附近有什麼——藥草、食材、能用的東西。今天能做多少就做多少。');
+  story('Narrator', 'Day one. The house is old, the food is gone, Avaren is still unconscious, and now you urgently need to brew a potion that can save him.\nUneasy as you are, you decide to first see what’s nearby—herbs, ingredients, anything usable. Do as much as you can today.');
 }
 
 async function playDay0OpeningIntro() {
@@ -16916,21 +16916,21 @@ async function playDay0OpeningIntro() {
   renderChars();
 
   await playActionScene([
-    { speaker: 'Narrator', text: '諾亞推門進來時，艾德林正站在大廳的樓梯旁。\n他的臉色比夜色還要蒼白。' },
-    { speaker: 'Noah', text: '艾德林，我把附近的痕跡都處理掉了。至少今晚，這裡是安全的。' },
-    { speaker: 'Eldrin', text: '謝謝你……諾亞。' },
-    { speaker: 'Noah', text: '不用跟我道謝。這間小屋本來就很久沒有人來了，用來躲藏正好。' },
-    { speaker: 'Noah', text: '阿瓦倫呢？那孩子的狀況怎麼樣？' },
-    { speaker: 'Eldrin', text: '還沒有醒。\n他的呼吸很弱，詛咒也還在擴散。\n我不知道我能不能救他。' },
-    { speaker: 'Noah', text: '艾德林。' },
-    { speaker: 'Noah', text: '你已經把他帶出來了。這不是誰都做得到的事。' },
-    { speaker: 'Eldrin', text: '可是如果他死了，我做的事情就沒有意義了。' },
-    { speaker: 'Noah', text: '所以你才會留在這裡，不是嗎？' },
-    { speaker: 'Noah', text: '你會想辦法救他。你一直都是這樣的人。' },
-    { speaker: 'Noah', text: '今晚先讓他休息。你也一樣。我之後會再過來看你們。' },
+    { speaker: 'Narrator', text: 'When Noah pushes the door open, Eldrin is standing by the stairs in the lobby.\nHis face is paler than the night itself.' },
+    { speaker: 'Noah', text: 'Eldrin, I’ve cleared away all the traces nearby. At least for tonight, this place is safe.' },
+    { speaker: 'Eldrin', text: 'Thank you... Noah.' },
+    { speaker: 'Noah', text: 'No need to thank me. No one’s come to this cabin in ages—it’s perfect for hiding.' },
+    { speaker: 'Noah', text: 'And Avaren? How is the boy doing?' },
+    { speaker: 'Eldrin', text: 'He hasn’t woken yet.\nHis breathing is weak, and the curse is still spreading.\nI don’t know if I can save him.' },
+    { speaker: 'Noah', text: 'Eldrin.' },
+    { speaker: 'Noah', text: 'You already got him out. That’s not something just anyone could do.' },
+    { speaker: 'Eldrin', text: 'But if he dies, everything I’ve done will mean nothing.' },
+    { speaker: 'Noah', text: 'That’s why you’re staying here, isn’t it?' },
+    { speaker: 'Noah', text: 'You’ll find a way to save him. You’ve always been that kind of person.' },
+    { speaker: 'Noah', text: 'Let him rest tonight. You too. I’ll come back to check on you later.' },
     { speaker: 'Eldrin', text: '...Mm.' },
-    { speaker: 'Noah', text: '不要一個人把所有事情都扛起來。至少在這裡，你們不是孤身一人。' },
-    { speaker: 'Narrator', text: '諾亞留下這句話後，輕輕關上了門。\n小屋重新安靜下來。' }
+    { speaker: 'Noah', text: 'Don’t shoulder everything alone. At least here, you’re not on your own.' },
+    { speaker: 'Narrator', text: 'With those words, Noah gently closes the door.\nThe cabin falls silent once more.' }
   ]);
 
   await animateNpcTo(G.noah, { x: 318, y: 440 }, 1700);
@@ -17187,9 +17187,9 @@ function openReidSaveScreen() {
     el.id = 'reid-slot-' + i;
     el.innerHTML = `
       <img class="save-slot-avatar" src="red_avatar.png" alt="">
-      <div class="save-slot-num">雷德<br>檔案 ${i}</div>
+      <div class="save-slot-num">Red<br>File ${i}</div>
       <div class="save-slot-text">
-        <div class="save-slot-info">第 11 天<br>白天・艾德林的小屋戶外</div>
+        <div class="save-slot-info">Day 11<br>Daytime · Outside Eldrin’s Cabin</div>
         <div class="save-slot-date">${timeStr}</div>
       </div>
       <div class="save-slot-btns">
