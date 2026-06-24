@@ -12802,7 +12802,7 @@ function showActionMenu(heading, items, noteText = '', noCancel = false) {
       // 若 run() 啟動了睡眠動畫，保持暫停狀態；否則正常解除暫停
       if (!G.sleepAnimActive && !isDlgBlocking()) G.paused = false;
       menuBtns = [];
-      if (!isAvarenUnconscious() && !isAvarenBedRest() && G.mood > 50 && G.avarenScene === G.scene) {
+      if (!G.bloodMoon7Active && !isAvarenUnconscious() && !isAvarenBedRest() && G.mood > 50 && G.avarenScene === G.scene) {
         G.bubbleText = pick(AVAREN_DLG.possess.concat(['……（跟著你）']));
         if (G.mood <= 80) G.bubbleText = pick(['……（靠近你）', '……艾德林。', '……（悄悄跟著）']);
         G.bubbleTimer = 300;
