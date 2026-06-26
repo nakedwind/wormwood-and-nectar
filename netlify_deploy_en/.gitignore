@@ -1,0 +1,15 @@
+# PSD 原始檔（太大，不上傳）
+PSD/
+
+# Claude Code 設定檔（本機用，不上傳）
+.claude/
+
+# 備份檔
+*.current-broken-after-chicken
+*.bak
+*.backup
+
+# 系統檔
+.DS_Store
+Thumbs.db
+desktop.ini
