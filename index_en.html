@@ -15823,8 +15823,8 @@ function initTitleSpine() {
     const context = new spine.webgl.ManagedWebGLRenderingContext(canvas, { alpha: true, premultipliedAlpha: false });
     const gl = context.gl;
     const assetManager = new spine.webgl.AssetManager(context);
-    assetManager.loadTextureAtlas('spine/封面拆圖.atlas');
-    assetManager.loadText('spine/封面拆圖.json');
+    assetManager.loadTextureAtlas('spine-en/封面拆圖.atlas');
+    assetManager.loadText('spine-en/封面拆圖.json');
     const renderer = new spine.webgl.SceneRenderer(canvas, context, true);
     const _spineLoadBar = document.getElementById('spine-loading-bar');
     const _spineLoadUi  = document.getElementById('spine-loading');
@@ -15840,8 +15840,8 @@ function initTitleSpine() {
       }
       if (_spineLoadBar) _spineLoadBar.style.width = '100%';
       if (assetManager.hasErrors()) { console.warn('Spine load error', assetManager.getErrors()); return; }
-      const atlas = assetManager.get('spine/封面拆圖.atlas');
-      const jsonData = JSON.parse(assetManager.get('spine/封面拆圖.json'));
+      const atlas = assetManager.get('spine-en/封面拆圖.atlas');
+      const jsonData = JSON.parse(assetManager.get('spine-en/封面拆圖.json'));
       const skeletonData = new spine.SkeletonJson(new spine.AtlasAttachmentLoader(atlas)).readSkeletonData(jsonData);
       skeleton = new spine.Skeleton(skeletonData);
       state = new spine.AnimationState(new spine.AnimationStateData(skeletonData));

@@ -1,0 +1,96 @@
+
+封面拆圖.png
+size: 1730,1629
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+a01
+  rotate: true
+  xy: 974, 1405
+  size: 222, 324
+  orig: 222, 324
+  offset: 0, 0
+  index: -1
+a02
+  rotate: true
+  xy: 2, 1407
+  size: 220, 322
+  orig: 222, 324
+  offset: 1, 1
+  index: -1
+a03
+  rotate: true
+  xy: 326, 1407
+  size: 220, 322
+  orig: 222, 324
+  offset: 1, 1
+  index: -1
+a04
+  rotate: true
+  xy: 650, 1407
+  size: 220, 322
+  orig: 222, 324
+  offset: 1, 1
+  index: -1
+eldrin01
+  rotate: false
+  xy: 2, 2
+  size: 862, 604
+  orig: 862, 604
+  offset: 0, 0
+  index: -1
+eldrin02
+  rotate: false
+  xy: 2, 803
+  size: 860, 602
+  orig: 862, 604
+  offset: 1, 1
+  index: -1
+eldrin03
+  rotate: false
+  xy: 864, 608
+  size: 860, 602
+  orig: 862, 604
+  offset: 1, 1
+  index: -1
+eldrin04
+  rotate: false
+  xy: 866, 2
+  size: 862, 604
+  orig: 862, 604
+  offset: 0, 0
+  index: -1
+light
+  rotate: false
+  xy: 1300, 1212
+  size: 415, 415
+  orig: 427, 427
+  offset: 6, 6
+  index: -1
+
+封面拆圖2.png
+size: 1969,1712
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+BG01
+  rotate: true
+  xy: 2, 2
+  size: 1708, 936
+  orig: 1710, 938
+  offset: 1, 1
+  index: -1
+BG02
+  rotate: true
+  xy: 940, 15
+  size: 869, 754
+  orig: 871, 756
+  offset: 1, 1
+  index: -1
+frame
+  rotate: false
+  xy: 940, 886
+  size: 1027, 824
+  orig: 1029, 826
+  offset: 1, 1
+  index: -1
