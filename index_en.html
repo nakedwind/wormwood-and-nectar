@@ -16971,6 +16971,7 @@ async function skipToDay1() {
 }
 
 async function startGame() {
+  gcEvent('game/start', 'Start New Game');
   await ensureAssetsReady();
   zeRestoreSaved(); // 套用之前用區域編輯器儲存的座標
   initState();
@@ -18561,7 +18562,7 @@ runTipsCycle();
 
 <!-- ══ GoatCounter 玩家統計 ══
      ↓↓↓ 把下面的 YOURCODE 換成你在 goatcounter.com 註冊的代碼（例如 wormwood）↓↓↓ -->
-<script data-goatcounter="https://naturalwind0.goatcounter.com/count"
+<script data-goatcounter="https://naturalwind0-en.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"></script>
 </body>
 </html>

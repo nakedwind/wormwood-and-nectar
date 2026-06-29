@@ -17031,6 +17031,7 @@ async function skipToDay1() {
 }
 
 async function startGame() {
+  gcEvent('game/start', '開始新遊戲');
   await ensureAssetsReady();
   zeRestoreSaved(); // 套用之前用區域編輯器儲存的座標
   initState();
